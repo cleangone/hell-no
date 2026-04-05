@@ -1,8 +1,3 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
-
 <template>
   <header>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
@@ -17,8 +12,61 @@ import HelloWorld from './components/HelloWorld.vue'
     </div>
   </header>
 
+   <div v-if="userExists">
+      {{ user.firstName }}
+      <v-btn @click="logout()">Logout</v-btn>
+   
+   </div>
+   <RouterLink v-else to="/login">Login</RouterLink>
+    
+           
   <RouterView />
+
+
 </template>
+
+<script setup>
+   import { computed, onMounted, ref } from 'vue'
+   import { RouterLink, RouterView } from 'vue-router'
+   import HelloWorld from './components/HelloWorld.vue'
+
+   import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
+   import { useUserStore }    from '@/stores/userStore'
+   
+   const userStore    = useUserStore()
+   
+   onMounted(async() => {
+      // logStore.info("App.onMounted")
+      const auth = getAuth()
+      onAuthStateChanged(auth, (user) => {      
+         if (user) { userStore.userId = user.uid } 
+         else { userStore.userId = "" }
+         // viewStore.resetVisiblity()
+      })
+
+      // setWindowSize()
+      // window.addEventListener('resize', setWindowSize)
+   })
+
+   const user = computed(() => { 
+      const currUser = userStore.userExists ? userStore.user : null 
+      // logStore.info("user update: " + (currUser ? currUser.firstName : "null"))
+      // // const soloMode = currUser?.settings?.soloMode ? true : false
+      // // if (localStore.soloMode != soloMode) { localStore.setSoloMode(soloMode) }
+      return currUser
+   })
+
+
+   const userExists  = computed(() => userStore.userExists )
+   
+   const logout = () => { 
+      signOut(getAuth()) 
+      // router.push(URL.HOME)
+   }
+
+
+</script>
+
 
 <style scoped>
 header {
