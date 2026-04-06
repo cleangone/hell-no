@@ -9,12 +9,20 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^41.4.2",
+    "@ckeditor/ckeditor5-vue": "^7.4.0",
     "@vueuse/core": "^14.2.1",
     "@vueuse/firebase": "^14.2.1",
+    "draggable-resizable-vue3": "^1.0.94-beta",
     "firebase": "^12.11.0",
+    "interactjs": "^1.10.27",
     "pinia": "^3.0.4",
+    "swiper": "^12.1.3",
+    "uuid": "^13.0.0",
     "vue": "^3.5.30",
+    "vue-advanced-cropper": "^2.8.9",
     "vue-router": "^5.0.3",
+    "vuedraggable": "^2.24.3",
     "vuetify": "^4.0.5"
   },
   "devDependencies": {

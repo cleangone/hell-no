@@ -1,5 +1,5 @@
-// import { useNow, useDateFormat } from '@vueuse/core'
-// import { v4 as uuid } from 'uuid'
+import { useNow, useDateFormat } from '@vueuse/core'
+import { v4 as uuid } from 'uuid'
 import { BackgroundColors, State } from './constants'
    
 export const requiredRule = [ v => !!v || 'Required' ]
@@ -12,10 +12,10 @@ const isOptionalYear = (v) => {
    return !v || parseInt(v) && v > 1800 && v <= new Date().getFullYear() ? true : 'Invalid year' 
 }
 
-// export function dateUuid() {
-//    const datePrefix = useDateFormat(useNow(), 'MM-DD-YY-')
-//    return datePrefix.value + uuid()
-// }
+export function dateUuid() {
+   const datePrefix = useDateFormat(useNow(), 'MM-DD-YY-')
+   return datePrefix.value + uuid()
+}
          
 export function logError(viewName, err, instance) { 
    if (err.message == "img is null" && instance.$options.name == "BaseTransition") { return false }

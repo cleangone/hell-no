@@ -1,0 +1,108 @@
+import { computed } from 'vue'
+import { defineStore } from 'pinia'
+import { useUserStore }  from './userStore'
+import { useGroupStore } from './groupStore'
+
+export const useUserMgr = defineStore('userMgr', () => {
+   const userStore  = useUserStore()
+   const groupStore = useGroupStore()
+   
+   const myKnownUserIds = computed(() => { 
+      const knownUserIds = []
+      for (const group of groupStore.myGroups) {
+         knownUserIds.push( ...group.userIds )
+      }
+      let set = new Set(knownUserIds)
+      set.delete(userStore.userId)
+
+      return Array.from(set)
+   })
+
+   const myUserContacts = computed(() => getUserContacts(myKnownUserIds.value))
+
+   // consolidate with myFullName
+   function getFullName(user) {
+      return user ? 
+         (user.firstName ? user.firstName : "") + (user.firstName && user.lastName ? " " : "") + (user.lastName ? user.lastName : "") :
+         ""
+   }
+
+   function getUserIdByEmail(email) {
+      const userContact = getUserContactByEmail(email) 
+      return userContact ? userContact.id : null
+   }
+   
+   function getUserContactByEmail(email) {
+      for (const user of userStore.users) { 
+         if (user.email == email) { return getUserContact(user) }        
+      }
+      return null
+   }
+
+   function getUserContacts(userIds) {
+      const userContacts = []
+      for (const userId of userIds) { 
+         const user = userStore.getUser(userId)
+         if (user) { userContacts.push(getUserContact(user)) }
+      }
+      userContacts.sort((a, b) => a.lastName.localeCompare(b.lastName))
+
+      return userContacts      
+   }
+   function getUserContact(user) {
+      return { 
+         id: user.id, 
+         username: user.username, 
+         email: user.email, 
+         firstName: user.firstName, 
+         lastName: user.lastName ? user.lastName : "",
+         fullName: getFullName(user) 
+      }         
+   }
+
+   function setItemHeaders(headers) {
+      const settings = { ...userStore.mySettings }
+      settings.itemHeaders = headers
+      userStore.updateSettings(settings)
+   }
+   
+   function setShowHiddenItems(showHidden) {
+      const settings = { ...userStore.mySettings }
+      settings.showHiddenItems = showHidden
+      userStore.updateSettings(settings)
+   }
+
+   function getUserContactsNotInGroup(group) {
+      let userIds = new Set(myKnownUserIds.value)
+      for (const groupUserId of group.userIds) {
+         userIds.delete(groupUserId)
+      }
+         
+      return getUserContacts(userIds)
+   }
+   
+   function addMessagingToken(device, token) {
+      const user = userStore.user 
+      if (user) {
+         let messagingTokenFound = false
+         const messagingTokens = user.messagingTokens ? user.messagingTokens : []
+         for (const messagingToken of messagingTokens) {
+            if (messagingToken.device == device) {
+               messagingToken.token = token
+               messagingTokenFound = true
+            }
+         }
+
+         if (!messagingTokenFound) { messagingTokens.push ({ device: device, token: token }) }   
+
+         userStore.updateUser({id: user.id, messagingTokens: messagingTokens})
+      }
+      else {
+         console.log("Cannot find user")
+      }
+   }
+
+   return { 
+      getFullName, getUserIdByEmail, getUserContactByEmail, setItemHeaders, setShowHiddenItems, 
+      myUserContacts, getUserContactsNotInGroup, addMessagingToken }
+})

@@ -1,34 +1,27 @@
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+   <v-row>
+      <v-col cols="8">
+         <h1>Hell-No Reboot test</h1>
+      </v-col>
+      <v-col>
+         <div v-if="userExists">
+            {{ user.firstName }}
+            <v-btn @click="logout()">Logout</v-btn>
+         </div>
+         <RouterLink v-else to="/login">Login</RouterLink>
+         <!-- <RouterLink v-else :to="URL.LOGIN">Login</RouterLink> -->
+      </v-col>
+   </v-row>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-   <div v-if="userExists">
-      {{ user.firstName }}
-      <v-btn @click="logout()">Logout</v-btn>
-   
-   </div>
-   <RouterLink v-else to="/login">Login</RouterLink>
-    
-           
-  <RouterView />
-
-
+   <RouterView/>
 </template>
 
 <script setup>
    import { computed, onMounted, ref } from 'vue'
    import { RouterLink, RouterView } from 'vue-router'
-   import HelloWorld from './components/HelloWorld.vue'
+   // import HelloWorld from './components/HelloWorld.vue'
+   import { URL } from '@/utils/constants'
+   
 
    import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
    import { useUserStore }    from '@/stores/userStore'
