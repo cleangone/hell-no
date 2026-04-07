@@ -77,7 +77,7 @@
 
    const visibleItemCount = computed(() => viewMgr.galleryItemCount(props.gallery))
    const selectedFields   = computed(() => viewStore.visibleThumbFields.get(ItemOrigin.GALLERY))
-   const showDateModified = computed(() => selectedFields.value ? selectedFields.value.includes(ThumbField.DATE_UPDATED) : false)
+   const showDateModified = computed(() => selectedFields.value.includes(ThumbField.DATE_UPDATED))
    
    // todo - this only goes down one level
    const childGalleryImages = computed(() => { 

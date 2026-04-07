@@ -1,28 +1,31 @@
 @import './base.css';
 
 #app {
-  /* max-width: 1280px; */
+   /* was max-width: 1980px; */
   max-width: 3000px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   font-weight: normal;
+  /* background-color: blueviolet; */
 }
 
 a,
-.green {
+.blue {
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
+  /* color: hsla(160, 100%, 37%, 1); */
+  color: #1976D2;
   transition: 0.4s;
-  padding: 3px;
 }
 
 @media (hover: hover) {
   a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+   /* background-color: hsla(160, 100%, 37%, 0.2); */
+   background-color: #f2f6fc;
+}
 }
 
-@media (min-width: 1024px) {
+/* was min-width: 1024px, then I set it to 1980 */
+@media (min-width: 3000px) {
   body {
     display: flex;
     place-items: center;

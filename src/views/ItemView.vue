@@ -190,7 +190,7 @@
    import { useRoute, useRouter } from 'vue-router'
    import { createReusableTemplate, onKeyStroke, useWindowSize } from '@vueuse/core'
    // import { useHead } from '@unhead/vue'
-   // import { Head } from '@unhead/vue/components'
+   import { Head } from '@unhead/vue/components'
    import { useUserStore }    from '@/stores/userStore'
    import { useItemStore }    from '@/stores/itemStore'
    import { useItemMgr }      from '@/stores/itemMgr'

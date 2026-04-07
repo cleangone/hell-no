@@ -58,10 +58,10 @@
             <template v-slot:item.image="{ item }">
                <img :src="item.thumbUrl" @click="showItemImage(item)" height="100" class="hand"/>
             </template>
-            <!-- <template v-slot:item.showWithItem="{ item }">
+            <template v-slot:item.showWithItem="{ item }">
                <v-checkbox v-if="isPrimaryImage(item)" v-model="TRUE" disabled class="ml-3 mt-4"/> 
                <v-checkbox v-else v-model="item.showWithItem" @click="toggleShowWithItem(item)" class="ml-3 mt-4"/> 
-            </template> -->
+            </template>
             <template v-slot:item.wall="{ item }">
                <div v-if=imageOnWall(item.id) class="d-flex flex-column">
                   <div v-if=imageOnMyWall(item.id)>My Wall</div>

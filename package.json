@@ -1,36 +1,50 @@
 {
-  "name": "hell-no",
+  "name": "next-gallery",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "vite build",
+    "dev": "vite",
     "preview": "vite preview"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^41.4.2",
-    "@ckeditor/ckeditor5-vue": "^7.4.0",
-    "@vueuse/core": "^14.2.1",
-    "@vueuse/firebase": "^14.2.1",
+    "@ckeditor/ckeditor5-vue": "^5.1.0",
+    "@unhead/vue": "^1.9.16",
+    "@vueuse/core": "^10.6.1",
+    "@vueuse/firebase": "^10.6.1",
+    "algoliasearch": "^4.24.0",
+    "bootstrap": "^5.3.2",
+    "bootstrap-vue": "^2.23.1",
     "draggable-resizable-vue3": "^1.0.94-beta",
-    "firebase": "^12.11.0",
-    "interactjs": "^1.10.27",
-    "pinia": "^3.0.4",
-    "swiper": "^12.1.3",
-    "uuid": "^13.0.0",
-    "vue": "^3.5.30",
-    "vue-advanced-cropper": "^2.8.9",
-    "vue-router": "^5.0.3",
-    "vuedraggable": "^2.24.3",
-    "vuetify": "^4.0.5"
+    "firebase": "^10.7.0",
+    "from": "^0.1.7",
+    "import": "^0.0.6",
+    "instantsearch.css": "^8.1.0",
+    "interact": "^0.0.3",
+    "interactjs": "^1.10.26",
+    "pinia": "^2.1.7",
+    "primevue": "^3.50.0",
+    "register-service-worker": "^1.7.2",
+    "swiper": "^11.1.0",
+    "uuid": "^9.0.1",
+    "vue": "^3.4.5",
+    "vue-advanced-cropper": "^2.8.8",
+    "vue-cropperjs": "^5.0.0",
+    "vue-gtag": "^2.0.1",
+    "vue-instantsearch": "^4.19.2",
+    "vue-router": "^4.2.5",
+    "vue-sortable": "^0.1.3",
+    "vue-swipy": "^0.1.1",
+    "vue3-popper": "^1.5.0",
+    "vuedraggable": "^4.1.0",
+    "vuetify": "^3.7.4"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.4",
-    "vite": "^7.3.1",
-    "vite-plugin-vue-devtools": "^8.0.7"
-  },
-  "engines": {
-    "node": "^20.19.0 || >=22.12.0"
+    "@mdi/font": "^7.3.67",
+    "@vitejs/plugin-vue": "^4.4.0",
+    "@vue/cli-plugin-pwa": "~5.0.0",
+    "vite": "^4.4.11",
+    "vite-plugin-pwa": "^0.19.4"
   }
 }

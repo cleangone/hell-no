@@ -8,9 +8,19 @@
     ],
     "rewrites": [
       {
+         "source": "/link/**",
+         "function": "link"
+       },
+      {
         "source": "**",
         "destination": "/index.html"
       }
     ]
+  },
+  "extensions": {
+    "storage-resize-images": "firebase/storage-resize-images@0.1.12",
+    "storage-resize-images-llui": "firebase/storage-resize-images@0.1.12",
+    "storage-resize-images-xm6n": "firebase/storage-resize-images@0.2.2",
+    "storage-resize-images-ymbw": "firebase/storage-resize-images@0.1.12"
   }
 }
