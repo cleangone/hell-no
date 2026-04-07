@@ -8,7 +8,7 @@
          <v-tab v-if="!viewMgr.solo"     :value="tabs.invite">Invites</v-tab>
          <v-tab v-if="viewMgr.isDeskTop" :value="tabs.wall">Wall</v-tab>
          <v-tab v-if="viewMgr.isDeskTop" :value="tabs.artist">Artists</v-tab>
-         <v-tab                          :value="tabs.broadcast">Broadcast</v-tab>
+         <!-- <v-tab                          :value="tabs.broadcast">Broadcast</v-tab> -->
          <v-btn v-if="viewMgr.isMobile" @click="logout()" size="small" 
             class="align-self-center ml-auto mr-3" style="float:right">Logout</v-btn>
       </v-tabs>
@@ -22,7 +22,7 @@
             <v-window-item :value="tabs.invite">   <AccountInvites/>   </v-window-item>
             <v-window-item :value="tabs.wall">     <AccountWall/>      </v-window-item>
             <v-window-item :value="tabs.artist">   <AccountArtists/>   </v-window-item>
-            <v-window-item :value="tabs.broadcast"><AccountBroadcast/> </v-window-item>
+            <!-- <v-window-item :value="tabs.broadcast"><AccountBroadcast/> </v-window-item> -->
          </v-window>
       </v-card-text>
   </v-card>
@@ -40,7 +40,7 @@
    import AccountInvites   from '@/components/account/AccountInvites.vue'
    import AccountWall      from '@/components/account/AccountWall.vue'
    import AccountArtists   from '@/components/account/AccountArtists.vue'
-   import AccountBroadcast from '@/components/account/broadcast/AccountBroadcast.vue'
+   // import AccountBroadcast from '@/components/account/broadcast/AccountBroadcast.vue'
    import { URL } from '@/utils/constants'
    
    const router = useRouter()
@@ -48,7 +48,9 @@
    const wasMobile = ref()
    const tabs = { 
       item: "item", gallery: "gallery", profile: "profile", group: "group", invite: "invite", 
-      wall: "wall", artist: "artist", broadcast: "broadcast" }
+      wall: "wall", artist: "artist"
+      // , broadcast: "broadcast" 
+   }
    const tab = ref(tabs.item)
    const lastLargeScreenTab = ref(null)
    

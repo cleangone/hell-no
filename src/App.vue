@@ -15,12 +15,12 @@
                         color="blue-darken-2" size="medium" variant="text"></v-btn>
                   </template>
                   <v-list>
-                     <v-list-item @click="router.push(URL.BROADCAST)">
+                     <!-- <v-list-item @click="router.push(URL.BROADCAST)">
                         <template v-slot:prepend>
                            <v-icon icon="mdi-broadcast" color="blue-darken-3"></v-icon>
                         </template>
                         <v-list-item-title>Broadcast</v-list-item-title>
-                     </v-list-item>
+                     </v-list-item> -->
                      <v-list-item @click="router.push(URL.MESSAGE)">
                         <template v-slot:prepend>
                            <v-icon icon="mdi-message" color="blue-darken-3"></v-icon>
@@ -44,9 +44,9 @@
                      | <LinkOrText :currentRoute="currentRoute" :route="Route.GALLERIES" :url="URL.GALLERIES + Defaults.SITE_ID" text="Galleries" />
                   </span> 
                   | <LinkOrText :currentRoute="currentRoute" :route="Route.SEARCH" :url="URL.SEARCH" text="Search"/>
-                  <span v-if="userExists">
+                  <!-- <span v-if="userExists">
                      | <LinkOrText :currentRoute="currentRoute" :route="Route.BROADCAST" :url="URL.BROADCAST" text="Broadcast" />
-                  </span> 
+                  </span>  -->
                   <span v-if="userExists && !viewMgr.solo">
                      | <LinkOrText :currentRoute="currentRoute" :route="Route.MESSAGE" :url="URL.MESSAGE" text="Messages" />
                   </span> 
@@ -66,7 +66,7 @@
                <span v-else-if="isRoute(Route.ABOUT)">About</span>
                <span v-else-if="isRoute(Route.USER)">{{ userTitle }}</span>
                <span v-else-if="isRoute(Route.MESSAGE)">Messages</span>
-               <span v-else-if="isRoute(Route.BROADCAST)">Broadcast</span>
+               <!-- <span v-else-if="isRoute(Route.BROADCAST)">Broadcast</span> -->
                <span v-else-if="isRoute(Route.ACCOUNT)" class="text-subtitle-1">My Account</span>
                <span v-else-if="isRoute(Route.ADMIN)" class="text-subtitle-1">Admin</span>
                <span v-else-if="isRoute(Route.ADD_ITEM)">Add Item</span>
@@ -187,7 +187,7 @@
    import ToggleIcon     from '@/components/util/ToggleIcon.vue'
    import { handleError } from '@/utils/utils'
    import { Defaults, Route, URL } from '@/utils/constants'
-   import { versions }   from '@/utils/version'
+   import { versions }   from '@/version'
 
    const route = useRoute()
    const router = useRouter()

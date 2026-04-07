@@ -20,7 +20,9 @@
 */
 export const versions = [     
    ["v2.0.1",  "4/6/26"],  // Remove db log table - became huge, impacted loading and login
-   ["v2.0.0",  "4/6/26"],  // Relaunch in hell-no repository - will be slimmed down version
+                           // Comment out Broadcast in Header/Account, Feeds in HomeView
+                           // Initial streamline of ItemView
+   ["v2.0.0",  "4/6/26"],  // Relaunch in h2.hell-no.gallery in hell-no repository - will be slimmed down version
    ["v1.56.2", "2/23/25"], // Display site or user's wall based on soloMode 
                            // Filter search results by userId if soloMode
                            // Add soloMode to account icon dropdown, remove editInPlace

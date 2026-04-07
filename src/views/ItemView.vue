@@ -1,11 +1,8 @@
 <template>
-   <DefineTemplate>
-      <div class="title">
-         {{ itemName }}
-         <IconButton v-if="!viewMgr.solo && itemUser" icon="mdi-email" @click="sendEmail()"/>
-         <EditButton v-if="isOwnedByUser" @click="editItem(paramItem)"/>
+   <DefineTemplate> <!-- desktop item info beside or below image -->
+      <div v-if="alternateName" class="mt-n2">
+         also <span class="text-h5">{{ alternateName }}</span>
       </div>
-      <div v-if="alternateName" class="text-h5 mt-n2">{{ alternateName }}</div>
       <div class="text-h6 mt-n2">{{ artist }}</div>
       <div v-if="paramItem.yearCreated" class="text-h6 mt-n2">{{ paramItem.yearCreated }}</div>
       <div v-if="populated(paramItem.subtitle)" class="font-weight-medium mb-1">{{ paramItem.subtitle }}</div>
@@ -14,16 +11,17 @@
          From <RouterLink :to="URL.USER + paramItem.userId">{{ itemUsername }}</RouterLink>
       </div>
       <GroupNames v-if="!viewMgr.solo" :groups="itemGroups"/>
+      <div>   
+         <IconButton v-if="!viewMgr.solo && itemUser" icon="mdi-email" @click="sendEmail()"/>
+         <EditButton v-if="isOwnedByUser" @click="editItem(paramItem)"/>
+      </div>
+
       <div v-html="paramItem.desc" class="mt-3 mb-1"></div>
-      <div v-if="isFeed" class="bg-shade mt-2 pt-1">
+      <!-- <div v-if="isFeed" class="bg-shade mt-2 pt-1">
          <span class="ml-4 mr-1 my-5 font-weight-bold">{{ isSavedFeedItem ? "Saved Feed" : "Feed" }}</span>
          <TextButton v-if="!isSavedFeedItem" @click="saveFeedItem()" text="Save" class="pb-1"/>
          <TextButton @click="dismissFeedItem()" text="Dismiss" class="pb-1"/>
-      </div>   
-      <div class="bg-shade mt-2 pt-1">
-         <span class="ml-4 mr-1 my-5 font-weight-bold">Link</span>
-         <TextButton @click="copyLinkToClipboard()" text="Copy to clipboard" class="ml-1 pb-1"/>       
-      </div>
+      </div>    -->
    </DefineTemplate>
 
    <Head>
@@ -130,12 +128,12 @@
             </v-infinite-scroll>
          </div>
       </div>
-      <div v-else class="text-left">
+      <div v-else class="text-left"> <!-- desktop - image and info -->
          <IconSpan :icons="['mdi-text-box-outline', descBeside?'mdi-chevron-right':'mdi-chevron-down']" 
             @click="viewStore.toggleItemDescBesideImage()" class="pointer"/>
          <v-row class="w-100">
             <v-col :cols="descBeside ? 8 : 12">
-               <div v-if="isItemGroup(paramItem)" @click="showItem(paramItem)" class="center d-flex justify-center" style="width: 100%">
+               <div v-if="isItemGroup(paramItem)" @click="viewStore.toggleItemDescBesideImage()" class="center d-flex justify-center" style="width: 100%">
                   <div class="d-flex align-center bg-black">
                      <img v-if="paramItem.childItems.length" :src="paramItem.childItems[0].primaryImage.url" 
                         :width="childItemTargetWidth(0)" class="first-image" :class="imageClass"/>
@@ -146,19 +144,21 @@
                   </div>
                </div>
                <v-img v-else :src="paramItem.primaryImage.url" contain :max-width="imageWidth" 
-                  @click="showImage(paramItem.primaryImage)" :class="imageClass"/>
-               <div v-if="!descBeside && additionalImages.length" class="bg-shade my-5">
-                  <v-row class="mx-3">
-                     <div v-for="additionalImage in additionalImages" :key="additionalImage.id" class="py-3 px-1">
-                        <div class="text-center pointer">
-                           <v-img :src="additionalImage.url" @click="showAdditionalImages(additionalImage)" contain :width="75"/>
-                           {{ additionalImage.name }}
+                  @click="viewStore.toggleItemDescBesideImage()" :class="imageClass"/>
+               <div v-if="!descBeside" class="mt-5">
+                  <div v-if="additionalImages.length" class="bg-shade mb-5">
+                     <v-row class="mx-3">
+                        <div v-for="additionalImage in additionalImages" :key="additionalImage.id" class="py-3 px-1">
+                           <div class="text-center pointer">
+                              <v-img :src="additionalImage.url" @click="showAdditionalImages(additionalImage)" contain :width="75"/>
+                              {{ additionalImage.name }}
+                           </div>
                         </div>
-                     </div>
-                  </v-row>
-               </div>
-               <div v-if="!descBeside" class="text-left">
-                  <ReuseTemplate/>
+                     </v-row>
+                  </div>
+                  <div class="text-left">
+                     <ReuseTemplate/>
+                  </div>
                </div>
             </v-col> 
             <v-col v-if="descBeside && additionalImages.length" cols="1" class="bg-shade my-3">
@@ -210,7 +210,7 @@
    import GroupNames       from '@/components/group/GroupNames.vue'
    import EditButton       from '@/components/util/EditButton.vue'
    import IconButton       from '@/components/util/IconButton.vue'
-   import TextButton       from '@/components/util/TextButton.vue'
+   // import TextButton       from '@/components/util/TextButton.vue'
    import IconSpan         from '@/components/util/IconSpan.vue'
    import { handleError, isGroup, populated } from '@/utils/utils'
    import { Emit, GalleryImageTypes, ImageType, ItemNavAction, ItemOrigin, ItemType, ParentFeedType, URL } from '@/utils/constants'
@@ -463,10 +463,6 @@
       return "position:relative;left:-" + left + "px"
    })
    
-   const copyLinkToClipboard = () => { 
-      const link = "https://hell-no.gallery/link/?itemId=" + paramItem.value.id
-      navigator.clipboard.writeText(link)
-   }
 
    const sendEmail = () => {
       viewStore.setEmailContext(itemUser.value, paramItem.value)

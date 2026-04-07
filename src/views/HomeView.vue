@@ -13,10 +13,10 @@
    </v-container>
    <!-- greeting, notifications, wall -->
    <v-container class="pa-0 mb-2 width-100">
-      <div class="mt-n2 mb-2">
+      <!-- <div class="mt-n2 mb-2">
          <div v-if="viewMgr.solo" class="text-subtitle-1">Solo Mode</div>
          <RouterLink v-else :to="URL.ABOUT">Why should I care?</RouterLink>
-      </div>
+      </div> -->
       
       <ShowNotifications v-if="notifications.length" :notifications="notifications" class="mb-3"/>
       <div class="walldiv" :style="wallDivStyle">
@@ -27,14 +27,15 @@
       </div>
    </v-container>
    <!-- groups if user logged in and not solo -->
-   <div v-if="userStore.userExists && !viewMgr.solo && groups && groups.length">
+   <!-- <div v-if="userStore.userExists && !viewMgr.solo && groups && groups.length">
       <span class="font-weight-bold">Group Updates</span> |
       <span v-for="group in groups" :key="group.id">
          <RouterLink :to="URL.GROUP + group.id">{{ group.name }} </RouterLink>  |
       </span>
-   </div>
+   </div> -->
+
    <!-- galleries, feeds (if not solo) -->
-   <div>
+   <!-- <div>
       <v-row class="my-3">
          <v-col v-if="visibleGalleries.length">
             <div class="my-5">
@@ -54,7 +55,19 @@
             </v-row>
          </v-col>
       </v-row>
+   </div> -->
+
+   <!-- galleries -->
+   <div v-if="visibleGalleries.length" class="my-3">
+      <div class="my-5">
+         <span class="font-weight-bold">Galleries</span> |
+         <RouterLink :to="URL.GALLERIES + Defaults.SITE_ID">View all</RouterLink>
+      </div>
+      <v-row justify="space-around" ref="galleryRef" class="mb-md-4" >
+         <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" showChildImages dense />
+      </v-row>  
    </div>
+
    <!-- updates -->
    <v-container class="mt-5 pt-3 bg-shade">
       <div class="mb-3">
@@ -78,12 +91,12 @@
    import { useElementSize } from '@vueuse/core'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
-   import { useGroupStore }   from '@/stores/groupStore'
+   // import { useGroupStore }   from '@/stores/groupStore'
    import { useInviteStore }  from '@/stores/inviteStore'
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useWallStore }    from '@/stores/wallStore'
    import { useWallMgr }      from '@/stores/wallMgr'
-   import { useFeedMgr }      from '@/stores/feedMgr'
+   // import { useFeedMgr }      from '@/stores/feedMgr'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { useLocalStore }   from '@/stores/localStore'
@@ -98,13 +111,13 @@
    import { Defaults, GalleryThumbWidth, ItemOrigin, TodoType, URL, WallRowHeight } from '@/utils/constants'
    
    const userStore    = useUserStore()
-   const groupStore   = useGroupStore()
+   // const groupStore   = useGroupStore()
    const galleryStore = useGalleryStore()
    const inviteStore  = useInviteStore()
    const itemMgr      = useItemMgr()
    const wallStore    = useWallStore()
    const wallMgr      = useWallMgr()
-   const feedMgr      = useFeedMgr()
+   // const feedMgr      = useFeedMgr()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
    const localStore   = useLocalStore()
@@ -190,7 +203,7 @@
    const wallDivStyle   = computed(() => "height:" + (((slideRowHeight.value + slideRowMargin.value) * wallRows.value)) + "px;")
    const wallBackgroundStyle = computed(() => wallDivStyle.value + " opacity:" + wallBackgroundOpacity.value + ";")
 
-   const groups = computed(() => { return groupStore.myGroups })
+   // const groups = computed(() => { return groupStore.myGroups })
 
    const visibleGalleries = computed(() => { 
       const galleries = []     
@@ -250,32 +263,32 @@
       return thumbRow.thumbs
    })
 
-   const allFeedItems = computed(() =>  {  
-      const items = []
-      if (feedMgr.myFeed) { 
-         if (feedMgr.myFeed.feedItems.length) { items.push(...feedMgr.myFeed.feedItems) } 
-         else if (feedMgr.myFeed?.savedItems?.length ) { 
-            viewStore.setShowSavedFeedItems(true)
-            items.push(...feedMgr.myFeed.savedItems)
-         } 
-      }
-      viewStore.setVisibleItems(ItemOrigin.FEED, "Feed", URL.FEED, items)
-      return items
-   })
+   // const allFeedItems = computed(() =>  {  
+   //    const items = []
+   //    if (feedMgr.myFeed) { 
+   //       if (feedMgr.myFeed.feedItems.length) { items.push(...feedMgr.myFeed.feedItems) } 
+   //       else if (feedMgr.myFeed?.savedItems?.length ) { 
+   //          viewStore.setShowSavedFeedItems(true)
+   //          items.push(...feedMgr.myFeed.savedItems)
+   //       } 
+   //    }
+   //    viewStore.setVisibleItems(ItemOrigin.FEED, "Feed", URL.FEED, items)
+   //    return items
+   // })
 
-   const feedItemsExist = computed(() => allFeedItems.value.length > 0)
+   // const feedItemsExist = computed(() => allFeedItems.value.length > 0)
    
    // return number of feed items to fill one row of the feed display
-   const feedItems = computed(() => { 
-      const thumbRow = new ThumbRow(1, feedWidth.value ? feedWidth.value : 150 ) 
-      const ungroupedItems = itemMgr.ungroupAndExtractItems(allFeedItems.value)
-      for (const item of ungroupedItems) {
-         const aspectRatio = itemMgr.itemAspectRatio(item)
-         const newThumbWidth = Math.round(200 * aspectRatio) + 5
-         if (!thumbRow.addThumb(item, newThumbWidth))  { break }  
-      } 
-      return thumbRow.thumbs
-   })
+   // const feedItems = computed(() => { 
+   //    const thumbRow = new ThumbRow(1, feedWidth.value ? feedWidth.value : 150 ) 
+   //    const ungroupedItems = itemMgr.ungroupAndExtractItems(allFeedItems.value)
+   //    for (const item of ungroupedItems) {
+   //       const aspectRatio = itemMgr.itemAspectRatio(item)
+   //       const newThumbWidth = Math.round(200 * aspectRatio) + 5
+   //       if (!thumbRow.addThumb(item, newThumbWidth))  { break }  
+   //    } 
+   //    return thumbRow.thumbs
+   // })
 </script>
 
 <style>
