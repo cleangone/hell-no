@@ -42,7 +42,6 @@
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
-   import { useLogStore }     from '@/stores/logStore'
    import { displayDate } from '@/utils/dateUtils'
    import { backgroundColorStyle, handleError, objAspectRatio } from '@/utils/utils'
    import { GalleryThumbWidth, ImageType, ItemOrigin, ThumbField, URL } from '@/utils/constants'
@@ -58,14 +57,13 @@
    const itemMgr      = useItemMgr()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
-   const logStore     = useLogStore()
    const cardRef = ref(null)
    const popup = ref(null)
    const showEditDialog = ref(false)
    const mouseleaveTime = ref(Date.now())
    const galleryImageIndex = ref(0)
    
-   onErrorCaptured((err) => { return handleError(err, "GalleryThumb", logStore) })
+   onErrorCaptured((err) => { return handleError(err, "GalleryThumb") })
 
    const cardWidth = computed(() =>  {
       if (xs.value) { return props.dense ? XsGalleryThumbWidth : windowWidth.value * .4 } // .4 adjusts width for 2 thumbs/row

@@ -16,9 +16,6 @@
          <template v-slot:item.dateCreated="{ item }">
             {{ item.dateCreated ? item.dateCreated.toDate().toLocaleDateString() : "" }}
          </template>
-         <template v-slot:item.actions="{ item }">
-            <DeleteButton @click="deleteAction(item)"></DeleteButton>
-         </template>
       </v-data-table>
    </div>
    <v-dialog v-model="showViewDialog" width="auto" height="auto">
@@ -31,7 +28,6 @@
    import { useUserStore }   from '@/stores/userStore'
    import { useActionStore } from '@/stores/actionStore'
    import ViewAction   from '@/components/admin/ViewAction.vue'
-   import DeleteButton from '@/components/util/DeleteButton.vue'
    import TextButton   from '@/components/util/TextButton.vue'
    import { ActionType } from '@/utils/constants'
 
@@ -67,8 +63,6 @@
       selectedAction.value  = action 
       showViewDialog.value = true
    }
-
-   const deleteAction = (action) => { logStore.deleteAction(action.id) }
 
    const deleteOld = () => { 
       const midnight = new Date().setHours(0, 0, 0)

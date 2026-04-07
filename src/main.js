@@ -12,7 +12,6 @@ import { createHead } from '@unhead/vue'
 import "@mdi/font/css/materialdesignicons.css"
 import CKEditor from "@ckeditor/ckeditor5-vue"
 import VueGtag from 'vue-gtag'
-import { useLogStore } from '@/stores/logStore'
 import { URL } from '@/utils/constants'
 import { GoogleAnalyticsConfig } from '@/config/config'
 import './assets/main.css'
@@ -47,6 +46,4 @@ app.use(CKEditor)
 app.use(VueGtag, { config: { id: GoogleAnalyticsConfig.measurementID }}, router)
 
 app.mount('#app')
-
-const logStore = useLogStore()
    

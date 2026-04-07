@@ -11,7 +11,6 @@ import { useWallStore }    from '@/stores/wallStore'
 import { useHitStore }     from '@/stores/hitStore'
 import { useViewStore }    from '@/stores/viewStore'
 import { useLocalStore }   from '@/stores/localStore'
-import { useLogStore }     from '@/stores/logStore'
 import { dateUuid, isGroup, isHidden, isPublic } from '@/utils/utils'  
    
 export const useViewMgr = defineStore('viewMgr', () => {   
@@ -27,7 +26,6 @@ export const useViewMgr = defineStore('viewMgr', () => {
    const hitStore     = useHitStore()
    const viewStore    = useViewStore()
    const localStore   = useLocalStore()
-   const logStore     = useLogStore()
    
    function init() {
       console.log("viewMgr.init")
@@ -53,13 +51,13 @@ export const useViewMgr = defineStore('viewMgr', () => {
    const isMobile     = computed(() => {
          const iosDevice = navigator.userAgent.match(/iPhone|iPad|iPod/) // ipad no longer matches
          const mobile = xs.value || (isStandalone.value && iosDevice != null)
-         logStore.jsonInfo("deviceInfo",
-            { standalone: isStandalone.value, iosDevice: iosDevice, isMobile: mobile })
+         // logStore.jsonInfo("deviceInfo",
+            // { standalone: isStandalone.value, iosDevice: iosDevice, isMobile: mobile })
          return mobile
    })
    const isDeskTop = computed(() => !isMobile.value)
    const solo = computed(() => { 
-      logStore.info("viewMgr.soloMode " + localStore.soloMode)
+      // logStore.info("viewMgr.soloMode " + localStore.soloMode)
       return localStore.soloMode
    })
    

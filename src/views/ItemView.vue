@@ -200,7 +200,6 @@
    import { useWallStore }    from '@/stores/wallStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
-   import { useLogStore }     from '@/stores/logStore'
    import ItemArtistYear   from '@/components/item/ItemArtistYear.vue'
    import ItemGroupSmThumb from '@/components/item/ItemGroupSmThumb.vue'
    import ItemSwipe        from '@/components/item/ItemSwipe.vue'
@@ -230,7 +229,6 @@
    const wallStore    = useWallStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
-   const logStore     = useLogStore()
    const showNav = ref(false)
    const swipeBotItem = ref(null)
    const { width: windowWidth, height: windowHeight } = useWindowSize()
@@ -258,14 +256,14 @@
       // logStore.addInfo("ItemView.onMounted")
       if (viewStore.isInitialized && route.params.origin != ItemOrigin.EXTERNAL) { showNav.value = true }
       else {
-         logStore.info("ItemView - external/direct link to " + route.params.id)
+         // logStore.info("ItemView - external/direct link to " + route.params.id)
          viewMgr.init()
       }
       
       if (viewMgr.isMobile) { initializeScrollItems() }
    })
 
-   onErrorCaptured((err) => { return handleError(err, "ItemView", logStore) })
+   onErrorCaptured((err) => { return handleError(err, "ItemView") })
 
    const paramItem = computed(() => { 
       // needs to take into account feed state of visible items

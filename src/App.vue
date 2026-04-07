@@ -179,7 +179,6 @@
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
-   import { useLogStore }     from '@/stores/logStore'
    import { useLocalStore }   from '@/stores/localStore'
    import MessageSetup   from '@/components/notification/MessageSetup.vue'
    import LinkOrText     from '@/components/util/LinkOrText.vue'
@@ -197,7 +196,6 @@
    const galleryStore = useGalleryStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
-   const logStore     = useLogStore()
    const localStore   = useLocalStore()
    const windowSize = ref({})
 
@@ -214,7 +212,7 @@
       window.addEventListener('resize', setWindowSize)
    })
 
-   onErrorCaptured((err) => { return handleError(err, "App", logStore) })
+   onErrorCaptured((err) => { return handleError(err, "App") })
 
    router.beforeEach((to, from) => {
       if (to.name == Route.ADMIN   && !adminStore.isAdmin)   { return {name: Route.HOME}  }
@@ -232,7 +230,7 @@
    
    const user = computed(() => { 
       const currUser = userStore.userExists ? userStore.user : null 
-      logStore.info("user update: " + (currUser ? currUser.firstName : "null"))
+      // logStore.info("user update: " + (currUser ? currUser.firstName : "null"))
       const soloMode = currUser?.settings?.soloMode ? true : false
       if (localStore.soloMode != soloMode) { localStore.setSoloMode(soloMode) }
       return currUser
@@ -247,8 +245,8 @@
    const userAgent = computed(() => navigator.userAgent)
    const isStandalone = computed(() => window.matchMedia('(display-mode: standalone)').matches)
    const appEnv = computed(() => { 
-      logStore.jsonInfo("navigator", 
-         { maxTouchPoints: navigator.maxTouchPoints, platform: navigator.platform, userAgent: navigator.userAgent })
+      // logStore.jsonInfo("navigator", 
+         // { maxTouchPoints: navigator.maxTouchPoints, platform: navigator.platform, userAgent: navigator.userAgent })
       
       const installed = isStandalone.value ? "Installed" : ""
       const iosDevice = navigator.userAgent.match(/iPhone|iPad|iPod/) // ipad no longer matches

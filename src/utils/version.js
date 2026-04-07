@@ -16,9 +16,11 @@
       - finish wall automation - no more set random, auto figure out rows
       - add filter to RecentView
       - broadcast control: pause/ff/rew
+      - lazy loading in router - chunk retrieval errors with Admin, others
 */
 export const versions = [     
-   ["v2.0.0",  "4/6/26"],  // Relaunch in hell-no repository.  Will be slimmed down version. 
+   ["v2.0.1",  "4/6/26"],  // Remove db log table - became huge, impacted loading and login
+   ["v2.0.0",  "4/6/26"],  // Relaunch in hell-no repository - will be slimmed down version
    ["v1.56.2", "2/23/25"], // Display site or user's wall based on soloMode 
                            // Filter search results by userId if soloMode
                            // Add soloMode to account icon dropdown, remove editInPlace

@@ -4,7 +4,7 @@
       <v-row no-gutters class="d-flex align-center flex-nowrap">
          <v-col cols="2" class="flex-grow-0 flex-shrink-0"></v-col>
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
-            <span class="title">Hell-No Gallery</span>
+            <span class="title">Hell-No H2 Gallery</span>
          </v-col>
          <v-col cols="2" class="flex-grow-0 flex-shrink-0 d-flex justify-end">
             <TextButton v-if="userStore.userExists" @click="showAddItemDialog=true" text="Add Item" class="px-0"/>

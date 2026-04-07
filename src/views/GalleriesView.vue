@@ -43,7 +43,6 @@
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
-   import { useLogStore }     from '@/stores/logStore'
    import GalleryThumb    from '@/components/gallery/GalleryThumb.vue'
    import TextButtonTight from '@/components/util/TextButton.vue'
    import { handleError } from '@/utils/utils'
@@ -56,14 +55,13 @@
    const galleryStore = useGalleryStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
-   const logStore     = useLogStore()
    const sort = ref(SortBy.NAME)
 
    onMounted(async() => {
       if (!viewStore.isInitialized) { viewMgr.init() }
    })
 
-   onErrorCaptured((err) => { return handleError(err, "GalleriesView", logStore) })
+   onErrorCaptured((err) => { return handleError(err, "GalleriesView") })
 
    const username = computed(() => route.params.id == Defaults.SITE_ID ? null : userStore.getUsername(route.params.id))
 

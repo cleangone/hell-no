@@ -19,7 +19,6 @@
    import { Swiper, SwiperSlide } from "swiper/vue"
    import { Autoplay, Navigation, Pagination } from 'swiper/modules'
    import { useViewStore } from '@/stores/viewStore'
-   import { useLogStore }  from '@/stores/logStore'
    import SwipeWallSlide from './SwipeWallSlide.vue'
    import ItemPopup      from '@/components/item/ItemPopup.vue'
    import { handleError } from '@/utils/utils'
@@ -33,11 +32,10 @@
    const breakpoints = useBreakpoints(breakpointsTailwind)
    const xs = breakpoints.smaller('sm')
    const viewStore = useViewStore()
-   const logStore  = useLogStore()
    const modules = ref([Autoplay, Navigation, Pagination])
    const popupImage = ref(null)
    
-   onErrorCaptured((err) => { return handleError(err, "SwipeWall", logStore) })
+   onErrorCaptured((err) => { return handleError(err, "SwipeWall") })
 
    const background = computed(() => props.transparent ? "" : "bg-shade" )
 

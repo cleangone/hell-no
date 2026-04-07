@@ -7,13 +7,11 @@
 
 <script setup>
    import { computed, onErrorCaptured, ref } from 'vue'
-   import { useLogStore }  from '@/stores/logStore'
    import { handleError } from '@/utils/utils'
    
    const props = defineProps({ popupImage: Object })
-   const logStore = useLogStore()
    
-   onErrorCaptured((err) => { return handleError(err, "ItemPopup", logStore) })
+   onErrorCaptured((err) => { return handleError(err, "ItemPopup") })
   
    const popupStyle = computed(() => { 
       const y =  props.popupImage.y > 5 ? props.popupImage.y : 5

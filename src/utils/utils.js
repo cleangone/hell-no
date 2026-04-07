@@ -70,11 +70,10 @@ export function sortByName(objs) {
 export function populated(str) { return str && str.length }
 
 const KNOWN_ERRORS = [ " is null", ".value is undefined" ]
-export function handleError(err, component, logStore) { 
+export function handleError(err, component) { 
    for (const suffix of KNOWN_ERRORS) {
       if (err.message.endsWith(suffix)) { 
-         console.log(component + " error: " + err.name + " - " + err.message)
-         logStore.info(component + " known error: " + err.name + " - " + err.message)
+         console.log(component + " known error: " + err.name + " - " + err.message)
          return false // do not bubble up error
       }
    } 

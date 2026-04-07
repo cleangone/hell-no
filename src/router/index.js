@@ -18,7 +18,15 @@ import AdminView     from '../views/AdminView.vue'
 import AddItemView   from '../views/AddItemView.vue'
 import EditItemView  from '../views/EditItemView.vue'
 import { Route, URL } from '@/utils/constants'
-      
+
+// lazy load not working - chunk retrieval error
+// Account works, but others do not
+// const MessageView   = () => import('../views/MessageView.vue')
+// const BroadcastView = () => import('../views/BroadcastView.vue')
+// const AboutView     = () => import('../views/AboutView.vue')
+// const AccountView   = () => import('../views/AccountView.vue')
+// const AdminView     = () => import('../views/AdminView.vue')
+
 const router = createRouter({
    history: createWebHistory(import.meta.env.BASE_URL),
    routes: [
@@ -42,6 +50,7 @@ const router = createRouter({
       createRoute(Route.ADD_ITEM,  AddItemView,   URL.ADD_ITEM),
       createRoute(Route.EDIT_ITEM, EditItemView,  URL.EDIT_ITEM + ':id')
       
+
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.

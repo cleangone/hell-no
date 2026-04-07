@@ -75,7 +75,6 @@
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
-   import { useLogStore }     from '@/stores/logStore'
    import GalleryThumb    from '@/components/gallery/GalleryThumb.vue'
    import EditGallery     from '@/components/gallery/EditGallery.vue'
    import AddItemDialog   from '@/components/item/crud/AddItemDialog.vue'
@@ -98,7 +97,6 @@
    const itemMgr      = useItemMgr()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
-   const logStore     = useLogStore()
    const headerMouseleaveTime = ref(Date.now())
    const headerPopup = ref(null)
    const showEditGalleryDialog = ref(false)

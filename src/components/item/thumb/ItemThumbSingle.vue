@@ -17,7 +17,6 @@
    import { useItemMgr }   from '@/stores/itemMgr'
    import { useViewStore } from '@/stores/viewStore'
    import { useViewMgr }   from '@/stores/viewMgr'
-   import { useLogStore }  from '@/stores/logStore'
    import ItemPopup     from '@/components/item/ItemPopup.vue'
    import ItemThumbText from './ItemThumbText.vue'
    import { backgroundColorStyle, handleError } from '@/utils/utils'
@@ -30,12 +29,11 @@
    const itemMgr = useItemMgr()
    const viewStore = useViewStore()
    const viewMgr   = useViewMgr()
-   const logStore = useLogStore()
    const cardRef = ref(null)
    const popup = ref(null)
    const mouseleaveTime = ref(Date.now())
    
-   onErrorCaptured((err) => { return handleError(err, "ItemThumbSingle", logStore) })
+   onErrorCaptured((err) => { return handleError(err, "ItemThumbSingle") })
 
    const item     = computed(() => props.item)
    const itemURL  = computed(() => {   
