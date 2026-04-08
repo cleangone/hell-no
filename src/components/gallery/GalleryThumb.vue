@@ -2,8 +2,10 @@
    <v-card :width="cardWidth" ref="cardRef" class="mb-5 d-flex flex-column text-center" :style="nameStyle" style="z-index: 1">
       <RouterLink :to="URL.GALLERY + gallery.id">
          <v-carousel v-if="galleryImages.length>1" cycle :interval="carouselInterval" :height="carouselHeight"
-            :direction="carouselDirection" hide-delimiters :show-arrows="false" v-on:update:modelValue="setGalleryImageIndex">
+            hide-delimiters :show-arrows="false" v-on:update:modelValue="setGalleryImageIndex">
             <v-carousel-item v-for="image in galleryImages" :key="image.id">
+               <!-- v-carousel-item transition not working - old version of vuetify? -->
+               <!-- transition="v-slide-x-transition" reverse-transition="v-slide-x-reverse-transition"> -->
                <v-img :src="image.thumbUrl" @mouseover="mouseover()" @mouseleave="mouseleave()" class="pointer"></v-img>
             </v-carousel-item>
          </v-carousel>
@@ -69,10 +71,8 @@
       if (xs.value) { return props.dense ? XsGalleryThumbWidth : windowWidth.value * .4 } // .4 adjusts width for 2 thumbs/row
       return GalleryThumbWidth
    })
-   const carouselHeight = computed(() => cardWidth * 9 / 16)
+   const carouselHeight   = computed(() => cardWidth * 9 / 16)
    const carouselInterval = computed(() => 4000 + Math.floor(Math.random() * 4000)) // random bet 4-8 secs 
-   const carouselDirection = computed(() => Math.random() < .8 ? "horizontal" : "vertical") // 80% horizontal
-
    const visibleItemCount = computed(() => viewMgr.galleryItemCount(props.gallery))
    const selectedFields   = computed(() => viewStore.visibleThumbFields.get(ItemOrigin.GALLERY))
    const showDateModified = computed(() => selectedFields.value.includes(ThumbField.DATE_UPDATED))

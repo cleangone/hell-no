@@ -13,7 +13,7 @@
          </v-row>
          <v-row justify="space-around" class="pt-4">
             <ItemThumb v-for="item in galleryItems" :key="item.id" :item="item" :origin="ItemOrigin.GALLERY"
-               :useAltName="gallery.useAltItemName" :useLocalName="gallery.useLocalItemName"/>
+               :useAltName="gallery.useAltItemName" :useLocalName="gallery.useLocalItemName" :tight="viewMgr.isMobile"/>
          </v-row>
       </v-container>
    </DefineTemplate>
@@ -84,7 +84,7 @@
    import PlayItems       from '@/components/item/PlayItems.vue'
    import EditButton      from '@/components/util/EditButton.vue'
    import { backgroundColorStyle, objAspectRatio } from '@/utils/utils'
-   import { ImageType, ItemOrigin, URL } from '@/utils/constants'
+   import { ImageType, ItemOrigin, State, URL } from '@/utils/constants'
   
    const route = useRoute()
    const router = useRouter()
@@ -103,18 +103,19 @@
    const showAddItemDialog     = ref(false)
    
    onMounted(async() => {
+      console.log("GalleryView.onMounted")
       if (!viewStore.isInitialized) {
-         // logStore.info("GalleryView - external/direct link")
+         console.log("GalleryView - external/direct link")
          viewMgr.init()
       }
-      // logStore.info("GalleryView - onMounted done") 
    })
 
    const gallery = computed(() => { 
-      const gallery = galleryStore.getGallery(route.params.id) 
-      if (!viewMgr.galleryIsVisibleToUser(gallery)) { 
-         console.log("gallery not visible")
-         router.push(URL.HOME) }
+      const gallery = galleryStore.getGallery(route.params.id)      
+      console.log("GalleryView - gallery", gallery)
+      if (!gallery) { return null }  // galleryStore has not intiailized yet
+
+      if (!viewMgr.galleryIsVisibleToUser(gallery)) { router.push(URL.HOME) }
 
       viewStore.setPageName(gallery.name)
       return gallery 
@@ -150,7 +151,11 @@
       const displayItems = []
       const galleryItemIds = gallery.value.itemIds ? gallery.value.itemIds : []
       for (const item of itemStore.getGalleryItems(route.params.id)) {
-         if (viewMgr.itemIsVisibleToUser(item)) {
+
+
+         
+
+         if (viewMgr.itemThumbVisibleToUser(item)) {
             const displayItem = { ...item, position: galleryItemIds.indexOf(item.id) + 1 }  
             setLocalName(displayItem) 
             displayItems.push(displayItem) 

@@ -2,25 +2,19 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import { useUserStore }    from '@/stores/userStore'
-import { useItemStore }    from '@/stores/itemStore'
 import { useItemMgr }      from '@/stores/itemMgr'
-import { useGroupStore }   from '@/stores/groupStore'
-import { useGalleryStore } from '@/stores/galleryStore'
 import { useGalleryMgr }   from '@/stores/galleryMgr'
 import { useWallStore }    from '@/stores/wallStore'
 import { useHitStore }     from '@/stores/hitStore'
 import { useViewStore }    from '@/stores/viewStore'
 import { useLocalStore }   from '@/stores/localStore'
-import { dateUuid, isGroup, isHidden, isPublic } from '@/utils/utils'  
+import { dateUuid, isHidden, isInvisible, isOwned, isPublic } from '@/utils/utils'  
    
 export const useViewMgr = defineStore('viewMgr', () => {   
    const breakpoints = useBreakpoints(breakpointsTailwind)
    const xs = breakpoints.smaller('sm')
    const userStore    = useUserStore()
-   const itemStore    = useItemStore()
    const itemMgr      = useItemMgr()
-   const groupStore   = useGroupStore()
-   const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
    const wallStore    = useWallStore()
    const hitStore     = useHitStore()
@@ -60,56 +54,14 @@ export const useViewMgr = defineStore('viewMgr', () => {
       // logStore.info("viewMgr.soloMode " + localStore.soloMode)
       return localStore.soloMode
    })
-   
-   function itemIsVisibleToUser(item) {
-      // console.log("itemIsVisibleToUser", item)
-      const visibility = viewStore.getVisiblity(item)
-      if (visibility) { return visibility.isVisible }
-   
-      if (isPublic(item) || item.onUserWall) { return viewStore.setVisiblity(item, true) }
-      else if (isHidden(item)) { return viewStore.setVisiblity(item, false)} 
-      else if (userOwns(item)) { return viewStore.setVisiblity(item, true) }
-      else if (isGroup(item)) {
-         const isVisible = userInGroups(item.groupIds)
-         if (!isVisible) { console.log("Group item " + item.name +  " not visible") } 
-         return viewStore.setVisiblity(item, isVisible)
-      } 
 
-      return viewStore.setVisiblity(item, false)
-   }
-
-   // check that gallery is visible and contains at least one visible item or childGallery
-   function galleryIsVisibleToUser(gallery) {
-      // console.log("galleryIsVisibleToUser", gallery)
-      if (gallery && (isPublic(gallery) || userOwns(gallery))) {
-         // first do a quick id-only check to see if there is a previously-viewed visible items
-         for (const itemId of gallery.itemIds) {
-            const visibility = viewStore.getIdVisiblity(itemId)
-            // console.log("galleryIsVisibleToUser - itemId", visibility)
-            if (visibility && visibility.isVisible) { 
-               // console.log(gallery.name  + " visibleToUser - on id check")
-               return true }
-         }
-
-         // default to a full check, which will also populate visibility 
-         for (const itemId of gallery.itemIds) {
-            const item = itemStore.getItem(itemId)
-            if (item) {
-               // console.log("galleryIsVisibleToUser.item", item)
-               const isVisibile = itemIsVisibleToUser(item)
-               // console.log(item.name + " visibleToUser.isVisibile", isVisibile)
-               if (isVisibile) { return isVisibile }
-            }
-         }
-         
-         for (const childGalleryId of gallery.childGalleryIds) {
-            const childGallery = galleryStore.getGallery(childGalleryId)
-            if (galleryIsVisibleToUser(childGallery)) { return true }
-         }
-      } 
-
-      return false
-   }
+   // can nav directly to INVISIBLE item even though thumb/link not visible, but HIDDEN items never visible
+   function itemIsVisibleToUser(item)    { return itemThumbVisibleToUser(item) || isInvisible(item) }
+   function itemThumbVisibleToUser(item) { return isPublic(item) || item.onUserWall || (isOwned(item, userStore.userId) && !isHidden(item)) }
+      
+   // can nav directly to INVISIBLE gallery even though thumb/link not visible
+   function galleryIsVisibleToUser(gallery)    { return galleryThumbVisibleToUser(gallery) || isInvisible(gallery)}
+   function galleryThumbVisibleToUser(gallery) { return isPublic(gallery) || isOwned(gallery, userStore.userId) }
 
    const hitIds = ref([])
    function addHit(itemId) {
@@ -140,8 +92,6 @@ export const useViewMgr = defineStore('viewMgr', () => {
       return itemIds.size
    }
       
-   function userOwns(object) { return userStore.userId == object.userId }
-   function userInGroups(groupIds) { return groupStore.getUserIds(groupIds).includes(userStore.userId) }
-   
-   return { init, isMobile, isDeskTop, solo, addHit, itemIsVisibleToUser, galleryIsVisibleToUser, galleryItemCount }
+   return { init, isMobile, isDeskTop, solo, addHit, itemIsVisibleToUser, itemThumbVisibleToUser, 
+      galleryIsVisibleToUser, galleryThumbVisibleToUser, galleryItemCount }
 })

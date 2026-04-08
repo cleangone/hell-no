@@ -15,7 +15,7 @@
    </v-container>
    <v-container style="width: 100%">
       <v-row justify="space-around">
-         <ItemThumb v-for="item in recentItems" :key="item.id" :item="item" :origin="ItemOrigin.RECENT"/>
+         <ItemThumb v-for="item in recentItems" :key="item.id" :item="item" :origin="ItemOrigin.RECENT" :tight="viewMgr.isMobile"/>
       </v-row>
    </v-container>
 </template>

@@ -51,17 +51,12 @@
       </v-row>
       <div v-if="xs">
          <v-row>
-            <v-select v-model="xsComputedGroups" :items="xsGroupsOptions" label="Groups" 
-            item-title="name" return-object multiple class="ms-5"/>
-         </v-row>
-         <v-row>
             <v-select v-model="xsComputedGalleries" :items="xsGalleriesOptions" label="Galleries" 
                item-title="name" return-object multiple class="ms-5"/>
          </v-row>
       </div>
       <div v-else class="expansion">
          <v-expansion-panels multiple>
-            <CheckboxExpansion type="Groups"    :checkboxes="groupCheckboxes"   class="mx-3"/>
             <CheckboxExpansion type="Galleries" :checkboxes="galleryCheckboxes" class="mx-3"/>
          </v-expansion-panels>
       </div>
@@ -78,8 +73,6 @@
    import { computed, onMounted, ref } from 'vue'
    import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
    import { useItemStore }    from '@/stores/itemStore'
-   import { useGroupStore }   from '@/stores/groupStore'
-   import { useGroupMgr }     from '@/stores/groupMgr'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
    import { useArtistStore }  from '@/stores/artistStore'
@@ -97,8 +90,6 @@
    const breakpoints = useBreakpoints(breakpointsTailwind)
    const xs = breakpoints.smaller('sm')   
    const itemStore    = useItemStore()
-   const groupStore   = useGroupStore()
-   const groupMgr     = useGroupMgr()
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
    const artistStore  = useArtistStore()
@@ -114,10 +105,8 @@
    const currYearCreated   = ref(null)
    const currSize          = ref(null)
    const currItemDescContainer = ref({ content: "" })
-   const currItemWall = ref(false)
-   const currItemGroups    = ref([])    
+   const currItemWall = ref(false)  
    const currItemGalleries = ref([])       
-   const currItemGroupCheckboxes   = ref([])
    const currItemGalleryCheckboxes = ref([])
    const artistOption = ref(null)
    const nextItems = ref([])
@@ -145,16 +134,6 @@
       currItemDescContainer.value.content = item.desc ? item.desc : ""
       currItemWall.value = wallStore.myWallIncludesItem(item.id)
       
-      const groupCheckboxes = []
-      currItemGroups.value = []      
-      const groups = groupMgr.getUserMemberGroups(item.userId)
-      for (const group of groups) {
-         const isSelected = item.groupIds?.includes(group.id)
-         if (isSelected) { currItemGroups.value.push(group) }
-         groupCheckboxes.push({ id: group.id, name: group.name, selected: isSelected })
-      }
-      currItemGroupCheckboxes.value = groupCheckboxes
-
       const galleryCheckboxes = []
       currItemGalleries.value = []   
       const galleries = galleryMgr.getUserGalleries(item.userId)   
@@ -182,7 +161,6 @@
       return options
    })
 
-   const selectedGroupIds   = computed(() => selectedCheckboxIds(currItemGroupCheckboxes.value))
    const selectedGalleryIds = computed(() => selectedCheckboxIds(currItemGalleryCheckboxes.value))
    const selectedCheckboxIds = (checkboxes) => { 
       const ids = []
@@ -193,17 +171,9 @@
    }
 
    // computed vars to drive changes to component
-   const groupCheckboxes   = computed(() => currItemGroupCheckboxes.value)
    const galleryCheckboxes = computed(() => currItemGalleryCheckboxes.value) 
    
    const isItemGroup = (item) => { return item.type == ItemType.GROUP }
-   
-   const xsGroupsOptions    = computed(() => groupStore.myGroups)
-   const xsSelectedGroupIds = computed(() => currItemGroups.value.map(({id}) => id))
-   const xsComputedGroups   = computed({ 
-      get() { return currItemGroups.value },
-      set(groups) { currItemGroups.value = sortByName(groups) }
-   })
    
    const xsGalleriesOptions   = computed(() => galleryStore.myGalleries)
    const xsSelectedGalleryIds = computed(() => currItemGalleries.value.map(({id}) => id)) 
@@ -216,8 +186,6 @@
       const existingGalleryIds = currItem.value.galleryIds ? currItem.value.galleryIds : []
       const updatedGalleryIds = xs.value ? [ ...xsSelectedGalleryIds.value ] : [ ...selectedGalleryIds.value ]
       
-      const updatedGroupIds = xs.value ? [ ...xsSelectedGroupIds.value ] : [ ...selectedGroupIds.value ]
-
       const addItemToGalleries = []
       for (const galleryId of updatedGalleryIds) {
          if (!existingGalleryIds.includes(galleryId)) { addItemToGalleries.push(galleryId) }
@@ -238,7 +206,7 @@
          alternateName: currAltName.value,
          subtitle: currItemSubtitle.value,
          desc: currItemDescContainer.value.content,
-         groupIds: updatedGroupIds,
+         groupIds: [], // todo - is this needed?
          galleryIds: updatedGalleryIds,
          onUserWall: currItemWall.value
       }

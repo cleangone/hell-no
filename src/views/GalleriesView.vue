@@ -30,7 +30,7 @@
    <v-container>
       <v-row justify="space-around" class="mb-md-4" >
          <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" 
-            :showChildImages="!showChildGalleries"/>
+            :showChildImages="!showChildGalleries" class="bg-red"/>
       </v-row>
    </v-container>
 </template>
@@ -71,11 +71,19 @@
    })
 
    const visibleGalleries = computed(() => { 
-      const allGalleries = route.params.id == Defaults.SITE_ID ? galleryStore.publicGalleries : galleryStore.getPublicGalleries(route.params.id) 
-   
+      // user can see their own galleries
+      const allGalleries = (route.params.id == userStore.userId) ? [] : [...galleryStore.myGalleries]
+      const galleryIds = new Set()
+      for (const gallery of allGalleries) { galleryIds.add(gallery.id) }
+      
+      const publicGalleries = route.params.id == Defaults.SITE_ID ? galleryStore.publicGalleries : galleryStore.getPublicGalleries(route.params.id) 
+      for (const gallery of publicGalleries) {
+         if (!galleryIds.has(gallery.id)) { allGalleries.push(gallery) }
+      }   
+
       const galleries = []     
       for (const gallery of allGalleries) {
-         if (gallery.images.length && viewMgr.galleryIsVisibleToUser(gallery)) { galleries.push(gallery) }
+         if (gallery.images.length && viewMgr.galleryThumbVisibleToUser(gallery)) { galleries.push(gallery) }
       }   
       return galleries
    })

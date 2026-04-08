@@ -1,8 +1,9 @@
 <template>
    <DefineTemplate>
       <IconButton v-if="multipleItems" icon="mdi-chevron-left" @click="prev()" size="med"/>
-      <IconButton v-if="isPlaying" icon="mdi-pause" @click="pause()"/>
-      <IconButton v-else icon="mdi-play" @click="play()"/>
+      <!-- <IconButton v-if="!isFullscreen && isPlaying" icon="mdi-pause" @click="pause()"/>
+      <IconButton v-if="!isFullscreen && !isPlaying" icon="mdi-play" @click="play()"/> -->
+      <span v-if="isFullscreen" class="mx-4 text-blue">{{ currItem?.name }}</span>
       <IconButton v-if="multipleItems" icon="mdi-chevron-right" @click="next()" size="med"/>
    </DefineTemplate>
    
@@ -41,7 +42,7 @@
    import IconButton from '@/components/util/IconButton.vue'
    import { Emit } from '@/utils/constants'
    
-   const props = defineProps({ items: Object, item: Object })
+   const props = defineProps({ items: Object, item: Object, fullscreen: Boolean })
    const emit = defineEmits([Emit.DONE])
 
    const { width: windowWidth, height: windowHeight } = useWindowSize()
@@ -67,6 +68,11 @@
    onMounted(() => { 
       items.value = itemMgr.ungroupAndExtractItems(props.items)
       if (props.item) { itemIndex.value = getItemIndex() }
+
+      // can we toggle to fullscreen immed?
+      if (props.fullscreen)   { 
+         console.log("fullscreenToggle")
+         fullscreenToggle() }
    })
 
    const getItemIndex = () => { 

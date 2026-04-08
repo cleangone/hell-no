@@ -170,13 +170,14 @@ export const Route = {
 }
 
 export const State = {
-   PUBLIC:  'Public',
-   GROUP:   'Group',
-   PRIVATE: 'Private',
-   HIDDEN:  'Hidden',  
+   PUBLIC:    'Public',
+   GROUP:     'Group', // todo - deprecated
+   PRIVATE:   'Private',
+   HIDDEN:    'Hidden',  
+   INVISIBLE: 'Invisible',  
 }
-export const ItemStates    = [ State.PUBLIC, State.GROUP, State.PRIVATE, State.HIDDEN ]
-export const GalleryStates = [ State.PUBLIC, State.PRIVATE ]
+export const ItemStates    = [ State.PUBLIC, State.PRIVATE, State.INVISIBLE, State.HIDDEN ]
+export const GalleryStates = [ State.PUBLIC, State.PRIVATE, State.INVISIBLE ]
 export const GroupStates   = [ State.PUBLIC, State.GROUP, State.PRIVATE ]
 
 export const TodoType = {

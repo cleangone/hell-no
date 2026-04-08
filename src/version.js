@@ -1,10 +1,6 @@
 /*
    Post 1.0:
-      - Groups/Community - if any traction
-         - group moderator
-         - Group visible comments
-      - AboutView FAQ 
-         - walls       
+      
       - Add parallax to gallery header
       - Eder-mode for wall
       - User can add to site art wall - would have to be via action because of edit rules
@@ -19,6 +15,10 @@
       - lazy loading in router - chunk retrieval errors with Admin, others
 */
 export const versions = [     
+   ["v2.1.0",  "4/7/26"],  // Enable paste of direct link to gallery
+                           // Initial removal of groups
+                           // Add Item/Gallery state INVISIBLE 
+                           // Add PlayItems fullscreen prop
    ["v2.0.1",  "4/6/26"],  // Remove db log table - became huge, impacted loading and login
                            // Comment out Broadcast in Header/Account, Feeds in HomeView
                            // Initial streamline of ItemView

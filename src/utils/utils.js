@@ -53,11 +53,13 @@ export const IdSet = class {
    asArray() { return [ ...this.set ] }
 }
 
-export function isPublic(object)  { return object.state == State.PUBLIC  }
-export function isGroup(object)   { return object.state == State.GROUP   }
-export function isPrivate(object) { return object.state == State.PRIVATE }
-export function isHidden(object)  { return object.state == State.HIDDEN  }
-export function isPublicOrGroup(object) { return isPublic(object) || isGroup(object) }
+export function isPublic(obj)    { return obj && obj.state == State.PUBLIC  }
+export function isGroup(obj)     { return obj && obj.state == State.GROUP   }
+export function isPrivate(obj)   { return obj && obj.state == State.PRIVATE }
+export function isHidden(obj)    { return obj && obj.state == State.HIDDEN  }
+export function isInvisible(obj) { return obj && obj.state == State.INVISIBLE  }
+export function isPublicOrGroup(obj) { return isPublic(obj) || isGroup(obj) }
+export function isOwned(obj, userId) { return obj && userId && obj.userId == userId }   
 
 export function objAspectRatio(object) { return object.width / object.height }
    

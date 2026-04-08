@@ -11,17 +11,12 @@
          From <RouterLink :to="URL.USER + paramItem.userId">{{ itemUsername }}</RouterLink>
       </div>
       <GroupNames v-if="!viewMgr.solo" :groups="itemGroups"/>
-      <div>   
+      <div v-if="isOwnedByUser && !isPublic(paramItem)">{{ paramItem.state }}</div> 
+      <div class="ml-n2">  
          <IconButton v-if="!viewMgr.solo && itemUser" icon="mdi-email" @click="sendEmail()"/>
          <EditButton v-if="isOwnedByUser" @click="editItem(paramItem)"/>
       </div>
-
       <div v-html="paramItem.desc" class="mt-3 mb-1"></div>
-      <!-- <div v-if="isFeed" class="bg-shade mt-2 pt-1">
-         <span class="ml-4 mr-1 my-5 font-weight-bold">{{ isSavedFeedItem ? "Saved Feed" : "Feed" }}</span>
-         <TextButton v-if="!isSavedFeedItem" @click="saveFeedItem()" text="Save" class="pb-1"/>
-         <TextButton @click="dismissFeedItem()" text="Dismiss" class="pb-1"/>
-      </div>    -->
    </DefineTemplate>
 
    <Head>
@@ -37,7 +32,9 @@
    <div> <!-- origin page and galleries -->
       <span style="text-align:center">
          <div v-if="showNav"> <!-- origin page and gallery if there is only one -->
-            <RouterLink  v-if="viewStoreVisibleItems" :to="viewStoreVisibleItems.linkUrl">{{ viewStoreVisibleItems.linkName }}</RouterLink> 
+            <RouterLink v-if="viewStoreVisibleItems" :to="viewStoreVisibleItems.linkUrl" :class="singleOtherGallery ? 'font-weight-bold' : ''">
+               {{ viewStoreVisibleItems.linkName }}
+            </RouterLink> 
             <span v-if="singleOtherGallery">
                | <RouterLink :to="galleryUrl(otherGalleries[0].id)">{{ otherGalleries[0].name }} Gallery</RouterLink>
             </span>
@@ -128,9 +125,10 @@
             </v-infinite-scroll>
          </div>
       </div>
-      <div v-else class="text-left"> <!-- desktop - image and info -->
-         <IconSpan :icons="['mdi-text-box-outline', descBeside?'mdi-chevron-right':'mdi-chevron-down']" 
-            @click="viewStore.toggleItemDescBesideImage()" class="pointer"/>
+      <!-- desktop - image and info -->
+      <div v-else class="text-left"> 
+         <IconButton :icon="descBeside?'mdi-image':'mdi-image-text'" @click="viewStore.toggleItemDescBesideImage()"/>
+         <PlayItems :items="viewStoreItems" :item="paramItem" icon="mdi-arrow-expand" fullscreen :buttonClass="PLAY_ITEMS_CLASS"/>
          <v-row class="w-100">
             <v-col :cols="descBeside ? 8 : 12">
                <div v-if="isItemGroup(paramItem)" @click="viewStore.toggleItemDescBesideImage()" class="center d-flex justify-center" style="width: 100%">
@@ -210,9 +208,7 @@
    import GroupNames       from '@/components/group/GroupNames.vue'
    import EditButton       from '@/components/util/EditButton.vue'
    import IconButton       from '@/components/util/IconButton.vue'
-   // import TextButton       from '@/components/util/TextButton.vue'
-   import IconSpan         from '@/components/util/IconSpan.vue'
-   import { handleError, isGroup, populated } from '@/utils/utils'
+   import { handleError, isGroup, isOwned, isPublic, populated } from '@/utils/utils'
    import { Emit, GalleryImageTypes, ImageType, ItemNavAction, ItemOrigin, ItemType, ParentFeedType, URL } from '@/utils/constants'
 
    const PLAY_ITEMS_CLASS = "PlayItems"
@@ -253,10 +249,10 @@
    
    // onMounted not guar to be called before other methods/computed
    onMounted(async() => {
-      // logStore.addInfo("ItemView.onMounted")
+      console.log("ItemView.onMounted")
       if (viewStore.isInitialized && route.params.origin != ItemOrigin.EXTERNAL) { showNav.value = true }
       else {
-         // logStore.info("ItemView - external/direct link to " + route.params.id)
+         console.log("ItemView - external/direct link to " + route.params.id)
          viewMgr.init()
       }
       
@@ -266,13 +262,13 @@
    onErrorCaptured((err) => { return handleError(err, "ItemView") })
 
    const paramItem = computed(() => { 
-      // needs to take into account feed state of visible items
       // console.log("paramItem - route.params.id", route.params.id)
       let item = itemStore.getItem(route.params.id)
-      viewMgr.addHit(route.params.id)
       // console.log("paramItem - item", item)
       if (!item) { return null }  // itemStore has not intiailized yet
 
+      viewMgr.addHit(route.params.id)
+      
       if (viewMgr.isMobile && isItemGroup(item)) { 
          item = { ...item, childNum: route.params.child ? route.params.child : "1" }
          item = itemMgr.extractFromItemGroup(item) 
@@ -322,7 +318,7 @@
       const originGalleryId = route.params.origin == ItemOrigin.GALLERY ? viewStoreVisibleItems.value?.linkId : null
       for (const galleryId of paramItem.value.galleryIds) {
          const gallery = galleryStore.getGallery(galleryId)
-         if (gallery.id != originGalleryId && viewMgr.galleryIsVisibleToUser(gallery)) { galleries.push(gallery) }
+         if (gallery.id != originGalleryId && viewMgr.galleryThumbVisibleToUser(gallery)) { galleries.push(gallery) }
       }
       galleries.sort(function(a, b){return a.name.localeCompare(b.name)}) 
       return galleries
@@ -373,8 +369,7 @@
 
    const isSingleItem = (item) => { return !isItemGroup(item) }
    const isItemGroup  = (item) => { return itemMgr.isItemGroup(item) }
-   const isOwnedByUser = computed(() => userStore.userId == paramItem.value.userId)
-   
+   const isOwnedByUser = computed(() => isOwned(paramItem.value, userStore.userId))
    const prevItemUrl = computed(() => itemMgr.itemNavURL(linkId(navItems.value.prev), route.params.origin, ItemNavAction.PREV, navItems.value.prev.childNum))
    const nextItemUrl = computed(() => itemMgr.itemNavURL(linkId(navItems.value.next), route.params.origin, ItemNavAction.NEXT, navItems.value.next.childNum))
    const linkId     = (item)      => { return item.linkId ? item.linkId : item.id }

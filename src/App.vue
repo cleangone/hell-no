@@ -226,7 +226,7 @@
    const isMyUserPage = computed(() => currentRoute.value === Route.USER && route.params.id == userStore.userId)
    
    const isRoute  = (route) => { return currentRoute.value == route }
-   const inRoutes = (...routes) => { return routes.includes(currentRoute) }  
+   const inRoutes = (...routes) => { return routes.includes(currentRoute.value) }  
    
    const user = computed(() => { 
       const currUser = userStore.userExists ? userStore.user : null 
