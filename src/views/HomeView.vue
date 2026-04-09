@@ -28,28 +28,8 @@
    </v-container>
    
 
-   <!-- galleries, feeds (if not solo) -->
-   <!-- <div>
-      <v-row class="my-3">
-         <v-col v-if="visibleGalleries.length">
-            <div class="my-5">
-               <span class="font-weight-bold">Galleries</span> |
-               <RouterLink :to="URL.GALLERIES + Defaults.SITE_ID">View all</RouterLink>
-            </div>
-            <v-row justify="space-around" ref="galleryRef" class="mb-md-4" >
-               <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" showChildImages dense />
-            </v-row>
-         </v-col>
-         <v-col v-if="userStore.userExists && !viewMgr.solo && feedItemsExist" class="feed ma-6">
-            <div class="font-weight-bold">
-               Group Feeds | <RouterLink :to="URL.FEED">View all</RouterLink>
-            </div>
-            <v-row justify="space-around" ref="feedRef" class="mb-md-4 mt-4">
-               <ItemThumb v-for="item in feedItems" :key="item.id" :item="item" :origin="ItemOrigin.FEED" tight/>
-            </v-row>
-         </v-col>
-      </v-row>
-   </div> -->
+   <!-- small gallery thumbs -->
+   <!-- <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" showChildImages dense /> -->
 
    <!-- galleries -->
    <div v-if="visibleGalleries.length" class="my-3">
@@ -58,7 +38,7 @@
          <RouterLink :to="URL.GALLERIES + Defaults.SITE_ID">View all</RouterLink>
       </div>
       <v-row justify="space-around" ref="galleryRef" class="mb-md-4" >
-         <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" showChildImages dense />
+         <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" showChildImages />
       </v-row>  
    </div>
 

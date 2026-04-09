@@ -48,9 +48,9 @@ export const useViewStore = defineStore('view', () => {
       xsThumbFieldsIndex.value = xsThumbFieldsIndex.value == xsThumbFieldsColors.length - 1 ? 0 : xsThumbFieldsIndex.value + 1
 
       const options = []
-      if (xsThumbFieldsIndex.value > 0) { options.push( ...[ThumbOptionsItem.TITLE, ThumbOptionsItem.ARTIST] ) }
-      if (xsThumbFieldsIndex.value > 1) { options.push(ThumbOptionsItem.UPDATED) }
-      if (xsThumbFieldsIndex.value > 2) { options.push(ThumbOptionsItem.USER) }
+      if (xsThumbFieldsIndex.value > 0) { options.push(ThumbOptionsItem.TITLE) }
+      if (xsThumbFieldsIndex.value > 1) { options.push(ThumbOptionsItem.ARTIST) }
+      if (xsThumbFieldsIndex.value > 2) { options.push(...[ThumbOptionsItem.USER, ThumbOptionsItem.UPDATED]) }
 
       setItemThumbOptions(options)
    }

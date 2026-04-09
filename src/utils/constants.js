@@ -186,6 +186,7 @@ export const TodoType = {
 }
 
 export const ThumbOptionsGallery = {
+   SM_THUMB:     'Small Thumbnails',
    SHOW_CHILD:   'Show Child Galleries',
    SHOW_PRIVATE: 'Show My Private Galleries',
    SORT_BY_NAME: 'Sort by Name',

@@ -46,7 +46,7 @@
    import { useViewMgr }      from '@/stores/viewMgr'
    import { displayDate } from '@/utils/dateUtils'
    import { handleError, objAspectRatio, thumbBackgroundColorStyle } from '@/utils/utils'
-   import { GalleryThumbWidth, ImageType, ItemOrigin, ThumbOptionsItem, URL } from '@/utils/constants'
+   import { GalleryThumbWidth, ImageType, ThumbOptionsGallery, ThumbOptionsItem, URL } from '@/utils/constants'
    
    const XsGalleryThumbWidth = 125
    const props = defineProps({ gallery: Object, showChildImages:Boolean, dense:Boolean })
@@ -68,7 +68,11 @@
    onErrorCaptured((err) => { return handleError(err, "GalleryThumb") })
 
    const cardWidth = computed(() =>  {
-      if (xs.value) { return props.dense ? XsGalleryThumbWidth : windowWidth.value * .4 } // .4 adjusts width for 2 thumbs/row
+      if (xs.value) { 
+         // .4 is 2 thumbs/row, .3 is 3
+         const galleryWidthPct = viewStore.galleryThumbOptions.includes(ThumbOptionsGallery.SM_THUMB) ? .3 : .4
+         return props.dense ? XsGalleryThumbWidth : windowWidth.value * galleryWidthPct
+      } 
       return GalleryThumbWidth
    })
    const carouselHeight   = computed(() => cardWidth * 9 / 16)
