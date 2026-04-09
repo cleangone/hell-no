@@ -77,6 +77,13 @@ export const FeedType = {
    GROUP:   'Group',
 }
 
+export const GalleryOptions = {
+   SHOW_CHILD:   'ShowChild',
+   SHOW_PRIVATE: 'ShowPrivate',
+   SORT_BY_NAME: 'SortByName',
+   SORT_BY_DATE: 'SortByDate',
+}
+
 export const GroupUserState = {
    OWNER:   'Owner',
    MODERATOR: 'Moderator',
@@ -243,7 +250,8 @@ export const BackgroundColors = {
    GREEN:   { name: "green-lighten-5",  code: "#E8F5E9"},
    YELLOW:  { name: "yellow-lighten-4", code: "#FFF9C4"},
    RED:     { name: "red-lighten-4",    code: "#FFCDD2"},
-   GREY:    { name: "grey-lighten-4",   code: "#F5F5F5"},
+   GREY:    { name: "grey-lighten-3",   code: "#EEEEEE"},
+   WHITE:   { name: "white",            code: "#FFFFFF"},
 }
 
 export const Colors = [ 'red', 'pink', 'orange', 'yellow', 'blue', 'green', 'indigo', 'purple' ]

@@ -7,7 +7,8 @@
       <div v-if="fromUser" class="text-left ms-1">
          From <RouterLink :to="URL.USER + fromUser.id">{{ fromUser.name }}</RouterLink>
       </div>
-      <GroupNames :groups="item.groups" class="text-left ms-1"/> <!-- only populated for Feed -->
+      <!-- only populated for Feed -->
+      <!-- <GroupNames :groups="item.groups" class="text-left ms-1"/>  -->
       <div v-if="showDateModified" class="mb-2">
          {{ displayDate(item.dateContentModified) }}
       </div>
@@ -28,7 +29,7 @@
    import { useViewMgr }   from '@/stores/viewMgr'
    import ItemArtistYear from '../ItemArtistYear.vue'
    import EditItemDialog from '../crud/EditItemDialog.vue'
-   import GroupNames     from '@/components/group/GroupNames.vue'
+   // import GroupNames     from '@/components/group/GroupNames.vue'
    import EditButton     from '@/components/util/EditButton.vue'
    import { displayDate } from '@/utils/dateUtils'
    import { handleError } from '@/utils/utils'

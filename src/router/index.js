@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView      from '../views/HomeView.vue'
-import GroupView     from '../views/GroupView.vue'
 import GalleryView   from '../views/GalleryView.vue'
 import GalleriesView from '../views/GalleriesView.vue'
 import SearchView    from '../views/SearchView.vue'
@@ -31,7 +30,6 @@ const router = createRouter({
    history: createWebHistory(import.meta.env.BASE_URL),
    routes: [
       createRoute(Route.HOME,      HomeView,      URL.HOME),
-      createRoute(Route.GROUP,     GroupView,     URL.GROUP + ':id'),
       createRoute(Route.GALLERY,   GalleryView,   URL.GALLERY + ':id'),
       createRoute(Route.GALLERIES, GalleriesView, URL.GALLERIES + ':id'),
       createRoute(Route.SEARCH,    SearchView,    URL.SEARCH),

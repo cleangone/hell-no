@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
-import { Defaults, ItemOrigin, ThumbField } from '@/utils/constants'
+import { Defaults, GalleryOptions, ItemOrigin, ThumbField } from '@/utils/constants'
 
 export const useViewStore = defineStore('view', () => {
    const userStore = useUserStore()
@@ -47,6 +47,9 @@ export const useViewStore = defineStore('view', () => {
       setVisibleThumbFields(ItemOrigin.SEARCH,  defaultThumbFields)
       setVisibleThumbFields(ItemOrigin.ADMIN,   defaultThumbFields)
    }
+
+   const galleryThumbOptions = ref([ GalleryOptions.SORT_BY_NAME ])
+   function setGalleryThumbOptions(options) { galleryThumbOptions.value = options }
 
    const xsThumbFieldsColors = [ "grey", "green-lighten-3", "green-lighten-1", "green-darken-1" ]
    const xsThumbFieldsIndex = ref(2)
@@ -160,6 +163,7 @@ export const useViewStore = defineStore('view', () => {
       showSiteWall, setShowSiteWall,
       getVisibleItems, setVisibleItems, updateVisibleItems, 
       visibleThumbFields, setVisibleThumbFields,
+      galleryThumbOptions, setGalleryThumbOptions, 
       xsThumbFieldsColors, xsThumbFieldsIndex, incrementXsThumbFieldsIndex, 
       processedFeedItemIds, addProcessedFeedItemId,
       pageName, setPageName, 

@@ -10,7 +10,7 @@
       <div v-if="!viewMgr.solo && itemUsername" class="mt-n1">
          From <RouterLink :to="URL.USER + paramItem.userId">{{ itemUsername }}</RouterLink>
       </div>
-      <GroupNames v-if="!viewMgr.solo" :groups="itemGroups"/>
+      <!-- <GroupNames v-if="!viewMgr.solo" :groups="itemGroups"/> -->
       <div v-if="isOwnedByUser && !isPublic(paramItem)">{{ paramItem.state }}</div> 
       <div class="ml-n2">  
          <IconButton v-if="!viewMgr.solo && itemUser" icon="mdi-email" @click="sendEmail()"/>
@@ -205,7 +205,7 @@
    import ShowItemImages   from '@/components/item/ShowItemImages.vue'
    import ShowItemGroupImages from '@/components/item/ShowItemGroupImages.vue'
    import EditItemDialog   from '@/components/item/crud/EditItemDialog.vue'
-   import GroupNames       from '@/components/group/GroupNames.vue'
+   // import GroupNames       from '@/components/group/GroupNames.vue'
    import EditButton       from '@/components/util/EditButton.vue'
    import IconButton       from '@/components/util/IconButton.vue'
    import { handleError, isGroup, isOwned, isPublic, populated } from '@/utils/utils'
@@ -308,8 +308,8 @@
    const descBeside    = computed(() => viewStore.itemDescBesideImage)
    const artist        = computed(() => paramItem.value.primaryArtist ? paramItem.value.primaryArtist.fullName : null) 
 
-   const itemGroups = computed(() => isGroup(paramItem.value) && paramItem.value.groupIds.length ?
-                                       groupMgr.getMyOverlapGroups(paramItem.value.groupIds) : []) 
+   // const itemGroups = computed(() => isGroup(paramItem.value) && paramItem.value.groupIds.length ?
+   //                                     groupMgr.getMyOverlapGroups(paramItem.value.groupIds) : []) 
 
    const singleOtherGallery     = computed(() => otherGalleries.value.length == 1)
    const multipleOtherGalleries = computed(() => otherGalleries.value.length > 1)

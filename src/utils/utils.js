@@ -31,13 +31,15 @@ function random3(chars) {
     return result
 }
 
+export function thumbBackgroundColorStyle(obj) { return isPrivate(obj) || isInvisible(obj) ? backgroundColorStyle(obj.state) : "" }
 export function backgroundColorStyle(state) { return "background-color: " + backgroundColorCode(state) }
 export function backgroundColorCode(state) {
-   if (state == State.PUBLIC)       { return BackgroundColors.GREEN.code }
-   else if (state == State.GROUP)   { return BackgroundColors.YELLOW.code }
-   else if (state == State.PRIVATE) { return BackgroundColors.RED.code }
+   if (state == State.PUBLIC)         { return BackgroundColors.GREEN.code }
+   else if (state == State.GROUP)     { return BackgroundColors.YELLOW.code }
+   else if (state == State.PRIVATE)   { return BackgroundColors.RED.code }
+   else if (state == State.INVISIBLE) { return BackgroundColors.GREY.code }
    
-   return BackgroundColors.GREY.code
+   return BackgroundColors.WHITE.code
 }
 
 export function removeArrayEntry(array, entry) { 

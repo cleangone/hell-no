@@ -26,13 +26,7 @@
          </div> 
       </div>
    </v-container>
-   <!-- groups if user logged in and not solo -->
-   <!-- <div v-if="userStore.userExists && !viewMgr.solo && groups && groups.length">
-      <span class="font-weight-bold">Group Updates</span> |
-      <span v-for="group in groups" :key="group.id">
-         <RouterLink :to="URL.GROUP + group.id">{{ group.name }} </RouterLink>  |
-      </span>
-   </div> -->
+   
 
    <!-- galleries, feeds (if not solo) -->
    <!-- <div>

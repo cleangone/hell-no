@@ -1,5 +1,5 @@
 <template>
-   <v-card :width="cardWidth" ref="cardRef" class="mb-5 d-flex flex-column text-center" :style="nameStyle" style="z-index: 1">
+   <v-card :width="cardWidth" ref="cardRef" class="mb-5 d-flex flex-column text-center" :style="backgroundStyle" style="z-index: 1">
       <RouterLink :to="URL.GALLERY + gallery.id">
          <v-carousel v-if="galleryImages.length>1" cycle :interval="carouselInterval" :height="carouselHeight"
             hide-delimiters :show-arrows="false" v-on:update:modelValue="setGalleryImageIndex">
@@ -45,7 +45,7 @@
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { displayDate } from '@/utils/dateUtils'
-   import { backgroundColorStyle, handleError, objAspectRatio } from '@/utils/utils'
+   import { handleError, objAspectRatio, thumbBackgroundColorStyle } from '@/utils/utils'
    import { GalleryThumbWidth, ImageType, ItemOrigin, ThumbField, URL } from '@/utils/constants'
    
    const XsGalleryThumbWidth = 125
@@ -106,7 +106,13 @@
    })
 
    const editInPlace = computed(() => viewStore.editInPlace && (userStore.userId == props.gallery.userId) )
-   const nameStyle = computed(() => { return editInPlace.value ? backgroundColorStyle(props.gallery.state) : "" })
+   // const nameStyle = computed(() => { return editInPlace.value ? backgroundColorStyle(props.gallery.state) : "" })
+   const backgroundStyle = computed(() => { 
+      
+      // const style = thumbBackgroundColorStyle(props.gallery)
+      // if (style.length) { console.log()
+      
+      return thumbBackgroundColorStyle(props.gallery)})
 
    const mouseover = () => {
       if (xs.value) { return }
