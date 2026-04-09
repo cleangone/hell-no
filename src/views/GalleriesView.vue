@@ -2,10 +2,7 @@
    <div v-if="viewMgr.isMobile && username" class="mt-n2">
       <RouterLink :to="URL.USER + route.params.id">{{ username }}</RouterLink>
    </div>
-   <div v-if="viewMgr.isMobile" style="float:right">
-      <GalleryThumbsConfig/>
-   </div>
-   <v-container v-else class="mt-4 pa-0 pb-3 width-100">
+   <v-container v-if="!viewMgr.isMobile" class="mt-4 pa-0 pb-3 width-100">
       <v-row no-gutters class="d-flex align-center flex-nowrap">
          <v-col cols="1" class="flex-grow-0 flex-shrink-0"/>
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">

@@ -15,12 +15,6 @@
                         color="blue-darken-2" size="medium" variant="text"></v-btn>
                   </template>
                   <v-list>
-                     <!-- <v-list-item @click="router.push(URL.BROADCAST)">
-                        <template v-slot:prepend>
-                           <v-icon icon="mdi-broadcast" color="blue-darken-3"></v-icon>
-                        </template>
-                        <v-list-item-title>Broadcast</v-list-item-title>
-                     </v-list-item> -->
                      <v-list-item @click="router.push(URL.MESSAGE)">
                         <template v-slot:prepend>
                            <v-icon icon="mdi-message" color="blue-darken-3"></v-icon>
@@ -83,8 +77,8 @@
                <span v-if="isRoute(Route.HOME)">
                   <Icon icon="mdi-plus" @click="router.push(URL.ADD_ITEM)"/>
                </span>
-               <span v-if="isRoute(Route.USER)">
-                  <Icon icon="mdi-cog" @click="router.push(URL.ACCOUNT)"/>
+               <span v-else-if="isRoute(Route.GALLERIES)">
+                  <GalleryThumbsConfig/>
                </span>
                <span v-else-if="inRoutes(Route.GALLERY, Route.RECENT)">
                   <MultiStateIcon icon="mdi-text-box-plus" :stateColors="viewStore.xsThumbFieldsColors" 
@@ -92,6 +86,9 @@
                </span>
                <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD)">
                   <ToggleIcon icon="mdi-gesture-swipe" :state="viewStore.isMobileSwipe" @click="viewStore.toggleMobileSwipe()"/>
+               </span>
+               <span v-else-if="isRoute(Route.USER)">
+                  <Icon icon="mdi-cog" @click="router.push(URL.ACCOUNT)"/>
                </span>
                <!-- <span v-else-if="currentRoute == Route.ACCOUNT && userIsAdmin">
                   <Icon icon="mdi-cog" @click="router.push(URL.ADMIN)"/>
@@ -180,6 +177,7 @@
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { useLocalStore }   from '@/stores/localStore'
+   import GalleryThumbsConfig from '@/components/gallery/GalleryThumbsConfig.vue'
    import MessageSetup   from '@/components/notification/MessageSetup.vue'
    import LinkOrText     from '@/components/util/LinkOrText.vue'
    import Icon           from '@/components/util/Icon.vue'

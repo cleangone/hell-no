@@ -47,13 +47,12 @@ export const useViewStore = defineStore('view', () => {
    function incrementXsThumbFieldsIndex() { 
       xsThumbFieldsIndex.value = xsThumbFieldsIndex.value == xsThumbFieldsColors.length - 1 ? 0 : xsThumbFieldsIndex.value + 1
 
-      const fields = []
-      if (xsThumbFieldsIndex.value > 0) { fields.push(...baseThumbFields) }
-      if (xsThumbFieldsIndex.value > 1) { fields.push(ThumbField.DATE_UPDATED) }
-      if (xsThumbFieldsIndex.value > 2) { fields.push(ThumbField.USER) }
+      const options = []
+      if (xsThumbFieldsIndex.value > 0) { options.push( ...[ThumbOptionsItem.TITLE, ThumbOptionsItem.ARTIST] ) }
+      if (xsThumbFieldsIndex.value > 1) { options.push(ThumbOptionsItem.UPDATED) }
+      if (xsThumbFieldsIndex.value > 2) { options.push(ThumbOptionsItem.USER) }
 
-      setVisibleThumbFields(ItemOrigin.RECENT,  fields)
-      setVisibleThumbFields(ItemOrigin.GALLERY, fields)
+      setItemThumbOptions(options)
    }
 
    const processedFeedItemIds = []
