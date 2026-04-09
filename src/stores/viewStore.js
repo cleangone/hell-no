@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
-import { Defaults, GalleryOptions, ItemOrigin, ThumbField } from '@/utils/constants'
+import { Defaults, ItemOrigin, ThumbOptionsGallery, ThumbOptionsItem } from '@/utils/constants'
 
 export const useViewStore = defineStore('view', () => {
    const userStore = useUserStore()
@@ -9,7 +9,7 @@ export const useViewStore = defineStore('view', () => {
    const isInitialized = ref(false)
    function init() { 
       if (!isInitialized.value) {
-         resetVisibleThumbFields()
+         resetItemThumbOptions()
          isInitialized.value = true 
       }
    }
@@ -34,22 +34,13 @@ export const useViewStore = defineStore('view', () => {
       if (visibleItems.value.has(origin)) { visibleItems.value.get(origin).items = [...items] }
    }
 
-   const baseThumbFields         = [ ThumbField.TITLE, ThumbField.ARTIST ]
-   const defaultThumbFields      = [ ...baseThumbFields, ThumbField.DATE_UPDATED ]
-   const defaultUserThumbFields  = [ ...defaultThumbFields, ThumbField.USER ]
-   const visibleThumbFields = ref(new Map())
-   function setVisibleThumbFields(origin, fields) { visibleThumbFields.value.set(origin, fields) }
-   function resetVisibleThumbFields() {
-      setVisibleThumbFields(ItemOrigin.RECENT,  defaultUserThumbFields)
-      setVisibleThumbFields(ItemOrigin.GALLERY, defaultThumbFields)
-      setVisibleThumbFields(ItemOrigin.FEED,    defaultUserThumbFields)
-      setVisibleThumbFields(ItemOrigin.GROUP,   defaultUserThumbFields)
-      setVisibleThumbFields(ItemOrigin.SEARCH,  defaultThumbFields)
-      setVisibleThumbFields(ItemOrigin.ADMIN,   defaultThumbFields)
-   }
+   const defaultItemThumbOptions = [ ThumbOptionsItem.TITLE, ThumbOptionsItem.ARTIST, ThumbOptionsItem.UPDATED ]
+   const itemThumbOptions = ref([ ...defaultItemThumbOptions ] )
+   function setItemThumbOptions(options) { itemThumbOptions.value = [...options] }
+   function resetItemThumbOptions() { setItemThumbOptions(defaultItemThumbOptions) }
 
-   const galleryThumbOptions = ref([ GalleryOptions.SORT_BY_NAME ])
-   function setGalleryThumbOptions(options) { galleryThumbOptions.value = options }
+   const galleryThumbOptions = ref([ ThumbOptionsGallery.SORT_BY_NAME ])
+   function setGalleryThumbOptions(options) { galleryThumbOptions.value = [...options] }
 
    const xsThumbFieldsColors = [ "grey", "green-lighten-3", "green-lighten-1", "green-darken-1" ]
    const xsThumbFieldsIndex = ref(2)
@@ -162,7 +153,7 @@ export const useViewStore = defineStore('view', () => {
       isInitialized, init, getSeconds,
       showSiteWall, setShowSiteWall,
       getVisibleItems, setVisibleItems, updateVisibleItems, 
-      visibleThumbFields, setVisibleThumbFields,
+      itemThumbOptions, setItemThumbOptions,      
       galleryThumbOptions, setGalleryThumbOptions, 
       xsThumbFieldsColors, xsThumbFieldsIndex, incrementXsThumbFieldsIndex, 
       processedFeedItemIds, addProcessedFeedItemId,

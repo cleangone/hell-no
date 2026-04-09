@@ -29,7 +29,6 @@
 <script setup>
    import { computed, onErrorCaptured, onMounted, ref } from 'vue'
    import { useRoute } from 'vue-router'
-   import { createReusableTemplate } from '@vueuse/core'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useViewStore }    from '@/stores/viewStore'
@@ -37,7 +36,7 @@
    import GalleryThumb        from '@/components/gallery/GalleryThumb.vue'
    import GalleryThumbsConfig from '@/components/gallery/GalleryThumbsConfig.vue'
    import { handleError, isPrivate } from '@/utils/utils'
-   import { Defaults, GalleryOptions, URL } from '@/utils/constants'
+   import { Defaults, ThumbOptionsGallery, URL } from '@/utils/constants'
   
    const route = useRoute()
    const userStore    = useUserStore()
@@ -53,9 +52,9 @@
 
    const username = computed(() => route.params.id == Defaults.SITE_ID ? null : userStore.getUsername(route.params.id))
 
-   const showChildGalleries     = computed(() => viewStore.galleryThumbOptions.includes(GalleryOptions.SHOW_CHILD))
-   const showMyPrivateGalleries = computed(() => viewStore.galleryThumbOptions.includes(GalleryOptions.SHOW_PRIVATE))
-   const sortByDate             = computed(() => viewStore.galleryThumbOptions.includes(GalleryOptions.SORT_BY_DATE))
+   const showChildGalleries     = computed(() => viewStore.galleryThumbOptions.includes(ThumbOptionsGallery.SHOW_CHILD))
+   const showMyPrivateGalleries = computed(() => viewStore.galleryThumbOptions.includes(ThumbOptionsGallery.SHOW_PRIVATE))
+   const sortByDate             = computed(() => viewStore.galleryThumbOptions.includes(ThumbOptionsGallery.SORT_BY_DATE))
    
    const visibleGalleries = computed(() => { 
       // user can see their own galleries

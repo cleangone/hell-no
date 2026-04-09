@@ -9,7 +9,7 @@
             <RouterLink v-if="username" :to="URL.USER + route.params.id">{{ username }}</RouterLink>
          </v-col>
          <v-col v-if="viewMgr.isDeskTop" cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
-            <ItemThumbConfig :origin="ItemOrigin.RECENT"/>
+            <ItemThumbConfig/>
          </v-col>
       </v-row>
    </v-container>

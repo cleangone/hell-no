@@ -26,14 +26,12 @@
    import { computed, onErrorCaptured, ref } from 'vue'
    import { useUserStore } from '@/stores/userStore'
    import { useViewStore } from '@/stores/viewStore'
-   import { useViewMgr }   from '@/stores/viewMgr'
    import ItemArtistYear from '../ItemArtistYear.vue'
    import EditItemDialog from '../crud/EditItemDialog.vue'
-   // import GroupNames     from '@/components/group/GroupNames.vue'
    import EditButton     from '@/components/util/EditButton.vue'
    import { displayDate } from '@/utils/dateUtils'
    import { handleError } from '@/utils/utils'
-   import { ThumbField, URL } from '@/utils/constants'
+   import { ThumbOptionsItem, URL } from '@/utils/constants'
    
    onErrorCaptured((err) => { return handleError(err, "ItemThumbText") })
 
@@ -42,19 +40,18 @@
    })
    const userStore = useUserStore()
    const viewStore = useViewStore()
-   const viewMgr   = useViewMgr()
    const showEditDialog = ref(false)
    
    const item = computed(() => props.item)
    const selectedFields = computed(() => {
-      const fields = viewStore.visibleThumbFields.get(props.origin)
+      const fields = viewStore.itemThumbOptions
       return fields ? fields : [] // issue somehow related to local storage serialization
    })
-   const showTitle        = computed(() => selectedFields.value.includes(ThumbField.TITLE))
-   const showArtist       = computed(() => selectedFields.value.includes(ThumbField.ARTIST))
-   const showDateModified = computed(() => selectedFields.value.includes(ThumbField.DATE_UPDATED))
-   const showUser         = computed(() => selectedFields.value.includes(ThumbField.USER) && !viewMgr.solo)
-   
+   const showTitle        = computed(() => selectedFields.value.includes(ThumbOptionsItem.TITLE))
+   const showArtist       = computed(() => selectedFields.value.includes(ThumbOptionsItem.ARTIST))
+   const showDateModified = computed(() => selectedFields.value.includes(ThumbOptionsItem.UPDATED))
+   const showUser         = computed(() => selectedFields.value.includes(ThumbOptionsItem.USER))
+
    const itemName = computed(() => { 
       const name = props.useAltName && item.value.alternateName?.length ? item.value.alternateName : item.value.name
       return props.useLocalName ? item.value.localName : name

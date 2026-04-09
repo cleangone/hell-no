@@ -37,7 +37,7 @@
                   <EditButton v-if="editInPlace" @click="showEditGalleryDialog=true"></EditButton> 
                </v-col>
                <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
-                  <ItemThumbConfig :origin="ItemOrigin.GALLERY"/>
+                  <ItemThumbConfig/>
                </v-col>
             </v-row>
             <span style="text-align:center">
@@ -103,7 +103,7 @@
    const showAddItemDialog     = ref(false)
    
    onMounted(async() => {
-      console.log("GalleryView.onMounted")
+      // console.log("GalleryView.onMounted")
       if (!viewStore.isInitialized) {
          console.log("GalleryView - external/direct link")
          viewMgr.init()
@@ -112,7 +112,7 @@
 
    const gallery = computed(() => { 
       const gallery = galleryStore.getGallery(route.params.id)      
-      console.log("GalleryView - gallery", gallery)
+      // console.log("GalleryView - gallery", gallery)
       if (!gallery) { return null }  // galleryStore has not intiailized yet
 
       if (!viewMgr.galleryIsVisibleToUser(gallery)) { router.push(URL.HOME) }

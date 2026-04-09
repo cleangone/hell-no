@@ -46,7 +46,7 @@
    import { useViewMgr }      from '@/stores/viewMgr'
    import { displayDate } from '@/utils/dateUtils'
    import { handleError, objAspectRatio, thumbBackgroundColorStyle } from '@/utils/utils'
-   import { GalleryThumbWidth, ImageType, ItemOrigin, ThumbField, URL } from '@/utils/constants'
+   import { GalleryThumbWidth, ImageType, ItemOrigin, ThumbOptionsItem, URL } from '@/utils/constants'
    
    const XsGalleryThumbWidth = 125
    const props = defineProps({ gallery: Object, showChildImages:Boolean, dense:Boolean })
@@ -74,8 +74,8 @@
    const carouselHeight   = computed(() => cardWidth * 9 / 16)
    const carouselInterval = computed(() => 4000 + Math.floor(Math.random() * 4000)) // random bet 4-8 secs 
    const visibleItemCount = computed(() => viewMgr.galleryItemCount(props.gallery))
-   const selectedFields   = computed(() => viewStore.visibleThumbFields.get(ItemOrigin.GALLERY))
-   const showDateModified = computed(() => selectedFields.value.includes(ThumbField.DATE_UPDATED))
+   const selectedFields   = computed(() => viewStore.itemThumbOptions)
+   const showDateModified = computed(() => selectedFields.value.includes(ThumbOptionsItem.UPDATED))
    
    // todo - this only goes down one level
    const childGalleryImages = computed(() => { 

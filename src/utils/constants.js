@@ -77,13 +77,6 @@ export const FeedType = {
    GROUP:   'Group',
 }
 
-export const GalleryOptions = {
-   SHOW_CHILD:   'ShowChild',
-   SHOW_PRIVATE: 'ShowPrivate',
-   SORT_BY_NAME: 'SortByName',
-   SORT_BY_DATE: 'SortByDate',
-}
-
 export const GroupUserState = {
    OWNER:   'Owner',
    MODERATOR: 'Moderator',
@@ -192,15 +185,19 @@ export const TodoType = {
    GROUP_INVITE: 'GroupInvite',
 }
 
-export  const ThumbField = { 
-   TITLE:     'Title',
-   ARTIST:    'Artist',
-   DATE_UPDATED: 'Date updated',
-   USER:      'User',
-   // GROUP:     'Group'
+export const ThumbOptionsGallery = {
+   SHOW_CHILD:   'Show Child Galleries',
+   SHOW_PRIVATE: 'Show My Private Galleries',
+   SORT_BY_NAME: 'Sort by Name',
+   SORT_BY_DATE: 'Sort by Date',
+}
+
+export const ThumbOptionsItem = { 
+   TITLE:   'Title',
+   ARTIST:  'Artist',
+   UPDATED: 'Date updated',
+   USER:    'User',
 } 
-export const ThumbFields = [ 
-   ThumbField.TITLE, ThumbField.ARTIST, ThumbField.DATE_UPDATED, ThumbField.USER ]
 
 export const ThumbType = {
    GALLERY:   'Gallery',
