@@ -103,13 +103,19 @@
                <template v-for="item in scrollItems" :key="item.id">
                   <div v-if="item.id != route.params.id" class="mt-5">
                      <div class="text-h6">{{ item.name }}</div>
-                     <div v-if="showNav"> 
+                     <!-- <div v-if="showNav"> 
                         <RouterLink v-if="viewStoreVisibleItems" :to="viewStoreVisibleItems.linkUrl">{{ viewStoreVisibleItems.linkName }}</RouterLink> 
                         <span v-if="itemOtherGalleries(item).length == 1">
                           | <RouterLink :to="galleryUrl(itemOtherGalleries(item)[0].id)">{{ itemOtherGalleries(item)[0].name }} Gallery</RouterLink>
                         </span>
                      </div>
                      <div v-if="!showNav || itemOtherGalleries(item).length > 1"> 
+                        <span v-for="gallery,index in itemOtherGalleries(item)" :key="gallery.id">
+                           <span v-if="index"> | </span>
+                           <RouterLink :to="galleryUrl(gallery.id)">{{ gallery.name }} Gallery</RouterLink>
+                        </span>
+                     </div> -->
+                     <div v-if="itemOtherGalleries(item).length"> 
                         <span v-for="gallery,index in itemOtherGalleries(item)" :key="gallery.id">
                            <span v-if="index"> | </span>
                            <RouterLink :to="galleryUrl(gallery.id)">{{ gallery.name }} Gallery</RouterLink>
@@ -348,7 +354,14 @@
       return galleries
    }
 
-   const showPrevNext = computed(() => viewMgr.isMobile && windowWidth.value > windowHeight.value ? false : showNav.value)
+   // do not show prev/next if mobile set to scroll through items
+   const showPrevNext = computed(() => 
+      viewMgr.isMobile && !viewStore.isMobileSwipe ? false : showNav.value)
+   
+   // todo - why did I care about horizontal windows?
+   // const showPrevNext = computed(() => 
+   //    viewMgr.isMobile && windowWidth.value > windowHeight.value ? false : showNav.value)
+   
    const showAdditionalImages = (additionalImage) => { 
       if (additionalImage.type == AdditionalImagesType.ITEM) { showItem(additionalImage.item) }
       else { showImage(additionalImage.image) }

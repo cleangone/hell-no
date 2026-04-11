@@ -13,6 +13,7 @@
       - lazy loading in router - chunk retrieval errors with Admin, others
 */
 export const versions = [     
+   ["v2.1.4",  "4/11/26"], // Clean up prev/next and repeated origin for mobile ItemView when scrolling 
    ["v2.1.3",  "4/10/26"], // Store user's gallery and item configs in settings
    ["v2.1.2",  "4/10/26"], // Add small item thumb option for xs
    ["v2.1.1",  "4/8/26"],  // Add gallery thumb background for private/invisible
