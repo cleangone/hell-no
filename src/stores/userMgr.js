@@ -65,6 +65,20 @@ export const useUserMgr = defineStore('userMgr', () => {
       settings.itemHeaders = headers
       userStore.updateSettings(settings)
    }
+
+   function setGalleryThumbOptions(options) {
+      // console.log("updating user galleryThumbOptions")
+      const settings = { ...userStore.mySettings }
+      settings.galleryThumbOptions = options
+      userStore.updateSettings(settings)
+   }
+   
+   function setItemThumbOptions(options) {
+      console.log("updating user itemThumbOptions")
+      const settings = { ...userStore.mySettings }
+      settings.itemThumbOptions = options
+      userStore.updateSettings(settings)
+   }
    
    function setShowHiddenItems(showHidden) {
       const settings = { ...userStore.mySettings }
@@ -103,6 +117,7 @@ export const useUserMgr = defineStore('userMgr', () => {
    }
 
    return { 
-      getFullName, getUserIdByEmail, getUserContactByEmail, setItemHeaders, setShowHiddenItems, 
+      getFullName, getUserIdByEmail, getUserContactByEmail, 
+      setItemHeaders, setGalleryThumbOptions, setItemThumbOptions, setShowHiddenItems, 
       myUserContacts, getUserContactsNotInGroup, addMessagingToken }
 })

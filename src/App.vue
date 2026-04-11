@@ -205,7 +205,8 @@
       onAuthStateChanged(auth, (user) => {      
          if (user) { userStore.userId = user.uid } 
          else { userStore.userId = "" }
-         viewStore.resetVisiblity()
+         // console.log("onAuthStateChanged", userStore.userId)
+         viewStore.resetView()
       })
 
       setWindowSize()

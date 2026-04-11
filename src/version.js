@@ -5,16 +5,15 @@
       - Eder-mode for wall
       - User can add to site art wall - would have to be via action because of edit rules
       - Deleted status, trash
-      - Add Copy Link to GalleryView
       - Add all metadata to mobile ItemView 
       - Include Edit gallery images in EditGallery
       - review/refactor stores, esp default returns of collection queries
       - finish wall automation - no more set random, auto figure out rows
       - add filter to RecentView
-      - broadcast control: pause/ff/rew
       - lazy loading in router - chunk retrieval errors with Admin, others
 */
 export const versions = [     
+   ["v2.1.3",  "4/10/26"], // Store user's gallery and item configs in settings
    ["v2.1.2",  "4/10/26"], // Add small item thumb option for xs
    ["v2.1.1",  "4/8/26"],  // Add gallery thumb background for private/invisible
                            // Consolidate gallery thumb display config in GalleryThumbsConfig

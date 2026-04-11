@@ -17,8 +17,7 @@
    <div style="clear:both"></div>
    <v-container>
       <v-row justify="space-around" class="mb-md-4" >
-         <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" 
-            :showChildImages="!showChildGalleries" class="bg-red"/>
+         <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" :showChildImages="!showChildGalleries"/>
       </v-row>
    </v-container>
 </template>

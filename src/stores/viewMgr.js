@@ -22,7 +22,7 @@ export const useViewMgr = defineStore('viewMgr', () => {
    const localStore   = useLocalStore()
    
    function init() {
-      console.log("viewMgr.init")
+      // console.log("viewMgr.init")
       if (!viewStore.isInitialized) {
          viewStore.init()
 

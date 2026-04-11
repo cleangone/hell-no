@@ -19,20 +19,22 @@
 
 <script setup>
    import { computed } from 'vue'
+   import { useUserStore } from '@/stores/userStore'
    import { useViewStore } from '@/stores/viewStore'
    import { useViewMgr }   from '@/stores/viewMgr'
    import IconButton       from '@/components/util/IconButton.vue'
    import { GalleryThumbOptions as ThumbOptions } from '@/utils/constants'
 
+   const userStore = useUserStore()
    const viewStore = useViewStore()
-   const viewMgr    = useViewMgr()
+   const viewMgr   = useViewMgr()
    
-   const defaultOptions = [ 
-      ThumbOptions.SHOW_CHILD, ThumbOptions.SHOW_PRIVATE, ThumbOptions.UPDATED, ThumbOptions.SORT_BY_NAME, ThumbOptions.SORT_BY_DATE ]
    const allOptions = computed(() => {
-       const options = viewMgr.isXs ? [ ThumbOptions.SM_THUMB ] : []
-       options.push(...defaultOptions)
-       return options
+      const options = viewMgr.isXs ? [ ThumbOptions.SM_THUMB, ThumbOptions.SHOW_CHILD ] : [ ThumbOptions.SHOW_CHILD ]
+      if (userStore.userExists) { options.push(ThumbOptions.SHOW_PRIVATE) }
+      options.push(...[ ThumbOptions.UPDATED, ThumbOptions.SORT_BY_NAME, ThumbOptions.SORT_BY_DATE ])
+   
+      return options
    })
    
    const selectedOptions = computed({ 

@@ -13,6 +13,8 @@ import { useFirestore } from '@vueuse/firebase/useFirestore'
       username
       settings
          itemHeaders[]
+         galleryThumbOptions[]
+         itemThumbOptions[]
          searches[]
          showHiddenItems
          notifyViaEmail

@@ -1,17 +1,26 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
+import { useUserMgr }   from '@/stores/userMgr'
 import { Defaults, GalleryThumbOptions, ItemThumbOptions } from '@/utils/constants'
 
 export const useViewStore = defineStore('view', () => {
    const userStore = useUserStore()
+   const userMgr   = useUserMgr()
    
    const isInitialized = ref(false)
    function init() { 
+      // console.log("viewStore.init")
       if (!isInitialized.value) {
-         resetItemThumbOptions()
          isInitialized.value = true 
       }
+   }
+
+   function resetView() { 
+      // console.log("viewStore.resetView")
+      resetGalleryThumbOptions()
+      resetItemThumbOptions()
+      resetVisiblity() 
    }
 
    const showSiteWall = ref(false)
@@ -34,13 +43,33 @@ export const useViewStore = defineStore('view', () => {
       if (visibleItems.value.has(origin)) { visibleItems.value.get(origin).items = [...items] }
    }
 
+   // save options in user settings and locally if not logged in
    const defaultItemThumbOptions = [ ItemThumbOptions.TITLE, ItemThumbOptions.ARTIST, ItemThumbOptions.UPDATED ]
-   const itemThumbOptions = ref([ ...defaultItemThumbOptions ] )
-   function setItemThumbOptions(options) { itemThumbOptions.value = [...options] }
+   const currItemThumbOptions = ref([ ...defaultItemThumbOptions ] )
+   const itemThumbOptions = computed(() => { 
+      return userStore.userExists && userStore.mySettings.itemThumbOptions ?
+         userStore.mySettings.itemThumbOptions :
+         currItemThumbOptions.value
+   })
+   function setItemThumbOptions(options) { 
+      currItemThumbOptions.value = [...options] 
+      if (userStore.userExists) { userMgr.setItemThumbOptions(options) }
+   }
    function resetItemThumbOptions() { setItemThumbOptions(defaultItemThumbOptions) }
-
-   const galleryThumbOptions = ref([ GalleryThumbOptions.SORT_BY_NAME, GalleryThumbOptions.UPDATED ])
-   function setGalleryThumbOptions(options) { galleryThumbOptions.value = [...options] }
+ 
+   // save options in user settings and locally if not logged in
+   const defaultGalleryThumbOptions = [ GalleryThumbOptions.SORT_BY_NAME, GalleryThumbOptions.UPDATED ]
+   const currGalleryThumbOptions = ref([ ...defaultGalleryThumbOptions ])
+   const galleryThumbOptions = computed(() => { 
+      return userStore.userExists && userStore.mySettings.galleryThumbOptions ?
+         userStore.mySettings.galleryThumbOptions :
+         currGalleryThumbOptions.value
+   })
+   function setGalleryThumbOptions(options) { 
+      currGalleryThumbOptions.value = [...options] 
+      if (userStore.userExists) { userMgr.setGalleryThumbOptions(options) }
+   }
+   function resetGalleryThumbOptions() { setGalleryThumbOptions(defaultGalleryThumbOptions) }
 
    const xsThumbFieldsColors = [ "grey", "green-lighten-3", "green-lighten-1", "green-darken-1" ]
    const xsThumbFieldsIndex = ref(2)
@@ -149,7 +178,7 @@ export const useViewStore = defineStore('view', () => {
    function setDeviceId(id) { deviceId.value = id }
    
    return { 
-      isInitialized, init, getSeconds,
+      isInitialized, init, resetView, getSeconds,
       showSiteWall, setShowSiteWall,
       getVisibleItems, setVisibleItems, updateVisibleItems, 
       itemThumbOptions, setItemThumbOptions,      
