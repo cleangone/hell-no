@@ -67,6 +67,14 @@ export const FeedAction = {
 }
 
 export const GalleryThumbWidth = 250
+export const GalleryThumbOptions = {
+   SM_THUMB:     'Small Thumbnails',
+   SHOW_CHILD:   'Show Child Galleries',
+   SHOW_PRIVATE: 'Show My Private Galleries',
+   UPDATED:      'Date Updated',
+   SORT_BY_NAME: 'Sort by Name',
+   SORT_BY_DATE: 'Sort by Date',
+}
 
 export const ParentFeedType = {
    SAVED:    'Saved',
@@ -129,6 +137,14 @@ export const ItemType = {
    GROUP:   'Group',
 }
 
+export const ItemThumbOptions = { 
+   SM_THUMB: 'Small Thumbnails',
+   TITLE:    'Title',
+   ARTIST:   'Artist',
+   UPDATED:  'Date Updated',
+   USER:     'User',
+} 
+
 export const LogEntryType = {
    ERROR:   'Error',
    INFO:    'Info',
@@ -185,20 +201,9 @@ export const TodoType = {
    GROUP_INVITE: 'GroupInvite',
 }
 
-export const ThumbOptionsGallery = {
-   SM_THUMB:     'Small Thumbnails',
-   SHOW_CHILD:   'Show Child Galleries',
-   SHOW_PRIVATE: 'Show My Private Galleries',
-   SORT_BY_NAME: 'Sort by Name',
-   SORT_BY_DATE: 'Sort by Date',
-}
 
-export const ThumbOptionsItem = { 
-   TITLE:   'Title',
-   ARTIST:  'Artist',
-   UPDATED: 'Date updated',
-   USER:    'User',
-} 
+
+
 
 export const ThumbType = {
    GALLERY:   'Gallery',

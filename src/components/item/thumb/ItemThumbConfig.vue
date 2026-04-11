@@ -3,9 +3,9 @@
       <template v-slot:activator="{ props }">
          <IconButton v-bind="props" icon="mdi-image-edit" size="medium"/>
       </template>
-      <v-list v-model:selected="selectedFields" select-strategy="leaf">
+      <v-list v-model:selected="selectedOptions" select-strategy="leaf">
          <v-list-item-title class="ma-2 font-weight-bold">Thumbnails</v-list-item-title>     
-         <v-list-item v-for="field in thumbFields" :key="field" :title="field" :value="field">
+         <v-list-item v-for="option in allOptions" :key="option" :title="option" :value="option">
             <template v-slot:prepend="{ isSelected }">
                <v-list-item-action start>
                   <v-checkbox-btn :model-value="isSelected"></v-checkbox-btn>
@@ -18,14 +18,25 @@
 
 <script setup>
    import { computed } from 'vue'
+   // import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
    import { useViewStore } from '@/stores/viewStore'
-   import IconButton from '@/components/util/IconButton.vue'
-   import { ThumbOptionsItem } from '@/utils/constants'
+   import { useViewMgr }   from '@/stores/viewMgr'
+   import IconButton       from '@/components/util/IconButton.vue'
+   import { ItemThumbOptions as ThumbOptions } from '@/utils/constants'
 
+   // const breakpoints = useBreakpoints(breakpointsTailwind)
+   // const xs = breakpoints.smaller('sm')
    const viewStore = useViewStore()
-   const thumbFields = [ ThumbOptionsItem.TITLE, ThumbOptionsItem.ARTIST, ThumbOptionsItem.UPDATED, ThumbOptionsItem.USER ]
-     
-   const selectedFields = computed({ 
+   const viewMgr    = useViewMgr()
+   
+   const defaultOptions = [ ThumbOptions.TITLE, ThumbOptions.ARTIST, ThumbOptions.USER, ThumbOptions.UPDATED ]  
+   const allOptions = computed(() => {
+       const options = viewMgr.isXs ? [ ThumbOptions.SM_THUMB ] : []
+       options.push(...defaultOptions)
+       return options
+   })
+
+   const selectedOptions = computed({ 
       get() { return viewStore.itemThumbOptions },
       set(fields) { viewStore.setItemThumbOptions(fields) } 
    })

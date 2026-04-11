@@ -81,8 +81,9 @@
                   <GalleryThumbsConfig/>
                </span>
                <span v-else-if="inRoutes(Route.GALLERY, Route.RECENT)">
-                  <MultiStateIcon icon="mdi-text-box-plus" :stateColors="viewStore.xsThumbFieldsColors" 
-                     :stateIndex="viewStore.xsThumbFieldsIndex" @click="viewStore.incrementXsThumbFieldsIndex()"/>
+                  <ItemThumbConfig/>
+                  <!-- <MultiStateIcon icon="mdi-text-box-plus" :stateColors="viewStore.xsThumbFieldsColors" 
+                     :stateIndex="viewStore.xsThumbFieldsIndex" @click="viewStore.incrementXsThumbFieldsIndex()"/> -->
                </span>
                <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD)">
                   <ToggleIcon icon="mdi-gesture-swipe" :state="viewStore.isMobileSwipe" @click="viewStore.toggleMobileSwipe()"/>
@@ -178,11 +179,12 @@
    import { useViewMgr }      from '@/stores/viewMgr'
    import { useLocalStore }   from '@/stores/localStore'
    import GalleryThumbsConfig from '@/components/gallery/GalleryThumbsConfig.vue'
-   import MessageSetup   from '@/components/notification/MessageSetup.vue'
-   import LinkOrText     from '@/components/util/LinkOrText.vue'
-   import Icon           from '@/components/util/Icon.vue'
-   import MultiStateIcon from '@/components/util/MultiStateIcon.vue'
-   import ToggleIcon     from '@/components/util/ToggleIcon.vue'
+   import ItemThumbConfig     from '@/components/item/thumb/ItemThumbConfig.vue'
+   import MessageSetup        from '@/components/notification/MessageSetup.vue'
+   import LinkOrText          from '@/components/util/LinkOrText.vue'
+   import Icon                from '@/components/util/Icon.vue'
+   import MultiStateIcon      from '@/components/util/MultiStateIcon.vue'
+   import ToggleIcon          from '@/components/util/ToggleIcon.vue'
    import { handleError } from '@/utils/utils'
    import { Defaults, Route, URL } from '@/utils/constants'
    import { versions }   from '@/version'

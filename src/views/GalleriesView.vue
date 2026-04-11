@@ -33,7 +33,7 @@
    import GalleryThumb        from '@/components/gallery/GalleryThumb.vue'
    import GalleryThumbsConfig from '@/components/gallery/GalleryThumbsConfig.vue'
    import { handleError, isPrivate } from '@/utils/utils'
-   import { Defaults, ThumbOptionsGallery, URL } from '@/utils/constants'
+   import { Defaults, GalleryThumbOptions, URL } from '@/utils/constants'
   
    const route = useRoute()
    const userStore    = useUserStore()
@@ -49,9 +49,9 @@
 
    const username = computed(() => route.params.id == Defaults.SITE_ID ? null : userStore.getUsername(route.params.id))
 
-   const showChildGalleries     = computed(() => viewStore.galleryThumbOptions.includes(ThumbOptionsGallery.SHOW_CHILD))
-   const showMyPrivateGalleries = computed(() => viewStore.galleryThumbOptions.includes(ThumbOptionsGallery.SHOW_PRIVATE))
-   const sortByDate             = computed(() => viewStore.galleryThumbOptions.includes(ThumbOptionsGallery.SORT_BY_DATE))
+   const showChildGalleries     = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SHOW_CHILD))
+   const showMyPrivateGalleries = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SHOW_PRIVATE))
+   const sortByDate             = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SORT_BY_DATE))
    
    const visibleGalleries = computed(() => { 
       // user can see their own galleries

@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
-import { Defaults, ItemOrigin, ThumbOptionsGallery, ThumbOptionsItem } from '@/utils/constants'
+import { Defaults, GalleryThumbOptions, ItemThumbOptions } from '@/utils/constants'
 
 export const useViewStore = defineStore('view', () => {
    const userStore = useUserStore()
@@ -34,12 +34,12 @@ export const useViewStore = defineStore('view', () => {
       if (visibleItems.value.has(origin)) { visibleItems.value.get(origin).items = [...items] }
    }
 
-   const defaultItemThumbOptions = [ ThumbOptionsItem.TITLE, ThumbOptionsItem.ARTIST, ThumbOptionsItem.UPDATED ]
+   const defaultItemThumbOptions = [ ItemThumbOptions.TITLE, ItemThumbOptions.ARTIST, ItemThumbOptions.UPDATED ]
    const itemThumbOptions = ref([ ...defaultItemThumbOptions ] )
    function setItemThumbOptions(options) { itemThumbOptions.value = [...options] }
    function resetItemThumbOptions() { setItemThumbOptions(defaultItemThumbOptions) }
 
-   const galleryThumbOptions = ref([ ThumbOptionsGallery.SORT_BY_NAME ])
+   const galleryThumbOptions = ref([ GalleryThumbOptions.SORT_BY_NAME, GalleryThumbOptions.UPDATED ])
    function setGalleryThumbOptions(options) { galleryThumbOptions.value = [...options] }
 
    const xsThumbFieldsColors = [ "grey", "green-lighten-3", "green-lighten-1", "green-darken-1" ]
@@ -48,9 +48,9 @@ export const useViewStore = defineStore('view', () => {
       xsThumbFieldsIndex.value = xsThumbFieldsIndex.value == xsThumbFieldsColors.length - 1 ? 0 : xsThumbFieldsIndex.value + 1
 
       const options = []
-      if (xsThumbFieldsIndex.value > 0) { options.push(ThumbOptionsItem.TITLE) }
-      if (xsThumbFieldsIndex.value > 1) { options.push(ThumbOptionsItem.ARTIST) }
-      if (xsThumbFieldsIndex.value > 2) { options.push(...[ThumbOptionsItem.USER, ThumbOptionsItem.UPDATED]) }
+      if (xsThumbFieldsIndex.value > 0) { options.push(ItemThumbOptions.TITLE) }
+      if (xsThumbFieldsIndex.value > 1) { options.push(ItemThumbOptions.ARTIST) }
+      if (xsThumbFieldsIndex.value > 2) { options.push(ItemThumbOptions.UPDATED) }
 
       setItemThumbOptions(options)
    }

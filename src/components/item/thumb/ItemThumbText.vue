@@ -7,8 +7,6 @@
       <div v-if="fromUser" class="text-left ms-1">
          From <RouterLink :to="URL.USER + fromUser.id">{{ fromUser.name }}</RouterLink>
       </div>
-      <!-- only populated for Feed -->
-      <!-- <GroupNames :groups="item.groups" class="text-left ms-1"/>  -->
       <div v-if="showDateModified" class="mb-2">
          {{ displayDate(item.dateContentModified) }}
       </div>
@@ -26,12 +24,12 @@
    import { computed, onErrorCaptured, ref } from 'vue'
    import { useUserStore } from '@/stores/userStore'
    import { useViewStore } from '@/stores/viewStore'
-   import ItemArtistYear from '../ItemArtistYear.vue'
-   import EditItemDialog from '../crud/EditItemDialog.vue'
-   import EditButton     from '@/components/util/EditButton.vue'
-   import { displayDate } from '@/utils/dateUtils'
-   import { handleError } from '@/utils/utils'
-   import { ThumbOptionsItem, URL } from '@/utils/constants'
+   import ItemArtistYear   from '../ItemArtistYear.vue'
+   import EditItemDialog   from '../crud/EditItemDialog.vue'
+   import EditButton       from '@/components/util/EditButton.vue'
+   import { displayDate }  from '@/utils/dateUtils'
+   import { handleError }  from '@/utils/utils'
+   import { ItemThumbOptions as ThumbOptions, URL } from '@/utils/constants'
    
    onErrorCaptured((err) => { return handleError(err, "ItemThumbText") })
 
@@ -47,11 +45,11 @@
       const fields = viewStore.itemThumbOptions
       return fields ? fields : [] // issue somehow related to local storage serialization
    })
-   const showTitle        = computed(() => selectedFields.value.includes(ThumbOptionsItem.TITLE))
-   const showArtist       = computed(() => selectedFields.value.includes(ThumbOptionsItem.ARTIST))
-   const showDateModified = computed(() => selectedFields.value.includes(ThumbOptionsItem.UPDATED))
-   const showUser         = computed(() => selectedFields.value.includes(ThumbOptionsItem.USER))
-
+   const showTitle        = computed(() => selectedFields.value.includes(ThumbOptions.TITLE))
+   const showArtist       = computed(() => selectedFields.value.includes(ThumbOptions.ARTIST))
+   const showUser         = computed(() => selectedFields.value.includes(ThumbOptions.USER))
+   const showDateModified = computed(() => selectedFields.value.includes(ThumbOptions.UPDATED))
+   
    const itemName = computed(() => { 
       const name = props.useAltName && item.value.alternateName?.length ? item.value.alternateName : item.value.name
       return props.useLocalName ? item.value.localName : name

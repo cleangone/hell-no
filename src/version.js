@@ -15,6 +15,7 @@
       - lazy loading in router - chunk retrieval errors with Admin, others
 */
 export const versions = [     
+   ["v2.1.2",  "4/10/26"], // Add small item thumb option for xs
    ["v2.1.1",  "4/8/26"],  // Add gallery thumb background for private/invisible
                            // Consolidate gallery thumb display config in GalleryThumbsConfig
    ["v2.1.0",  "4/7/26"],  // Enable paste of direct link to gallery

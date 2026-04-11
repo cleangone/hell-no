@@ -19,19 +19,18 @@
 
 <script setup>
    import { computed } from 'vue'
-   import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
    import { useViewStore } from '@/stores/viewStore'
-   import IconButton from '@/components/util/IconButton.vue'
-   import { ThumbOptionsGallery } from '@/utils/constants'
+   import { useViewMgr }   from '@/stores/viewMgr'
+   import IconButton       from '@/components/util/IconButton.vue'
+   import { GalleryThumbOptions as ThumbOptions } from '@/utils/constants'
 
-   const breakpoints = useBreakpoints(breakpointsTailwind)
-   const xs = breakpoints.smaller('sm')
    const viewStore = useViewStore()
+   const viewMgr    = useViewMgr()
    
    const defaultOptions = [ 
-      ThumbOptionsGallery.SHOW_CHILD, ThumbOptionsGallery.SHOW_PRIVATE, ThumbOptionsGallery.SORT_BY_NAME, ThumbOptionsGallery.SORT_BY_DATE ]
+      ThumbOptions.SHOW_CHILD, ThumbOptions.SHOW_PRIVATE, ThumbOptions.UPDATED, ThumbOptions.SORT_BY_NAME, ThumbOptions.SORT_BY_DATE ]
    const allOptions = computed(() => {
-       const options = xs.value ? [ ThumbOptionsGallery.SM_THUMB ] : []
+       const options = viewMgr.isXs ? [ ThumbOptions.SM_THUMB ] : []
        options.push(...defaultOptions)
        return options
    })
@@ -40,12 +39,12 @@
       get() { return viewStore.galleryThumbOptions },
       set(checkboxOptions) { 
          const origSortOption = 
-            selectedOptions.value.includes(ThumbOptionsGallery.SORT_BY_NAME) ? ThumbOptionsGallery.SORT_BY_NAME : ThumbOptionsGallery.SORT_BY_DATE 
+            selectedOptions.value.includes(ThumbOptions.SORT_BY_NAME) ? ThumbOptions.SORT_BY_NAME : ThumbOptions.SORT_BY_DATE 
          let updatedSortOption = null
           
          const options = []
          for (const checkboxOption of checkboxOptions) {
-            if (checkboxOption == ThumbOptionsGallery.SORT_BY_NAME || checkboxOption == ThumbOptionsGallery.SORT_BY_DATE) {
+            if (checkboxOption == ThumbOptions.SORT_BY_NAME || checkboxOption == ThumbOptions.SORT_BY_DATE) {
                if (checkboxOption != origSortOption) { updatedSortOption = checkboxOption } 
             }
             else { options.push(checkboxOption) }

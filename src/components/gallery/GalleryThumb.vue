@@ -1,5 +1,6 @@
 <template>
-   <v-card :width="cardWidth" ref="cardRef" class="mb-5 d-flex flex-column text-center" :style="backgroundStyle" style="z-index: 1">
+   <v-card :width="cardWidth" ref="cardRef" class="d-flex flex-column text-center" :class="cardMargin"
+         :style="backgroundStyle" style="z-index: 1">
       <RouterLink :to="URL.GALLERY + gallery.id">
          <v-carousel v-if="galleryImages.length>1" cycle :interval="carouselInterval" :height="carouselHeight"
             hide-delimiters :show-arrows="false" v-on:update:modelValue="setGalleryImageIndex">
@@ -11,7 +12,7 @@
          </v-carousel>
          <v-img v-else :src="galleryImage.thumbUrl" @mouseover="mouseover()" @mouseleave="mouseleave()"></v-img>
       </RouterLink>
-      <div :class="dense ? 'my-1' : 'my-3'">
+      <div :class="textMargin">
          <div class="text-body-2">
             <span class="font-weight-bold">{{ gallery.name }}</span>
             <span v-if="visibleItemCount" class="ml-1">({{ visibleItemCount }})</span>
@@ -46,7 +47,7 @@
    import { useViewMgr }      from '@/stores/viewMgr'
    import { displayDate } from '@/utils/dateUtils'
    import { handleError, objAspectRatio, thumbBackgroundColorStyle } from '@/utils/utils'
-   import { GalleryThumbWidth, ImageType, ThumbOptionsGallery, ThumbOptionsItem, URL } from '@/utils/constants'
+   import { GalleryThumbOptions, GalleryThumbWidth, ImageType, URL } from '@/utils/constants'
    
    const XsGalleryThumbWidth = 125
    const props = defineProps({ gallery: Object, showChildImages:Boolean, dense:Boolean })
@@ -67,19 +68,23 @@
    
    onErrorCaptured((err) => { return handleError(err, "GalleryThumb") })
 
+   const smallThumb = computed(() => xs.value && viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SM_THUMB))
    const cardWidth = computed(() =>  {
       if (xs.value) { 
-         // .4 is 2 thumbs/row, .3 is 3
-         const galleryWidthPct = viewStore.galleryThumbOptions.includes(ThumbOptionsGallery.SM_THUMB) ? .3 : .4
+         // .4 is 2 thumbs/row, .28 is 3 thumbs
+         const galleryWidthPct = smallThumb.value ? .28 : .4
          return props.dense ? XsGalleryThumbWidth : windowWidth.value * galleryWidthPct
       } 
       return GalleryThumbWidth
    })
+   
+   const cardMargin  = computed(() => smallThumb.value ? "mb-2" : "mb-5")
+   const textMargin  = computed(() => props.dense || smallThumb.value ? "my-1" : "my-3")
+
    const carouselHeight   = computed(() => cardWidth * 9 / 16)
    const carouselInterval = computed(() => 4000 + Math.floor(Math.random() * 4000)) // random bet 4-8 secs 
    const visibleItemCount = computed(() => viewMgr.galleryItemCount(props.gallery))
-   const selectedFields   = computed(() => viewStore.itemThumbOptions)
-   const showDateModified = computed(() => selectedFields.value.includes(ThumbOptionsItem.UPDATED))
+   const showDateModified = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.UPDATED))
    
    // todo - this only goes down one level
    const childGalleryImages = computed(() => { 

@@ -20,6 +20,7 @@
    import ItemPopup     from '@/components/item/ItemPopup.vue'
    import ItemThumbText from './ItemThumbText.vue'
    import { backgroundColorStyle, handleError } from '@/utils/utils'
+   import { ItemThumbOptions as ThumbOptions } from '@/utils/constants'
    
    const props = defineProps({ 
       item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, admin: Boolean
@@ -44,8 +45,10 @@
    const artist   = computed(() => item.value.primaryArtist ? item.value.primaryArtist.fullName : null)
    
    const aspectRatio = computed(() => itemMgr.itemAspectRatio(item.value))
+   const smallThumb = computed(() => viewMgr.isXs && viewStore.itemThumbOptions.includes(ThumbOptions.SM_THUMB))
    const cardWidth = computed(() => { 
-      const targetWidth = Math.round(200 * aspectRatio.value)
+      const targetHeight = smallThumb.value ? 175 : 200
+      const targetWidth = Math.round(targetHeight * aspectRatio.value)
       return targetWidth > 300 ? 300 : targetWidth
    })
 
