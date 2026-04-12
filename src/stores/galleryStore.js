@@ -11,6 +11,7 @@ import { ImageType, State } from '@/utils/constants'
    Gallery
       id
       name
+      tag - unique across all galleries
       userId
       state: State: PUBLIC, PRIVATE
       desc
@@ -43,8 +44,13 @@ export const useGalleryStore = defineStore('gallery', () => {
    function galleryDoc(galleryId) { return doc(db, TABLE, galleryId) }
 
    const galleries = useFirestore(galleryCollection)      
-   const galleryIdToGallery = computed(() => { return galleries.value ? new Map(galleries.value.map((obj) => [obj.id, obj])) : new Map() })
+   const galleryIdToGallery  = computed(() => { return galleries.value ? new Map(galleries.value.map((obj) => [obj.id, obj])) : new Map() })
+   const galleryTagToGallery = computed(() => { 
+      return galleries.value ? new Map(galleries.value.filter(obj => obj.tag).map(obj => [obj.tag, obj])) : new Map() 
+   })
+   
    function getGallery(galleryId) { return galleryIdToGallery.value ? galleryIdToGallery.value.get(galleryId) : null }
+   function getGalleryByTag(tag)  { return galleryTagToGallery.value ? galleryTagToGallery.value.get(tag) : null }
 
    //
    // publicGalleries
@@ -204,7 +210,8 @@ export const useGalleryStore = defineStore('gallery', () => {
    }
 
    return { 
-      galleries, myGalleries, myGalleriesExist, myGalleryIdToGalleryMap, getGallery, getMyGallery,
+      galleries, myGalleries, myGalleriesExist, myGalleryIdToGalleryMap, 
+      getGallery, getGalleryByTag, getMyGallery,
       publicGalleries, getPublicGalleries, publicGalleryIdToChildGalleries, userIdToGalleries, 
       addGallery, updateGallery, deleteGallery,
       addItem, removeItemId, addChildGalleryId, removeChildGalleryId, 

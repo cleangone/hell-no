@@ -6,8 +6,15 @@
       <v-form v-model="dataValid">
          <div class="pa-md-4">
             <div v-if="parentGalleryName">Parent Gallery: {{ parentGalleryName  }}</div>
-            <v-text-field v-model="galleryName" label="Gallery Name" :rules="requiredRule"/>
             <v-row>
+               <v-col cols="8">
+                  <v-text-field v-model="galleryName" label="Gallery Name" :rules="requiredRule"/>
+               </v-col> 
+               <v-col> 
+                  <v-text-field v-model="galleryTag" label="Tag" :rules="tagRule"/>
+               </v-col>
+            </v-row>
+            <v-row class="mt-n4">
                <v-col>
                   <v-select v-model="galleryState" label="Gallery State" :items="GalleryStates"/>
                </v-col> 
@@ -17,7 +24,7 @@
                      class="select-min text-subtitle-2"/>
                </v-col>
             </v-row>
-            <div class="my-2 rounded edit-html-div">
+            <div class="rounded edit-html-div">
                <div class="ms-3 pt-2 pb-1 text-caption text-grey-darken-1">Description</div>
                <div class="mx-3 pb-3">
                   <EditHtml :contentContainer="galleryDescContainer"/>
@@ -57,6 +64,7 @@
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
    const galleryName = ref('')
+   const galleryTag = ref('')
    const galleryState = ref('')
    const galleryDescContainer = ref({ content: "" })
    const childGalleries = ref([])
@@ -67,7 +75,8 @@
    const dataValid = ref(true)
    
    onMounted(() => {
-      galleryName.value = props.gallery.name
+      galleryName.value  = props.gallery.name
+      galleryTag.value   = props.gallery.tag ? props.gallery.tag : ""
       galleryState.value = props.gallery.state
       galleryDescContainer.value.content = props.gallery.desc ? props.gallery.desc : ""
       useAltItemName.value   = props.gallery.useAltItemName   ? props.gallery.useAltItemName   : false
@@ -80,6 +89,14 @@
       }
       sortChildGalleries()
    })
+   
+   const tagRule = computed(() => [
+      v => !v || !v.length || v.length < 16 || 'Max 15 characters',
+      v => {         
+         const gallery = galleryStore.getGalleryByTag(v)
+         return gallery && gallery.id != props.gallery.id ? "Tag already exists" : true 
+      }
+   ])
 
    const parentGalleryName = computed(() => galleryStore.getMyGallery(props.gallery.parentGalleryId)?.name )
    
@@ -141,7 +158,8 @@
 
       galleryStore.updateGallery({
          id: props.gallery.id,
-         name: galleryName.value,
+         name:  galleryName.value,
+         tag:   galleryTag.value,
          state: galleryState.value,
          desc: galleryDescContainer.value.content,
          useAltItemName:   useAltItemName.value,

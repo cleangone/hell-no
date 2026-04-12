@@ -196,19 +196,15 @@ export const ItemStates    = [ State.PUBLIC, State.PRIVATE, State.INVISIBLE, Sta
 export const GalleryStates = [ State.PUBLIC, State.PRIVATE, State.INVISIBLE ]
 export const GroupStates   = [ State.PUBLIC, State.GROUP, State.PRIVATE ]
 
-export const TodoType = {
-   INVITE:       'Invite',
-   GROUP_INVITE: 'GroupInvite',
-}
-
-
-
-
-
 export const ThumbType = {
    GALLERY:   'Gallery',
    RECENT:    'Recent',
    FEED:      'Feed',
+}
+
+export const TodoType = {
+   INVITE:       'Invite',
+   GROUP_INVITE: 'GroupInvite',
 }
 
 export const URL = {

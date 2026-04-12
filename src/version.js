@@ -13,6 +13,7 @@
       - lazy loading in router - chunk retrieval errors with Admin, others
 */
 export const versions = [     
+   ["v2.2.0",  "4/12/26"], // Add gallery.tag for readable URL
    ["v2.1.4",  "4/11/26"], // Clean up prev/next and repeated origin for mobile ItemView when scrolling 
    ["v2.1.3",  "4/10/26"], // Store user's gallery and item configs in settings
    ["v2.1.2",  "4/10/26"], // Add small item thumb option for xs

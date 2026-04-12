@@ -87,6 +87,7 @@
    
    const galleryHeaders = [
       { title: 'Name',            value: 'name', sortable: true },
+      { title: 'Tag',             value: 'tag',  sortable: true },
       { title: 'Items',           value: 'itemsDesc',           align: 'center'  },
       { title: 'Images',     key: 'images'  },
       { title: 'Content Modified',value: 'dateContentModified', align: 'center' },

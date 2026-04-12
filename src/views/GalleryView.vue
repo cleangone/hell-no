@@ -111,7 +111,7 @@
    })
 
    const gallery = computed(() => { 
-      const gallery = galleryStore.getGallery(route.params.id)      
+      const gallery = route.params.id.length  > 15 ? galleryStore.getGallery(route.params.id) : galleryStore.getGalleryByTag(route.params.id) 
       // console.log("GalleryView - gallery", gallery)
       if (!gallery) { return null }  // galleryStore has not intiailized yet
 
@@ -122,6 +122,7 @@
    })
    
    const contentStyle      = computed(() => "min-height:" + windowHeight.value + "px")
+   const galleryId         = computed(() => gallery.value.id)
    const descExists        = computed(() => gallery.value.desc && gallery.value.desc.length)
    const hasChildGalleries = computed(() => gallery.value.childGalleryIds && gallery.value.childGalleryIds.length)
    const parentGallery     = computed(() => galleryStore.getGallery(gallery.value.parentGalleryId))
@@ -150,11 +151,7 @@
    const galleryItems = computed(() => { 
       const displayItems = []
       const galleryItemIds = gallery.value.itemIds ? gallery.value.itemIds : []
-      for (const item of itemStore.getGalleryItems(route.params.id)) {
-
-
-         
-
+      for (const item of itemStore.getGalleryItems(galleryId.value)) {
          if (viewMgr.itemThumbVisibleToUser(item)) {
             const displayItem = { ...item, position: galleryItemIds.indexOf(item.id) + 1 }  
             setLocalName(displayItem) 

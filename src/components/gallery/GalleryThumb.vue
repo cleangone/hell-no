@@ -1,7 +1,7 @@
 <template>
    <v-card :width="cardWidth" ref="cardRef" class="d-flex flex-column text-center" :class="cardMargin"
          :style="backgroundStyle" style="z-index: 1">
-      <RouterLink :to="URL.GALLERY + gallery.id">
+      <RouterLink :to="galleryUrl">
          <v-carousel v-if="galleryImages.length>1" cycle :interval="carouselInterval" :height="carouselHeight"
             hide-delimiters :show-arrows="false" v-on:update:modelValue="setGalleryImageIndex">
             <v-carousel-item v-for="image in galleryImages" :key="image.id">
@@ -35,7 +35,6 @@
 
 <script setup>
    import { computed, onErrorCaptured, ref } from 'vue'
-   import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
    import { useWindowSize } from '@vueuse/core'
    import ItemPopup   from '@/components/item/ItemPopup.vue'
    import EditGallery from '@/components/gallery/EditGallery.vue'
@@ -52,8 +51,6 @@
    const XsGalleryThumbWidth = 125
    const props = defineProps({ gallery: Object, showChildImages:Boolean, dense:Boolean })
    
-   const breakpoints = useBreakpoints(breakpointsTailwind)
-   const xs = breakpoints.smaller('sm')
    const { width: windowWidth } = useWindowSize()
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
@@ -68,9 +65,16 @@
    
    onErrorCaptured((err) => { return handleError(err, "GalleryThumb") })
 
-   const smallThumb = computed(() => xs.value && viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SM_THUMB))
+   const galleryUrl = computed(() => URL.GALLERY + (props.gallery?.tag?.length ? props.gallery.tag : props.gallery.id))
+   
+   
+   // const galleryUrl = computed(() => URL.GALLERY + props.gallery.id)
+   
+   
+   
+   const smallThumb = computed(() => viewMgr.isXs && viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SM_THUMB))
    const cardWidth = computed(() =>  {
-      if (xs.value) { 
+      if (viewMgr.isXs) { 
          // .4 is 2 thumbs/row, .28 is 3 thumbs
          const galleryWidthPct = smallThumb.value ? .28 : .4
          return props.dense ? XsGalleryThumbWidth : windowWidth.value * galleryWidthPct
@@ -124,7 +128,7 @@
       return thumbBackgroundColorStyle(props.gallery)})
 
    const mouseover = () => {
-      if (xs.value) { return }
+      if (viewMgr.isXs) { return }
       
       const mouseoverTime = Date.now()  
       setTimeout(() => {  // debounce mouseover 
