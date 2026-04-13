@@ -13,6 +13,8 @@
       - lazy loading in router - chunk retrieval errors with Admin, others
 */
 export const versions = [     
+   ["v2.2.1",  "4/12/26"], // Move all gallery/item control icons to right side by title
+                           // Add copy link back as icon
    ["v2.2.0",  "4/12/26"], // Add gallery.tag for readable URL
    ["v2.1.4",  "4/11/26"], // Clean up prev/next and repeated origin for mobile ItemView when scrolling 
    ["v2.1.3",  "4/10/26"], // Store user's gallery and item configs in settings
@@ -421,25 +423,3 @@ export const versions = [
    ["v0.2.1", "12/27/23"], // Add GroupUser Invited status, accept/decline invite in Account
    ["v0.2.0", "12/26/23"], // Add User wall, with drag & drop editing
 ]
-
-/*
-
-   Top
-      - AboutView FAQ
-      - ItemView
-         - 90% width on swipeitem - cannot scroll on phone with full width
-         - figure out min height for bottom cover
-      - Wall background color
-   Group
-
-   Feed 
-      
-   Notifications
-      - expand home page ToDo section
-   Item
-      - delete removes it from wall
-   General
-      - 600x600 thumb will enlarge small images
-      - caching with workers
-      - Better firestore, storage rules
-   */

@@ -33,11 +33,12 @@
                <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
                <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
                   <span class="title">{{ gallery.name }}</span>
-                  <PlayItems :items="galleryItems" buttonClass="mb-3"/>
-                  <EditButton v-if="editInPlace" @click="showEditGalleryDialog=true"></EditButton> 
                </v-col>
-               <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
+               <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
+                  <PlayItems :items="galleryItems" buttonClass="mr-n2"/>
+                  <CopyLink :route="Route.GALLERY" :id="galleryId"/>
                   <ItemThumbConfig/>
+                  <EditButton v-if="canEdit" @click="showEditGalleryDialog=true" class="mx-n2"/>
                </v-col>
             </v-row>
             <span style="text-align:center">
@@ -69,6 +70,7 @@
    import { computed, onMounted, ref } from 'vue'
    import { useRoute, useRouter } from 'vue-router'
    import { createReusableTemplate, useMouse, useWindowSize } from '@vueuse/core'   
+   import { useSeoMeta } from '@unhead/vue'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useItemStore }    from '@/stores/itemStore'
@@ -83,8 +85,9 @@
    import ItemPopup       from '@/components/item/ItemPopup.vue'
    import PlayItems       from '@/components/item/PlayItems.vue'
    import EditButton      from '@/components/util/EditButton.vue'
+   import CopyLink        from '@/components/util/CopyLink.vue'
    import { backgroundColorStyle, objAspectRatio } from '@/utils/utils'
-   import { ImageType, ItemOrigin, State, URL } from '@/utils/constants'
+   import { ImageType, ItemOrigin, Route, State, URL } from '@/utils/constants'
   
    const route = useRoute()
    const router = useRouter()
@@ -102,6 +105,11 @@
    const showEditGalleryDialog = ref(false)
    const showAddItemDialog     = ref(false)
    
+   useSeoMeta({
+      title: 'Gallery Page',
+      description: 'Gallery description.'
+   })
+
    onMounted(async() => {
       // console.log("GalleryView.onMounted")
       if (!viewStore.isInitialized) {
@@ -122,7 +130,7 @@
    })
    
    const contentStyle      = computed(() => "min-height:" + windowHeight.value + "px")
-   const galleryId         = computed(() => gallery.value.id)
+   const galleryId         = computed(() => gallery.value ? gallery.value.id : "")
    const descExists        = computed(() => gallery.value.desc && gallery.value.desc.length)
    const hasChildGalleries = computed(() => gallery.value.childGalleryIds && gallery.value.childGalleryIds.length)
    const parentGallery     = computed(() => galleryStore.getGallery(gallery.value.parentGalleryId))
@@ -139,6 +147,7 @@
       return galleries
    })
 
+   const canEdit         = computed(() => userStore.userId == gallery.value.userId)
    const backgroundImage = computed(() => getImage(ImageType.BACKGROUND))
    const headerImage     = computed(() => getImage(ImageType.HEADER))
    const getImage = (imageType)  => {
@@ -185,9 +194,6 @@
       }     
    }
    
-   const editInPlace = computed(() => viewStore.editInPlace && (userStore.userId == gallery.value.userId) )
-   const editBackgroundStyle = computed(() => { return editInPlace.value ? backgroundColorStyle(gallery.value.state) : "" })
-
    const headerMouseover = () => {
       const mouseoverTime = Date.now()  
       setTimeout(() => { 

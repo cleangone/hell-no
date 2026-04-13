@@ -1,7 +1,6 @@
 <template>
    <IconButton v-if="itemsExist" @click="showDialog=true" :icon="icon" class="px-0" :class="buttonClass"/> 
             
-    <!-- icon="mdi-play"  -->
    <v-dialog v-model="showDialog" width="auto">
       <PlayItemsDialog :items="props.items" :item="props.item" :fullscreen="props.fullscreen" @done="done()"/>
    </v-dialog>  

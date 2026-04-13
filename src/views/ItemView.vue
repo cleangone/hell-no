@@ -7,15 +7,11 @@
       <div v-if="paramItem.yearCreated" class="text-h6 mt-n2">{{ paramItem.yearCreated }}</div>
       <div v-if="populated(paramItem.subtitle)" class="font-weight-medium mb-1">{{ paramItem.subtitle }}</div>
       <div v-if="paramItem.size" class="mt-n2">{{ paramItem.size }}</div>
-      <div v-if="!viewMgr.solo && itemUsername" class="mt-n1">
-         From <RouterLink :to="URL.USER + paramItem.userId">{{ itemUsername }}</RouterLink>
+      <div v-if="itemUser" class="mt-n1">
+         From <RouterLink :to="URL.USER + paramItem.userId">{{ itemUsername }}</RouterLink> 
+         <IconButton v-if="!isOwnedByUser" icon="mdi-email" @click="sendEmail()"/>
       </div>
-      <!-- <GroupNames v-if="!viewMgr.solo" :groups="itemGroups"/> -->
       <div v-if="isOwnedByUser && !isPublic(paramItem)">{{ paramItem.state }}</div> 
-      <div class="ml-n2">  
-         <IconButton v-if="!viewMgr.solo && itemUser" icon="mdi-email" @click="sendEmail()"/>
-         <EditButton v-if="isOwnedByUser" @click="editItem(paramItem)"/>
-      </div>
       <div v-html="paramItem.desc" class="mt-3 mb-1"></div>
    </DefineTemplate>
 
@@ -24,9 +20,18 @@
     <meta property="og:description" content="Item OG description"/>
      -->
    </Head>
-   <div v-if="viewMgr.isDeskTop && paramItem" style="font-size: 30px">
-      {{ paramItem.name }}
-      <PlayItems :items="viewStoreItems" :item="paramItem" :buttonClass="'mb-1 ' + PLAY_ITEMS_CLASS"/>
+   <div v-if="viewMgr.isDeskTop && paramItem">
+      <v-row no-gutters class="d-flex align-center flex-nowrap" :style="editBackgroundStyle">
+         <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
+         <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
+            <span style="font-size: 30px">{{ paramItem.name }}</span>
+         </v-col>
+         <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
+            <PlayItems :items="viewStoreItems" :item="paramItem" buttonClass="mr-n2"/>
+            <CopyLink :route="Route.ITEM" :id="route.params.id"/>
+            <EditButton v-if="isOwnedByUser" @click="editItem(paramItem)" class="mx-n2"/>
+         </v-col>
+      </v-row>
    </div>
 
    <div> <!-- origin page and galleries -->
@@ -133,7 +138,7 @@
       </div>
       <!-- desktop - image and info -->
       <div v-else class="text-left"> 
-         <IconButton :icon="descBeside?'mdi-image':'mdi-image-text'" @click="viewStore.toggleItemDescBesideImage()"/>
+         <IconButton :icon="descBeside?'mdi-image':'mdi-image-text'" @click="viewStore.toggleItemDescBesideImage()" class="mx-n2"/>
          <PlayItems :items="viewStoreItems" :item="paramItem" icon="mdi-arrow-expand" fullscreen :buttonClass="PLAY_ITEMS_CLASS"/>
          <v-row class="w-100">
             <v-col :cols="descBeside ? 8 : 12">
@@ -214,8 +219,9 @@
    // import GroupNames       from '@/components/group/GroupNames.vue'
    import EditButton       from '@/components/util/EditButton.vue'
    import IconButton       from '@/components/util/IconButton.vue'
+   import CopyLink         from '@/components/util/CopyLink.vue'
    import { handleError, isGroup, isOwned, isPublic, populated } from '@/utils/utils'
-   import { Emit, GalleryImageTypes, ImageType, ItemNavAction, ItemOrigin, ItemType, ParentFeedType, URL } from '@/utils/constants'
+   import { Emit, ImageType, ItemNavAction, ItemOrigin, ItemType, ParentFeedType, Route, URL } from '@/utils/constants'
 
    const PLAY_ITEMS_CLASS = "PlayItems"
    const AdditionalImagesType = { ITEM: 'item', IMAGE: 'image' }
