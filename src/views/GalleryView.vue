@@ -104,11 +104,6 @@
    const headerPopup = ref(null)
    const showEditGalleryDialog = ref(false)
    const showAddItemDialog     = ref(false)
-   
-   useSeoMeta({
-      title: 'Gallery Page',
-      description: 'Gallery description.'
-   })
 
    onMounted(async() => {
       // console.log("GalleryView.onMounted")
@@ -127,6 +122,11 @@
 
       viewStore.setPageName(gallery.name)
       return gallery 
+   })
+
+   useSeoMeta({
+      title: (gallery.value ? gallery.value.name + " " : "")  + "Hell-No Gallery", 
+      description: "Gallery description"
    })
    
    const contentStyle      = computed(() => "min-height:" + windowHeight.value + "px")

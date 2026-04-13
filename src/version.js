@@ -13,6 +13,7 @@
       - lazy loading in router - chunk retrieval errors with Admin, others
 */
 export const versions = [     
+   ["v2.2.2",  "4/13/26"], // Add SeoMeta to Home/Galleries/Gallery/ItemView to update browser tab title
    ["v2.2.1",  "4/12/26"], // Move all gallery/item control icons to right side by title
                            // Add copy link back as icon
    ["v2.2.0",  "4/12/26"], // Add gallery.tag for readable URL

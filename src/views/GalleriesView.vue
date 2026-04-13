@@ -24,6 +24,7 @@
 
 <script setup>
    import { computed, onErrorCaptured, onMounted, ref } from 'vue'
+   import { useSeoMeta } from '@unhead/vue'
    import { useRoute } from 'vue-router'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
@@ -42,6 +43,10 @@
    
    onMounted(async() => {
       if (!viewStore.isInitialized) { viewMgr.init() }
+   })
+
+   useSeoMeta({
+      title: "Hell-No Galleries"
    })
 
    onErrorCaptured((err) => { return handleError(err, "GalleriesView") })

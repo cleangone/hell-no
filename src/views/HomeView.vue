@@ -2,22 +2,15 @@
    <!-- title if not mobile - mobile title in app -->
    <v-container v-if="!viewMgr.isMobile" class="pa-0 mt-2 mb-1 width-100">
       <v-row no-gutters class="d-flex align-center flex-nowrap">
-         <v-col cols="2" class="flex-grow-0 flex-shrink-0"></v-col>
+         <v-col cols="1" class="flex-grow-0 flex-shrink-0"></v-col>
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
             <span class="title">Hell-No H2 Gallery</span>
          </v-col>
-         <v-col cols="2" class="flex-grow-0 flex-shrink-0 d-flex justify-end">
-            <TextButton v-if="userStore.userExists" @click="showAddItemDialog=true" text="Add Item" class="px-0"/>
-         </v-col>
+         <v-col cols="1" class="flex-grow-0 flex-shrink-0 d-flex justify-end"></v-col>
       </v-row>
    </v-container>
    <!-- greeting, notifications, wall -->
-   <v-container class="pa-0 mb-2 width-100">
-      <!-- <div class="mt-n2 mb-2">
-         <div v-if="viewMgr.solo" class="text-subtitle-1">Solo Mode</div>
-         <RouterLink v-else :to="URL.ABOUT">Why should I care?</RouterLink>
-      </div> -->
-      
+   <v-container class="pa-0 mb-2 width-100">   
       <ShowNotifications v-if="notifications.length" :notifications="notifications" class="mb-3"/>
       <div class="walldiv" :style="wallDivStyle">
          <v-img :src="wallImage" cover :style="wallBackgroundStyle" class="wall-background"></v-img>
@@ -27,10 +20,6 @@
       </div>
    </v-container>
    
-
-   <!-- small gallery thumbs -->
-   <!-- <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" showChildImages dense /> -->
-
    <!-- galleries -->
    <div v-if="visibleGalleries.length" class="my-3">
       <div class="my-5">
@@ -54,59 +43,47 @@
          </v-row>
       </v-container>
    </v-container>
-
-   <v-dialog v-model="showAddItemDialog" width="auto">
-      <AddItemDialog @done="showAddItemDialog=false"/>
-   </v-dialog>
 </template>
 
 <script setup>
    import { computed, onMounted, ref } from 'vue'
    import { useElementSize } from '@vueuse/core'
+   import { useSeoMeta } from '@unhead/vue'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
-   // import { useGroupStore }   from '@/stores/groupStore'
    import { useInviteStore }  from '@/stores/inviteStore'
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useWallStore }    from '@/stores/wallStore'
    import { useWallMgr }      from '@/stores/wallMgr'
-   // import { useFeedMgr }      from '@/stores/feedMgr'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { useLocalStore }   from '@/stores/localStore'
-   import AddItemDialog from '@/components/item/crud/AddItemDialog.vue'
    import ItemThumb     from '@/components/item/thumb/ItemThumb.vue'
    import GalleryThumb  from '@/components/gallery/GalleryThumb.vue'
    import SwipeWall     from '@/components/wall/SwipeWall.vue'
-   import TextButton    from '@/components/util/TextButton.vue'
    import ShowNotifications from '@/components/notification/ShowNotifications.vue'
    import { timestampsEqual } from '@/utils/dateUtils'
    import { ThumbRow } from '@/utils/utilClasses'
    import { Defaults, GalleryThumbWidth, ItemOrigin, TodoType, URL, WallRowHeight } from '@/utils/constants'
    
    const userStore    = useUserStore()
-   // const groupStore   = useGroupStore()
    const galleryStore = useGalleryStore()
    const inviteStore  = useInviteStore()
    const itemMgr      = useItemMgr()
    const wallStore    = useWallStore()
    const wallMgr      = useWallMgr()
-   // const feedMgr      = useFeedMgr()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
    const localStore   = useLocalStore()
-   const feedRef    = ref(null)
    const galleryRef = ref(null)
    const recentRef  = ref(null)
-   const { width: feedWidth }    = useElementSize(feedRef)
    const { width: galleryWidth } = useElementSize(galleryRef)
    const { width: recentWidth }  = useElementSize(recentRef)
    const images = ["/images/speakeasy.jpg", "/images/hell-no-sofia.jpg", "/images/hell-no-solo.jpg"]
    const soloImage =  "/images/solo.jpg"
    const currSiteWall = ref(null)
    const currMyWall   = ref(null)
-   const wallBackgroundOpacity = ref(.1)
-   const showAddItemDialog = ref(false)  
+   const wallBackgroundOpacity = ref(.1) 
    
    onMounted(() => {
       // console.log("Home")
@@ -118,6 +95,10 @@
             fadeWallBackground()
          }, 1000)  
       }
+   })
+
+   useSeoMeta({
+      title: "Hell-No Gallery" // displayed in browser tabs
    })
 
    // const seconds = () => { return " (" + viewStore.getSeconds() + " seconds)" }

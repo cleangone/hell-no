@@ -198,7 +198,7 @@
    import { computed, onErrorCaptured, onMounted, ref } from 'vue'
    import { useRoute, useRouter } from 'vue-router'
    import { createReusableTemplate, onKeyStroke, useWindowSize } from '@vueuse/core'
-   // import { useHead } from '@unhead/vue'
+   import { useSeoMeta } from '@unhead/vue'
    import { Head } from '@unhead/vue/components'
    import { useUserStore }    from '@/stores/userStore'
    import { useItemStore }    from '@/stores/itemStore'
@@ -248,17 +248,6 @@
    const selectedImage = ref(null)
    const meta = ref({})
    
-   // useHead({
-   //    title: () => meta.value.title,
-   //    meta: () => [
-   //       { name: 'description', content: "Description" }
-   //    ]
-   // })
-
-   // <meta property="og:title" content="Your Title"/>
-   // <meta property="og:description" content="A full description of the page."/>
-   // <meta property="og:image" content="https://mywebsite.net/assets/opengraph/theogimage.jpg"/>
-   
    // onMounted not guar to be called before other methods/computed
    onMounted(async() => {
       console.log("ItemView.onMounted")
@@ -289,6 +278,10 @@
       viewStore.setPageName(item.name)
       meta.value.title = item.name
       return item 
+   })
+
+   useSeoMeta({
+      title: paramItem.value ? paramItem.value.name : "Hell-No Gallery"
    })
 
    const additionalImages = computed(() => {
