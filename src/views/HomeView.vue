@@ -53,7 +53,6 @@
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useInviteStore }  from '@/stores/inviteStore'
    import { useItemMgr }      from '@/stores/itemMgr'
-   import { useWallStore }    from '@/stores/wallStore'
    import { useWallMgr }      from '@/stores/wallMgr'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
@@ -70,7 +69,6 @@
    const galleryStore = useGalleryStore()
    const inviteStore  = useInviteStore()
    const itemMgr      = useItemMgr()
-   const wallStore    = useWallStore()
    const wallMgr      = useWallMgr()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
@@ -79,10 +77,8 @@
    const recentRef  = ref(null)
    const { width: galleryWidth } = useElementSize(galleryRef)
    const { width: recentWidth }  = useElementSize(recentRef)
-   const images = ["/images/speakeasy.jpg", "/images/hell-no-sofia.jpg", "/images/hell-no-solo.jpg"]
-   const soloImage =  "/images/solo.jpg"
+   const images = [ "/images/speakeasy.jpg", "/images/hell-no-sofia.jpg", "/images/hell-no-solo.jpg" ]
    const currSiteWall = ref(null)
-   const currMyWall   = ref(null)
    const wallBackgroundOpacity = ref(.1) 
    
    onMounted(() => {
@@ -120,37 +116,34 @@
       return todos
    })
 
-   const wallImage   = computed(() => viewMgr.solo ? soloImage : randomImage.value)
-   const randomImage = computed(() => {return images[Math.floor(Math.random() * images.length)] })
-
-   const displayWall = computed(() => viewMgr.solo ? myDisplayWall.value : siteDisplayWall.value)
-
-   const siteDisplayWall = computed(() => {
-      let wall = wallStore.siteWall
-      if (wall.wallRows) { 
-         wall = wallMgr.fillWall(wall, itemMgr.recentPublicItems) 
-         localStore.setSiteWall(wall) 
-      }
+   const wallImage = computed(() => { return images[Math.floor(Math.random() * images.length)] })
+   const displayWall = computed(() => {
+      console.log("displayWall")
+      let wall = wallMgr.filledSiteWall
+      if (wall.wallRows) { localStore.setSiteWall(wall) }
       else if (localStore.siteWall.wallRows) { wall = { ...localStore.siteWall } }
 
-      // use currWall if it exists - prevent flashing of retrieved after dispaly of one from local store
-      if (currSiteWall.value) { return currSiteWall.value }
+      // use currWall if it exists - prevent flashing of retrieved after display of one from local store
+      if (currSiteWall.value) { 
+         console.log("currSiteWall")
+         return currSiteWall.value }
       if (wall.wallRows) { currSiteWall.value = wall }
       return wall
    })
-   
-   const myDisplayWall = computed(() => {
-      let wall = wallStore.myWall
-      if (wall.wallRows) { 
-         wall = wallMgr.fillWall(wall, itemMgr.myRecentItems) 
-         localStore.setMyWall(wall) 
-      }
-      else if (localStore.myWall.wallRows) { wall = { ...localStore.myWall } }
 
-      if (currMyWall.value) { return currMyWall.value }
-      if (wall.wallRows) { currMyWall.value = wall }
-      return wall
-   })
+   // const displayWall = computed(() => {
+   //    let wall = wallStore.siteWall
+   //    if (wall.wallRows) { 
+   //       wall = wallMgr.fillWall(wall, itemMgr.recentPublicItems) 
+   //       localStore.setSiteWall(wall) 
+   //    }
+   //    else if (localStore.siteWall.wallRows) { wall = { ...localStore.siteWall } }
+
+   //    // use currWall if it exists - prevent flashing of retrieved after dispaly of one from local store
+   //    if (currSiteWall.value) { return currSiteWall.value }
+   //    if (wall.wallRows) { currSiteWall.value = wall }
+   //    return wall
+   // })
    
    const slideRowHeight = computed(() => viewMgr.isMobile ? WallRowHeight.XS : WallRowHeight.DEFAULT)
    const slideRowMargin = computed(() => viewMgr.isMobile ? 30 : 10 )
@@ -162,7 +155,7 @@
 
    const visibleGalleries = computed(() => { 
       const galleries = []     
-      const allGalleries = viewMgr.solo ? galleryStore.myGalleries : galleryStore.publicGalleries
+      const allGalleries = galleryStore.publicGalleries
       for (const gallery of allGalleries) {
          if (gallery.images.length && showGallery(gallery) ) { galleries.push(gallery) }
       }    
@@ -192,7 +185,7 @@
    })
    
    const allRecentItems = computed(() => {
-      let items = viewMgr.solo ? [ ...itemMgr.myRecentItems ] : [ ...itemMgr.recentPublicItems, ...itemMgr.recentGroupMemberItems ]
+      let items = [ ...itemMgr.recentPublicItems ]
       if (items.length) { 
          items.sort(function(a, b){return b.dateContentModified - a.dateContentModified}) 
          localStore.setRecentItems(items) 
@@ -217,33 +210,6 @@
       } 
       return thumbRow.thumbs
    })
-
-   // const allFeedItems = computed(() =>  {  
-   //    const items = []
-   //    if (feedMgr.myFeed) { 
-   //       if (feedMgr.myFeed.feedItems.length) { items.push(...feedMgr.myFeed.feedItems) } 
-   //       else if (feedMgr.myFeed?.savedItems?.length ) { 
-   //          viewStore.setShowSavedFeedItems(true)
-   //          items.push(...feedMgr.myFeed.savedItems)
-   //       } 
-   //    }
-   //    viewStore.setVisibleItems(ItemOrigin.FEED, "Feed", URL.FEED, items)
-   //    return items
-   // })
-
-   // const feedItemsExist = computed(() => allFeedItems.value.length > 0)
-   
-   // return number of feed items to fill one row of the feed display
-   // const feedItems = computed(() => { 
-   //    const thumbRow = new ThumbRow(1, feedWidth.value ? feedWidth.value : 150 ) 
-   //    const ungroupedItems = itemMgr.ungroupAndExtractItems(allFeedItems.value)
-   //    for (const item of ungroupedItems) {
-   //       const aspectRatio = itemMgr.itemAspectRatio(item)
-   //       const newThumbWidth = Math.round(200 * aspectRatio) + 5
-   //       if (!thumbRow.addThumb(item, newThumbWidth))  { break }  
-   //    } 
-   //    return thumbRow.thumbs
-   // })
 </script>
 
 <style>
@@ -261,8 +227,5 @@
    top: 0;
    width: 100%;
    z-index: 2;
-}
-.feed {
-   border: 3px solid black; 
 }
 </style>

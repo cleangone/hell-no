@@ -1,10 +1,6 @@
 <template>
    <div class="text-left">  
-      <div class="text-h5">
-         <span v-if="showWalls">Walls<TextButton @click="showWalls=false" text="Site Wall Items"></TextButton></span>
-         <span v-else>Site Wall Items <TextButton @click="showWalls=true" text="Show Walls"></TextButton></span>
-      </div>
-      <v-data-table v-if="showWalls" :headers="headers" :items="displayWalls" :custom-key-sort="customKeySort" items-per-page="25" density="compact">
+      <v-data-table :headers="headers" :items="displayWalls" :custom-key-sort="customKeySort" items-per-page="25" density="compact">
          <template v-slot:item.dateModified="{ item }">
             {{ item.dateModified ? item.dateModified.toDate().toLocaleDateString() : "" }}
          </template> 
@@ -18,7 +14,6 @@
             <EditButton @click="editWall(item)"></EditButton>
          </template>
       </v-data-table>
-      <ManageWall v-else  :wallId="Defaults.SITE_ID"/>
    </div>
    <v-dialog v-model="showEditDialog" width="auto">
       <EditWall :wall="selectedWall" asAdmin @done="showEditDialog=false"/>
@@ -31,13 +26,9 @@
    import { useWallMgr }    from '@/stores/wallMgr'
    import EditButton from '@/components/util/EditButton.vue'
    import EditWall   from '@/components/wall/EditWall.vue'
-   import ManageWall from '@/components/wall/ManageWall.vue'
-   import TextButton from '@/components/util/TextButton.vue'
-   import { Defaults } from '@/utils/constants'  
    
    const wallStore  = useWallStore()
    const wallMgr    = useWallMgr()
-   const showWalls      = ref(true)
    const showEditDialog = ref(false)
    const selectedWall = ref({})
    

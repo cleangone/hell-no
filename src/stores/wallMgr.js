@@ -1,8 +1,11 @@
+import { computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import { useWallStore } from '@/stores/wallStore'
 import { useItemStore } from '@/stores/itemStore'
 import { useItemMgr }   from '@/stores/itemMgr'
+import { useHitStore }  from '@/stores/hitStore'
+import { randomizeArray } from '@/utils/utils'
 import { Defaults, WallType } from '@/utils/constants' 
  
 export const useWallMgr = defineStore('wallMgr', () => { 
@@ -10,13 +13,26 @@ export const useWallMgr = defineStore('wallMgr', () => {
    const wallStore = useWallStore()
    const itemStore = useItemStore()
    const itemMgr   = useItemMgr()
-
+   const hitStore  = useHitStore()
+   
    function name(wall) { 
       if (wall.type == WallType.SITE) { return "Site" }
       else if (wall.type == WallType.USER) { return userStore.getUsername(wall.id)  }
-      else if (wall.type == WallType.GROUP) { return "Group"  }
       return ""
    }
+
+   const filledSiteWall = computed(() => {
+      console.log("filledSiteWall")
+
+      // add a selection of existing user wall items 
+      const siteCopy = { ...wallStore.siteWall }
+      const userWallItems = randomizeArray(wallStore.userWallItems)
+      const firstWallItems = userWallItems.slice(0, 5)
+      console.log("userWallItems", firstWallItems)
+      siteCopy.wallItems = firstWallItems
+   
+      return fillWall(siteCopy, itemMgr.recentPublicItems) 
+   })
 
    function fillWall(wall, items) { 
       const maxItems = wall.maxWallItems ? wall.maxWallItems : Defaults.MAX_WALL_ITEMS
@@ -59,6 +75,6 @@ export const useWallMgr = defineStore('wallMgr', () => {
       }
    }
    
-   return { name, fillWall, userWallIncludesItem, deleteWallItem }
+   return { name, filledSiteWall, fillWall, userWallIncludesItem, deleteWallItem }
 })
 

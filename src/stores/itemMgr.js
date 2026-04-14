@@ -1,14 +1,12 @@
 import { computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useWindowSize } from '@vueuse/core'
-import { useUserStore } from '@/stores/userStore'
 import { useItemStore } from '@/stores/itemStore'
 import { dateUuid, objAspectRatio } from '@/utils/utils'
 import { ItemNavAction, ItemType, State, URL } from '@/utils/constants'
    
 export const useItemMgr = defineStore('itemMgr', () => {   
    const { width: windowWidth, height: windowHeight } = useWindowSize()
-   const userStore = useUserStore()
    const itemStore = useItemStore()   
    
    const myItemIdToItem = computed(() => { 

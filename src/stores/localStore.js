@@ -38,7 +38,7 @@ export const useLocalStore = defineStore('local', () => {
    const soloMode = useLocalStorage('solo-mode', false)
    function setSoloMode(solo) { soloMode.value = solo }
 
-   // local storage serialization recreates date data but not the object w methods
+   // local storage serialization recreates date but not the object w methods
    function fixDates(obj) { 
       const clone = { ...obj }
       clone.dateCreated  = getTimestamp(clone.dateCreated)

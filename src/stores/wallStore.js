@@ -11,7 +11,7 @@ import { Defaults, DefaultWall, WallDisplayOrder, WallType } from '@/utils/const
    Wall
       id - user/groupId or 0 for home wall
       wallRows
-      type: WallType: USER, GROUP, SITE
+      type: WallType: SITE, USER
       displayOrder: WallDisplayOrder: USER_SET, RANDOM, RANDOM_IN_ROW - option unused - all set to RANDOM
       addRecent: boolean
       wallItems[]
@@ -58,6 +58,12 @@ export const useWallStore = defineStore('wall', () => {
    
    const userWallsQuery = computed(() => query(wallCollection, where('type', '==', WallType.USER)))
    const userWalls = useFirestore(userWallsQuery, [])
+   const userWallItems = computed(() => { 
+      const wallItems = []
+      for (const userWall of userWalls.value) { wallItems.push(...userWall.wallItems) }
+      return wallItems
+   })
+
    const userIdToWall = computed(() => { return userWalls.value ? new Map(userWalls.value.map((obj) => [obj.id, obj])) : new Map() })
    function getUserWall(userId) { return userIdToWall.value.has(userId) ? userIdToWall.value.get(userId) : DefaultWall } 
 
@@ -162,7 +168,7 @@ export const useWallStore = defineStore('wall', () => {
    function updateWallDoc(id, wall) { updateDoc(wallDoc(id), { ...wall, dateModified: serverTimestamp() }) }
 
    return { 
-      walls, myWall, myWallIncludesItem, myWallIncludesImage, addMyWallItem, addWallItem,
+      walls, userWallItems, myWall, myWallIncludesItem, myWallIncludesImage, addMyWallItem, addWallItem,
       getWall, getUserWall, createWallItem, addWall, updateWall, removeWallsItemId, removeWallsImageId, removeWallItem,
       siteWall, siteWallIncludesItem, siteWallIncludesImage, addSiteWallItem
    }

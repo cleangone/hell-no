@@ -240,9 +240,8 @@ export const WallRowHeight = {
 }
 
 export const WallType = {
-   USER:  'User',
-   GROUP: 'Group',
    SITE:  'Site',
+   USER:  'User',
 }
 
 export const BackgroundColors = {

@@ -5,9 +5,8 @@ import { collection, doc, query, where, setDoc, updateDoc, deleteDoc, arrayRemov
 import { useFirestore } from '@vueuse/firebase/useFirestore'
 import { useUserStore } from './userStore'
 import { useFeedStore } from './feedStore'
-import { useWallStore } from './wallStore'
 import { dateUuid, isPublic } from '@/utils/utils'
-import { FeedType, State, WallType } from '@/utils/constants'
+import { FeedType, State } from '@/utils/constants'
    
 /*
    Group
@@ -27,7 +26,6 @@ const TABLE = 'groups'
 export const useGroupStore = defineStore('group', () => {
    const userStore = useUserStore()
    const feedStore = useFeedStore()
-   const wallStore = useWallStore()
    const groupCollection = collection(db, TABLE)
    function groupDoc(id) { return doc(db, TABLE, id) }
    
@@ -101,7 +99,6 @@ export const useGroupStore = defineStore('group', () => {
       })
 
       feedStore.addFeed(id, FeedType.GROUP)
-      wallStore.addWall(id, WallType.GROUP)
    }
 
    function updateGroup(group)                 { update(group.id, group) }

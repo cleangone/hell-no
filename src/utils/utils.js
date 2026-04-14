@@ -71,6 +71,14 @@ export function sortByName(objs) {
    return sortedObjs
 }
 
+export function randomizeArray(array) {
+   return !array || !array.length ? array : 
+      array
+         .map(value => ({ value, sort: Math.random() }))
+         .sort((a, b) => a.sort - b.sort)
+         .map(({ value }) => value)
+}
+
 export function populated(str) { return str && str.length }
 
 const KNOWN_ERRORS = [ " is null", ".value is undefined" ]

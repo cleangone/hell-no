@@ -11,8 +11,10 @@
       - finish wall automation - no more set random, auto figure out rows
       - add filter to RecentView
       - lazy loading in router - chunk retrieval errors with Admin, others
+      - add local store of galleries for home page 
 */
-export const versions = [     
+export const versions = [    
+   ["v2.3.0",  "4/14/26"], // Add some userWall items to siteWall
    ["v2.2.2",  "4/13/26"], // Add SeoMeta to Home/Galleries/Gallery/ItemView to update browser tab title
    ["v2.2.1",  "4/12/26"], // Move all gallery/item control icons to right side by title
                            // Add copy link back as icon
