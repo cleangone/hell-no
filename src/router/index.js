@@ -10,7 +10,6 @@ import UserView      from '../views/UserView.vue'
 import LoginView     from '../views/LoginView.vue'
 import RegisterView  from '../views/RegisterView.vue'
 import MessageView   from '../views/MessageView.vue'
-import BroadcastView from '../views/BroadcastView.vue'
 import AboutView     from '../views/AboutView.vue'
 import AccountView   from '../views/AccountView.vue'
 import AdminView     from '../views/AdminView.vue'
@@ -21,7 +20,6 @@ import { Route, URL } from '@/utils/constants'
 // lazy load not working - chunk retrieval error
 // Account works, but others do not
 // const MessageView   = () => import('../views/MessageView.vue')
-// const BroadcastView = () => import('../views/BroadcastView.vue')
 // const AboutView     = () => import('../views/AboutView.vue')
 // const AccountView   = () => import('../views/AccountView.vue')
 // const AdminView     = () => import('../views/AdminView.vue')
@@ -41,14 +39,12 @@ const router = createRouter({
       createRoute(Route.LOGIN,     LoginView,     URL.LOGIN),
       createRoute(Route.REGISTER,  RegisterView,  URL.REGISTER + ':registerId'),
       createRoute(Route.MESSAGE,   MessageView,   URL.MESSAGE),
-      createRoute(Route.BROADCAST, BroadcastView, URL.BROADCAST),
       createRoute(Route.ABOUT,     AboutView,     URL.ABOUT),
       createRoute(Route.ACCOUNT,   AccountView,   URL.ACCOUNT),
       createRoute(Route.ADMIN,     AdminView,     URL.ADMIN),
       createRoute(Route.ADD_ITEM,  AddItemView,   URL.ADD_ITEM),
       createRoute(Route.EDIT_ITEM, EditItemView,  URL.EDIT_ITEM + ':id')
       
-
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.

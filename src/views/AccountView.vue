@@ -22,7 +22,6 @@
             <v-window-item :value="tabs.invite">   <AccountInvites/>   </v-window-item>
             <v-window-item :value="tabs.wall">     <AccountWall/>      </v-window-item>
             <v-window-item :value="tabs.artist">   <AccountArtists/>   </v-window-item>
-            <!-- <v-window-item :value="tabs.broadcast"><AccountBroadcast/> </v-window-item> -->
          </v-window>
       </v-card-text>
   </v-card>
@@ -40,7 +39,6 @@
    import AccountInvites   from '@/components/account/AccountInvites.vue'
    import AccountWall      from '@/components/account/AccountWall.vue'
    import AccountArtists   from '@/components/account/AccountArtists.vue'
-   // import AccountBroadcast from '@/components/account/broadcast/AccountBroadcast.vue'
    import { URL } from '@/utils/constants'
    
    const router = useRouter()
@@ -49,7 +47,6 @@
    const tabs = { 
       item: "item", gallery: "gallery", profile: "profile", group: "group", invite: "invite", 
       wall: "wall", artist: "artist"
-      // , broadcast: "broadcast" 
    }
    const tab = ref(tabs.item)
    const lastLargeScreenTab = ref(null)
