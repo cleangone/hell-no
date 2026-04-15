@@ -4,7 +4,7 @@
       <v-row no-gutters class="d-flex align-center flex-nowrap">
          <v-col cols="1" class="flex-grow-0 flex-shrink-0"></v-col>
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
-            <span class="title">Hell-No H2 Gallery</span>
+            <span class="title">Hell-No Gallery</span>
          </v-col>
          <v-col cols="1" class="flex-grow-0 flex-shrink-0 d-flex justify-end"></v-col>
       </v-row>
@@ -21,7 +21,7 @@
    </v-container>
    
    <!-- galleries -->
-   <div v-if="visibleGalleries.length" class="my-3">
+   <div v-if="recentGalleries.length" class="my-3">
       <div class="my-5">
          <span class="font-weight-bold">Galleries</span> |
          <RouterLink :to="URL.GALLERIES + Defaults.SITE_ID">View all</RouterLink>
@@ -118,32 +118,18 @@
 
    const wallImage = computed(() => { return images[Math.floor(Math.random() * images.length)] })
    const displayWall = computed(() => {
-      console.log("displayWall")
+      // console.log("displayWall")
       let wall = wallMgr.filledSiteWall
       if (wall.wallRows) { localStore.setSiteWall(wall) }
       else if (localStore.siteWall.wallRows) { wall = { ...localStore.siteWall } }
 
       // use currWall if it exists - prevent flashing of retrieved after display of one from local store
       if (currSiteWall.value) { 
-         console.log("currSiteWall")
+         // console.log("currSiteWall")
          return currSiteWall.value }
       if (wall.wallRows) { currSiteWall.value = wall }
       return wall
    })
-
-   // const displayWall = computed(() => {
-   //    let wall = wallStore.siteWall
-   //    if (wall.wallRows) { 
-   //       wall = wallMgr.fillWall(wall, itemMgr.recentPublicItems) 
-   //       localStore.setSiteWall(wall) 
-   //    }
-   //    else if (localStore.siteWall.wallRows) { wall = { ...localStore.siteWall } }
-
-   //    // use currWall if it exists - prevent flashing of retrieved after dispaly of one from local store
-   //    if (currSiteWall.value) { return currSiteWall.value }
-   //    if (wall.wallRows) { currSiteWall.value = wall }
-   //    return wall
-   // })
    
    const slideRowHeight = computed(() => viewMgr.isMobile ? WallRowHeight.XS : WallRowHeight.DEFAULT)
    const slideRowMargin = computed(() => viewMgr.isMobile ? 30 : 10 )
@@ -151,12 +137,10 @@
    const wallDivStyle   = computed(() => "height:" + (((slideRowHeight.value + slideRowMargin.value) * wallRows.value)) + "px;")
    const wallBackgroundStyle = computed(() => wallDivStyle.value + " opacity:" + wallBackgroundOpacity.value + ";")
 
-   // const groups = computed(() => { return groupStore.myGroups })
-
-   const visibleGalleries = computed(() => { 
+   const recentGalleries = computed(() => { 
       const galleries = []     
-      const allGalleries = galleryStore.publicGalleries
-      for (const gallery of allGalleries) {
+      const publicGalleries = galleryStore.publicGalleries
+      for (const gallery of publicGalleries) {
          if (gallery.images.length && showGallery(gallery) ) { galleries.push(gallery) }
       }    
       galleries.sort(function(a, b) { return b.dateContentModified - a.dateContentModified }) 
@@ -175,11 +159,8 @@
    const thumbGalleries = computed(() => {   
       // console.log("galleryWidth " + galleryWidth.value)
       const thumbRow = new ThumbRow(2, galleryWidth.value ? galleryWidth.value : 400 ) // maxRows, maxWidth
-      for (const gallery of visibleGalleries.value) {
-         // console.log("checking " + gallery.name)
-         if (viewMgr.galleryIsVisibleToUser(gallery)) { 
-            if (!thumbRow.addThumb(gallery, GalleryThumbWidth)) { break }  
-         }
+      for (const gallery of recentGalleries.value) {
+         if (!thumbRow.addThumb(gallery, GalleryThumbWidth)) { break }  
       } 
       return thumbRow.thumbs
    })

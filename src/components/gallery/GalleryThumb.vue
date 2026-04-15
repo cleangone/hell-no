@@ -66,12 +66,6 @@
    onErrorCaptured((err) => { return handleError(err, "GalleryThumb") })
 
    const galleryUrl = computed(() => URL.GALLERY + (props.gallery?.tag?.length ? props.gallery.tag : props.gallery.id))
-   
-   
-   // const galleryUrl = computed(() => URL.GALLERY + props.gallery.id)
-   
-   
-   
    const smallThumb = computed(() => viewMgr.isXs && viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SM_THUMB))
    const cardWidth = computed(() =>  {
       if (viewMgr.isXs) { 
@@ -119,13 +113,7 @@
    })
 
    const editInPlace = computed(() => viewStore.editInPlace && (userStore.userId == props.gallery.userId) )
-   // const nameStyle = computed(() => { return editInPlace.value ? backgroundColorStyle(props.gallery.state) : "" })
-   const backgroundStyle = computed(() => { 
-      
-      // const style = thumbBackgroundColorStyle(props.gallery)
-      // if (style.length) { console.log()
-      
-      return thumbBackgroundColorStyle(props.gallery)})
+   const backgroundStyle = computed(() => thumbBackgroundColorStyle(props.gallery))
 
    const mouseover = () => {
       if (viewMgr.isXs) { return }

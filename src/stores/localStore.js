@@ -23,13 +23,7 @@ export const useLocalStore = defineStore('local', () => {
    function setMyWall(wall) { myWallLocal.value = wall }
    
    const recentItemsLocal = useLocalStorage('recent-items', [])
-   const recentItems = computed(() => { 
-      const items = []
-      for (const localItem of recentItemsLocal.value) {
-         items.push(fixDates(localItem))
-      }
-      return items
-   })
+   const recentItems = computed(() => fixObjs(recentItemsLocal.value))
    function setRecentItems(items) { recentItemsLocal.value = items }
    
    const deviceId = useLocalStorage('device-id', null)
@@ -37,6 +31,14 @@ export const useLocalStore = defineStore('local', () => {
 
    const soloMode = useLocalStorage('solo-mode', false)
    function setSoloMode(solo) { soloMode.value = solo }
+
+   function fixObjs(localObjs) {
+      const objs = []
+      for (const localObj of localObjs) {
+         objs.push(fixDates(localObj))
+      }
+      return objs
+   }
 
    // local storage serialization recreates date but not the object w methods
    function fixDates(obj) { 
