@@ -2,6 +2,7 @@
    <v-btn :icon="props.icon"  variant="text" :disabled="props.disabled" :color="color" :size="size" :density="density"></v-btn>
 </template>
 
+v-tooltip="'Your Text'"
 <script setup>
    import { computed } from 'vue'
    

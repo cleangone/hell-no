@@ -33,6 +33,7 @@
 
 <script setup>
    import { computed, ref } from 'vue'
+   import { useSeoMeta } from '@unhead/vue'
    import { useRoute, useRouter } from 'vue-router'
    import { useElementSize } from '@vueuse/core'
    import { useUserStore }    from '@/stores/userStore'
@@ -62,6 +63,10 @@
    const recentRef  = ref(null)
    const { width: galleryWidth } = useElementSize(galleryRef)
    const { width: recentWidth }  = useElementSize(recentRef)
+
+   useSeoMeta({
+      title: "Hell-No User"
+   })
 
    const user          = computed(() => userStore.getUser(route.params.id) )
    const userExists    = computed(() => user.value ? true : false )

@@ -30,6 +30,7 @@
 
 <script setup>
    import { ref } from 'vue'
+   import { useSeoMeta } from '@unhead/vue'
    import { useViewMgr } from '@/stores/viewMgr'
    import AdminUsers   from '@/components/admin/AdminUsers.vue'
    import AdminContent from '@/components/admin/AdminContent.vue'
@@ -45,6 +46,10 @@
       users: "users", content: "content", walls: "walls", artists: "artists", feeds: "feeds", chats: "chats", actions: "actions", test: "test" 
    }
    const tab = ref(tabs.item)
+
+   useSeoMeta({
+      title: "Hell-No Admin"
+   })
 </script>
 
 <style>

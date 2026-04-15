@@ -8,7 +8,6 @@
          <v-tab v-if="!viewMgr.solo"     :value="tabs.invite">Invites</v-tab>
          <v-tab v-if="viewMgr.isDeskTop" :value="tabs.wall">Wall</v-tab>
          <v-tab v-if="viewMgr.isDeskTop" :value="tabs.artist">Artists</v-tab>
-         <!-- <v-tab                          :value="tabs.broadcast">Broadcast</v-tab> -->
          <v-btn v-if="viewMgr.isMobile" @click="logout()" size="small" 
             class="align-self-center ml-auto mr-3" style="float:right">Logout</v-btn>
       </v-tabs>
@@ -29,6 +28,7 @@
 
 <script setup>
    import { onMounted, ref } from 'vue'
+   import { useSeoMeta } from '@unhead/vue'
    import { useRouter } from 'vue-router'
    import { getAuth, signOut } from "firebase/auth"
    import { useViewMgr } from '@/stores/viewMgr'
@@ -54,6 +54,10 @@
    onMounted(() => {
       wasMobile.value = viewMgr.isMobile
       window.addEventListener('resize', onWWindowResize)
+   })
+
+   useSeoMeta({
+      title: "Hell-No My Account"
    })
    
    const onWWindowResize = () => { 

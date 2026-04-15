@@ -23,8 +23,10 @@
             <span v-if="item.childGalleryIds.length"> ({{ item.childGalleryIds.length }})</span>
          </template>
          <template v-slot:item.images="{ item }">
-            <span v-if="item.images.length" style="min-width:90px" class="d-flex  align-center">
-               <img :src="item.images[0].thumbUrl" @click="editImages(item)" height="40" class="pointer"/>
+            <span v-if="firstThumb(item.images)" style="min-width:90px" class="d-flex  align-center">
+            <!-- <span v-if="item.images.length" style="min-width:90px" class="d-flex  align-center"> -->
+               <img :src="firstThumb(item.images).thumbUrl" @click="editImages(item)" height="40" class="pointer"/>
+               <!-- <img :src="item.images[0].thumbUrl" @click="editImages(item)" height="40" class="pointer"/> -->
                <span v-if="item.images.length>1" class="ml-1">({{ item.images.length }})</span>
             </span>
             <IconButton v-else icon="mdi-image" @click="editImages(item)" class="justify-self-center align-self-center"></IconButton>
@@ -72,6 +74,7 @@
    import DeleteButton from '@/components/util/DeleteButton.vue'
    import IconButton   from '@/components/util/IconButton.vue'
    import TextButton   from '@/components/util/TextButton.vue'
+   import { ImageType } from '@/utils/constants'
    import { removeArrayEntry } from '@/utils/utils'
    
    const userStore = useUserStore()
@@ -142,6 +145,18 @@
          }
       }
       return galleries
+   }
+
+   // ugly double loop, but only a couple images
+   const isThumb = (image) => { return !image.imageType || image.imageType == ImageType.GALLERY } // backward compatible   
+   const firstThumb = (images) => { 
+      for (const image of images) {
+         if (isThumb(image) && image.active) { return image }
+      }
+      for (const image of images) {
+         if (isThumb(image)) { return image }
+      }
+      return null      
    }
 
    const editGallery   = (gallery) => { showGalleryDialog(gallery, showEditGalleryDialog) }
