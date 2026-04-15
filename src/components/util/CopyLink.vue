@@ -19,7 +19,7 @@
       // const link = window.location.origin + "/link/?route=" + props.route + "&id=" + props.id
 
       // todo - using hell-no until v1/v2 get fllipped
-      const link = "https://hell-no.gallery" + "/link/?route=" + props.route + "&id=" + props.id
+      const link = "https://ex.hell-no.gallery" + "/link/?route=" + props.route + "&id=" + props.id
       navigator.clipboard.writeText(link) 
    }
 </script>
