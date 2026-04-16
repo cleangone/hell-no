@@ -47,9 +47,7 @@
    }
    const tab = ref(tabs.item)
 
-   useSeoMeta({
-      title: "Hell-No Admin"
-   })
+   useSeoMeta({ title: "Hell-No Admin" })
 </script>
 
 <style>

@@ -41,12 +41,9 @@
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
    
+   useSeoMeta({ title: "Hell-No Galleries" })
    onMounted(async() => {
       if (!viewStore.isInitialized) { viewMgr.init() }
-   })
-
-   useSeoMeta({
-      title: "Hell-No Galleries"
    })
 
    onErrorCaptured((err) => { return handleError(err, "GalleriesView") })

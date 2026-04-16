@@ -20,8 +20,8 @@
       </div>
    </v-container>
    
-   <!-- galleries -->
-   <div v-if="recentGalleries.length" class="my-3">
+   <!-- galleries, favorites -->
+   <!-- <div v-if="recentGalleries.length" class="my-3">
       <div class="my-5">
          <span class="font-weight-bold">Galleries</span> |
          <RouterLink :to="URL.GALLERIES + Defaults.SITE_ID">View all</RouterLink>
@@ -29,6 +29,28 @@
       <v-row justify="space-around" ref="galleryRef" class="mb-md-4" >
          <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" showChildImages />
       </v-row>  
+   </div> -->
+
+   <div v-if="recentGalleries.length || favoriteItems.length" class="my-3">
+      <v-row>
+         <v-col v-if="recentGalleries.length">
+            <div class="my-5">
+               <span class="font-weight-bold">Galleries</span> |
+               <RouterLink :to="URL.GALLERIES + Defaults.SITE_ID">View all</RouterLink>
+            </div>
+            <v-row justify="space-around" ref="galleryRef" class="mb-md-4" >
+               <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" showChildImages dense />
+            </v-row>
+         </v-col>
+         <v-col v-if="favoriteItems.length" class="favorites ma-4 px-3">
+            <div class="font-weight-bold">
+               Favorites | <RouterLink :to="URL.FAVORITES">View all</RouterLink>
+            </div>
+            <v-row justify="space-around" ref="favoritesRef" class="mt-4">
+               <ItemThumb v-for="item in favoriteItems" :key="item.id" :item="item" :origin="ItemOrigin.FEED" tight/>
+            </v-row>
+         </v-col>
+      </v-row>
    </div>
 
    <!-- updates -->
@@ -73,10 +95,12 @@
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
    const localStore   = useLocalStore()
-   const galleryRef = ref(null)
-   const recentRef  = ref(null)
-   const { width: galleryWidth } = useElementSize(galleryRef)
-   const { width: recentWidth }  = useElementSize(recentRef)
+   const galleryRef   = ref(null)
+   const favoritesRef = ref(null)
+   const recentRef    = ref(null)
+   const { width: galleryWidth   } = useElementSize(galleryRef)
+   const { width: favoritesWidth } = useElementSize(favoritesRef)
+   const { width: recentWidth    }  = useElementSize(recentRef)
    const images = [ "/images/speakeasy.jpg", "/images/hell-no-sofia.jpg", "/images/hell-no-solo.jpg" ]
    const currSiteWall = ref(null)
    const wallBackgroundOpacity = ref(.1) 
@@ -182,18 +206,43 @@
       return ungroupedItems
    })
 
-   const recentItems = computed(() => {
-      const thumbRow = new ThumbRow(2, recentWidth.value ? recentWidth.value : 500 )  
-      for (const item of allRecentItems.value) {
+   const allFavoriteItems = computed(() => { 
+      const favorites = []
+      // if (userStore.userExists && userStore.user.favoriteItems) {
+      //    return allRecentItems.value
+      // } 
+
+      // if (userStore.userExists) {
+      //    const items = allRecentItems.value
+
+      //    const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
+         
+      //    // set items for prev/next nav
+      //    viewStore.setVisibleItems(
+      //       ItemOrigin.FAVORITES, "My Favorites", URL.FAVORITES + userStore.userId, ungroupedItems)
+      //    return ungroupedItems
+
+      // } 
+      return favorites
+   })
+   
+   const recentItems   = computed(() => getThumbItems(allRecentItems.value,   2, recentWidth.value, 500))
+   const favoriteItems = computed(() => getThumbItems(allFavoriteItems.value, 1, favoritesWidth.value, 400))
+   function getThumbItems(items, rows, elementWidth, defaultWidth) {
+      const thumbRow = new ThumbRow(rows, elementWidth ? elementWidth : defaultWidth )  
+      for (const item of items) {
          const aspectRatio = itemMgr.itemAspectRatio(item)  // w/h
          const newThumbWidth = Math.round(200 * aspectRatio) + 5
          if (!thumbRow.addThumb(item, newThumbWidth))  { break }  
       } 
       return thumbRow.thumbs
-   })
+   }
 </script>
 
 <style>
+.favorites {
+   border: 3px solid black; 
+}
 .wall-background {
    position: absolute;
    left: 0;

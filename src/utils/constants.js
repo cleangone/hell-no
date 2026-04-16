@@ -122,14 +122,13 @@ export const ItemNavAction = {
 }
 
 export const ItemOrigin = {
-   WALL:     'wall',
-   RECENT:   'recent',
-   SEARCH:   'search',
-   FEED:     'feed',
-   GROUP:    'group',
-   GALLERY:  'gallery',
-   ADMIN:    'admin',
-   EXTERNAL: 'ext',
+   WALL:      'wall',
+   RECENT:    'recent',
+   FAVORITES: 'favorites',
+   SEARCH:    'search',
+   GALLERY:   'gallery',
+   ADMIN:     'admin',
+   EXTERNAL:  'ext',
 }
 
 export const ItemType = {
@@ -167,11 +166,12 @@ export const Route = {
    ITEM:      'item',
    ITEM_CHILD:'itemch',
    USER:      'user',
+   FAVORITES: 'favorites',
+   
    // CATEGORY:  'Category',
    // RECENT:    'Recent Updates',
    // CURRENT:   'Current Activity',
    // ACTIVITY:  'Activity',
-   // FAVORITE:  'Favorites',
    LOGIN:     'login',
    REGISTER:  'register',
    MESSAGE:   'message',
@@ -217,6 +217,7 @@ export const URL = {
    RECENT:    '/recent/',
    ITEM:      '/item/',
    USER:      '/user/',
+   FAVORITES: '/favorites',
    LOGIN:     '/login',
    REGISTER:  '/register/',
    MESSAGE:   '/message',

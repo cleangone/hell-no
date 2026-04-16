@@ -51,15 +51,12 @@
    const tab = ref(tabs.item)
    const lastLargeScreenTab = ref(null)
    
+   useSeoMeta({ title: "Hell-No My Account" })
    onMounted(() => {
       wasMobile.value = viewMgr.isMobile
       window.addEventListener('resize', onWWindowResize)
    })
 
-   useSeoMeta({
-      title: "Hell-No My Account"
-   })
-   
    const onWWindowResize = () => { 
       if (viewMgr.isDeskTop) { 
          if (wasMobile.value) {

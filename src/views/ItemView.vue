@@ -281,7 +281,7 @@
    })
 
    useSeoMeta({
-      title: paramItem.value ? paramItem.value.name : "Hell-No Gallery"
+      title: paramItem.value ? "Hell-No - " + paramItem.value.name : "Hell-No Gallery"
    })
 
    const additionalImages = computed(() => {

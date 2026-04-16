@@ -124,10 +124,7 @@
       return gallery 
    })
 
-   useSeoMeta({
-      title: (gallery.value ? gallery.value.name + " " : "")  + "Hell-No Gallery", 
-      description: "Gallery description"
-   })
+   useSeoMeta({ title: "Hell-No " + (gallery.value ? gallery.value.name + " " : "")  + "Gallery" })
    
    const contentStyle      = computed(() => "min-height:" + windowHeight.value + "px")
    const galleryId         = computed(() => gallery.value ? gallery.value.id : "")

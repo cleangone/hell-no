@@ -8,6 +8,7 @@
    <div class="app">     
       <v-row no-gutters class="flex-nowrap">
          <v-col :cols="sideCols" class="flex-grow-0 flex-shrink-0 nav-left" style="white-space:nowrap">
+            <!-- top left icon for mobile -->
             <nav v-if="viewMgr.isMobile">
                <v-menu v-if="currentRoute==Route.HOME && user"> <!-- force user evaluation to verify solo -->
                   <template v-slot:activator="{ props }">
@@ -31,6 +32,7 @@
                </v-menu>
                <Icon v-if="currentRoute!=Route.HOME" icon="mdi-chevron-left" @click="router.back()"/>
             </nav>
+            <!-- top left links for desktop -->
             <nav v-else>
                <LinkOrText :currentRoute="currentRoute" :route="Route.HOME" :url="URL.HOME" text="Home" />
                <span v-if="!inRoutes(Route.ACCOUNT, Route.ADMIN, Route.REGISTER)">
@@ -48,6 +50,7 @@
                </span> 
             </nav>
          </v-col>
+         <!-- top center title for mobile -->
          <v-col cols="2" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
             <div v-if="viewMgr.isMobile" class="text-h6"> 
                <span v-if="isRoute(Route.HOME)">Hell-No Gallery</span>
@@ -55,12 +58,11 @@
                <span v-else-if="isRoute(Route.GALLERY)">{{ pageName }} Gallery</span>
                <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD)">{{ pageName }}</span>
                <span v-else-if="isRoute(Route.SEARCH)">Search</span>
-               <span v-else-if="isRoute(Route.FEED)"> {{ viewStore.showSavedFeedItems ? "Saved Feed" : "Feed" }}</span>
+               <span v-else-if="isRoute(Route.FAVORITES)">My Favorites</span>
                <span v-else-if="isRoute(Route.RECENT)">Updates</span>
                <span v-else-if="isRoute(Route.ABOUT)">About</span>
                <span v-else-if="isRoute(Route.USER)">{{ userTitle }}</span>
                <span v-else-if="isRoute(Route.MESSAGE)">Messages</span>
-               <!-- <span v-else-if="isRoute(Route.BROADCAST)">Broadcast</span> -->
                <span v-else-if="isRoute(Route.ACCOUNT)" class="text-subtitle-1">My Account</span>
                <span v-else-if="isRoute(Route.ADMIN)" class="text-subtitle-1">Admin</span>
                <span v-else-if="isRoute(Route.ADD_ITEM)">Add Item</span>
@@ -72,6 +74,7 @@
                <span v-if="isRoute(Route.ADMIN)"   class="text-subtitle-1">Admin</span>
             </nav>
          </v-col>
+         <!-- top right icon for mobile -->
          <v-col :cols="sideCols" class="flex-grow-0 flex-shrink-0 nav-right">
             <div v-if="viewMgr.isMobile">
                <span v-if="isRoute(Route.HOME)">
@@ -80,7 +83,7 @@
                <span v-else-if="isRoute(Route.GALLERIES)">
                   <GalleryThumbsConfig/>
                </span>
-               <span v-else-if="inRoutes(Route.GALLERY, Route.RECENT)">
+               <span v-else-if="inRoutes(Route.GALLERY, Route.FAVORITES, Route.RECENT)">
                   <ItemThumbConfig/>
                   <!-- <MultiStateIcon icon="mdi-text-box-plus" :stateColors="viewStore.xsThumbFieldsColors" 
                      :stateIndex="viewStore.xsThumbFieldsIndex" @click="viewStore.incrementXsThumbFieldsIndex()"/> -->
@@ -140,6 +143,7 @@
 
       <MessageSetup disableDisplay/>
 
+      <!-- Bottom nav for mobile -->
       <v-layout v-if="viewMgr.isMobile" style="height:60px">
          <v-bottom-navigation v-model="navIndex" color="primary" style="min-height:60px" grow>
             <v-btn @click="router.push(URL.HOME)">
