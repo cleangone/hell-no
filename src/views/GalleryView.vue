@@ -7,7 +7,7 @@
                   <GalleryThumb v-for="gallery in childThumbGalleries" :key="gallery.id" :gallery="gallery"/>
                </v-row>
             </v-col>
-            <v-col v-if="descExists" cols="6" class="d-flex flex-grow-1 flex-shrink-1">
+            <v-col v-if="descExists && !descInHeader" cols="6" class="d-flex flex-grow-1 flex-shrink-1">
                <div v-html="gallery.desc" class="mb-1 text-left desc-div bg-white"></div>   
             </v-col>
          </v-row>
@@ -47,9 +47,13 @@
             </span>
          </v-container>
          <div style="clear:both"></div>   
-         <div v-if="headerImage" class="bg-white"> 
+         <div v-if="headerImage" class="bg-white mb-20"> 
             <RouterLink :to="itemMgr.itemURL(headerImage.itemId, ItemOrigin.GALLERY)">
-               <v-img :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" cover/>
+               <v-img :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" cover>
+                  <div v-if="descExists && descInHeader" class="pa-1 d-flex fill-height align-end justify-end">
+                     <div v-html="gallery.desc" class="text-left desc-header-div bg-white"></div>   
+                  </div>
+               </v-img>
             </RouterLink>
          </div>   
          <ReuseTemplate/>
@@ -58,8 +62,8 @@
 
    <ItemPopup v-if="headerPopup" :popupImage="headerPopup"/>
 
-   <v-dialog v-model="showEditGalleryDialog" width="auto">
-      <EditGallery :gallery="gallery" @done="showEditGalleryDialog=false"/>
+   <v-dialog v-model="showEditGalleryDialog" width="75%" height="90%">
+      <EditGalleryCard :gallery="gallery" @done="showEditGalleryDialog=false"/>
    </v-dialog>
    <v-dialog v-model="showAddItemDialog" width="auto">
       <AddItemDialog :gallery="gallery" @done="showAddItemDialog=false"/>
@@ -78,7 +82,7 @@
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import GalleryThumb    from '@/components/gallery/GalleryThumb.vue'
-   import EditGallery     from '@/components/gallery/EditGallery.vue'
+   import EditGalleryCard from '@/components/gallery/EditGalleryCard.vue'
    import AddItemDialog   from '@/components/item/crud/AddItemDialog.vue'
    import ItemThumb       from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig from '@/components/item/thumb/ItemThumbConfig.vue'
@@ -129,6 +133,7 @@
    const contentStyle      = computed(() => "min-height:" + windowHeight.value + "px")
    const galleryId         = computed(() => gallery.value ? gallery.value.id : "")
    const descExists        = computed(() => gallery.value.desc && gallery.value.desc.length)
+   const descInHeader      = computed(() => gallery.value.descInHeader)
    const hasChildGalleries = computed(() => gallery.value.childGalleryIds && gallery.value.childGalleryIds.length)
    const parentGallery     = computed(() => galleryStore.getGallery(gallery.value.parentGalleryId))
    const parentGalleryName = computed(() => parentGallery.value ? parentGallery.value.name : "")
@@ -215,6 +220,13 @@
    border-radius: 5px;
    padding: 10px; 
    width: 100%;
+}
+
+.desc-header-div {
+   border: 2px solid rgb(179, 177, 177);
+   border-radius: 5px;
+   padding: 10px; 
+   width: 75%;
 }
 .content-wrapper {
   overflow: hidden;

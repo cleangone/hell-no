@@ -1,8 +1,6 @@
 <template>
-   <v-card :title="'Edit Gallery Images - ' + gallery.name" class="gallery-image-edit-dialog">
-      <template v-slot:append>
-         <IconButton icon="mdi-close" @click="$emit(Emit.DONE)"/>
-      </template>
+   <!-- <v-card> -->
+      
       <div class="text-left">
          <TextButton text="Add item images" @click="addItemImages()" class="ml-3"/>
          <TextButton v-if="viewTable" @click="viewTable=false" text="Sort Thumbnails"/>
@@ -44,7 +42,7 @@
          </template>
       </draggable>
       </div>
-   </v-card> 
+   <!-- </v-card>  -->
 </template>
 
 <script setup>

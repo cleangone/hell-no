@@ -50,11 +50,8 @@
    <v-dialog v-model="showAddGalleryDialog" width="auto">
       <AddGallery :userId="userStore.userId" @done="showAddGalleryDialog=false"/>
    </v-dialog>
-   <v-dialog v-model="showEditGalleryDialog" width="auto">
-      <EditGallery :gallery="selectedGallery" @done="showEditGalleryDialog=false"/>
-   </v-dialog>
-   <v-dialog v-model="showEditImagesDialog" width="auto">
-      <EditGalleryImages :galleryId="selectedGallery.id" @done="showEditImagesDialog=false"/>
+   <v-dialog v-model="showEditGalleryDialog" width="75%" height="90%">
+      <EditGalleryCard :gallery="selectedGallery" :editImages="showEditImages" @done="showEditGalleryDialog=false"/>
    </v-dialog>
    <v-dialog v-model="showDeleteGalleryDialog" width="auto">
       <DeleteGallery :gallery="selectedGallery" @done="showDeleteGalleryDialog=false"/>
@@ -67,8 +64,7 @@
    import { useGalleryStore } from '@/stores/galleryStore'
    import AccountGalleryItems from '@/components/account/AccountGalleryItems.vue'
    import AddGallery          from '@/components/gallery/AddGallery.vue'
-   import EditGallery         from '@/components/gallery/EditGallery.vue'
-   import EditGalleryImages   from '@/components/gallery/EditGalleryImages.vue'
+   import EditGalleryCard     from '@/components/gallery/EditGalleryCard.vue'
    import DeleteGallery       from '@/components/gallery/DeleteGallery.vue'
    import EditButton   from '@/components/util/EditButton.vue'
    import DeleteButton from '@/components/util/DeleteButton.vue'
@@ -81,9 +77,9 @@
    const galleryStore = useGalleryStore()
    const showAddGalleryDialog = ref(false)
    const showEditGalleryDialog = ref(false)
-   const showEditImagesDialog = ref(false)
    const showDeleteGalleryDialog = ref(false)
    const showGalleries = ref(true)
+   const showEditImages = ref(true)
    const selectedGallery = ref({})
    const search = ref("")
    const expandedGalleryIds = ref([])
@@ -159,12 +155,17 @@
       return null      
    }
 
-   const editGallery   = (gallery) => { showGalleryDialog(gallery, showEditGalleryDialog) }
-   const editImages    = (gallery) => { showGalleryDialog(gallery, showEditImagesDialog) }
-   const deleteGallery = (gallery) => { showGalleryDialog(gallery, showDeleteGalleryDialog) }
-   const showGalleryDialog = (gallery, showDialog) => {
+   const editGallery = (gallery) => { showEditGallery(gallery, false) }
+   const editImages  = (gallery) => { showEditGallery(gallery, true) }
+   const showEditGallery = (gallery, images) => {
       selectedGallery.value = gallery
-      showDialog.value = true
+      showEditImages.value = images
+      showEditGalleryDialog.value = true
+   }
+   
+   const deleteGallery = (gallery) => {
+      selectedGallery.value = gallery
+      showDeleteGalleryDialog.value = true
    }
 
    const showGalleryItems = (gallery) => {

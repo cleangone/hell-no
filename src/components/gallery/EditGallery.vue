@@ -1,60 +1,53 @@
 <template>
-   <v-card title="Edit Gallery" class="edit-dialog">
-      <template v-slot:append>
-         <IconButton icon="mdi-close" @click="$emit(Emit.DONE)"/>
-      </template>
-      <v-form v-model="dataValid">
-         <div class="pa-md-4">
-            <div v-if="parentGalleryName">Parent Gallery: {{ parentGalleryName  }}</div>
-            <v-row>
-               <v-col cols="8">
-                  <v-text-field v-model="galleryName" label="Gallery Name" :rules="requiredRule"/>
-               </v-col> 
-               <v-col> 
-                  <v-text-field v-model="galleryTag" label="Tag" :rules="tagRule"/>
-               </v-col>
-            </v-row>
-            <v-row class="mt-n4">
-               <v-col>
-                  <v-select v-model="galleryState" label="Gallery State" :items="GalleryStates"/>
-               </v-col> 
-               <v-col>
-                  <v-select v-model="childGalleries" label="Child Galleries" :items="childGalleryOptions" 
-                     item-title="name" return-object multiple  v-on:update:modelValue="sortChildGalleries"
-                     class="select-min text-subtitle-2"/>
-               </v-col>
-            </v-row>
-            <div class="rounded edit-html-div">
-               <div class="ms-3 pt-2 pb-1 text-caption text-grey-darken-1">Description</div>
-               <div class="mx-3 pb-3">
-                  <EditHtml :contentContainer="galleryDescContainer"/>
-               </div>
-            </div>
-            <v-checkbox v-model="useAltItemName"   label="Use Item Alternate Name, if set, for Thumbnail" class="tight-checkbox"/> 
-            <v-checkbox v-model="useLocalItemName" label="Localize Item Name in Thumbnail" class="tight-checkbox"/> 
-            <v-row v-if="useLocalItemName" class="mt-2">
-               <v-col>
-                  <v-text-field v-model="itemThumbPrefix" label="Item Thumb Prefix"/>
-               </v-col>
-               <v-col>
-                  <v-text-field v-model="itemThumbPrefixReplace" label="Item Thumb Prefix Replace"/>
-               </v-col>
-            </v-row>
+   <v-form v-model="dataValid">
+      <div class="pa-md-4">
+         <div v-if="parentGalleryName">Parent Gallery: {{ parentGalleryName  }}</div>
+         <v-row>
+            <v-col cols="8">
+               <v-text-field v-model="galleryName" label="Gallery Name" :rules="requiredRule"/>
+            </v-col> 
+            <v-col> 
+               <v-text-field v-model="galleryTag" label="Tag" :rules="tagRule"/>
+            </v-col>
+         </v-row>
+         <v-row class="mt-n4">
+            <v-col>
+               <v-select v-model="galleryState" label="Gallery State" :items="GalleryStates"/>
+            </v-col> 
+            <v-col>
+               <v-select v-model="childGalleries" label="Child Galleries" :items="childGalleryOptions" 
+                  item-title="name" return-object multiple  v-on:update:modelValue="sortChildGalleries"
+                  class="select-min text-subtitle-2"/>
+            </v-col>
+         </v-row>
+         <div class="ms-1">
+            <div class="pt-2 pb-1 text-caption text-grey-darken-1">Description</div>
+               <EditHtml :contentContainer="galleryDescContainer"/>
          </div>
-      </v-form>
-      <v-card-actions class="justify-end">
-         <v-btn color="primary" @click="save()" :disabled="!dataValid">save</v-btn>
-         <v-btn color="primary" @click="$emit(Emit.DONE)">Cancel</v-btn>
-      </v-card-actions>
-   </v-card>
+         <v-checkbox v-model="descInHeader" label="Position description inside bottom of header image" class="ms-n1 mt-n2 tight-checkbox"/> 
+         <v-checkbox v-model="useAltItemName" label="Use Item Alternate Name, if set, for Thumbnail" class="ms-n2 mt-2 tight-checkbox"/> 
+         <v-checkbox v-model="useLocalItemName" label="Localize Item Name in Thumbnail" class="ms-n2 tight-checkbox"/> 
+         <v-row v-if="useLocalItemName" class="mt-3">
+            <v-col>
+               <v-text-field v-model="itemThumbPrefix" label="Item Thumb Prefix"/>
+            </v-col>
+            <v-col>
+               <v-text-field v-model="itemThumbPrefixReplace" label="Item Thumb Prefix Replace"/>
+            </v-col>
+         </v-row>
+      </div>
+   </v-form>
+   <div class="float-bottom">  
+      <v-btn @click="save()" :disabled="!dataValid" color="primary" class="mr-4">save</v-btn>
+      <v-btn @click="$emit(Emit.DONE)" color="primary">cancel</v-btn>
+   </div>
 </template>
 
 <script setup>
    import { computed, onMounted, ref } from 'vue'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
-   import EditHtml   from '@/components/util/EditHtml.vue'
-   import IconButton from '@/components/util/IconButton.vue'
+   import EditHtml from '@/components/util/EditHtml.vue'
    import { requiredRule } from '@/utils/utils'
    import { Emit, GalleryStates } from '@/utils/constants'
    
@@ -67,6 +60,7 @@
    const galleryTag = ref('')
    const galleryState = ref('')
    const galleryDescContainer = ref({ content: "" })
+   const descInHeader = ref(false)
    const childGalleries = ref([])
    const itemThumbPrefix = ref('')
    const itemThumbPrefixReplace = ref('')
@@ -79,6 +73,7 @@
       galleryTag.value   = props.gallery.tag ? props.gallery.tag : ""
       galleryState.value = props.gallery.state
       galleryDescContainer.value.content = props.gallery.desc ? props.gallery.desc : ""
+      descInHeader.value     = props.gallery.descInHeader     ? props.gallery.descInHeader     : false
       useAltItemName.value   = props.gallery.useAltItemName   ? props.gallery.useAltItemName   : false
       useLocalItemName.value = props.gallery.useLocalItemName ? props.gallery.useLocalItemName : false
       itemThumbPrefix.value         = props.gallery.itemThumbPrefix        ? props.gallery.itemThumbPrefix : ""
@@ -162,6 +157,7 @@
          tag:   galleryTag.value,
          state: galleryState.value,
          desc: galleryDescContainer.value.content,
+         descInHeader:     descInHeader.value,
          useAltItemName:   useAltItemName.value,
          useLocalItemName: useLocalItemName.value,
          itemThumbPrefix:  itemThumbPrefix.value,

@@ -14,9 +14,11 @@
       - add local store of galleries for home page 
 */
 export const versions = [    
-   ["v2.3.2",  "4/13/26"], // Sort Gallery thumbnails
+   ["v2.4.0",  "4/16/26"], // Make gallery desc position configurable
+                           // Combine edit gallery item/mages into one dialog
+   ["v2.3.2",  "4/14/26"], // Sort Gallery thumbnails
                            // Delete Channel components, stores
-  ["v2.3.1",  "4/13/26"],  // Delete Broadcast views, components
+   ["v2.3.1",  "4/13/26"], // Delete Broadcast views, components
    ["v2.3.0",  "4/13/26"], // Add some userWall items to siteWall
    ["v2.2.2",  "4/13/26"], // Add SeoMeta to Home/Galleries/Gallery/ItemView to update browser tab title
    ["v2.2.1",  "4/12/26"], // Move all gallery/item control icons to right side by title
