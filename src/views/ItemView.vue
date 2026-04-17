@@ -140,6 +140,7 @@
       <div v-else class="text-left"> 
          <IconButton :icon="descBeside?'mdi-image':'mdi-image-text'" @click="viewStore.toggleItemDescBesideImage()" class="mx-n2"/>
          <PlayItems :items="viewStoreItems" :item="paramItem" icon="mdi-arrow-expand" fullscreen :buttonClass="PLAY_ITEMS_CLASS"/>
+         <IconButton v-if="userStore.userExists" :icon="isUserFavorite?'mdi-heart':'mdi-heart-plus-outline'" @click="toggleUserFavorite()" class="mx-n2"/>
          <v-row class="w-100">
             <v-col :cols="descBeside ? 8 : 12">
                <div v-if="isItemGroup(paramItem)" @click="viewStore.toggleItemDescBesideImage()" class="center d-flex justify-center" style="width: 100%">
@@ -201,11 +202,11 @@
    import { useSeoMeta } from '@unhead/vue'
    import { Head } from '@unhead/vue/components'
    import { useUserStore }    from '@/stores/userStore'
+   import { useUserMgr }      from '@/stores/userMgr'
    import { useItemStore }    from '@/stores/itemStore'
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useFeedStore }    from '@/stores/feedStore'
    import { useGalleryStore } from '@/stores/galleryStore'
-   import { useGroupMgr }     from '@/stores/groupMgr'
    import { useWallStore }    from '@/stores/wallStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
@@ -216,12 +217,11 @@
    import ShowItemImages   from '@/components/item/ShowItemImages.vue'
    import ShowItemGroupImages from '@/components/item/ShowItemGroupImages.vue'
    import EditItemDialog   from '@/components/item/crud/EditItemDialog.vue'
-   // import GroupNames       from '@/components/group/GroupNames.vue'
    import EditButton       from '@/components/util/EditButton.vue'
    import IconButton       from '@/components/util/IconButton.vue'
    import CopyLink         from '@/components/util/CopyLink.vue'
-   import { handleError, isGroup, isOwned, isPublic, populated } from '@/utils/utils'
-   import { Emit, ImageType, ItemNavAction, ItemOrigin, ItemType, ParentFeedType, Route, URL } from '@/utils/constants'
+   import { handleError, isOwned, isPublic, populated } from '@/utils/utils'
+   import { Emit, ItemNavAction, ItemOrigin, ParentFeedType, Route, URL } from '@/utils/constants'
 
    const PLAY_ITEMS_CLASS = "PlayItems"
    const AdditionalImagesType = { ITEM: 'item', IMAGE: 'image' }
@@ -229,11 +229,11 @@
    const router = useRouter()
    const [DefineTemplate, ReuseTemplate] = createReusableTemplate()
    const userStore    = useUserStore()
+   const userMgr      = useUserMgr()
    const itemStore    = useItemStore()
    const itemMgr      = useItemMgr()
    const feedStore    = useFeedStore()
    const galleryStore = useGalleryStore()
-   const groupMgr     = useGroupMgr()
    const wallStore    = useWallStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
@@ -280,8 +280,10 @@
       return item 
    })
 
+   // changed back to hardcoded because was causing load issue for mobile
    useSeoMeta({
-      title: paramItem.value ? "Hell-No - " + paramItem.value.name : "Hell-No Gallery"
+      // title: paramItem.value ? "Hell-No - " + paramItem.value.name : "Hell-No Gallery"
+      title: "Hell-No Gallery" 
    })
 
    const additionalImages = computed(() => {
@@ -312,18 +314,23 @@
    const itemUsername  = computed(() => itemUser.value ? itemUser.value.username : null)
    const descBeside    = computed(() => viewStore.itemDescBesideImage)
    const artist        = computed(() => paramItem.value.primaryArtist ? paramItem.value.primaryArtist.fullName : null) 
-
-   // const itemGroups = computed(() => isGroup(paramItem.value) && paramItem.value.groupIds.length ?
-   //                                     groupMgr.getMyOverlapGroups(paramItem.value.groupIds) : []) 
+   
+   const originGalleryId = computed(() => {  
+      let originGalleryId = route.params.origin == ItemOrigin.GALLERY ? viewStoreVisibleItems.value?.linkId : null
+      if (!originGalleryId || originGalleryId.length > 15) { return originGalleryId }
+        
+      // id is actually a tag
+      const gallery = galleryStore.getGalleryByTag(originGalleryId) 
+      return gallery ? gallery.id : null
+   })
 
    const singleOtherGallery     = computed(() => otherGalleries.value.length == 1)
    const multipleOtherGalleries = computed(() => otherGalleries.value.length > 1)
    const otherGalleries = computed(() => {  
       const galleries = []
-      const originGalleryId = route.params.origin == ItemOrigin.GALLERY ? viewStoreVisibleItems.value?.linkId : null
       for (const galleryId of paramItem.value.galleryIds) {
          const gallery = galleryStore.getGallery(galleryId)
-         if (gallery.id != originGalleryId && viewMgr.galleryThumbVisibleToUser(gallery)) { galleries.push(gallery) }
+         if (gallery.id != originGalleryId.value && viewMgr.galleryThumbVisibleToUser(gallery)) { galleries.push(gallery) }
       }
       galleries.sort(function(a, b){return a.name.localeCompare(b.name)}) 
       return galleries
@@ -342,15 +349,20 @@
       }
 
       const galleries = []
-      const originGalleryId = route.params.origin == ItemOrigin.GALLERY ? viewStoreVisibleItems.value?.linkId : null
       for (const galleryId of galleryIds) {
          const gallery = galleryStore.getGallery(galleryId)
-         if (gallery.id != originGalleryId && viewMgr.galleryIsVisibleToUser(gallery)) { galleries.push(gallery) }
+         if (gallery.id != originGalleryId.value && viewMgr.galleryIsVisibleToUser(gallery)) { galleries.push(gallery) }
       }
       galleries.sort(function(a, b){return a.name.localeCompare(b.name)}) 
       itemIdToOtherGalleries.set(item.id, galleries)
       
       return galleries
+   }
+
+   const isUserFavorite = computed(() => userStore.user?.favoriteItems?.includes(route.params.id))
+   const toggleUserFavorite = () => {
+      if (isUserFavorite.value) { userMgr.removeFavoriteItem(route.params.id) }
+      else { userMgr.addFavoriteItem(route.params.id) }
    }
 
    // do not show prev/next if mobile set to scroll through items
@@ -379,7 +391,6 @@
    const viewStoreItems = computed(() => viewStoreVisibleItems.value ? viewStoreVisibleItems.value.items : [])
    const itemIdVisibleItem = computed(() => viewStoreItems.value ? new Map(viewStoreItems.value.map((obj) => [obj.id, obj])) : new Map())
 
-   const isSingleItem = (item) => { return !isItemGroup(item) }
    const isItemGroup  = (item) => { return itemMgr.isItemGroup(item) }
    const isOwnedByUser = computed(() => isOwned(paramItem.value, userStore.userId))
    const prevItemUrl = computed(() => itemMgr.itemNavURL(linkId(navItems.value.prev), route.params.origin, ItemNavAction.PREV, navItems.value.prev.childNum))

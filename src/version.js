@@ -14,8 +14,9 @@
       - add local store of galleries for home page 
 */
 export const versions = [    
-   ["v2.4.0",  "4/16/26"], // Make gallery desc position configurable
-                           // Combine edit gallery item/mages into one dialog
+   ["v2.4.0",  "4/16/26"], // Add Favorites
+                           // Make gallery desc position configurable
+                           // Combine edit gallery item/images into one dialog
    ["v2.3.2",  "4/14/26"], // Sort Gallery thumbnails
                            // Delete Channel components, stores
    ["v2.3.1",  "4/13/26"], // Delete Broadcast views, components

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { useWindowSize } from '@vueuse/core'
 import { useItemStore } from '@/stores/itemStore'
 import { dateUuid, objAspectRatio } from '@/utils/utils'
-import { ItemNavAction, ItemType, State, URL } from '@/utils/constants'
+import { ItemNavAction, ItemType, URL } from '@/utils/constants'
    
 export const useItemMgr = defineStore('itemMgr', () => {   
    const { width: windowWidth, height: windowHeight } = useWindowSize()
@@ -53,6 +53,16 @@ export const useItemMgr = defineStore('itemMgr', () => {
       return recentItems
    }
    
+   function getItems(itemIds) { 
+      if (!itemIds || !itemIds.length) { return [] }
+      const items = []
+      for (const itemId of itemIds) { 
+         const item = itemStore.itemIdToItem.get(itemId)
+         if (item) { items.push(item) }
+      }
+      return items
+   }
+
    function isItemGroup(item) { return item.type == ItemType.GROUP }
    function itemAspectRatio(item) { 
       // console.log("itemAspectRatio", item)
@@ -170,7 +180,7 @@ export const useItemMgr = defineStore('itemMgr', () => {
    }
 
    return { 
-      myItemIdToItem, artistIdToMyItemIds, 
+      myItemIdToItem, artistIdToMyItemIds, getItems,
       recentPublicItems, recentGroupMemberItems, myRecentItems, getRecentItems, getRecentPublicItems,
       isItemGroup, ungroupItems, ungroupItem, ungroupAndExtractItems, extractFromItemGroup,
       itemAspectRatio, itemNavURL, itemURL, getPopupImage, createItemImage }

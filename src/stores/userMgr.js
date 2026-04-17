@@ -1,5 +1,6 @@
 import { computed } from 'vue'
 import { defineStore } from 'pinia'
+import { arrayUnion, arrayRemove } from "firebase/firestore"
 import { useUserStore }  from './userStore'
 import { useGroupStore } from './groupStore'
 
@@ -95,6 +96,9 @@ export const useUserMgr = defineStore('userMgr', () => {
       return getUserContacts(userIds)
    }
    
+   function addFavoriteItem(itemId)    { userStore.updateUser({ id: userStore.userId, favoriteItems: arrayUnion(itemId) })}
+   function removeFavoriteItem(itemId) { userStore.updateUser({ id: userStore.userId, favoriteItems: arrayRemove(itemId) })}
+
    function addMessagingToken(device, token) {
       const user = userStore.user 
       if (user) {
@@ -119,5 +123,6 @@ export const useUserMgr = defineStore('userMgr', () => {
    return { 
       getFullName, getUserIdByEmail, getUserContactByEmail, 
       setItemHeaders, setGalleryThumbOptions, setItemThumbOptions, setShowHiddenItems, 
-      myUserContacts, getUserContactsNotInGroup, addMessagingToken }
+      myUserContacts, getUserContactsNotInGroup, 
+      addFavoriteItem, removeFavoriteItem, addMessagingToken }
 })

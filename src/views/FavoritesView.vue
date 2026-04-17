@@ -15,7 +15,7 @@
    </v-container>
    <v-container style="width: 100%">
       <v-row justify="space-around">
-         <ItemThumb v-for="item in favoriteItems" :key="item.id" :item="item" :origin="ItemOrigin.RECENT" :tight="viewMgr.isMobile"/>
+         <ItemThumb v-for="item in favoriteItems" :key="item.id" :item="item" :origin="ItemOrigin.FAVORITES" :tight="viewMgr.isMobile"/>
       </v-row>
    </v-container>
 </template>
@@ -41,21 +41,16 @@
    const username = computed(() => route.params.id == Defaults.SITE_ID ? null : userStore.getUsername(route.params.id))
    
    const favoriteItems = computed(() => {
-      let items = [] 
-      if (viewMgr.solo) { items = [ ...itemMgr.myRecentItems ] }
-      else if (username.value) { items = [ ...itemMgr.getRecentItems(route.params.id) ] }
-      else { items = [ ...itemMgr.recentPublicItems, ...itemMgr.recentGroupMemberItems ] }
-
-      items.sort(function(a, b){return b.dateContentModified - a.dateContentModified})    
-
-      const displayItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
       const visibleItems = []
-      for (const item of displayItems) {
-         if (viewMgr.itemIsVisibleToUser(item)) { visibleItems.push(item) }
+      if (userStore.userExists && userStore.user.favoriteItems) {
+         const favoriteItemIds = userStore.user.favoriteItems
+         const items = itemMgr.getItems(favoriteItemIds)
+         const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
+         for (const item of ungroupedItems) { 
+            if (viewMgr.itemIsVisibleToUser(item)) { visibleItems.push(item) }
+         }
       }
-
-       // set items for prev/next nav
-      return viewStore.setVisibleItems(ItemOrigin.FAVORITES, "My Favorites", URL.FAVORITES + route.params.id, visibleItems)
+      return viewStore.setVisibleItems(ItemOrigin.FAVORITES, "My Favorites", URL.FAVORITES, visibleItems)
    })
 </script>
 

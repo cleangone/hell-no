@@ -31,7 +31,7 @@
       </v-row>  
    </div> -->
 
-   <div v-if="recentGalleries.length || favoriteItems.length" class="my-3">
+   <div v-if="recentGalleries.length || favoriteItems?.length" class="my-3">
       <v-row>
          <v-col v-if="recentGalleries.length">
             <div class="my-5">
@@ -42,12 +42,12 @@
                <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" showChildImages dense />
             </v-row>
          </v-col>
-         <v-col v-if="favoriteItems.length" class="favorites ma-4 px-3">
+         <v-col v-if="favoriteItems?.length" class="favorites ma-4 px-3">
             <div class="font-weight-bold">
                Favorites | <RouterLink :to="URL.FAVORITES">View all</RouterLink>
             </div>
             <v-row justify="space-around" ref="favoritesRef" class="mt-4">
-               <ItemThumb v-for="item in favoriteItems" :key="item.id" :item="item" :origin="ItemOrigin.FEED" tight/>
+               <ItemThumb v-for="item in favoriteItems" :key="item.id" :item="item" :origin="ItemOrigin.FAVORITES" tight/>
             </v-row>
          </v-col>
       </v-row>
@@ -206,26 +206,19 @@
       return ungroupedItems
    })
 
-   const allFavoriteItems = computed(() => { 
-      const favorites = []
-      // if (userStore.userExists && userStore.user.favoriteItems) {
-      //    return allRecentItems.value
-      // } 
-
-      // if (userStore.userExists) {
-      //    const items = allRecentItems.value
-
-      //    const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
-         
-      //    // set items for prev/next nav
-      //    viewStore.setVisibleItems(
-      //       ItemOrigin.FAVORITES, "My Favorites", URL.FAVORITES + userStore.userId, ungroupedItems)
-      //    return ungroupedItems
-
-      // } 
-      return favorites
+   const allFavoriteItems = computed(() => {
+      const visibleItems = []
+      if (userStore.userExists && userStore.user.favoriteItems) {
+         const favoriteItemIds = userStore.user.favoriteItems
+         const items = itemMgr.getItems(favoriteItemIds)
+         const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
+         for (const item of ungroupedItems) { 
+            if (viewMgr.itemIsVisibleToUser(item)) { visibleItems.push(item) }
+         }
+      }
+      return viewStore.setVisibleItems(ItemOrigin.FAVORITES, "My Favorites", URL.FAVORITES, visibleItems)
    })
-   
+
    const recentItems   = computed(() => getThumbItems(allRecentItems.value,   2, recentWidth.value, 500))
    const favoriteItems = computed(() => getThumbItems(allFavoriteItems.value, 1, favoritesWidth.value, 400))
    function getThumbItems(items, rows, elementWidth, defaultWidth) {
