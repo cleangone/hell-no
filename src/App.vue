@@ -74,8 +74,9 @@
                <span v-if="isRoute(Route.ADMIN)"   class="text-subtitle-1">Admin</span>
             </nav>
          </v-col>
-         <!-- top right icon for mobile -->
+         <!-- top right icons -->
          <v-col :cols="sideCols" class="flex-grow-0 flex-shrink-0 nav-right">
+            <!-- top right icon for mobile -->
             <div v-if="viewMgr.isMobile">
                <span v-if="isRoute(Route.HOME)">
                   <Icon icon="mdi-plus" @click="router.push(URL.ADD_ITEM)"/>
@@ -101,12 +102,12 @@
                   <Icon icon="mdi-close" @click="router.back()"/>
                </span>
             </div>
+            <!-- top right icon for desktop -->
             <div v-else-if="userExists">
                <RouterLink :to="viewMgr.solo || isMyUserPage ? URL.ACCOUNT : URL.USER + userId">{{ firstName }}</RouterLink>
                <v-menu>
                   <template v-slot:activator="{ props }">
-                     <v-btn v-bind="props" icon="mdi-account" 
-                        color="blue-darken-2" size="medium" variant="text"></v-btn>
+                     <v-btn v-bind="props" icon="mdi-account" size="medium" variant="text" class="icon-btn"/>
                   </template>
                   <v-list>
                      <v-list-item @click="toggleSoloMode()">
@@ -296,9 +297,11 @@
 }
 .title    { font-size: 35px; }
 .title-sm { font-size: 16px; }
-.bg-shade {
+
+/* moved to main.css */
+/* .bg-shade {
    background-color: rgb(234, 234, 235);
-}
+} */
 .edit-dialog {
    min-width: 500px;  
 }

@@ -6,7 +6,9 @@
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
             <span class="title">Hell-No Gallery</span>
          </v-col>
-         <v-col cols="1" class="flex-grow-0 flex-shrink-0 d-flex justify-end"></v-col>
+         <v-col cols="1" class="flex-grow-0 flex-shrink-0 d-flex justify-end">
+            <!-- <IconButton :icon="isDark?'mdi-brightness-5':'mdi-brightness-3'" @click="toggleDark()" class="mr-n2"/> -->
+         </v-col>
       </v-row>
    </v-container>
    <!-- greeting, notifications, wall -->
@@ -42,7 +44,7 @@
                <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" showChildImages dense />
             </v-row>
          </v-col>
-         <v-col v-if="favoriteItems?.length" class="favorites ma-4 px-3">
+         <v-col v-if="favoriteItems?.length" class="box-border box-border-color ma-4 px-3">
             <div class="font-weight-bold">
                Favorites | <RouterLink :to="URL.FAVORITES">View all</RouterLink>
             </div>
@@ -69,7 +71,7 @@
 
 <script setup>
    import { computed, onMounted, ref } from 'vue'
-   import { useElementSize } from '@vueuse/core'
+   import { useDark, useElementSize, useToggle } from '@vueuse/core'
    import { useSeoMeta } from '@unhead/vue'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
@@ -82,6 +84,7 @@
    import ItemThumb     from '@/components/item/thumb/ItemThumb.vue'
    import GalleryThumb  from '@/components/gallery/GalleryThumb.vue'
    import SwipeWall     from '@/components/wall/SwipeWall.vue'
+   import IconButton    from '@/components/util/IconButton.vue'
    import ShowNotifications from '@/components/notification/ShowNotifications.vue'
    import { timestampsEqual } from '@/utils/dateUtils'
    import { ThumbRow } from '@/utils/utilClasses'
@@ -104,7 +107,21 @@
    const images = [ "/images/speakeasy.jpg", "/images/hell-no-sofia.jpg", "/images/hell-no-solo.jpg" ]
    const currSiteWall = ref(null)
    const wallBackgroundOpacity = ref(.1) 
+   // const isDark = useDark()
    
+const isDark
+ = useDark
+({
+  selector
+: 'body',
+  attribute
+: 'color-scheme',
+  valueDark
+: 'dark',
+  valueLight
+: 'light',
+})
+
    onMounted(() => {
       // console.log("Home")
       viewMgr.init()
@@ -120,6 +137,10 @@
    useSeoMeta({
       title: "Hell-No Gallery" // displayed in browser tabs
    })
+   
+   // dark mode works if browser set to dark, but toggle doesn't work
+   // see documentation re @media (prefers-color-scheme: dark) vs css .dark 
+   const toggleDark = useToggle(isDark)
 
    // const seconds = () => { return " (" + viewStore.getSeconds() + " seconds)" }
    const showWall = computed(() => viewStore.showSiteWall)
@@ -233,8 +254,8 @@
 </script>
 
 <style>
-.favorites {
-   border: 3px solid black; 
+.box-border {
+   border: 5px solid; 
 }
 .wall-background {
    position: absolute;

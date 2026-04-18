@@ -2,18 +2,15 @@
    Post 1.0:
       
       - Add parallax to gallery header
-      - Eder-mode for wall
-      - User can add to site art wall - would have to be via action because of edit rules
       - Deleted status, trash
       - Add all metadata to mobile ItemView 
-      - Include Edit gallery images in EditGallery
       - review/refactor stores, esp default returns of collection queries
       - finish wall automation - no more set random, auto figure out rows
       - add filter to RecentView
       - lazy loading in router - chunk retrieval errors with Admin, others
-      - add local store of galleries for home page 
 */
 export const versions = [    
+   ["v2.4.1",  "4/17/26"], // Update css styles to support browser dark mode
    ["v2.4.0",  "4/16/26"], // Add Favorites
                            // Make gallery desc position configurable
                            // Combine edit gallery item/images into one dialog

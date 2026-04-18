@@ -1,8 +1,7 @@
 <template>
    <v-menu> 
       <template v-slot:activator="{ props }">
-         <v-btn v-bind="props" icon="mdi-link-box-variant" 
-            color="blue-darken-2" size="medium" variant="text"></v-btn>
+         <v-btn v-bind="props" icon="mdi-link-variant" size="small" variant="text" class="icon-btn"/>
       </template>
       <v-list>
          <v-list-item @click="copyLinkToClipboard()">

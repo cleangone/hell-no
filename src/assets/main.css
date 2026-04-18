@@ -9,19 +9,28 @@
   /* background-color: blueviolet; */
 }
 
-a,
-.blue {
+a, .blue, .icon-btn {
   text-decoration: none;
-  /* color: hsla(160, 100%, 37%, 1); */
   color: #1976D2;
   transition: 0.4s;
 }
 
-@media (hover: hover) {
-  a:hover {
-   /* background-color: hsla(160, 100%, 37%, 0.2); */
-   background-color: #f2f6fc;
+.bg-shade { background-color: var(--color-shade); }
+.box-border-color { border-color: var(--vt-c-black-mute); } 
+
+@media (prefers-color-scheme: dark) {
+   a, .icon-btn {
+      color: #9cdcfe; /* Lighter blue/cyan */
+   }
+   .bg-shade { background-color: var(--color-shade-dark); }
+   .box-border-color { border-color: var(--vt-c-text-dark-2); } 
 }
+
+@media (hover: hover) {
+   a:hover {
+      /* background-color: hsla(160, 100%, 37%, 0.2); */
+      background-color: #f2f6fc;
+   }
 }
 
 /* was min-width: 1024px, then I set it to 1980 */

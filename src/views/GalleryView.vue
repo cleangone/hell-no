@@ -26,7 +26,7 @@
       <ReuseTemplate/>
    </div>
    <div v-else :style="contentStyle" class="content-wrapper">
-      <img v-if="backgroundImage" :src="backgroundImage.url" class="background">
+      <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
       <div class="content">
          <v-container class="mt-4 pa-0 pb-3 width-100">
             <v-row no-gutters class="d-flex align-center flex-nowrap" :style="editBackgroundStyle">
@@ -150,6 +150,7 @@
    })
 
    const canEdit         = computed(() => userStore.userId == gallery.value.userId)
+   const backgroundStyle = computed(() => "opacity: .05;") // make this configurable?
    const backgroundImage = computed(() => getImage(ImageType.BACKGROUND))
    const headerImage     = computed(() => getImage(ImageType.HEADER))
    const getImage = (imageType)  => {
@@ -233,7 +234,6 @@
   position: relative;
 }
 .background {
-  opacity: 0.05;
   position: absolute;
   left: 0;
   top: 0;
