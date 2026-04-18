@@ -8,8 +8,10 @@
       - finish wall automation - no more set random, auto figure out rows
       - add filter to RecentView
       - lazy loading in router - chunk retrieval errors with Admin, others
+      - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.5.0",  "4/18/26"], // Add Profiles
    ["v2.4.1",  "4/17/26"], // Update css styles to support browser dark mode
    ["v2.4.0",  "4/16/26"], // Add Favorites
                            // Make gallery desc position configurable
