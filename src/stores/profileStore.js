@@ -23,6 +23,7 @@ export const useProfileStore = defineStore('profile', () => {
    function profileDoc(id) { return doc(db, TABLE, id) }
    
    const profiles = useFirestore(profileCollection)   
+   const profileIdToProfile = computed(() => profiles.value ? new Map(profiles.value.map((obj) => [obj.id, obj])) : new Map())
    const usernames = computed(() => { return profiles?.value ? new Set(profiles.value.map(obj => obj.username)) : new Set() })
 
    const myProfilesQuery = computed(() => userStore.userId && query(profileCollection, where('userId', '==', userStore.userId)))
@@ -33,13 +34,9 @@ export const useProfileStore = defineStore('profile', () => {
       return sorted
    })
 
-   function getMyProfileUsername(profileId) {
-      if (myProfiles.value) {  
-         for (const profile of myProfiles.value) {
-            if (profile.id == profileId) { return profile.username }
-         }
-      }
-      return null
+   function getUsername(profileId) {
+      const profile = profileIdToProfile.value.get(profileId)
+      return profile ? profile.username : null 
    }
 
    function addProfile(username, userId) {
@@ -57,6 +54,6 @@ export const useProfileStore = defineStore('profile', () => {
    function deleteProfile(id)      { deleteDoc(doc(profileCollection, id)) }
 
    return { 
-      myProfiles, usernames, getMyProfileUsername, addProfile, updateProfile, deleteProfile,
+      myProfiles, usernames, getUsername, addProfile, updateProfile, deleteProfile,
    }
 })

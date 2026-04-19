@@ -207,6 +207,7 @@
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useFeedStore }    from '@/stores/feedStore'
    import { useGalleryStore } from '@/stores/galleryStore'
+   import { useProfileStore } from '@/stores/profileStore'
    import { useWallStore }    from '@/stores/wallStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
@@ -234,6 +235,7 @@
    const itemMgr      = useItemMgr()
    const feedStore    = useFeedStore()
    const galleryStore = useGalleryStore()
+   const profileStore = useProfileStore()
    const wallStore    = useWallStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
@@ -308,13 +310,17 @@
       return images
    })
 
-   const itemName      = computed(() => paramItem.value.name)   
+   // const itemName      = computed(() => paramItem.value.name)   
    const alternateName = computed(() => paramItem.value.alternateName?.length ? paramItem.value.alternateName : null)
    const itemUser      = computed(() => userStore.getUser(paramItem.value.userId)) 
-   const itemUsername  = computed(() => itemUser.value ? itemUser.value.username : null)
    const descBeside    = computed(() => viewStore.itemDescBesideImage)
    const artist        = computed(() => paramItem.value.primaryArtist ? paramItem.value.primaryArtist.fullName : null) 
    
+   const itemUsername  = computed(() => {
+      if (paramItem.value.profileId) { return profileStore.getUsername(paramItem.value.profileId) }
+      else { return itemUser.value ? itemUser.value.username : null }
+    })
+
    const originGalleryId = computed(() => {  
       let originGalleryId = route.params.origin == ItemOrigin.GALLERY ? viewStoreVisibleItems.value?.linkId : null
       if (!originGalleryId || originGalleryId.length > 15) { return originGalleryId }

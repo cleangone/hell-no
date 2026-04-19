@@ -285,7 +285,7 @@
                }
                displayItem.galleries = galleryNames.join(', ')
 
-               if (item.profileId) { displayItem.profile = profileStore.getMyProfileUsername(item.profileId) }
+               if (item.profileId) { displayItem.profile = profileStore.getUsername(item.profileId) }
 
                displayItems.push(displayItem)
             }

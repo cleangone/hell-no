@@ -22,8 +22,9 @@
 
 <script setup>
    import { computed, onErrorCaptured, ref } from 'vue'
-   import { useUserStore } from '@/stores/userStore'
-   import { useViewStore } from '@/stores/viewStore'
+   import { useUserStore }    from '@/stores/userStore'
+   import { useProfileStore } from '@/stores/profileStore'
+   import { useViewStore }    from '@/stores/viewStore'
    import ItemArtistYear   from '../ItemArtistYear.vue'
    import EditItemDialog   from '../crud/EditItemDialog.vue'
    import EditButton       from '@/components/util/EditButton.vue'
@@ -36,8 +37,9 @@
    const props = defineProps({ 
       item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, showAdminIcons: Boolean
    })
-   const userStore = useUserStore()
-   const viewStore = useViewStore()
+   const userStore    = useUserStore()
+   const profileStore = useProfileStore()
+   const viewStore    = useViewStore()
    const showEditDialog = ref(false)
    
    const item = computed(() => props.item)
@@ -56,9 +58,12 @@
    })
 
    const fromUser = computed(() => { 
-      return showUser.value ? 
-         { id: item.value.userId, name: item.value.username ? item.value.username : userStore.getUsername(item.value.userId) } : 
-         null 
+      if (showUser.value) {
+         if (item.value.profileId) { return { id: item.value.userId, name: profileStore.getUsername(item.value.profileId) }}
+         else { return { id: item.value.userId, 
+            name: item.value.username ? item.value.username : userStore.getUsername(item.value.userId) }}
+      }
+      return null 
    }) 
 </script>
 

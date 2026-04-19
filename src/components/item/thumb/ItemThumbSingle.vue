@@ -27,7 +27,7 @@
    })
 
    const userStore = useUserStore()
-   const itemMgr = useItemMgr()
+   const itemMgr   = useItemMgr()
    const viewStore = useViewStore()
    const viewMgr   = useViewMgr()
    const cardRef = ref(null)
