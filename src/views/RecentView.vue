@@ -15,7 +15,8 @@
    </v-container>
    <v-container style="width: 100%">
       <v-row justify="space-around">
-         <ItemThumb v-for="item in recentItems" :key="item.id" :item="item" :origin="ItemOrigin.RECENT" :tight="viewMgr.isMobile"/>
+         <ItemThumb v-for="item in recentItems" :key="item.id" :item="item" :origin="ItemOrigin.RECENT" 
+            :bypassShowUser="bypassShowUser" :tight="viewMgr.isMobile"/>
       </v-row>
    </v-container>
 </template>
@@ -55,6 +56,8 @@
 
       return viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates", URL.RECENT + route.params.id, visibleItems)
    })
+
+   const bypassShowUser = computed(() => username.value ? true : false)
 </script>
 
 <style>

@@ -48,7 +48,7 @@
    import { GalleryThumbOptions, GalleryThumbWidth, ImageType, URL } from '@/utils/constants'
    
    const XsGalleryThumbWidth = 125
-   const props = defineProps({ gallery: Object, showChildImages:Boolean, dense:Boolean })
+   const props = defineProps({ gallery: Object, showChildImages:Boolean, bypassShowUser:Boolean, dense:Boolean })
    
    const { width: windowWidth } = useWindowSize()
    const userStore    = useUserStore()
@@ -82,7 +82,7 @@
    const carouselHeight   = computed(() => cardWidth * 9 / 16)
    const carouselInterval = computed(() => 4000 + Math.floor(Math.random() * 4000)) // random bet 4-8 secs 
    const visibleItemCount = computed(() => viewMgr.galleryItemCount(props.gallery))
-   const showUser         = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.USER))
+   const showUser         = computed(() => !props.bypassShowUser && viewStore.galleryThumbOptions.includes(GalleryThumbOptions.USER))
    const showDateModified = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.UPDATED))
    
    const fromUser = computed(() => { 

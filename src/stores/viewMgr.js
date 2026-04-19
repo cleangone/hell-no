@@ -30,7 +30,7 @@ export const useViewMgr = defineStore('viewMgr', () => {
          // console.log("localStore.deviceId", deviceId)
          if (!deviceId) {
             deviceId = dateUuid()
-            console.log("localStore.setDeviceId", deviceId)
+            // console.log("localStore.setDeviceId", deviceId)
             localStore.setDeviceId(deviceId)
          }
          viewStore.setDeviceId(deviceId)
@@ -72,7 +72,7 @@ export const useViewMgr = defineStore('viewMgr', () => {
       }
       if (hitIds.value.length == 1) {
          setTimeout(function() { 
-            console.log("viewMgr hits reset")
+            // console.log("viewMgr hits reset")
             hits.value = [] 
          }, 1000 * 60 * 60) // reset after an hour
       }

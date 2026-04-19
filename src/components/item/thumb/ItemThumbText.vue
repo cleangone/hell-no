@@ -1,9 +1,9 @@
 <template>
-   <div v-if="showTitle || showArtist" class="text-body-2 mb-2"> 
+   <div v-if="showTitle || showArtist" class="text-body-2"> 
       <div v-if="showTitle" showTitle class="font-weight-bold">{{ itemName }}</div>
       <ItemArtistYear v-if="showArtist" :item="item"/>
    </div>
-   <UserDateText :user="fromUser" :date="showDateModified ? item.dateContentModified : null" class="text-body-2 mt-2"/>
+   <UserDateText :user="fromUser" :date="showDateModified ? item.dateContentModified : null" class="text-body-2"/>
    <div v-if="showAdminIcons" class="mt-auto text-right">
       <EditButton @click="showEditDialog=true" ></EditButton>
    </div>
@@ -27,8 +27,8 @@
    
    onErrorCaptured((err) => { return handleError(err, "ItemThumbText") })
 
-   const props = defineProps({ 
-      item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, showAdminIcons: Boolean
+   const props = defineProps({ item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, 
+      bypassShowUser:Boolean, showAdminIcons: Boolean
    })
    const userStore    = useUserStore()
    const profileStore = useProfileStore()
@@ -42,7 +42,7 @@
    })
    const showTitle        = computed(() => selectedFields.value.includes(ThumbOptions.TITLE))
    const showArtist       = computed(() => selectedFields.value.includes(ThumbOptions.ARTIST))
-   const showUser         = computed(() => selectedFields.value.includes(ThumbOptions.USER))
+   const showUser         = computed(() => !props.bypassShowUser && selectedFields.value.includes(ThumbOptions.USER))
    const showDateModified = computed(() => selectedFields.value.includes(ThumbOptions.UPDATED))
    
    const itemName = computed(() => { 

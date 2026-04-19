@@ -17,7 +17,8 @@
    <div style="clear:both"></div>
    <v-container>
       <v-row justify="space-around" class="mb-md-4" >
-         <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" :showChildImages="!showChildGalleries"/>
+         <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" 
+            :bypassShowUser="bypassShowUser" :showChildImages="!showChildGalleries"/>
       </v-row>
    </v-container>
 </template>
@@ -86,6 +87,8 @@
       else { galleries.sort(function(a, b) { return a.name.localeCompare(b.name) }) }
       return galleries
    })
+
+   const bypassShowUser = computed(() => username.value ? true : false)
 </script>
 
 <style>

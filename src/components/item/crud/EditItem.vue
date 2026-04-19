@@ -22,7 +22,7 @@
                <v-text-field v-model="currItemSubtitle" label="Subtitle" class="ms-2"/>
                <v-row>        
                   <v-col><v-select v-model="currItemState"     label="Item State" :items="ItemStates" class="ms-2"/></v-col>
-                  <v-col><v-select v-model="currProfileOption" label="Owned by Profile" :items="profileOptions" clearable/></v-col>
+                  <v-col><v-select v-model="currProfileOption" label="Owned by Profile" :items="profileOptions" clearable return-object/></v-col>
                </v-row>
                <v-row class="mt-n5">        
                   <v-col cols="8"><v-combobox v-model="artistOption" label="Artist" :items="artistOptions" clearable compact class="ms-2"/></v-col>

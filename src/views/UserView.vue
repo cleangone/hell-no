@@ -15,7 +15,7 @@
          <RouterLink :to="URL.GALLERIES + route.params.id">View all</RouterLink>   
       </div>
       <v-row justify="space-around" ref="galleryRef" class="mb-md-4" >
-         <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" showChildImages dense />
+         <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" bypassShowUser showChildImages dense />
       </v-row>
    </v-container>
    <v-container v-if="recentItems.length" class="mt-4 pt-1 bg-shade">
@@ -25,7 +25,7 @@
       </div>
       <v-container>
          <v-row justify="space-around" ref="recentRef" class="mb-md-4" >
-            <ItemThumb v-for="item in recentItems" :key="item.id" :item="item" :origin="ItemOrigin.RECENT"/>
+            <ItemThumb v-for="item in recentItems" :key="item.id" :item="item" :origin="ItemOrigin.RECENT" bypassShowUser/>
          </v-row>
       </v-container> 
    </v-container>

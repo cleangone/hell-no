@@ -3,16 +3,14 @@
       <div class="pa-md-4">
          <div v-if="parentGalleryName">Parent Gallery: {{ parentGalleryName  }}</div>
          <v-row>
-            <v-col cols="8">
-               <v-text-field v-model="galleryName" label="Gallery Name" :rules="requiredRule"/>
-            </v-col> 
-            <v-col> 
-               <v-text-field v-model="galleryTag" label="Tag" :rules="tagRule"/>
-            </v-col>
+            <v-col cols="8"><v-text-field v-model="galleryName" label="Gallery Name" :rules="requiredRule"/></v-col> 
+            <v-col><v-text-field v-model="galleryTag" label="Tag" :rules="tagRule"/></v-col>
          </v-row>
          <v-row class="mt-n4">
             <v-col><v-select v-model="galleryState" label="Gallery State" :items="GalleryStates"/></v-col> 
             <v-col><v-select v-model="galleryProfileOption" label="Owned by Profile" :items="profileOptions" clearable/></v-col> 
+         </v-row>
+         <v-row class="mt-n4">
             <v-col>
                <v-select v-model="childGalleries" label="Child Galleries" :items="childGalleryOptions" 
                   item-title="name" return-object multiple  v-on:update:modelValue="sortChildGalleries"

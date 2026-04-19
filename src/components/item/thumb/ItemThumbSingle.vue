@@ -5,7 +5,7 @@
          <v-img :src="thumbUrl" @mouseover="mouseover()" @mouseleave="mouseleave()"></v-img>
       </RouterLink>
       <ItemThumbText :item="item" :origin="origin" 
-         :useAltName="useAltName" :useLocalName="useLocalName" :showAdminIcons="showAdminIcons"/>
+         :useAltName="useAltName" :useLocalName="useLocalName" :bypassShowUser="bypassShowUser" :showAdminIcons="showAdminIcons"/>
    </v-card>
    
    <ItemPopup v-if="popup && !showAdminIcons" :popupImage="popup"/>
@@ -22,8 +22,8 @@
    import { backgroundColorStyle, handleError } from '@/utils/utils'
    import { ItemThumbOptions as ThumbOptions } from '@/utils/constants'
    
-   const props = defineProps({ 
-      item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, admin: Boolean
+   const props = defineProps({ item: Object, origin: String, 
+      useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean, admin: Boolean
    })
 
    const userStore = useUserStore()

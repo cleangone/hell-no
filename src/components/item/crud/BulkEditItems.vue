@@ -10,8 +10,9 @@
             <v-col><v-text-field v-model="nameReplace"  label="Name Replace"    class="mr-3"/></v-col>
          </v-row>
          <v-row class="mt-n7">
-            <v-col><v-select     v-model="itemState"    label="Visibility" :items="ItemStates" class="ml-3"/> </v-col>
-            <v-col><v-text-field v-model="yearCreated"  label="Year Created" :rules="optionalYearRule" class="mr-2"/></v-col>
+            <v-col><v-select v-model="itemState"      label="Visibility" :items="ItemStates" class="ml-3"/> </v-col>
+            <v-col><v-select v-model="profileId" :items="profiles" item-title="username" item-value="id" clearable/></v-col>
+            <v-col><v-text-field v-model="yearCreated" label="Year Created" :rules="optionalYearRule" class="mr-3"/></v-col>
          </v-row>
          <div class="expansion">
             <v-expansion-panels multiple>
@@ -36,8 +37,7 @@
    import { useGalleryMgr }   from '@/stores/galleryMgr'
    import { useArtistStore }  from '@/stores/artistStore'
    import { useArtistMgr }    from '@/stores/artistMgr'
-   import { useFeedMgr }      from '@/stores/feedMgr'
-   import { useActionStore }  from '@/stores/ActionStore'
+   import { useProfileStore } from '@/stores/profileStore'
    import CheckboxExpansion from '@/components/util/CheckboxExpansion.vue'
    import { optionalYearRule } from '@/utils/utils'
    import { Emit, ItemStates } from '@/utils/constants'
@@ -50,17 +50,18 @@
    const galleryMgr   = useGalleryMgr()
    const artistStore  = useArtistStore()
    const artistMgr    = useArtistMgr()
-   const feedMgr      = useFeedMgr()
-   const actionStore  = useActionStore()
+   const profileStore = useProfileStore()
    const namePrefix  = ref(null)
    const nameFind    = ref('')
    const nameReplace = ref('')
    const itemState   = ref('')
    const yearCreated = ref(null)
    const artistOption = ref(null)
-   const initialItemState    = ref('')
-   const initialYearCreated  = ref(null)
-   const initialArtistId     = ref(null)
+   const profileId   = ref(null)
+   const initialItemState   = ref('')
+   const initialProfileId   = ref(null)
+   const initialYearCreated = ref(null)
+   const initialArtistId    = ref(null)
    const initialSelectedGroupIds   = []
    const initialSelectedGalleryIds = []
    const itemGroups    = ref([])
@@ -68,6 +69,7 @@
    
    onMounted(() => {
       const stateValues = []
+      const profileIdValues = []
       const yearCreatedValues = new Set()
       const artistIds = []
       let primaryArtist = null
@@ -80,6 +82,9 @@
                artistIds.push(item.primaryArtist.id) }
          }  
          else { artistIds.push("0")}
+
+         const profileId = item.profileId ? item.profileId : ""
+         if (!profileIdValues.includes(profileId)) { profileIdValues.push(profileId) }
       }
 
       if (stateValues.length == 1) { 
@@ -93,6 +98,10 @@
             initialYearCreated.value = commonValue
             yearCreated.value = commonValue 
          }
+      }
+
+      if (profileIdValues.length == 1 && profileIdValues[0].length) { 
+         initialProfileId.value = profileIdValues[0] 
       }
 
       for (const item of props.items) {
@@ -136,15 +145,28 @@
 
    const artistOptions = computed(() => { return artistMgr.getArtistOptions(artistStore.myVisibleArtists) })
    
+   const profiles = computed(() => { 
+      const profiles = [ ...profileStore.myProfiles ]
+      for (const profile of profiles) {
+         if (initialProfileId.value == profile.id) { profileId.value = profile.id }
+      }
+      return profiles
+   })
+
    const dataEntered = computed(() => { 
       return namePrefix.value ||
              nameFind.value.length ||
              itemState.value != initialItemState.value ||
              yearCreated.value != initialYearCreated.value ||
              (artistOption.value && artistOption.value.value.id != initialArtistId.value) ||
+             profileUpdated.value ||
              JSON.stringify(selectedGroupIds.value)   != JSON.stringify(initialSelectedGroupIds) ||
              JSON.stringify(selectedGalleryIds.value) != JSON.stringify(initialSelectedGalleryIds)
    })
+   const profileUpdated = computed(() => 
+      !initialProfileId.value && profileId.value ||
+      initialProfileId.value && (!profileId.value || profileId.value != initialProfileId.value)
+   )
 
    const selectedGroupIds   = computed(() => selectedCheckboxIds(itemGroups.value))
    const selectedGalleryIds = computed(() => selectedCheckboxIds(itemGalleries.value))
@@ -228,11 +250,10 @@
             itemToUpdate.primaryArtist = artistMgr.getItemArtist(selectedArtist) 
          }
 
-         const updatedItem = itemStore.updateItem(itemToUpdate)
-         
-         const updatedItemForFeed = feedMgr.createFeedItem(updatedItem, item)
-         actionStore.addFeedAction(updatedItemForFeed, item)
+         if (profileUpdated.value) { itemToUpdate.profileId = profileId.value }
 
+         itemStore.updateItem(itemToUpdate)
+         
          for (const galleryId of addedGalleryIds) { 
             const { id, name, primaryImage, otherImages } = item
             galleryStore.addItem(galleryId, { id, name, primaryImage, otherImages }) 

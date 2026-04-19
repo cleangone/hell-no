@@ -97,6 +97,30 @@ export const useGalleryMgr = defineStore('galleryMgr', () => {
       galleryStore.removeItemId(galleryId, itemToDeleteId, dateContentModified) 
    }
 
-   return { getUserGalleries, deleteGallery, uniqueItems, galleryImage, myGalleryOptions, getGalleryOptions, removeItemId } 
+   const profileIdToGalleryIds = computed(() => { 
+      const profileIdToGalIds = new Map() 
+      if (galleryStore.galleries) {
+         for (const gallery of galleryStore.galleries) { 
+            if (gallery.profileId) {
+               const galleryIds = profileIdToGalIds.get(gallery.profileId)
+               if (galleryIds) { galleryIds.push(gallery.id) }
+               else { profileIdToGalIds.set(gallery.profileId, [ gallery.id ]) } 
+            }
+         }
+      }
+      return profileIdToGalIds
+   })
+
+   function getProfileCount(profileId) { 
+      if (profileIdToGalleryIds.value) {
+         const galleryIds = profileIdToGalleryIds.value.get(profileId)
+         if (galleryIds) { return galleryIds.length }
+      }
+      return 0
+   }
+
+   return { getUserGalleries, deleteGallery, uniqueItems, galleryImage, myGalleryOptions, 
+      getGalleryOptions, getProfileCount, removeItemId 
+   } 
 })
 

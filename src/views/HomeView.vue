@@ -23,16 +23,6 @@
    </v-container>
    
    <!-- galleries, favorites -->
-   <!-- <div v-if="recentGalleries.length" class="my-3">
-      <div class="my-5">
-         <span class="font-weight-bold">Galleries</span> |
-         <RouterLink :to="URL.GALLERIES + Defaults.SITE_ID">View all</RouterLink>
-      </div>
-      <v-row justify="space-around" ref="galleryRef" class="mb-md-4" >
-         <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" showChildImages />
-      </v-row>  
-   </div> -->
-
    <div v-if="recentGalleries.length || favoriteItems?.length" class="my-3">
       <v-row>
          <v-col v-if="recentGalleries.length">
