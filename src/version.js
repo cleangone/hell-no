@@ -11,7 +11,15 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
-   ["v2.5.0",  "4/18/26"], // Add Profiles
+                           // Display profile's UserView when profile username clicked on
+                           // bulkEditItem
+                           // userView thumbs don't need user listed
+   
+   ["v2.5.2",  "4/19/26"], // Integrate Profile with Galleries
+                           // Add user to GalleryThumb
+                           // Streamline user/dateModified in Item/GalleryThumb
+   ["v2.5.1",  "4/18/26"], // Items with a profileId do not show on user's recentItems           
+   ["v2.5.0",  "4/18/26"], // Add Profiles, integrate with Items
    ["v2.4.1",  "4/17/26"], // Update css styles to support browser dark mode
    ["v2.4.0",  "4/16/26"], // Add Favorites
                            // Make gallery desc position configurable

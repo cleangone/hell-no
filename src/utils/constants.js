@@ -71,6 +71,7 @@ export const GalleryThumbOptions = {
    SM_THUMB:     'Small Thumbnails',
    SHOW_CHILD:   'Show Child Galleries',
    SHOW_PRIVATE: 'Show My Private Galleries',
+   USER:         'User',
    UPDATED:      'Date Updated',
    SORT_BY_NAME: 'Sort by Name',
    SORT_BY_DATE: 'Sort by Date',

@@ -9,8 +9,8 @@ import { dateUuid } from '@/utils/utils'
 /*
    Profile
       id
-      name
       userId
+      username
       dateCreated
       dateModified
 */
@@ -40,11 +40,11 @@ export const useProfileStore = defineStore('profile', () => {
    }
 
    function addProfile(username, userId) {
-      const id = dateUuid()
-      setDoc(profileDoc(id), {
-         id: id,
-         username: username,
+      const newProfileRef = doc(profileCollection) // generate a firebase id, which looks like a userId
+      setDoc(newProfileRef, {
+         id: newProfileRef.id, 
          userId: userId,
+         username: username,
          dateCreated:  serverTimestamp(),
          dateModified: serverTimestamp()
       })

@@ -22,7 +22,7 @@
                <v-text-field v-model="currItemSubtitle" label="Subtitle" class="ms-2"/>
                <v-row>        
                   <v-col><v-select v-model="currItemState"     label="Item State" :items="ItemStates" class="ms-2"/></v-col>
-                  <v-col><v-select v-model="currProfileOption" label="Profile" :items="profileOptions" clearable/></v-col>
+                  <v-col><v-select v-model="currProfileOption" label="Owned by Profile" :items="profileOptions" clearable/></v-col>
                </v-row>
                <v-row class="mt-n5">        
                   <v-col cols="8"><v-combobox v-model="artistOption" label="Artist" :items="artistOptions" clearable compact class="ms-2"/></v-col>
@@ -161,29 +161,22 @@
    })
 
    const profileOptions = computed(() => { 
-      console.log("profileOptions")
       const options = []
       for (const profile of profileStore.myProfiles) {
          options.push({ title: profile.username, value: profile })
       }
       // check currProfileOption - profileOptions may be populated after onMounted
       for (const option of options) {
-         if (currItem.value.profileId == option.value.id) { 
-             console.log("found matching option")
-            currProfileOption.value = option }
+         if (currItem.value.profileId == option.value.id) { currProfileOption.value = option }
       }
 
       return options
    })
 
    const getCurrProfileOption = () => { 
-      console.log("getCurrProfileOption")
       for (const option of profileOptions.value) {
-         if (currItem.value.profileId == option.value.id) { 
-            console.log("found option")
-            return option }
+         if (currItem.value.profileId == option.value.id) { return option }
       }
-      console.log("no option")
       return null
    }
 

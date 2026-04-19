@@ -95,7 +95,7 @@
    const allRecentItems = computed(() => {
       const visibleItems = []
       for (const item of itemMgr.getRecentItems(route.params.id)) {
-         if (viewMgr.itemIsVisibleToUser(item)) { visibleItems.push(item) }
+         if (!item.profileId && viewMgr.itemIsVisibleToUser(item)) { visibleItems.push(item) }
       } 
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupItems(visibleItems) : visibleItems
       

@@ -3,14 +3,7 @@
       <div v-if="showTitle" showTitle class="font-weight-bold">{{ itemName }}</div>
       <ItemArtistYear v-if="showArtist" :item="item"/>
    </div>
-   <div v-if="showUser || showDateModified" class="text-body-2 mt-2">
-      <div v-if="fromUser" class="text-left ms-1">
-         From <RouterLink :to="URL.USER + fromUser.id">{{ fromUser.name }}</RouterLink>
-      </div>
-      <div v-if="showDateModified" class="mb-2">
-         {{ displayDate(item.dateContentModified) }}
-      </div>
-   </div>
+   <UserDateText :user="fromUser" :date="showDateModified ? item.dateContentModified : null" class="text-body-2 mt-2"/>
    <div v-if="showAdminIcons" class="mt-auto text-right">
       <EditButton @click="showEditDialog=true" ></EditButton>
    </div>
@@ -28,9 +21,9 @@
    import ItemArtistYear   from '../ItemArtistYear.vue'
    import EditItemDialog   from '../crud/EditItemDialog.vue'
    import EditButton       from '@/components/util/EditButton.vue'
-   import { displayDate }  from '@/utils/dateUtils'
+   import UserDateText     from '@/components/util/UserDateText.vue'
    import { handleError }  from '@/utils/utils'
-   import { ItemThumbOptions as ThumbOptions, URL } from '@/utils/constants'
+   import { ItemThumbOptions as ThumbOptions } from '@/utils/constants'
    
    onErrorCaptured((err) => { return handleError(err, "ItemThumbText") })
 

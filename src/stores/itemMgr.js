@@ -26,7 +26,29 @@ export const useItemMgr = defineStore('itemMgr', () => {
       }
       return artistIdToItemIds
    })
-   
+
+   const profileIdToItemIds = computed(() => { 
+      const profileToItems = new Map() 
+      if (itemStore.items) {
+         for (const item of itemStore.items) { 
+            if (item.profileId) {
+               const itemIds = profileToItems.get(item.profileId)
+               if (itemIds) { itemIds.push(item.id) }
+               else { profileToItems.set(item.profileId, [ item.id ]) } 
+            }
+         }
+      }
+      return profileToItems
+   })
+
+   function getProfileItemCount(profileId) { 
+      if (profileIdToItemIds.value) {
+         const itemIds = profileIdToItemIds.value.get(profileId)
+         if (itemIds) { return itemIds.length }
+      }
+      return 0
+   }
+
    const recentPublicItems      = computed(() => { return extractRecentItems(itemStore.publicItems) })
    const recentGroupMemberItems = computed(() => { return extractRecentItems(itemStore.myGroupMemberItems) })
    const myRecentItems          = computed(() => { return extractRecentItems(itemStore.myItems) })
@@ -180,7 +202,7 @@ export const useItemMgr = defineStore('itemMgr', () => {
    }
 
    return { 
-      myItemIdToItem, artistIdToMyItemIds, getItems,
+      myItemIdToItem, artistIdToMyItemIds, getItems, getProfileItemCount,
       recentPublicItems, recentGroupMemberItems, myRecentItems, getRecentItems, getRecentPublicItems,
       isItemGroup, ungroupItems, ungroupItem, ungroupAndExtractItems, extractFromItemGroup,
       itemAspectRatio, itemNavURL, itemURL, getPopupImage, createItemImage }

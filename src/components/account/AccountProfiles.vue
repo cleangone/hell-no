@@ -7,7 +7,7 @@
       <v-data-table :headers="headers" :items="profiles">
          <template v-slot:item.actions="{ item }">
             <EditButton   @click="editProfile(item)"/>
-            <DeleteButton @click="deleteProfile(item)" :disabled="item.items > 0"/>
+            <DeleteButton @click="deleteProfile(item)" :disabled="item.itemCount>0"/>
          </template>
       </v-data-table>
    </div>
@@ -44,8 +44,8 @@
    const selectedProfile = ref({})
    
    const headers = [
-      { title: 'Username', value: 'username', sortable: true },
-      { title: 'Items',    value: 'items',    align:'center' },
+      { title: 'Username', value: 'username',  sortable: true },
+      { title: 'Items',    value: 'itemCount', align:'center' },
       { title: '',         key: "actions" },
    ]
 
@@ -53,7 +53,8 @@
       const displayProfiles = []
       for (const profile of profileStore.myProfiles) {
          const displayProfile = { ...profile }
-         displayProfile.items = 0
+         const itemCount = itemMgr.getProfileItemCount(profile.id)
+         if (itemCount) { displayProfile.itemCount = itemCount }
          displayProfiles.push(displayProfile)
       }
       return displayProfiles

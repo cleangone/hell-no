@@ -62,6 +62,7 @@
    import { computed, ref } from 'vue'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
+   import { useProfileStore } from '@/stores/profileStore'
    import AccountGalleryItems from '@/components/account/AccountGalleryItems.vue'
    import AddGallery          from '@/components/gallery/AddGallery.vue'
    import EditGalleryCard     from '@/components/gallery/EditGalleryCard.vue'
@@ -73,8 +74,9 @@
    import { ImageType } from '@/utils/constants'
    import { removeArrayEntry } from '@/utils/utils'
    
-   const userStore = useUserStore()
+   const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
+   const profileStore = useProfileStore()
    const showAddGalleryDialog = ref(false)
    const showEditGalleryDialog = ref(false)
    const showDeleteGalleryDialog = ref(false)
@@ -92,14 +94,17 @@
       { title: 'Content Modified',value: 'dateContentModified', align: 'center' },
       { title: 'Modified',        value: 'dateModified',        align: 'center' },
       { title: 'Visibility',      value: 'state',               align: 'center' },
+      { title: 'Profile',         value: 'profile',             align: 'center' },
       { title: '',           key: "actions" },
    ]
 
    const displayGalleries = computed(() => { 
       const galleries = []
       for (const gallery of galleryStore.myGalleries) {
-         galleries.push({ ...gallery, 
-            itemsDesc: gallery.itemIds && gallery.itemIds.length ? gallery.itemIds.length : "None" })
+         const displayGallery = { ...gallery, 
+            itemsDesc: gallery.itemIds && gallery.itemIds.length ? gallery.itemIds.length : "None" }
+         if (gallery.profileId) { displayGallery.profile = profileStore.getUsername(gallery.profileId) }
+         galleries.push(displayGallery)
       }
       return galleries
    })

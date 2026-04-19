@@ -17,9 +17,7 @@
             <span class="font-weight-bold">{{ gallery.name }}</span>
             <span v-if="visibleItemCount" class="ml-1">({{ visibleItemCount }})</span>
          </div>
-         <div v-if="showDateModified" class="text-body-2">
-            {{ displayDate(gallery.dateContentModified) }}
-         </div>
+         <UserDateText :user="fromUser" :date="showDateModified ? gallery.dateContentModified : null" class="text-body-2"/>
       </div>
       <div v-if="editInPlace" class="mt-auto text-right">
          <EditButton @click="showEditDialog=true" ></EditButton>
@@ -36,15 +34,16 @@
 <script setup>
    import { computed, onErrorCaptured, ref } from 'vue'
    import { useWindowSize } from '@vueuse/core'
-   import ItemPopup   from '@/components/item/ItemPopup.vue'
-   import EditGallery from '@/components/gallery/EditGallery.vue'
-   import EditButton  from '@/components/util/EditButton.vue'
+   import ItemPopup    from '@/components/item/ItemPopup.vue'
+   import EditGallery  from '@/components/gallery/EditGallery.vue'
+   import EditButton   from '@/components/util/EditButton.vue'
+   import UserDateText from '@/components/util/UserDateText.vue'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useItemMgr }      from '@/stores/itemMgr'
+   import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
-   import { displayDate } from '@/utils/dateUtils'
    import { handleError, objAspectRatio, thumbBackgroundColorStyle } from '@/utils/utils'
    import { GalleryThumbOptions, GalleryThumbWidth, ImageType, URL } from '@/utils/constants'
    
@@ -55,6 +54,7 @@
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
    const itemMgr      = useItemMgr()
+   const profileStore = useProfileStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
    const cardRef = ref(null)
@@ -82,8 +82,17 @@
    const carouselHeight   = computed(() => cardWidth * 9 / 16)
    const carouselInterval = computed(() => 4000 + Math.floor(Math.random() * 4000)) // random bet 4-8 secs 
    const visibleItemCount = computed(() => viewMgr.galleryItemCount(props.gallery))
+   const showUser         = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.USER))
    const showDateModified = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.UPDATED))
    
+   const fromUser = computed(() => { 
+      if (showUser.value) {
+         if (props.gallery.profileId) { return { id: props.gallery.userId, name: profileStore.getUsername(props.gallery.profileId) }}
+         else { return { id: props.gallery.userId, name: userStore.getUsername(props.gallery.userId) }}
+      }
+      return null 
+   }) 
+
    // todo - this only goes down one level
    const childGalleryImages = computed(() => { 
       const images = []

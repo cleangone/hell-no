@@ -32,7 +32,7 @@
    const allOptions = computed(() => {
       const options = viewMgr.isXs ? [ ThumbOptions.SM_THUMB, ThumbOptions.SHOW_CHILD ] : [ ThumbOptions.SHOW_CHILD ]
       if (userStore.userExists) { options.push(ThumbOptions.SHOW_PRIVATE) }
-      options.push(...[ ThumbOptions.UPDATED, ThumbOptions.SORT_BY_NAME, ThumbOptions.SORT_BY_DATE ])
+      options.push(...[ ThumbOptions.USER, ThumbOptions.UPDATED, ThumbOptions.SORT_BY_NAME, ThumbOptions.SORT_BY_DATE ])
    
       return options
    })

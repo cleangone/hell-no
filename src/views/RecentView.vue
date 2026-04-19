@@ -50,7 +50,7 @@
       const displayItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
       const visibleItems = []
       for (const item of displayItems) {
-         if (viewMgr.itemIsVisibleToUser(item)) { visibleItems.push(item) }
+         if ((!username.value || username.value && !item.profileId) && viewMgr.itemIsVisibleToUser(item)) { visibleItems.push(item) }
       }
 
       return viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates", URL.RECENT + route.params.id, visibleItems)

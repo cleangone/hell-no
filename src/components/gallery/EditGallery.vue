@@ -11,9 +11,8 @@
             </v-col>
          </v-row>
          <v-row class="mt-n4">
-            <v-col>
-               <v-select v-model="galleryState" label="Gallery State" :items="GalleryStates"/>
-            </v-col> 
+            <v-col><v-select v-model="galleryState" label="Gallery State" :items="GalleryStates"/></v-col> 
+            <v-col><v-select v-model="galleryProfileOption" label="Owned by Profile" :items="profileOptions" clearable/></v-col> 
             <v-col>
                <v-select v-model="childGalleries" label="Child Galleries" :items="childGalleryOptions" 
                   item-title="name" return-object multiple  v-on:update:modelValue="sortChildGalleries"
@@ -22,7 +21,7 @@
          </v-row>
          <div class="ms-1">
             <div class="pt-2 pb-1 text-caption text-grey-darken-1">Description</div>
-               <EditHtml :contentContainer="galleryDescContainer"/>
+            <EditHtml :contentContainer="galleryDescContainer"/>
          </div>
          <v-checkbox v-model="descInHeader" label="Position description inside bottom of header image" class="ms-n1 mt-n2 tight-checkbox"/> 
          <v-checkbox v-model="useAltItemName" label="Use Item Alternate Name, if set, for Thumbnail" class="ms-n2 mt-2 tight-checkbox"/> 
@@ -47,6 +46,7 @@
    import { computed, onMounted, ref } from 'vue'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
+   import { useProfileStore } from '@/stores/profileStore'
    import EditHtml from '@/components/util/EditHtml.vue'
    import { requiredRule } from '@/utils/utils'
    import { Emit, GalleryStates } from '@/utils/constants'
@@ -56,10 +56,12 @@
 
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
+   const profileStore = useProfileStore()
    const galleryName = ref('')
    const galleryTag = ref('')
    const galleryState = ref('')
    const galleryDescContainer = ref({ content: "" })
+   const galleryProfileOption = ref(null)
    const descInHeader = ref(false)
    const childGalleries = ref([])
    const itemThumbPrefix = ref('')
@@ -95,6 +97,19 @@
 
    const parentGalleryName = computed(() => galleryStore.getMyGallery(props.gallery.parentGalleryId)?.name )
    
+   const profileOptions = computed(() => { 
+      const options = []
+      for (const profile of profileStore.myProfiles) {
+         options.push({ title: profile.username, value: profile })
+      }
+      // check galleryProfileOption - profileOptions may be populated after onMounted
+      for (const option of options) {
+         if (props.gallery.profileId == option.value.id) { galleryProfileOption.value = option }
+      }
+
+      return options
+   })
+
    const sortChildGalleries = () => { childGalleries.value.sort((a, b) => a.name.localeCompare(b.name)) }
    const childGalleryOptions = computed(() => { 
       const galleries = [] 
@@ -156,6 +171,7 @@
          name:  galleryName.value,
          tag:   galleryTag.value,
          state: galleryState.value,
+         profileId: galleryProfileOption.value ? galleryProfileOption.value.id : null,
          desc: galleryDescContainer.value.content,
          descInHeader:     descInHeader.value,
          useAltItemName:   useAltItemName.value,

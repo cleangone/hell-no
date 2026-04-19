@@ -29,7 +29,7 @@
       <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
       <div class="content">
          <v-container class="mt-4 pa-0 pb-3 width-100">
-            <v-row no-gutters class="d-flex align-center flex-nowrap" :style="editBackgroundStyle">
+            <v-row no-gutters class="d-flex align-center flex-nowrap">
                <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
                <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
                   <span class="title">{{ gallery.name }}</span>
@@ -90,8 +90,8 @@
    import PlayItems       from '@/components/item/PlayItems.vue'
    import EditButton      from '@/components/util/EditButton.vue'
    import CopyLink        from '@/components/util/CopyLink.vue'
-   import { backgroundColorStyle, objAspectRatio } from '@/utils/utils'
-   import { ImageType, ItemOrigin, Route, State, URL } from '@/utils/constants'
+   import { objAspectRatio } from '@/utils/utils'
+   import { ImageType, ItemOrigin, Route, URL } from '@/utils/constants'
   
    const route = useRoute()
    const router = useRouter()
