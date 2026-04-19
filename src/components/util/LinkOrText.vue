@@ -1,8 +1,16 @@
 <template>
-   <span v-if="props.currentRoute == props.route">{{ props.text }}</span>
+   <span v-if="routesEqual">{{ props.text }}</span>
    <RouterLink v-else :to="props.url">{{ props.text }}</RouterLink>
 </template>
 
 <script setup>
-   const props = defineProps({ currentRoute:String, route:String, url:String, text:String })
+   import { computed, ref } from 'vue'
+   
+   const props = defineProps({ 
+      currentRoute:Object, targetRoute:String, targetId:String, url:String, text:String })
+
+   const routesEqual = computed(() => { 
+      return (props.currentRoute.name == props.targetRoute &&
+              (!props.targetId || props.targetId == props.currentRoute.params.id)) 
+   })
 </script>

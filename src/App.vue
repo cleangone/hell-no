@@ -34,19 +34,19 @@
             </nav>
             <!-- top left links for desktop -->
             <nav v-else>
-               <LinkOrText :currentRoute="currentRoute" :route="Route.HOME" :url="URL.HOME" text="Home" />
+               <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.HOME" :url="URL.HOME" text="Home" />
                <span v-if="!inRoutes(Route.ACCOUNT, Route.ADMIN, Route.REGISTER)">
                   <span v-if="galleriesExist">
-                     | <LinkOrText :currentRoute="currentRoute" :route="Route.GALLERIES" :url="URL.GALLERIES + Defaults.SITE_ID" text="Galleries" />
+                     | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.GALLERIES" :targetId="Defaults.SITE_ID" :url="URL.GALLERIES + Defaults.SITE_ID" text="Galleries" />
                   </span> 
-                  | <LinkOrText :currentRoute="currentRoute" :route="Route.SEARCH" :url="URL.SEARCH" text="Search"/>
+                  | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.SEARCH" :url="URL.SEARCH" text="Search"/>
                   <!-- <span v-if="userExists">
                      | <LinkOrText :currentRoute="currentRoute" :route="Route.BROADCAST" :url="URL.BROADCAST" text="Broadcast" />
                   </span>  -->
                   <span v-if="userExists && !viewMgr.solo">
-                     | <LinkOrText :currentRoute="currentRoute" :route="Route.MESSAGE" :url="URL.MESSAGE" text="Messages" />
+                     | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.MESSAGE" :url="URL.MESSAGE" text="Messages" />
                   </span> 
-                  | <LinkOrText :currentRoute="currentRoute" :route="Route.ABOUT" :url="URL.ABOUT" text="About"/>
+                  | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.ABOUT" :url="URL.ABOUT" text="About"/>
                </span> 
             </nav>
          </v-col>
@@ -126,7 +126,7 @@
                </v-menu>
             </div>
             <div v-else>
-               <LinkOrText :currentRoute="currentRoute" :route="Route.LOGIN" :url="URL.LOGIN" text="Login"/>
+               <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.LOGIN" :url="URL.LOGIN" text="Login"/>
             </div> 
          </v-col>
       </v-row>
@@ -228,7 +228,7 @@
    const setWindowSize = () => { windowSize.value = { width: window.innerWidth, height: window.innerHeight }}
    const sideCols = computed(() => viewMgr.isMobile ? 1 : 5)
    const pageName = computed(() => viewStore.pageName)
-   const currentRoute = computed(() => { return router.currentRoute.value ? router.currentRoute.value.name : "" })
+   const currentRoute = computed(() => router.currentRoute.value ? router.currentRoute.value : {})
    const isMyUserPage = computed(() => currentRoute.value === Route.USER && route.params.id == userStore.userId)
    
    const isRoute  = (route) => { return currentRoute.value == route }
