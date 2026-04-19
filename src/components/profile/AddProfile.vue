@@ -2,7 +2,7 @@
    <v-card title="Add Profile" class="edit-dialog">
       <v-form v-model="dataValid">
          <div>
-            <v-text-field v-model="profileName" label="Profile name" :rules="nameRules" class="ma-3"></v-text-field>
+            <v-text-field v-model="username" label="Username" :rules="usernameRules" class="ma-3"></v-text-field>
          </div>
       </v-form>
       <v-card-actions class="justify-end">
@@ -22,16 +22,16 @@
    const emit = defineEmits([Emit.DONE])
 
    const profileStore = useProfileStore()
-   const profileName = ref('')
+   const username = ref('')
    const dataValid = ref(true)
    
-   const nameRules = computed(() => [
+   const usernameRules = computed(() => [
       ...requiredRule,
-      v => { return profileStore.profileNames.has(v) ? "Name already exists" : true }
+      v => { return profileStore.usernames.has(v) ? "Username already exists" : true }
    ])
 
    const save = () => {
-      profileStore.addProfile(profileName.value, props.userId)
+      profileStore.addProfile(username.value, props.userId)
       emit(Emit.DONE)
    }
 </script>

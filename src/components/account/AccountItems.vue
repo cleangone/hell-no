@@ -111,6 +111,7 @@
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
    import { useHitStore }     from '@/stores/hitStore'
+   import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
    import TableThumb     from '@/components/account/TableThumb.vue'
    import AddItemDialog  from '@/components/item/crud/AddItemDialog.vue'
@@ -136,6 +137,7 @@
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
    const hitStore     = useHitStore()
+   const profileStore = useProfileStore()
    const viewStore    = useViewStore()
    const showTable = ref(true)
    const showAddDialog            = ref(false)
@@ -166,6 +168,7 @@
       VISIBILITY: { col:8, title:'Visibility',  key:'state',         value: 'state',        align: 'center' },
       GROUPS:     { col:9, title:'Groups',                           value: 'groups' },
       GALLERIES:  { col:10,title:'Galleries',                        value: 'galleries' },
+      PROFILE:    { col:11,title:'Profile',                          value: 'profile' },
       ACTIONS:    {        title:'',            key:'actions' },
    }
 
@@ -187,7 +190,7 @@
     }
 
    const headerOptions = [ Headers.HITS, Headers.IMAGES, Headers.ARTIST, Headers.CREATED, Headers.MODIFIED, Headers.CONTENT_MOD, 
-                           Headers.YEAR, Headers.TYPE, Headers.VISIBILITY, Headers.GROUPS, Headers.GALLERIES ]
+                           Headers.YEAR, Headers.TYPE, Headers.VISIBILITY, Headers.GROUPS, Headers.GALLERIES, Headers.PROFILE ]
    const selectedHeaders = ref([ Headers.HITS, Headers.IMAGES, Headers.ARTIST, Headers.VISIBILITY, Headers.GROUPS, Headers.GALLERIES ])
    
    onMounted(async() => {
@@ -281,6 +284,9 @@
                   }
                }
                displayItem.galleries = galleryNames.join(', ')
+
+               if (item.profileId) { displayItem.profile = profileStore.getMyProfileUsername(item.profileId) }
+
                displayItems.push(displayItem)
             }
          }

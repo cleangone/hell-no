@@ -23,22 +23,30 @@ export const useProfileStore = defineStore('profile', () => {
    function profileDoc(id) { return doc(db, TABLE, id) }
    
    const profiles = useFirestore(profileCollection)   
-   const profileNames = computed(() => { return profiles?.value ? new Set(profiles.value.map(obj => obj.name)) : new Set() })
+   const usernames = computed(() => { return profiles?.value ? new Set(profiles.value.map(obj => obj.username)) : new Set() })
 
    const myProfilesQuery = computed(() => userStore.userId && query(profileCollection, where('userId', '==', userStore.userId)))
    const myRawProfiles = useFirestore(myProfilesQuery, [])
    const myProfiles = computed(() => {
       const sorted = [ ...myRawProfiles.value ]
-      sorted.sort(function(a, b){return a.name.localeCompare(b.name)}) 
+      sorted.sort(function(a, b){return a.username.localeCompare(b.username)}) 
       return sorted
    })
 
-   function addProfile(name, userId) {
-      console.log("addProfile", name)
+   function getMyProfileUsername(profileId) {
+      if (myProfiles.value) {  
+         for (const profile of myProfiles.value) {
+            if (profile.id == profileId) { return profile.username }
+         }
+      }
+      return null
+   }
+
+   function addProfile(username, userId) {
       const id = dateUuid()
       setDoc(profileDoc(id), {
          id: id,
-         name: name,
+         username: username,
          userId: userId,
          dateCreated:  serverTimestamp(),
          dateModified: serverTimestamp()
@@ -49,6 +57,6 @@ export const useProfileStore = defineStore('profile', () => {
    function deleteProfile(id)      { deleteDoc(doc(profileCollection, id)) }
 
    return { 
-      myProfiles, profileNames, addProfile, updateProfile, deleteProfile,
+      myProfiles, usernames, getMyProfileUsername, addProfile, updateProfile, deleteProfile,
    }
 })

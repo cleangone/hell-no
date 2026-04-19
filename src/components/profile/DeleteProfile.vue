@@ -1,5 +1,5 @@
 <template>
-   <DeleteConfirm type="Profile" :name="props.profile.name" @delete="deleteProfile()" @cancel="$emit(Emit.DONE)"/>
+   <DeleteConfirm type="Profile" :name="props.profile.username" @delete="deleteProfile()" @cancel="$emit(Emit.DONE)"/>
 </template>
 
 <script setup>

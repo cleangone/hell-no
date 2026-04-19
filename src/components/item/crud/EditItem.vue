@@ -21,12 +21,12 @@
                <v-text-field v-model="currAltName"      label="Alternate Name" class="ms-2"/>
                <v-text-field v-model="currItemSubtitle" label="Subtitle" class="ms-2"/>
                <v-row>        
-                  <v-col cols="8"><v-select v-model="currItemState"   label="Item State" :items="ItemStates" class="ms-2"/></v-col>
-                  <v-col><v-text-field      v-model="currYearCreated" label="Year Created" :rules="optionalYearRule"/></v-col>
+                  <v-col><v-select v-model="currItemState"     label="Item State" :items="ItemStates" class="ms-2"/></v-col>
+                  <v-col><v-select v-model="currProfileOption" label="Profile" :items="profileOptions" clearable/></v-col>
                </v-row>
                <v-row class="mt-n5">        
                   <v-col cols="8"><v-combobox v-model="artistOption" label="Artist" :items="artistOptions" clearable compact class="ms-2"/></v-col>
-                  <v-col><v-text-field        v-model="currSize"     label="Size"/></v-col>
+                   <v-col><v-text-field v-model="currYearCreated" label="Year Created" :rules="optionalYearRule"/></v-col>
                </v-row>
             </v-col>
             <v-col>
@@ -76,8 +76,7 @@
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
    import { useArtistStore }  from '@/stores/artistStore'
-   import { useFeedMgr }      from '@/stores/feedMgr'
-   import { useActionStore }  from '@/stores/actionStore'
+   import { useProfileStore } from '@/stores/profileStore'
    import { useWallStore }    from '@/stores/wallStore'
    import { useWallMgr }      from '@/stores/wallMgr'
    import EditHtml          from '@/components/util/EditHtml.vue'
@@ -93,8 +92,7 @@
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
    const artistStore  = useArtistStore()
-   const feedMgr      = useFeedMgr()
-   const actionStore  = useActionStore()
+   const profileStore = useProfileStore()
    const wallStore    = useWallStore()
    const wallMgr      = useWallMgr()
    const currItem = ref({})
@@ -103,12 +101,12 @@
    const currItemSubtitle  = ref('')
    const currItemState     = ref('')
    const currYearCreated   = ref(null)
-   const currSize          = ref(null)
    const currItemDescContainer = ref({ content: "" })
    const currItemWall = ref(false)  
    const currItemGalleries = ref([])       
    const currItemGalleryCheckboxes = ref([])
-   const artistOption = ref(null)
+   const artistOption  = ref(null)
+   const currProfileOption = ref(null)
    const nextItems = ref([])
    const dataValid = ref(true)
 
@@ -130,10 +128,11 @@
       currItemSubtitle.value = item.subtitle ? item.subtitle : ""
       currItemState.value = item.state
       currYearCreated.value = item.yearCreated
-      currSize.value = item.size
       currItemDescContainer.value.content = item.desc ? item.desc : ""
       currItemWall.value = wallStore.myWallIncludesItem(item.id)
       
+      currProfileOption.value = getCurrProfileOption()
+
       const galleryCheckboxes = []
       currItemGalleries.value = []   
       const galleries = galleryMgr.getUserGalleries(item.userId)   
@@ -160,6 +159,33 @@
       }
       return options
    })
+
+   const profileOptions = computed(() => { 
+      console.log("profileOptions")
+      const options = []
+      for (const profile of profileStore.myProfiles) {
+         options.push({ title: profile.username, value: profile })
+      }
+      // check currProfileOption - profileOptions may be populated after onMounted
+      for (const option of options) {
+         if (currItem.value.profileId == option.value.id) { 
+             console.log("found matching option")
+            currProfileOption.value = option }
+      }
+
+      return options
+   })
+
+   const getCurrProfileOption = () => { 
+      console.log("getCurrProfileOption")
+      for (const option of profileOptions.value) {
+         if (currItem.value.profileId == option.value.id) { 
+            console.log("found option")
+            return option }
+      }
+      console.log("no option")
+      return null
+   }
 
    const selectedGalleryIds = computed(() => selectedCheckboxIds(currItemGalleryCheckboxes.value))
    const selectedCheckboxIds = (checkboxes) => { 
@@ -196,30 +222,30 @@
          if (!updatedGalleryIds.includes(galleryId)) { deleteItemFromGalleries.push(galleryId) }
       }
    
-      const artist = artistOption.value
-      const primaryArtist = artist ? 
-         { id: artist.value.id, name: artist.value.name, fullName: artist.value.fullName, allNames: artist.value.allNames } : null  
-      
+     console.log("profileId", currProfileOption.value ? currProfileOption.value.id : null)
+
       const itemToUpdate = {
          id: currItem.value.id,
          name: currItemName.value,
+         profileId: currProfileOption.value ? currProfileOption.value.id : null,
          alternateName: currAltName.value,
          subtitle: currItemSubtitle.value,
          desc: currItemDescContainer.value.content,
-         groupIds: [], // todo - is this needed?
          galleryIds: updatedGalleryIds,
          onUserWall: currItemWall.value
       }
 
       if (currItemState.value   != currItem.value.state)       { itemToUpdate.state = currItemState.value }
       if (currYearCreated.value != currItem.value.yearCreated) { itemToUpdate.yearCreated = currYearCreated.value }
-      if (currSize.value        != currItem.value.size)        { itemToUpdate.size = currSize.value }
-
+      
+      const artist = artistOption.value
+      const primaryArtist = artist ? 
+         { id: artist.value.id, name: artist.value.name, fullName: artist.value.fullName, allNames: artist.value.allNames } : null  
       if (primaryArtist && (!currItem.value.primaryArtist || currItem.value.primaryArtist.id != primaryArtist.id)) { 
          itemToUpdate.primaryArtist = primaryArtist }
       else if (!primaryArtist && currItem.value.primaryArtist) { itemToUpdate.primaryArtist = null }
       
-      const updatedItem = itemStore.updateItem(itemToUpdate)
+      itemStore.updateItem(itemToUpdate)
       
       for (const galleryId of addItemToGalleries) { 
          const { id, primaryImage, otherImages } = currItem.value
@@ -246,9 +272,6 @@
       else if (!currItemWall.value && wallIncludesItem) { 
          wallStore.removeWallsItemId(currItem.value.id) 
       }
-
-      const updatedFeedItem = feedMgr.createFeedItem(updatedItem, currItem.value)
-      actionStore.addFeedAction(updatedFeedItem, currItem.value)
 
       if (nextItems.value.length) { setCurrItem(nextItems.value.shift()) }
       else { emit(Emit.DONE) }

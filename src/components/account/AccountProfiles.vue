@@ -44,9 +44,9 @@
    const selectedProfile = ref({})
    
    const headers = [
-      { title: 'Name',   value: 'name',   sortable: true },
-      { title: 'Items',  value: 'items',  align:'center' },
-      { title: '',       key: "actions" },
+      { title: 'Username', value: 'username', sortable: true },
+      { title: 'Items',    value: 'items',    align:'center' },
+      { title: '',         key: "actions" },
    ]
 
    const profiles = computed(() => { 

@@ -1,8 +1,8 @@
 <template>
-   <v-card title="Edit Group" class="edit-dialog">
+   <v-card title="Edit Profile" class="edit-dialog">
       <v-form v-model="dataValid">
          <div>
-            <v-text-field v-model="profileName" label="Profile name" :rules="nameRules" class="ma-3"></v-text-field>
+            <v-text-field v-model="username" label="Username" :rules="usernameRules" class="ma-3"></v-text-field>
          </div>
       </v-form>
       <v-card-actions class="justify-end">
@@ -19,25 +19,25 @@
    import { Emit } from '@/utils/constants'
    
    const props = defineProps({ profile: Object })
-   const emit = defineEmits([Emit.DONE])
+   const emit = defineEmits([ Emit.DONE ])
 
    const profileStore = useProfileStore()
-   const profileName = ref('')
+   const username = ref('')
    const dataValid = ref(true)
    
    onMounted(() => {
-      profileName.value = props.profile.name
+      username.value = props.profile.username
    })
    
-   const nameRules = computed(() => [
+   const usernameRules = computed(() => [
       ...requiredRule,
-      v => { return (v != props.profile.name) && profileStore.profileNames.has(v) ? "Name already exists" : true }
+      v => { return (v != props.profile.username) && profileStore.usernames.has(v) ? "Username already exists" : true }
    ])
    
-   const dataChanged = computed(() => profileName.value != props.profile.name)
+   const dataChanged = computed(() => username.value != props.profile.username)
 
    const save = () => {
-      profileStore.updateProfile({ id: props.profile.id, name: profileName.value })
+      profileStore.updateProfile({ id: props.profile.id, username: username.value })
       emit(Emit.DONE)
    }
 </script>
