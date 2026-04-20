@@ -10,7 +10,7 @@
          <v-col :cols="sideCols" class="flex-grow-0 flex-shrink-0 nav-left" style="white-space:nowrap">
             <!-- top left icon for mobile -->
             <nav v-if="viewMgr.isMobile">
-               <v-menu v-if="currentRoute==Route.HOME && user"> <!-- force user evaluation to verify solo -->
+               <v-menu v-if="currentRouteName==Route.HOME && user"> <!-- force user evaluation to verify solo -->
                   <template v-slot:activator="{ props }">
                      <v-btn v-bind="props" icon="mdi-menu" 
                         color="blue-darken-2" size="medium" variant="text"></v-btn>
@@ -30,7 +30,7 @@
                      </v-list-item>
                   </v-list>
                </v-menu>
-               <Icon v-if="currentRoute!=Route.HOME" icon="mdi-chevron-left" @click="router.back()"/>
+               <Icon v-if="currentRouteName!=Route.HOME" icon="mdi-chevron-left" @click="router.back()"/>
             </nav>
             <!-- top left links for desktop -->
             <nav v-else>
@@ -40,9 +40,6 @@
                      | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.GALLERIES" :targetId="Defaults.SITE_ID" :url="URL.GALLERIES + Defaults.SITE_ID" text="Galleries" />
                   </span> 
                   | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.SEARCH" :url="URL.SEARCH" text="Search"/>
-                  <!-- <span v-if="userExists">
-                     | <LinkOrText :currentRoute="currentRoute" :route="Route.BROADCAST" :url="URL.BROADCAST" text="Broadcast" />
-                  </span>  -->
                   <span v-if="userExists && !viewMgr.solo">
                      | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.MESSAGE" :url="URL.MESSAGE" text="Messages" />
                   </span> 
@@ -104,7 +101,7 @@
             </div>
             <!-- top right icon for desktop -->
             <div v-else-if="userExists">
-               <RouterLink :to="viewMgr.solo || isMyUserPage ? URL.ACCOUNT : URL.USER + userId">{{ firstName }}</RouterLink>
+               <RouterLink :to="isMyUserPage ? URL.ACCOUNT : URL.USER + userId">{{ firstName }}</RouterLink>
                <v-menu>
                   <template v-slot:activator="{ props }">
                      <v-btn v-bind="props" icon="mdi-account" size="medium" variant="text" class="icon-btn"/>
@@ -228,11 +225,12 @@
    const setWindowSize = () => { windowSize.value = { width: window.innerWidth, height: window.innerHeight }}
    const sideCols = computed(() => viewMgr.isMobile ? 1 : 5)
    const pageName = computed(() => viewStore.pageName)
-   const currentRoute = computed(() => router.currentRoute.value ? router.currentRoute.value : {})
-   const isMyUserPage = computed(() => currentRoute.value === Route.USER && route.params.id == userStore.userId)
-   
-   const isRoute  = (route) => { return currentRoute.value == route }
-   const inRoutes = (...routes) => { return routes.includes(currentRoute.value) }  
+   const currentRoute     = computed(() => router.currentRoute.value ? router.currentRoute.value : {})
+   const currentRouteName = computed(() => router.currentRoute.value ? router.currentRoute.value.name : "")
+   const isMyUserPage     = computed(() => currentRouteName.value == Route.USER && route.params.id == userStore.userId)
+
+   const isRoute  = (route) => { return currentRouteName.value == route }
+   const inRoutes = (...routes) => { return routes.includes(currentRouteName.value) }  
    
    const user = computed(() => { 
       const currUser = userStore.userExists ? userStore.user : null 
@@ -259,13 +257,14 @@
       return installed + (installed.length && iosDevice ? " on " : "") + (iosDevice ? iosDevice : "")
    })
 
+   // used by mobile to indicate which, if any, bottom nav option the current page is
    const navIndex = computed({ 
       get() { 
-         if (currentRoute.value == Route.HOME) { return 0 }
-         else if (currentRoute.value == Route.GALLERIES) { return 1 }
-         else if (currentRoute.value == Route.SEARCH)    { return 2 }
-         else if (currentRoute.value == Route.RECENT)    { return 3 }
-         else if (currentRoute.value == Route.ACCOUNT)   { return 4 }
+         if (currentRouteName.value == Route.HOME) { return 0 }
+         else if (currentRouteName.value == Route.GALLERIES) { return 1 }
+         else if (currentRouteName.value == Route.SEARCH)    { return 2 }
+         else if (currentRouteName.value == Route.RECENT)    { return 3 }
+         else if (currentRouteName.value == Route.ACCOUNT)   { return 4 }
          else return null
        },
       set(index) {} 
