@@ -21,7 +21,7 @@
    <div v-if="viewMgr.isMobile">
       <span style="text-align:center">
          <RouterLink v-if="gallery.parentGalleryId" :to="URL.GALLERY + gallery.parentGalleryId">{{ parentGalleryName }} Gallery</RouterLink>
-         <RouterLink v-else-if="userStore.userExists" :to="URL.GALLERIES + userStore.userId">Galleries</RouterLink>
+         <RouterLink v-else :to="URL.GALLERIES + galleriesLinkId">Galleries huh</RouterLink>
       </span>
       <ReuseTemplate/>
    </div>
@@ -43,7 +43,7 @@
             </v-row>
             <span style="text-align:center">
                <RouterLink v-if="gallery.parentGalleryId" :to="URL.GALLERY + gallery.parentGalleryId">{{ parentGalleryName }} Gallery</RouterLink>
-               <RouterLink v-else-if="userStore.userExists" :to="URL.GALLERIES + userStore.userId">Galleries</RouterLink>
+               <RouterLink v-else-if="userStore.userExists" :to="URL.GALLERIES + galleriesLinkId">Galleries</RouterLink>
             </span>
          </v-container>
          <div style="clear:both"></div>   
@@ -128,6 +128,11 @@
       return gallery 
    })
 
+   const galleriesLinkId = computed(() => {
+      if (!gallery.value) { return "0" } // default if gallery not yet populated
+      return gallery.value.profileId ? gallery.value.profileId : gallery.value.userId
+   })
+      
    useSeoMeta({ title: "Hell-No " + (gallery.value ? gallery.value.name + " " : "")  + "Gallery" })
    
    const contentStyle      = computed(() => "min-height:" + windowHeight.value + "px")

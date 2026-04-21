@@ -8,18 +8,13 @@
       <div v-if="populated(paramItem.subtitle)" class="font-weight-medium mb-1">{{ paramItem.subtitle }}</div>
       <div v-if="paramItem.size" class="mt-n2">{{ paramItem.size }}</div>
       <div v-if="itemUser" class="mt-n1">
-         From <RouterLink :to="URL.USER + paramItem.userId">{{ itemUsername }}</RouterLink> 
+         From <RouterLink :to="URL.USER + fromUser.id">{{ fromUser.username }}</RouterLink> 
          <IconButton v-if="!isOwnedByUser" icon="mdi-email" @click="sendEmail()"/>
       </div>
       <div v-if="isOwnedByUser && !isPublic(paramItem)">{{ paramItem.state }}</div> 
       <div v-html="paramItem.desc" class="mt-3 mb-1"></div>
    </DefineTemplate>
 
-   <Head>
-    <!-- <meta property="og:title" content="Item OG Title"/>
-    <meta property="og:description" content="Item OG description"/>
-     -->
-   </Head>
    <div v-if="viewMgr.isDeskTop && paramItem">
       <v-row no-gutters class="d-flex align-center flex-nowrap" :style="editBackgroundStyle">
          <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
@@ -108,18 +103,6 @@
                <template v-for="item in scrollItems" :key="item.id">
                   <div v-if="item.id != route.params.id" class="mt-5">
                      <div class="text-h6">{{ item.name }}</div>
-                     <!-- <div v-if="showNav"> 
-                        <RouterLink v-if="viewStoreVisibleItems" :to="viewStoreVisibleItems.linkUrl">{{ viewStoreVisibleItems.linkName }}</RouterLink> 
-                        <span v-if="itemOtherGalleries(item).length == 1">
-                          | <RouterLink :to="galleryUrl(itemOtherGalleries(item)[0].id)">{{ itemOtherGalleries(item)[0].name }} Gallery</RouterLink>
-                        </span>
-                     </div>
-                     <div v-if="!showNav || itemOtherGalleries(item).length > 1"> 
-                        <span v-for="gallery,index in itemOtherGalleries(item)" :key="gallery.id">
-                           <span v-if="index"> | </span>
-                           <RouterLink :to="galleryUrl(gallery.id)">{{ gallery.name }} Gallery</RouterLink>
-                        </span>
-                     </div> -->
                      <div v-if="itemOtherGalleries(item).length"> 
                         <span v-for="gallery,index in itemOtherGalleries(item)" :key="gallery.id">
                            <span v-if="index"> | </span>
@@ -200,7 +183,6 @@
    import { useRoute, useRouter } from 'vue-router'
    import { createReusableTemplate, onKeyStroke, useWindowSize } from '@vueuse/core'
    import { useSeoMeta } from '@unhead/vue'
-   import { Head } from '@unhead/vue/components'
    import { useUserStore }    from '@/stores/userStore'
    import { useUserMgr }      from '@/stores/userMgr'
    import { useItemStore }    from '@/stores/itemStore'
@@ -252,7 +234,7 @@
    
    // onMounted not guar to be called before other methods/computed
    onMounted(async() => {
-      console.log("ItemView.onMounted")
+      // console.log("ItemView.onMounted")
       if (viewStore.isInitialized && route.params.origin != ItemOrigin.EXTERNAL) { showNav.value = true }
       else {
          console.log("ItemView - external/direct link to " + route.params.id)
@@ -316,10 +298,9 @@
    const descBeside    = computed(() => viewStore.itemDescBesideImage)
    const artist        = computed(() => paramItem.value.primaryArtist ? paramItem.value.primaryArtist.fullName : null) 
    
-   const itemUsername  = computed(() => {
-      if (paramItem.value.profileId) { return profileStore.getUsername(paramItem.value.profileId) }
-      else { return itemUser.value ? itemUser.value.username : null }
-    })
+   const fromUser = computed(() => paramItem.value.profileId ?
+      { id: paramItem.value.profileId, username: profileStore.getUsername(paramItem.value.profileId) } :
+      { id: paramItem.value.userId,    username: itemUser.value ? itemUser.value.username : null })
 
    const originGalleryId = computed(() => {  
       let originGalleryId = route.params.origin == ItemOrigin.GALLERY ? viewStoreVisibleItems.value?.linkId : null

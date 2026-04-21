@@ -52,7 +52,7 @@
 
    const fromUser = computed(() => { 
       if (showUser.value) {
-         if (item.value.profileId) { return { id: item.value.userId, name: profileStore.getUsername(item.value.profileId) }}
+         if (item.value.profileId) { return { id: item.value.profileId, name: profileStore.getUsername(item.value.profileId) }}
          else { return { id: item.value.userId, 
             name: item.value.username ? item.value.username : userStore.getUsername(item.value.userId) }}
       }

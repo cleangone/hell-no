@@ -24,34 +24,49 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useRoute } from 'vue-router'
-   import { useUserStore } from '@/stores/userStore'
-   import { useItemMgr }   from '@/stores/itemMgr'
-   import { useViewStore } from '@/stores/viewStore'
-   import { useViewMgr }   from '@/stores/viewMgr'
+   import { useUserStore }    from '@/stores/userStore'
+   import { useItemMgr }      from '@/stores/itemMgr'
+   import { useProfileStore } from '@/stores/profileStore'
+   import { useViewStore }    from '@/stores/viewStore'
+   import { useViewMgr }      from '@/stores/viewMgr'
    import PlayItems       from '@/components/item/PlayItems.vue'
    import ItemThumb       from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig from '@/components/item/thumb/ItemThumbConfig.vue'
    import { Defaults, ItemOrigin, URL } from '@/utils/constants'
    
    const route = useRoute()
-   const userStore = useUserStore()
-   const itemMgr   = useItemMgr()
-   const viewStore = useViewStore()
-   const viewMgr   = useViewMgr()
+   const userStore    = useUserStore()
+   const itemMgr      = useItemMgr()
+   const profileStore = useProfileStore()
+   const viewStore    = useViewStore()
+   const viewMgr      = useViewMgr()
    
-   const username = computed(() => route.params.id == Defaults.SITE_ID ? null : userStore.getUsername(route.params.id))
-   
+   // id param can be a userId, profileId or the siteId
+   const rawUser    = computed(() => userStore.getUser(route.params.id) )
+   const rawProfile = computed(() => profileStore.getProfile(route.params.id)) 
+   const username   = computed(() => { 
+      if (route.params.id == Defaults.SITE_ID) { return null } 
+      else if (rawUser.value) { return rawUser.value.username }
+      else if (rawProfile.value) { return rawProfile.value.username }
+      return null
+   })
+
    const recentItems = computed(() => {
-      let items = [] 
-      if (username.value) { items = [ ...itemMgr.getRecentItems(route.params.id) ] }
-      else { items = [ ...itemMgr.recentPublicItems ] }
+      const items = [] 
+      if (username.value) { 
+         const userId = rawUser.value ? rawUser.value.id : rawProfile.value.userId
+         for (const item of itemMgr.getRecentItems(userId)) {
+            if (rawUser.value && !item.profileId || rawProfile.value && item.profileId == rawProfile.value.id) { items.push(item) }
+         }
+      }
+      else { items.push(...itemMgr.recentPublicItems) }
 
       items.sort(function(a, b){return b.dateContentModified - a.dateContentModified})    
 
       const displayItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
       const visibleItems = []
       for (const item of displayItems) {
-         if ((!username.value || username.value && !item.profileId) && viewMgr.itemIsVisibleToUser(item)) { visibleItems.push(item) }
+         if (viewMgr.itemThumbVisibleToUser(item)) { visibleItems.push(item) }
       }
 
       return viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates", URL.RECENT + route.params.id, visibleItems)
