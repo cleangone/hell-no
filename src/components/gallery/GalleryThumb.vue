@@ -87,7 +87,7 @@
    
    const fromUser = computed(() => { 
       if (showUser.value) {
-         if (props.gallery.profileId) { return { id: props.gallery.userId, name: profileStore.getUsername(props.gallery.profileId) }}
+         if (props.gallery.profileId) { return { id: props.gallery.profileId, name: profileStore.getUsername(props.gallery.profileId) }}
          else { return { id: props.gallery.userId, name: userStore.getUsername(props.gallery.userId) }}
       }
       return null 

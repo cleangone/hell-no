@@ -8,7 +8,7 @@
          </v-row>
          <v-row class="mt-n4">
             <v-col><v-select v-model="galleryState" label="Gallery State" :items="GalleryStates"/></v-col> 
-            <v-col><v-select v-model="galleryProfileOption" label="Owned by Profile" :items="profileOptions" clearable/></v-col> 
+            <v-col><v-select v-model="galleryProfileId" label="Owned by Profile" :items="profiles" item-title="username" item-value="id" clearable/></v-col>
          </v-row>
          <v-row class="mt-n4">
             <v-col>
@@ -59,7 +59,7 @@
    const galleryTag = ref('')
    const galleryState = ref('')
    const galleryDescContainer = ref({ content: "" })
-   const galleryProfileOption = ref(null)
+   const galleryProfileId = ref(null)
    const descInHeader = ref(false)
    const childGalleries = ref([])
    const itemThumbPrefix = ref('')
@@ -72,6 +72,7 @@
       galleryName.value  = props.gallery.name
       galleryTag.value   = props.gallery.tag ? props.gallery.tag : ""
       galleryState.value = props.gallery.state
+      galleryProfileId.value = props.gallery.profileId ? props.gallery.profileId : null
       galleryDescContainer.value.content = props.gallery.desc ? props.gallery.desc : ""
       descInHeader.value     = props.gallery.descInHeader     ? props.gallery.descInHeader     : false
       useAltItemName.value   = props.gallery.useAltItemName   ? props.gallery.useAltItemName   : false
@@ -95,19 +96,8 @@
 
    const parentGalleryName = computed(() => galleryStore.getMyGallery(props.gallery.parentGalleryId)?.name )
    
-   const profileOptions = computed(() => { 
-      const options = []
-      for (const profile of profileStore.myProfiles) {
-         options.push({ title: profile.username, value: profile })
-      }
-      // check galleryProfileOption - profileOptions may be populated after onMounted
-      for (const option of options) {
-         if (props.gallery.profileId == option.value.id) { galleryProfileOption.value = option }
-      }
-
-      return options
-   })
-
+   const profiles = computed(() => [ ...profileStore.myProfiles ])
+   
    const sortChildGalleries = () => { childGalleries.value.sort((a, b) => a.name.localeCompare(b.name)) }
    const childGalleryOptions = computed(() => { 
       const galleries = [] 
@@ -169,7 +159,7 @@
          name:  galleryName.value,
          tag:   galleryTag.value,
          state: galleryState.value,
-         profileId: galleryProfileOption.value ? galleryProfileOption.value.id : null,
+         profileId: galleryProfileId.value,
          desc: galleryDescContainer.value.content,
          descInHeader:     descInHeader.value,
          useAltItemName:   useAltItemName.value,

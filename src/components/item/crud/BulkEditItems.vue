@@ -10,8 +10,8 @@
             <v-col><v-text-field v-model="nameReplace"  label="Name Replace"    class="mr-3"/></v-col>
          </v-row>
          <v-row class="mt-n7">
-            <v-col><v-select v-model="itemState"      label="Visibility" :items="ItemStates" class="ml-3"/> </v-col>
-            <v-col><v-select v-model="profileId" :items="profiles" item-title="username" item-value="id" clearable/></v-col>
+            <v-col><v-select v-model="itemState" label="Visibility" :items="ItemStates" class="ml-3"/> </v-col>
+            <v-col><v-select v-model="profileId" label="Owned by Profile" :items="profiles" item-title="username" item-value="id" clearable/></v-col>
             <v-col><v-text-field v-model="yearCreated" label="Year Created" :rules="optionalYearRule" class="mr-3"/></v-col>
          </v-row>
          <div class="expansion">

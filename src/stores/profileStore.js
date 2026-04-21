@@ -4,7 +4,6 @@ import { db } from '@/firebase'
 import { collection, doc, query, where, setDoc, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore"
 import { useFirestore } from '@vueuse/firebase/useFirestore'
 import { useUserStore } from './userStore'
-import { dateUuid } from '@/utils/utils'
    
 /*
    Profile
@@ -39,6 +38,14 @@ export const useProfileStore = defineStore('profile', () => {
       return profile ? profile.username : null 
    }
 
+   function getProfile(profileId) {
+      return profileIdToProfile.value.get(profileId)
+   }
+   function getUserId(profileId) {
+      const profile = profileIdToProfile.value.get(profileId)
+      return profile ? profile.userId : null 
+   }
+
    function addProfile(username, userId) {
       const newProfileRef = doc(profileCollection) // generate a firebase id, which looks like a userId
       setDoc(newProfileRef, {
@@ -54,6 +61,6 @@ export const useProfileStore = defineStore('profile', () => {
    function deleteProfile(id)      { deleteDoc(doc(profileCollection, id)) }
 
    return { 
-      myProfiles, usernames, getUsername, addProfile, updateProfile, deleteProfile,
+      myProfiles, usernames, getProfile, getUsername, getUserId, addProfile, updateProfile, deleteProfile,
    }
 })

@@ -21,8 +21,12 @@
                <v-text-field v-model="currAltName"      label="Alternate Name" class="ms-2"/>
                <v-text-field v-model="currItemSubtitle" label="Subtitle" class="ms-2"/>
                <v-row>        
-                  <v-col><v-select v-model="currItemState"     label="Item State" :items="ItemStates" class="ms-2"/></v-col>
-                  <v-col><v-select v-model="currProfileOption" label="Owned by Profile" :items="profileOptions" clearable return-object/></v-col>
+                  <v-col><v-select v-model="currItemState" label="Item State" :items="ItemStates" class="ms-2"/></v-col>
+                  <v-col><v-select v-model="currProfileId" label="Owned by Profile" :items="profiles" item-title="username" item-value="id" clearable/></v-col>
+            <!-- <v-col><v-select v-model="currProfileOption" label="Owned by Profile" :items="profileOptions" clearable return-object/></v-col> -->
+               
+               
+               
                </v-row>
                <v-row class="mt-n5">        
                   <v-col cols="8"><v-combobox v-model="artistOption" label="Artist" :items="artistOptions" clearable compact class="ms-2"/></v-col>
@@ -100,13 +104,13 @@
    const currAltName       = ref('')
    const currItemSubtitle  = ref('')
    const currItemState     = ref('')
+   const currProfileId     = ref(null)
    const currYearCreated   = ref(null)
    const currItemDescContainer = ref({ content: "" })
    const currItemWall = ref(false)  
    const currItemGalleries = ref([])       
    const currItemGalleryCheckboxes = ref([])
    const artistOption  = ref(null)
-   const currProfileOption = ref(null)
    const nextItems = ref([])
    const dataValid = ref(true)
 
@@ -131,7 +135,8 @@
       currItemDescContainer.value.content = item.desc ? item.desc : ""
       currItemWall.value = wallStore.myWallIncludesItem(item.id)
       
-      currProfileOption.value = getCurrProfileOption()
+      currProfileId.value = item.profileId ? item.profileId : null
+      // currProfileOption.value = getCurrProfileOption()
 
       const galleryCheckboxes = []
       currItemGalleries.value = []   
@@ -160,25 +165,31 @@
       return options
    })
 
-   const profileOptions = computed(() => { 
-      const options = []
-      for (const profile of profileStore.myProfiles) {
-         options.push({ title: profile.username, value: profile })
-      }
-      // check currProfileOption - profileOptions may be populated after onMounted
-      for (const option of options) {
-         if (currItem.value.profileId == option.value.id) { currProfileOption.value = option }
-      }
 
-      return options
-   })
+   const profiles = computed(() =>  [ ...profileStore.myProfiles ])
 
-   const getCurrProfileOption = () => { 
-      for (const option of profileOptions.value) {
-         if (currItem.value.profileId == option.value.id) { return option }
-      }
-      return null
-   }
+
+
+
+   // const profileOptions = computed(() => { 
+   //    const options = []
+   //    for (const profile of profileStore.myProfiles) {
+   //       options.push({ title: profile.username, value: profile })
+   //    }
+   //    // check currProfileOption - profileOptions may be populated after onMounted
+   //    for (const option of options) {
+   //       if (currItem.value.profileId == option.value.id) { currProfileOption.value = option }
+   //    }
+
+   //    return options
+   // })
+
+   // const getCurrProfileId = () => { 
+   //    for (const profile of profiles.value) {
+   //       if (currItem.value.profileId == option.value.id) { return option }
+   //    }
+   //    return null
+   // }
 
    const selectedGalleryIds = computed(() => selectedCheckboxIds(currItemGalleryCheckboxes.value))
    const selectedCheckboxIds = (checkboxes) => { 
@@ -215,12 +226,10 @@
          if (!updatedGalleryIds.includes(galleryId)) { deleteItemFromGalleries.push(galleryId) }
       }
    
-     console.log("profileId", currProfileOption.value ? currProfileOption.value.id : null)
-
       const itemToUpdate = {
          id: currItem.value.id,
          name: currItemName.value,
-         profileId: currProfileOption.value ? currProfileOption.value.id : null,
+         profileId: currProfileId.value,
          alternateName: currAltName.value,
          subtitle: currItemSubtitle.value,
          desc: currItemDescContainer.value.content,
