@@ -46,6 +46,7 @@ import { ItemType, State } from '@/utils/constants'
          fullName
       parentItemIds[] - itemGroups this item is part of
       childItems[] - items this itemGroup holds
+      contributingGalleryOwnerIds[] - for access rules to allow gallery owner to update item      
       onUserWall
       versionTag: 6 digit alphanumeric tag that changs with every update - for cache control
       dateCreated

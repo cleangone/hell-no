@@ -10,11 +10,14 @@
             <v-col><v-select v-model="galleryState" label="Gallery State" :items="GalleryStates"/></v-col> 
             <v-col><v-select v-model="galleryProfileId" label="Owned by Profile" :items="profiles" item-title="username" item-value="id" clearable/></v-col>
          </v-row>
-         <v-row class="mt-n4">
-            <v-col>
+         <v-row class="mt-n4 text-subtitle-2">
+            <v-col :cols="childGalleryCols">
                <v-select v-model="childGalleries" label="Child Galleries" :items="childGalleryOptions" 
-                  item-title="name" return-object multiple  v-on:update:modelValue="sortChildGalleries"
-                  class="select-min text-subtitle-2"/>
+                  item-title="name" return-object multiple v-on:update:modelValue="sortChildGalleries" class="select-min text-subtitle-2"/>
+            </v-col>
+            <v-col>
+               <v-select v-model="galleryContributorIds" label="Contributors" :items="otherUsers"
+                  item-title="username" item-value="id" multiple class="select-min text-subtitle-2"/>
             </v-col>
          </v-row>
          <div class="ms-1">
@@ -42,6 +45,7 @@
 
 <script setup>
    import { computed, onMounted, ref } from 'vue'
+   import { useUserMgr }      from '@/stores/userMgr'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
    import { useProfileStore } from '@/stores/profileStore'
@@ -52,6 +56,7 @@
    const props = defineProps({ gallery: Object })
    const emit = defineEmits([ Emit.DONE ])
 
+   const userMgr = useUserMgr()
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
    const profileStore = useProfileStore()
@@ -60,6 +65,7 @@
    const galleryState = ref('')
    const galleryDescContainer = ref({ content: "" })
    const galleryProfileId = ref(null)
+   const galleryContributorIds = ref(null)
    const descInHeader = ref(false)
    const childGalleries = ref([])
    const itemThumbPrefix = ref('')
@@ -73,13 +79,14 @@
       galleryTag.value   = props.gallery.tag ? props.gallery.tag : ""
       galleryState.value = props.gallery.state
       galleryProfileId.value = props.gallery.profileId ? props.gallery.profileId : null
+      galleryContributorIds.value  = props.gallery.contributorIds ? props.gallery.contributorIds : null
       galleryDescContainer.value.content = props.gallery.desc ? props.gallery.desc : ""
       descInHeader.value     = props.gallery.descInHeader     ? props.gallery.descInHeader     : false
       useAltItemName.value   = props.gallery.useAltItemName   ? props.gallery.useAltItemName   : false
       useLocalItemName.value = props.gallery.useLocalItemName ? props.gallery.useLocalItemName : false
       itemThumbPrefix.value         = props.gallery.itemThumbPrefix        ? props.gallery.itemThumbPrefix : ""
       itemThumbPrefixReplace.value  = props.gallery.itemThumbPrefixReplace ? props.gallery.itemThumbPrefixReplace : ""
-      
+
       for (const gallery of galleryStore.myGalleries) {
          if (props.gallery.childGalleryIds.includes(gallery.id)) { childGalleries.value.push(gallery) }
       }
@@ -96,7 +103,8 @@
 
    const parentGalleryName = computed(() => galleryStore.getMyGallery(props.gallery.parentGalleryId)?.name )
    
-   const profiles = computed(() => [ ...profileStore.myProfiles ])
+   const profiles   = computed(() => [ ...profileStore.myProfiles ])
+   const otherUsers = computed(() => [ ...userMgr.otherUsers ])
    
    const sortChildGalleries = () => { childGalleries.value.sort((a, b) => a.name.localeCompare(b.name)) }
    const childGalleryOptions = computed(() => { 
@@ -115,7 +123,14 @@
              (gallery.parentGalleryId != null && gallery.parentGalleryId != props.gallery.id) ? // cannot have a diff parent 
          false : true
    }
-
+   const childGalleryCols = computed(() => { 
+      if (!childGalleries.value?.length && !galleryContributorIds.value?.length ||
+          childGalleries.value?.length && galleryContributorIds.value?.length) { return 6 } // 50/50 split
+      else if (childGalleries.value?.length ) { return 9 } // 75% of row
+      else if (galleryContributorIds.value?.length ) { return 3 } // 25% 
+      return 6
+   })
+   
    const save = () => {
       const childGalleryIds = childGalleries.value.map(function (obj) { return obj.id })
    
@@ -160,6 +175,7 @@
          tag:   galleryTag.value,
          state: galleryState.value,
          profileId: galleryProfileId.value,
+         contributorIds: galleryContributorIds.value,
          desc: galleryDescContainer.value.content,
          descInHeader:     descInHeader.value,
          useAltItemName:   useAltItemName.value,

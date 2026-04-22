@@ -11,12 +11,13 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
-                           // Display profile's UserView when profile username clicked on
-                           // bulkEditItem
-                           // userView thumbs don't need user listed
-   
+   ["v2.6.0",  "4/22/26"], // Add gallery.contributorIds, integrate with views, Gallery/Item crud 
+                           // Replace AccountGalleryItems.deleteItem with removeItemFromGallery
+   ["v2.5.3",  "4/20/26"], // Update views to handle param id possibly a profileId 
+                           // UserView updated to show/not show galleries and items based on profiles
    ["v2.5.2",  "4/19/26"], // Integrate Profile with Galleries
-                           // Add user to GalleryThumb
+                           // Add user to G
+                           // alleryThumb
                            // Streamline user/dateModified in Item/GalleryThumb
    ["v2.5.1",  "4/18/26"], // Items with a profileId do not show on user's recentItems           
    ["v2.5.0",  "4/18/26"], // Add Profiles, integrate with Items

@@ -8,6 +8,17 @@ export const useUserMgr = defineStore('userMgr', () => {
    const userStore  = useUserStore()
    const groupStore = useGroupStore()
    
+   const otherUsers = computed(() => { 
+      const users = []
+      if (userStore.userExists) {
+         for (const user of userStore.users) {
+            if (user.id != userStore.userId) { users.push(user)}      
+         }
+      }
+      users.sort((a, b) => a.username.localeCompare(b.username))
+      return users
+   })
+
    const myKnownUserIds = computed(() => { 
       const knownUserIds = []
       for (const group of groupStore.myGroups) {
@@ -121,7 +132,7 @@ export const useUserMgr = defineStore('userMgr', () => {
    }
 
    return { 
-      getFullName, getUserIdByEmail, getUserContactByEmail, 
+      otherUsers, getFullName, getUserIdByEmail, getUserContactByEmail, 
       setItemHeaders, setGalleryThumbOptions, setItemThumbOptions, setShowHiddenItems, 
       myUserContacts, getUserContactsNotInGroup, 
       addFavoriteItem, removeFavoriteItem, addMessagingToken }

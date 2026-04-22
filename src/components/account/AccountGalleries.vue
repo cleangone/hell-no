@@ -1,8 +1,10 @@
 <template>
    <div v-if="showGalleries" class="text-left">
       <div class="text-h5">
-         Galleries
-         <TextButton @click="showAddGalleryDialog=true" text="Add Gallery"/>
+         {{ showMyGalleries ?  "Galleries" : "My Contributing Galleries"  }}
+         <TextButton v-if="showMyGalleries" @click="showAddGalleryDialog=true" text="Add Gallery"/>
+         <TextButton v-if="showMyGalleries && galleryStore.myContributingGalleriesExist" @click="showMyGalleries=false" text="View My Contributing Galleries"/>
+         <TextButton v-if="!showMyGalleries" @click="showMyGalleries=true" text="View My Galleries"/>
       </div>
       <div>
          <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" label="Search"
@@ -23,13 +25,11 @@
             <span v-if="item.childGalleryIds.length"> ({{ item.childGalleryIds.length }})</span>
          </template>
          <template v-slot:item.images="{ item }">
-            <span v-if="firstThumb(item.images)" style="min-width:90px" class="d-flex  align-center">
-            <!-- <span v-if="item.images.length" style="min-width:90px" class="d-flex  align-center"> -->
-               <img :src="firstThumb(item.images).thumbUrl" @click="editImages(item)" height="40" class="pointer"/>
-               <!-- <img :src="item.images[0].thumbUrl" @click="editImages(item)" height="40" class="pointer"/> -->
+            <span v-if="firstThumb(item.images)" style="min-width:90px" class="d-flex align-center">
+               <img :src="firstThumb(item.images).thumbUrl" @click="editImages(item)" height="40" :disabled="!showMyGalleries" class="pointer"/>
                <span v-if="item.images.length>1" class="ml-1">({{ item.images.length }})</span>
             </span>
-            <IconButton v-else icon="mdi-image" @click="editImages(item)" class="justify-self-center align-self-center"></IconButton>
+            <IconButton v-else icon="mdi-image" @click="editImages(item)" :disabled="!showMyGalleries" class="justify-self-center align-self-center"></IconButton>
          </template>
          <template v-slot:item.dateModified="{ item }">
             {{ item.dateModified ? item.dateModified.toDate().toLocaleDateString() : "" }}
@@ -77,6 +77,7 @@
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
    const profileStore = useProfileStore()
+   const showMyGalleries = ref(true)
    const showAddGalleryDialog = ref(false)
    const showEditGalleryDialog = ref(false)
    const showDeleteGalleryDialog = ref(false)
@@ -86,24 +87,29 @@
    const search = ref("")
    const expandedGalleryIds = ref([])
    
-   const galleryHeaders = [
-      { title: 'Name',            value: 'name', sortable: true },
-      { title: 'Tag',             value: 'tag',  sortable: true },
-      { title: 'Items',           value: 'itemsDesc',           align: 'center'  },
-      { title: 'Images',     key: 'images'  },
-      { title: 'Content Modified',value: 'dateContentModified', align: 'center' },
-      { title: 'Modified',        value: 'dateModified',        align: 'center' },
-      { title: 'Visibility',      value: 'state',               align: 'center' },
-      { title: 'Profile',         value: 'profile',             align: 'center' },
-      { title: '',           key: "actions" },
-   ]
+   const galleryHeaders = computed(() => { 
+      const headers = [{ title: 'Name', value: 'name', sortable: true } ]
+      if (fieldsExist.value.tag) { headers.push({ title: 'Tag', value: 'tag', sortable: true }) }
+      headers.push(...[
+         { title: 'Items',           value: 'itemsDesc',           align: 'center'  },
+         { title: 'Images', key: 'images'  },
+         { title: 'Content Modified',value: 'dateContentModified', align: 'center' },
+         { title: 'Modified',        value: 'dateModified',        align: 'center' },
+         { title: 'Visibility',      value: 'state',               align: 'center' },
+      ])
+      if (fieldsExist.value.profileId)      { headers.push({ title: 'Profile',      value: 'profile',          align: 'center' })}
+      if (fieldsExist.value.contributorIds) { headers.push({ title: 'Contributors', value: 'contributorCount', align: 'center' })}
+      if (showMyGalleries.value)            { headers.push({ title: '', key: "actions" }) }
+      return headers
+   })
 
    const displayGalleries = computed(() => { 
       const galleries = []
-      for (const gallery of galleryStore.myGalleries) {
+      for (const gallery of showMyGalleries.value ? galleryStore.myGalleries :  galleryStore.myContributingGalleries) {
          const displayGallery = { ...gallery, 
             itemsDesc: gallery.itemIds && gallery.itemIds.length ? gallery.itemIds.length : "None" }
          if (gallery.profileId) { displayGallery.profile = profileStore.getUsername(gallery.profileId) }
+         if (gallery.contributorIds?.length) { displayGallery.contributorCount = gallery.contributorIds?.length }
          galleries.push(displayGallery)
       }
       return galleries
@@ -137,6 +143,16 @@
       return galleries
    })
 
+   const fieldsExist = computed(() => { 
+      const fields = { tag: false, profileId: false, contributorIds: false  }
+      for (const gallery of userGalleries.value) {
+         if (gallery.tag?.length) { fields.tag = true }
+         if (gallery.profileId)   { fields.profileId = true }
+         if (gallery.contributorIds?.length) { fields.contributorIds = true }
+      }
+      return fields
+   })
+
    const addChildGalleries = (gallery, generation) => { 
       const galleries = []
       if (galleryIdToChildGalleries.value.has(gallery.id)) {
@@ -161,7 +177,7 @@
    }
 
    const editGallery = (gallery) => { showEditGallery(gallery, false) }
-   const editImages  = (gallery) => { showEditGallery(gallery, true) }
+   const editImages  = (gallery) => { if (showMyGalleries.value) { showEditGallery(gallery, true) }}
    const showEditGallery = (gallery, images) => {
       selectedGallery.value = gallery
       showEditImages.value = images

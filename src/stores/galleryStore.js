@@ -13,6 +13,7 @@ import { ImageType, State } from '@/utils/constants'
       name
       tag - unique across all galleries
       userId
+      contributorIds[]
       state: State: PUBLIC, PRIVATE
       desc
       itemIds[]
@@ -89,9 +90,7 @@ export const useGalleryStore = defineStore('gallery', () => {
       return galleryMap
    })
 
-   //
    // myGalleries
-   //
    const myGalleriesQuery = computed(() => userStore.userId && query(galleryCollection, where('userId', '==', userStore.userId)) )
    const myRawGalleries = useFirestore(myGalleriesQuery, [])
    const myGalleriesExist = computed(() => myRawGalleries.value.length > 0 )
@@ -100,12 +99,24 @@ export const useGalleryStore = defineStore('gallery', () => {
       sortedGalleries.sort(function(a, b){return a.name.localeCompare(b.name)}) 
       return sortedGalleries
    })
+
+   // myContributingGalleries
+   const myContributingGalleriesQuery = computed(() => userStore.userId && 
+      query(galleryCollection, where('contributorIds','array-contains', userStore.userId)) )   
+   const myRawContributingGalleries = useFirestore(myContributingGalleriesQuery, [])
+   const myContributingGalleriesExist = computed(() => myRawContributingGalleries.value.length > 0 )
+   const myContributingGalleries = computed(() => {
+      const sortedGalleries = [ ...myRawContributingGalleries.value ]
+      sortedGalleries.sort(function(a, b){return a.name.localeCompare(b.name)}) 
+      return sortedGalleries
+   })
+
    const myGalleryIdToGalleryMap = computed(() => {
       const galleryIdToGallery = new Map()
       for (const gallery of myRawGalleries.value) { galleryIdToGallery.set(gallery.id, gallery) }
+      for (const gallery of myRawContributingGalleries.value) { galleryIdToGallery.set(gallery.id, gallery) }
       return galleryIdToGallery
    })
-
    function getMyGallery(galleryId) {return myGalleryIdToGalleryMap.value.get(galleryId) }
 
    //
@@ -210,7 +221,7 @@ export const useGalleryStore = defineStore('gallery', () => {
    }
 
    return { 
-      galleries, myGalleries, myGalleriesExist, myGalleryIdToGalleryMap, 
+      galleries, myGalleries, myGalleriesExist, myContributingGalleriesExist, myContributingGalleries, myGalleryIdToGalleryMap,
       getGallery, getGalleryByTag, getMyGallery,
       publicGalleries, getPublicGalleries, publicGalleryIdToChildGalleries, userIdToGalleries, 
       addGallery, updateGallery, deleteGallery,

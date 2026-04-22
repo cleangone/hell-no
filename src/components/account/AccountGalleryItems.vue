@@ -1,10 +1,10 @@
 <template>
    <div class="text-left">
       <div class="text-left text-h6">
-         <a @click="$emit(Emit.DONE)">Galleries</a> > {{ gallery.name }}
-         <EditButton @click="showEditGalleryDialog=true"/>
+         <a @click="$emit(Emit.DONE)">{{ isMyGallery ? "Galleries": "My ContributingGalleries" }}</a> > {{ gallery.name }}
+         <EditButton v-if="isMyGallery" @click="showEditGalleryDialog=true"/>
          <TextButton v-if="!selectedItemIds.length" @click="showAddItemDialog=true" text="Add Item"/>
-         <TextButton v-if="!selectedItemIds.length" @click="showBulkUploadDialog=true" text="Bulk Upload"/>
+         <TextButton v-if="isMyGallery && !selectedItemIds.length" @click="showBulkUploadDialog=true" text="Bulk Upload"/>
          <TextButton v-if="selectedItemIds.length"  @click="editItems()"     text="Edit Selected"/>
          <TextButton v-if="selectedItemIds.length"  @click="bulkEditItems()" text="Bulk Edit"/>
          <TextButton v-if="selectedItemIds.length"  @click="groupItems()"    text="Group Items"/>
@@ -13,7 +13,8 @@
       </div>
 
       <v-data-table v-if="viewTable" v-model="selectedItemIds" :headers="itemHeaders" 
-         :items="galleryDisplayItems" item-key="id" :custom-key-sort="customKeySort" show-select>
+            :items="galleryDisplayItems" item-key="id" :custom-key-sort="customKeySort" 
+            :show-select="isMyGallery" :item-selectable="item => item.isMyItem">
          <template v-slot:item.position="{ item }">
             <div v-if="!isHidden(item)">{{ item.position }}</div>
          </template>
@@ -26,8 +27,8 @@
             {{ item.dateModified ? item.dateModified.toDate().toLocaleDateString() : "" }}
          </template>
          <template v-slot:item.actions="{ item }">
-            <EditButton   @click="editItem(item)"/>
-            <DeleteButton @click="deleteItem(item)" :disabled="isChildItem(item.id)"/>
+            <EditButton v-if="isMyGallery || item.isMyItem" @click="editItem(item)"/>
+            <IconButton v-if="isMyGallery || item.isMyItem" icon="mdi-folder-remove" @click="removeItemFromGallery(item)" :disabled="isChildItem(item.id)"/>
          </template>
       </v-data-table>
 
@@ -53,7 +54,7 @@
    </div>
 
    <v-dialog v-model="showEditGalleryDialog" width="auto">
-      <EditGallery :gallery="gallery" @done="showEditGalleryDialog=false"/>
+      <EditGalleryCard :gallery="gallery" @done="showEditGalleryDialog=false"/>
    </v-dialog>
    <v-dialog v-model="showAddItemDialog" width="auto">
       <AddItemDialog :gallery="gallery"  @done="showAddItemDialog=false"/>
@@ -73,40 +74,42 @@
    <v-dialog v-model="showGroupItemsDialog" width="auto">
       <GroupItems :items="selectedItems" :gallery="gallery"  @done="showGroupItemsDialog=false"/>
    </v-dialog>
-   <v-dialog v-model="showDeleteItemDialog" max-width="500px">
-      <DeleteItem :item="selectedItem" @done="showDeleteItemDialog=false"/>
+   <v-dialog v-model="showRemoveItemDialog" max-width="500px">
+      <RemoveItem :item="selectedItem" :gallery="gallery" @done="showRemoveItemDialog=false"/>
    </v-dialog>
 </template>
 
 <script setup>
    import { computed, ref } from 'vue'
    import draggable from 'vuedraggable'
+   import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useItemStore }    from '@/stores/itemStore'
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useViewStore }    from '@/stores/viewStore'
-   import TableThumb     from '@/components/account/TableThumb.vue'
-   import EditGallery    from '@/components/gallery/EditGallery.vue'
-   import AddItemDialog  from '@/components/item/crud/AddItemDialog.vue'
-   import BulkUpload     from '@/components/item/crud/BulkUpload.vue'
-   import EditItemDialog from '@/components/item/crud/EditItemDialog.vue'
-   import BulkEditItems  from '@/components/item/crud/BulkEditItems.vue'
-   import GroupItems     from '@/components/item/crud/GroupItems.vue'
-   import DeleteItem     from '@/components/item/crud/DeleteItem.vue'
-   import EditButton     from '@/components/util/EditButton.vue'
-   import DeleteButton   from '@/components/util/DeleteButton.vue'
-   import TextButton     from '@/components/util/TextButton.vue'
+   import TableThumb      from '@/components/account/TableThumb.vue'
+   import EditGalleryCard from '@/components/gallery/EditGalleryCard.vue'
+   import RemoveItem      from '@/components/gallery/RemoveItem.vue'
+   import AddItemDialog   from '@/components/item/crud/AddItemDialog.vue'
+   import BulkUpload      from '@/components/item/crud/BulkUpload.vue'
+   import EditItemDialog  from '@/components/item/crud/EditItemDialog.vue'
+   import BulkEditItems   from '@/components/item/crud/BulkEditItems.vue'
+   import GroupItems      from '@/components/item/crud/GroupItems.vue'
+   import EditButton      from '@/components/util/EditButton.vue'
+   import IconButton      from '@/components/util/IconButton.vue'
+   import TextButton      from '@/components/util/TextButton.vue'
    import { isHidden } from '@/utils/utils'
    import { Emit, ItemOrigin, URL } from '@/utils/constants'
    
    const THUMB_HEIGHT = 200
 
    const props = defineProps(['galleryId'])
-   const emit = defineEmits([Emit.DONE]);
+   const emit = defineEmits([Emit.DONE])
+   const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
-   const itemStore = useItemStore()
-   const itemMgr = useItemMgr()
-   const viewStore = useViewStore()
+   const itemStore    = useItemStore()
+   const itemMgr      = useItemMgr()
+   const viewStore    = useViewStore()
    const showEditGalleryDialog = ref(false)
    const showAddItemDialog     = ref(false)
    const showBulkUploadDialog  = ref(false)
@@ -114,23 +117,26 @@
    const showEditItemsDialog   = ref(false)
    const showGroupItemsDialog  = ref(false)
    const showBulkEditDialog    = ref(false)
-   const showDeleteItemDialog  = ref(false)
+   const showRemoveItemDialog  = ref(false)
    const viewTable = ref(true)
    const selectedItem = ref({})
    const selectedItemIds = ref([])
    const selectedItems = ref([])
    const groupedGalleryItemIds = ref([])
 
-   const itemHeaders = [
-      { title: '',           value: 'position',       align: 'center', sortable: true },
-      { title: 'Name',       value: 'name',                            sortable: true },
-      { title: 'Image',      value: 'image',          align: 'center' },
-      { title: 'Artist',  key: 'primaryArtist',  
-                             value: 'primaryArtist.fullName' },
-      { title: 'Visibility', value: 'state',          align: 'center' },
-      { title: 'Modified',   value: 'dateModified',   align: 'center', sortable: true },
-      { title: '',        key: "actions" },
-   ]
+    const itemHeaders = computed(() => { 
+      const headers = [
+         { title: '',            value: 'position',       align: 'center', sortable: true },
+         { title: 'Name',        value: 'name',                            sortable: true },
+         { title: 'Image',       value: 'image',          align: 'center' },
+         { title: 'Artist',  key: 'primaryArtist', value: 'primaryArtist.fullName' },
+         { title: 'Visibility',  value: 'state',          align: 'center' },
+         { title: 'Modified',    value: 'dateModified',   align: 'center', sortable: true },
+      ]
+      if (ownerExists.value) { headers.push({ title: 'Owner', value: 'ownerUsername', align: 'center' })}
+      headers.push({ title: '', key: "actions" })
+      return headers
+   })
 
    const customKeySort = {
       name: (a, b) => { return a.localeCompare(b) }, 
@@ -138,15 +144,27 @@
    } 
 
    const gallery = computed(() => { return galleryStore.getGallery(props.galleryId) })
+   const isMyGallery = computed(() => gallery.value && gallery.value.userId == userStore.userId)
    const galleryDisplayItems = computed(() => { 
       const galleryItemIds = gallery.value.itemIds ? gallery.value.itemIds : []
       const displayItems = []
       for (const item of itemStore.getGalleryItems(props.galleryId)) {
-         const displayItem = { ...item, position: galleryItemIds.indexOf(item.id) + 1 }
+         const displayItem = { ...item, position: galleryItemIds.indexOf(item.id) + 1, isMyItem: item.userId == userStore.userId }
+         if (!displayItem.isMyItem) { 
+            const owner = userStore.getUser(item.userId)
+            if (owner) { displayItem.ownerUsername = owner.username }
+         }
          displayItems.push(displayItem) 
       }
       displayItems.sort(function(a, b){return a.position - b.position}) 
       return viewStore.setVisibleItems(ItemOrigin.ADMIN, "Admin", URL.USER, displayItems)
+   })
+
+   const ownerExists = computed(() => { 
+      for (const gallery of galleryDisplayItems.value) {
+         if (gallery.ownerUsername) { return true }
+      }
+      return false
    })
 
   const galleryThumbItems = computed({ 
@@ -196,8 +214,8 @@
 
    const isChildItem = (itemId) => { return itemStore.myChildItemIds.has(itemId) }
 
-   const editItem   = (item) => { showItemDialog(item, showEditItemDialog) }
-   const deleteItem = (item) => { showItemDialog(item, showDeleteItemDialog) }   
+   const editItem = (item) => { showItemDialog(item, showEditItemDialog) }
+   const removeItemFromGallery = (item) => { showItemDialog(item, showRemoveItemDialog) }   
    const editItems     = () => { showItemsDialog(showEditItemsDialog) }
    const bulkEditItems = () => { showItemsDialog(showBulkEditDialog) }
    const groupItems    = () => { showItemsDialog(showGroupItemsDialog) }

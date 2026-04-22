@@ -1,5 +1,5 @@
 <template>
-   <v-card :title="title" >
+   <v-card :title="title">
    <!-- <v-card :title="title" class="fill-height"> -->
       <template v-slot:append>
          <IconButton icon="mdi-close" @click="$emit(Emit.DONE)"/>
@@ -36,11 +36,4 @@
 </script>
 
 <style>
-
-.edit-gallery {
-  min-width: min(600px, 100%);
-  /* min-width: 900px; */
-  min-height: 600px;  
-   
-}
 </style>

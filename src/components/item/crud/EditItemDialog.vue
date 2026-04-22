@@ -1,10 +1,10 @@
 <template>
-   <v-card v-if="edit==Edit.ITEM" title="Edit Item" class="edit-item-dialog">
+   <v-card v-if="edit==Edit.ITEM" :title="isMyItem ? 'Edit Item' : 'Edit Contributed Item'" class="edit-item-dialog">
       <template v-slot:append>
          <IconButton icon="mdi-close" @click="$emit(Emit.DONE)"/>
       </template>
-      <div v-if="isSingleItem"><TextButton text="Edit Images" @click="edit=Edit.IMAGE" class="mx-3"/></div>
-      <div v-if="isGroupItem"><TextButton text="Edit Grouped Items" @click="edit=Edit.GROUPED_ITEMS" class="mx-3"/></div>
+      <div v-if="isMyItem && isSingleItem"><TextButton text="Edit Images" @click="edit=Edit.IMAGE" class="mx-3"/></div>
+      <div v-if="isMyItem && isGroupItem"><TextButton text="Edit Grouped Items" @click="edit=Edit.GROUPED_ITEMS" class="mx-3"/></div>
       <EditItem :item="item" :items="props.items" @done="$emit(Emit.DONE)"/>
    </v-card>
    <EditImages     v-else-if="edit==Edit.IMAGE"         :item="item" @done="edit=Edit.ITEM" class="edit-item-dialog"/>
@@ -13,6 +13,7 @@
 
 <script setup>
    import { computed, ref } from 'vue'
+   import { useUserStore } from '@/stores/userStore'
    import { useItemStore } from '@/stores/itemStore'
    import EditItem       from './EditItem.vue'
    import EditImages     from './EditImages.vue'
@@ -27,9 +28,11 @@
       items: Array  // edit multiple items one at a time
    })
    const emit  = defineEmits([ Emit.DONE ])
+   const userStore = useUserStore()
    const itemStore = useItemStore()
    
-   const item = computed(() => { return props.item ? itemStore.itemIdToItem.get(props.item.id) : props.item })
+   const item = computed(() => props.item ? itemStore.itemIdToItem.get(props.item.id) : props.item)
+   const isMyItem = computed(() => item.value && item.value.userId == userStore.userId)
 
    const edit = ref(Edit.ITEM)
    const isSingleItem = computed(() => props.item && props.item.type == ItemType.SINGLE)

@@ -22,11 +22,9 @@
                <v-text-field v-model="currItemSubtitle" label="Subtitle" class="ms-2"/>
                <v-row>        
                   <v-col><v-select v-model="currItemState" label="Item State" :items="ItemStates" class="ms-2"/></v-col>
-                  <v-col><v-select v-model="currProfileId" label="Owned by Profile" :items="profiles" item-title="username" item-value="id" clearable/></v-col>
-            <!-- <v-col><v-select v-model="currProfileOption" label="Owned by Profile" :items="profileOptions" clearable return-object/></v-col> -->
-               
-               
-               
+                  <v-col v-if="isMyItem && profiles.length">
+                     <v-select v-model="currProfileId" label="Owned by Profile" :items="profiles" item-title="username" item-value="id" clearable/>
+                  </v-col>
                </v-row>
                <v-row class="mt-n5">        
                   <v-col cols="8"><v-combobox v-model="artistOption" label="Artist" :items="artistOptions" clearable compact class="ms-2"/></v-col>
@@ -53,13 +51,13 @@
             </div>
          </v-col>
       </v-row>
-      <div v-if="xs">
+      <div v-if="xs && isMyItem">
          <v-row>
             <v-select v-model="xsComputedGalleries" :items="xsGalleriesOptions" label="Galleries" 
                item-title="name" return-object multiple class="ms-5"/>
          </v-row>
       </div>
-      <div v-else class="expansion">
+      <div v-else-if="isMyItem" class="expansion">
          <v-expansion-panels multiple>
             <CheckboxExpansion type="Galleries" :checkboxes="galleryCheckboxes" class="mx-3"/>
          </v-expansion-panels>
@@ -76,6 +74,7 @@
 <script setup>
    import { computed, onMounted, ref } from 'vue'
    import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+   import { useUserStore }    from '@/stores/userStore'
    import { useItemStore }    from '@/stores/itemStore'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
@@ -92,6 +91,7 @@
    const emit  = defineEmits([Emit.DONE])
    const breakpoints = useBreakpoints(breakpointsTailwind)
    const xs = breakpoints.smaller('sm')   
+   const userStore    = useUserStore()
    const itemStore    = useItemStore()
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
@@ -131,23 +131,28 @@
       currAltName.value = item.alternateName ? item.alternateName : ""
       currItemSubtitle.value = item.subtitle ? item.subtitle : ""
       currItemState.value = item.state
+      currProfileId.value = item.profileId ? item.profileId : null
       currYearCreated.value = item.yearCreated
       currItemDescContainer.value.content = item.desc ? item.desc : ""
       currItemWall.value = wallStore.myWallIncludesItem(item.id)
       
-      currProfileId.value = item.profileId ? item.profileId : null
-      // currProfileOption.value = getCurrProfileOption()
-
+      // once, twice, refactor... 
       const galleryCheckboxes = []
       currItemGalleries.value = []   
-      const galleries = galleryMgr.getUserGalleries(item.userId)   
-      for (const gallery of galleries) {
+      for (const gallery of [...galleryStore.myGalleries] ) {
          const isSelected = item.galleryIds?.includes(gallery.id)
          if (isSelected) { currItemGalleries.value.push(gallery) }
          galleryCheckboxes.push({ id: gallery.id, name: gallery.name, selected: isSelected })
       }
+      for (const gallery of galleryStore.myContributingGalleries ) {
+         const isSelected = item.galleryIds?.includes(gallery.id)
+         if (isSelected) { currItemGalleries.value.push(gallery) }
+         galleryCheckboxes.push({ id: gallery.id, name: gallery.name + "(Contributor)", selected: isSelected })
+      }
       currItemGalleryCheckboxes.value = galleryCheckboxes
    }
+
+   const isMyItem = computed(() => currItem.value && currItem.value.userId == userStore.userId)
 
    // handle situations where prop item images updated after component mounted
    const primaryImage = computed(() => 
@@ -165,31 +170,7 @@
       return options
    })
 
-
    const profiles = computed(() =>  [ ...profileStore.myProfiles ])
-
-
-
-
-   // const profileOptions = computed(() => { 
-   //    const options = []
-   //    for (const profile of profileStore.myProfiles) {
-   //       options.push({ title: profile.username, value: profile })
-   //    }
-   //    // check currProfileOption - profileOptions may be populated after onMounted
-   //    for (const option of options) {
-   //       if (currItem.value.profileId == option.value.id) { currProfileOption.value = option }
-   //    }
-
-   //    return options
-   // })
-
-   // const getCurrProfileId = () => { 
-   //    for (const profile of profiles.value) {
-   //       if (currItem.value.profileId == option.value.id) { return option }
-   //    }
-   //    return null
-   // }
 
    const selectedGalleryIds = computed(() => selectedCheckboxIds(currItemGalleryCheckboxes.value))
    const selectedCheckboxIds = (checkboxes) => { 
@@ -247,6 +228,14 @@
          itemToUpdate.primaryArtist = primaryArtist }
       else if (!primaryArtist && currItem.value.primaryArtist) { itemToUpdate.primaryArtist = null }
       
+      if (addItemToGalleries.length || deleteItemFromGalleries.length) {
+         const contributingGalleryOwnerIds = []
+         for (const gallery of galleryStore.myContributingGalleries ) {
+            if (updatedGalleryIds.includes(gallery.id)) { contributingGalleryOwnerIds.push(gallery.userId) }
+         }
+         itemToUpdate.contributingGalleryOwnerIds = contributingGalleryOwnerIds
+      }
+
       itemStore.updateItem(itemToUpdate)
       
       for (const galleryId of addItemToGalleries) { 
