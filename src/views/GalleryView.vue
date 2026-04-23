@@ -21,7 +21,7 @@
    <div v-if="viewMgr.isMobile">
       <span style="text-align:center">
          <RouterLink v-if="gallery.parentGalleryId" :to="URL.GALLERY + gallery.parentGalleryId">{{ parentGalleryName }} Gallery</RouterLink>
-         <RouterLink v-else :to="URL.GALLERIES + galleriesLinkId">Galleries huh</RouterLink>
+         <RouterLink v-else :to="URL.GALLERIES + galleriesLinkId">Galleries</RouterLink>
       </span>
       <ReuseTemplate/>
    </div>

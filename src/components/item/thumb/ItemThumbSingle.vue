@@ -47,7 +47,7 @@
    const aspectRatio = computed(() => itemMgr.itemAspectRatio(item.value))
    const smallThumb = computed(() => viewMgr.isXs && viewStore.itemThumbOptions.includes(ThumbOptions.SM_THUMB))
    const cardWidth = computed(() => { 
-      const targetHeight = smallThumb.value ? 175 : 200
+      const targetHeight = smallThumb.value ? 150 : 200
       const targetWidth = Math.round(targetHeight * aspectRatio.value)
       return targetWidth > 300 ? 300 : targetWidth
    })
