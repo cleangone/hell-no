@@ -11,6 +11,7 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.7.0",  "4/24/26"], // Popup Wall image after transition if no other popup active
    ["v2.6.0",  "4/22/26"], // Add gallery.contributorIds, integrate with views, Gallery/Item crud 
                            // Replace AccountGalleryItems.deleteItem with removeItemFromGallery
    ["v2.5.3",  "4/20/26"], // Update views to handle param id possibly a profileId 

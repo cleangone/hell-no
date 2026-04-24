@@ -180,11 +180,13 @@ export const useItemMgr = defineStore('itemMgr', () => {
       return URL.ITEM + origin + '/' + navAction + '/' + itemId + (childNum ? '/' + childNum : '') }
    function itemURL(itemId, origin, childNum) { return itemNavURL(itemId, origin, ItemNavAction.EXTERNAL, childNum) }
    
-   function getPopupImage(imageName, artistName, url, boundingRect, aspectRatio) { 
+   function getPopupImage(imageName, artistName, url, boundingRect, aspectRatio, isXs=false) { 
       const offset = 25
       const name = imageName + (artistName ? " - " + artistName : "")
-      const popupWidth = aspectRatio < 1 ? 300 : 500 
-      const popupHeight = Math.round(popupWidth / aspectRatio) + (name.length ? 25 : 0)  
+      let popupWidth = aspectRatio < 1 ? 300 : 500 
+
+      if (isXs) { popupWidth = aspectRatio < 1 ? 200 : 300 }
+      const popupHeight = Math.round(popupWidth / aspectRatio) + (name.length ? 35 : 0)  
       const x = boundingRect.left < windowWidth.value / 2 ? 
          boundingRect.right + offset : 
          boundingRect.left - popupWidth - offset 

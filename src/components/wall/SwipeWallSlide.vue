@@ -8,47 +8,78 @@
 </template>
 
 <script setup>
-   import { computed, onMounted, ref } from 'vue'
+   import { computed, onMounted, ref, watch } from 'vue'
    import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
-   import { useItemMgr } from '@/stores/itemMgr'
+   import { useItemMgr }    from '@/stores/itemMgr'
+   import { useSwipeStore } from './SwipeStore'
    import { objAspectRatio } from '@/utils/utils'
    import { Emit } from '@/utils/constants'
    
-   const props = defineProps({ wallItem:Object, origin:String })
+   const props = defineProps({ wallItem:Object, origin:String, row:Number, active:Boolean })
    const emit  = defineEmits([ Emit.POPUP, Emit.LOADED ])
    const breakpoints = useBreakpoints(breakpointsTailwind)
    const xs = breakpoints.smaller('sm')
-   const itemMgr = useItemMgr()
+   const itemMgr    = useItemMgr()
+   const swipeStore = useSwipeStore()
    const cardRef = ref(null)
-   const mouseleaveTime = ref(Date.now())
+   const mouseleaveTime = ref(Date.now())   
 
    onMounted(() => { emit(Emit.LOADED) })
+   watch(() => props.active, (isActive) => {
+      // display popup if no mouseover or other active popup 
+      if (isActive && !swipeStore.mouseoverActive && !swipeStore.transitionPopupActive) {
+         // alternate rows - TODO - handle walls with only one row
+         if (swipeStore.previousRow != props.row) {
+            setTimeout(() => {   
+               const popup = getPopupImage() // wait for transition to complete to get popup
+               if (popup) {   
+                  // emit popup so it can be displayed outside of slider stacking order 
+                  swipeStore.setTransitionPopupActive(true, props.row)
+                  emit(Emit.POPUP, popup)
+               }
+            }, 250)
+            setTimeout(() => { 
+               // todo - check if row matches here?
+               swipeStore.setTransitionPopupActive(false, props.row)
+               emit(Emit.POPUP, null)
+            }, 4000)  
+         }
+      }
+   })
 
    const wallItem  = computed(() => props.wallItem) 
    const itemURL   = computed(() => itemMgr.itemURL(props.wallItem.itemId, props.origin, props.wallItem.childNum))
    const textClass = computed(() => xs.value ? "text-caption" : "")
-     
+   
+   const getPopupImage = () => { 
+      const boundingRect = cardRef.value.$el.getBoundingClientRect()
+
+      // check if visible to user
+      if (boundingRect.y < 0) { return null}
+
+      const aspectRatio = objAspectRatio(props.wallItem.dimensions)
+      return itemMgr.getPopupImage(
+         wallItem.value.name, 
+         wallItem.value.artist ? wallItem.value.artist.fullName : null, 
+         wallItem.value.largeThumbUrl, boundingRect, aspectRatio, xs.value)
+   }
+
    const mouseover = () => {
       if (xs.value) { return }
 
       const mouseoverTime = Date.now()
       setTimeout(() => { 
          if (mouseoverTime > mouseleaveTime.value) { 
-            const boundingRect = cardRef.value.$el.getBoundingClientRect()
-            const aspectRatio = objAspectRatio(props.wallItem.dimensions)
-            const popupImage = itemMgr.getPopupImage(
-               wallItem.value.name, 
-               wallItem.value.artist ? wallItem.value.artist.fullName : null, 
-               wallItem.value.largeThumbUrl, boundingRect, aspectRatio)
-
             // emit popup so it can be displayed outside of slider stacking order 
-            emit(Emit.POPUP, popupImage)
+            swipeStore.setMouseoverActive(true)
+            emit(Emit.POPUP, getPopupImage())
          }
       }, 250)  
    }
 
    const mouseleave = () => {
       mouseleaveTime.value = Date.now()
+      swipeStore.setMouseoverActive(false)
       emit(Emit.POPUP, null)
    }
 </script>

@@ -1,12 +1,14 @@
 <template>
    <!-- <div class="wall-container bg-shade px-3"> -->
    <div class="wall-container px-3" :class="background">
-      <swiper v-for="slideRow in slideRows" key="slideRow.id" slides-per-view="auto" :space-between="spaceBetweenSlides" 
+      <swiper v-for="(slideRow, index) in slideRows" key="slideRow.id" slides-per-view="auto" :space-between="spaceBetweenSlides" 
             :pagination="{clickable: true}" :navigation="true" :loop="true" 
             :autoplay="{ delay:4500, pauseOnMouseEnter:true }" :modules="modules" style="--swiper-navigation-size:20px"
             :style="rowStyle">
-         <swiper-slide v-for="slideItem in slideRow.items" :key="slideItem.itemId" :width="slideItem.width" class="swipe-slide" :style="slideStyle"> 
-            <SwipeWallSlide :wallItem="slideItem" :origin="ItemOrigin.WALL" @loaded="onSlideLoaded" @popup="onPopup"/>
+         <swiper-slide v-for="slideItem in slideRow.items" :key="slideItem.itemId" :width="slideItem.width" 
+               v-slot="{ isActive }" class="swipe-slide" :style="slideStyle"> 
+            <SwipeWallSlide :wallItem="slideItem" :origin="ItemOrigin.WALL" :row=index :active="isActive"
+               @loaded="onSlideLoaded" @popup="onPopup"/>
          </swiper-slide>
       </swiper>
    </div>
@@ -18,7 +20,7 @@
    import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
    import { Swiper, SwiperSlide } from "swiper/vue"
    import { Autoplay, Navigation, Pagination } from 'swiper/modules'
-   import { useViewStore } from '@/stores/viewStore'
+   import { useViewStore }  from '@/stores/viewStore'
    import SwipeWallSlide from './SwipeWallSlide.vue'
    import ItemPopup      from '@/components/item/ItemPopup.vue'
    import { handleError } from '@/utils/utils'
