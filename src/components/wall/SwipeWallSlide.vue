@@ -26,7 +26,13 @@
 
    onMounted(() => { emit(Emit.LOADED) })
    watch(() => props.active, (isActive) => {
-      // display popup in top row if no mouseover or other active popup 
+      // bypass first slide becasue Wall rows not all set
+      if (isActive && swipeStore.firstActiveSlide) { 
+         swipeStore.setFirstActiveSlide(false)
+         return 
+      }
+     
+      // display popup in top row if no mouseover or other active popup
       if (isActive && !swipeStore.mouseoverActive && !swipeStore.transitionPopupActive && props.row == 0) {
          setTimeout(() => {   
             const popup = getPopupImage({ overlayThumb: true }) // wait for transition to complete for correct popup coords

@@ -1,5 +1,4 @@
 <template>
-   <!-- <div class="wall-container bg-shade px-3"> -->
    <div class="wall-container px-3" :class="background">
       <swiper v-for="(slideRow, index) in slideRows" key="slideRow.id" slides-per-view="auto" :space-between="spaceBetweenSlides" 
             :pagination="{clickable: true}" :navigation="true" :loop="true" @sliderMove="onSliderMove"
@@ -20,6 +19,7 @@
    import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
    import { Swiper, SwiperSlide } from "swiper/vue"
    import { Autoplay, Navigation, Pagination } from 'swiper/modules'
+   import { useSwipeStore } from './SwipeStore'
    import { useViewStore }  from '@/stores/viewStore'
    import SwipeWallSlide from './SwipeWallSlide.vue'
    import ItemPopup      from '@/components/item/ItemPopup.vue'
@@ -33,11 +33,15 @@
    const emit  = defineEmits([ Emit.LOADED ])
    const breakpoints = useBreakpoints(breakpointsTailwind)
    const xs = breakpoints.smaller('sm')
-   const viewStore = useViewStore()
+   const swipeStore = useSwipeStore()
+   const viewStore  = useViewStore()
    const modules = ref([Autoplay, Navigation, Pagination])
    const popupImage = ref(null)
    
-   onMounted(()   => window.addEventListener('scroll', handleScroll))
+   onMounted(() => {
+      swipeStore.setFirstActiveSlide(true)
+      window.addEventListener('scroll', handleScroll)
+   })
    onUnmounted(() => window.removeEventListener('scroll', handleScroll))
    const handleScroll = () => { if (popupImage.value) { popupImage.value = null } }
 
@@ -63,8 +67,7 @@
             if (!viewStore.previousWallOrder.itemIds.includes(wallItem.itemId)) { usePreviousWallOrder = false }
          }
       }
-
-      // console.log("usePreviousWallOrder", usePreviousWallOrder)   
+ 
       if (usePreviousWallOrder) {
          const itemIdToWallItem  = new Map(sizedWallItems.map((obj) => [obj.itemId, obj]))
 
