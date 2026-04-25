@@ -2,22 +2,29 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useSwipeStore = defineStore('wall-popup', () => {
-   const firstActiveSlideLocal = ref(true)   
-   const mouseoverActiveLocal = ref(false)   
-   const transitionPopupActiveLocal = ref(false)
+   const firstActiveSlide = ref(true)   
+   const popupMouseover   = ref(false)
+   const thumbMouseover   = ref(false)   
+   const transitionPopup  = ref(false)
 
-   
-   const firstActiveSlide = computed(() => firstActiveSlideLocal.value)
-   function setFirstActiveSlide(active) { firstActiveSlideLocal.value = active }
+   const firstActiveSlideDisplayed = computed(() => firstActiveSlide.value)
+   function setFirstActiveSlideDisplayed(active) { firstActiveSlide.value = active }
   
-   const mouseoverActive = computed(() => mouseoverActiveLocal.value)
-   function setMouseoverActive(active) { mouseoverActiveLocal.value = active }
+   const popupMouseoverActive = computed(() => popupMouseover.value)
+   function setPopupMouseoverActive(active) { 
+      popupMouseover.value = active 
+      if (!active) { transitionPopup.value = false } // user has moused off of popup - take it down
+   }
   
-   const transitionPopupActive = computed(() => transitionPopupActiveLocal.value)
-   function setTransitionPopupActive(active) { transitionPopupActiveLocal.value = active }
+   const thumbMouseoverActive = computed(() => thumbMouseover.value)
+   function setThumbMouseoverActive(active) { thumbMouseover.value = active }
   
-   return { firstActiveSlide, setFirstActiveSlide, 
-      mouseoverActive, setMouseoverActive, 
+   const transitionPopupActive = computed(() => transitionPopup.value)
+   function setTransitionPopupActive(active) { transitionPopup.value = active }
+  
+   return { firstActiveSlideDisplayed, setFirstActiveSlideDisplayed, 
+      popupMouseoverActive, setPopupMouseoverActive,
+      thumbMouseoverActive, setThumbMouseoverActive, 
       transitionPopupActive, setTransitionPopupActive 
    }
 })

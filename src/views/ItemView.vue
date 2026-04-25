@@ -16,7 +16,7 @@
    </DefineTemplate>
 
    <div v-if="viewMgr.isDeskTop && paramItem">
-      <v-row no-gutters class="d-flex align-center flex-nowrap" :style="editBackgroundStyle">
+      <v-row no-gutters class="d-flex align-center flex-nowrap">
          <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
             <span style="font-size: 30px">{{ paramItem.name }}</span>

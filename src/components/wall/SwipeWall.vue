@@ -15,8 +15,9 @@
 </template>
 
 <script setup>
-   import { computed, onErrorCaptured, onMounted, onUnmounted, ref } from 'vue'
+   import { computed, onErrorCaptured, onMounted, onUnmounted, ref, watch } from 'vue'
    import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+   import { storeToRefs } from 'pinia'
    import { Swiper, SwiperSlide } from "swiper/vue"
    import { Autoplay, Navigation, Pagination } from 'swiper/modules'
    import { useSwipeStore } from './SwipeStore'
@@ -36,16 +37,20 @@
    const swipeStore = useSwipeStore()
    const viewStore  = useViewStore()
    const modules = ref([Autoplay, Navigation, Pagination])
+   const { popupMouseoverActive } = storeToRefs(swipeStore)
    const popupImage = ref(null)
    
    onMounted(() => {
-      swipeStore.setFirstActiveSlide(true)
+      swipeStore.setFirstActiveSlideDisplayed(true)
       window.addEventListener('scroll', handleScroll)
    })
    onUnmounted(() => window.removeEventListener('scroll', handleScroll))
    const handleScroll = () => { if (popupImage.value) { popupImage.value = null } }
 
    onErrorCaptured((err) => { return handleError(err, "SwipeWall") })
+
+   // take down popup if user mouses away from it
+   watch(popupMouseoverActive, (active) => { if (!active) { onPopup(null) } })
 
    const background = computed(() => props.transparent ? "" : "bg-shade" )
 

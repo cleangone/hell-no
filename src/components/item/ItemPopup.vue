@@ -1,18 +1,20 @@
 <template>
    <div class="image-popup" :style="popupStyle">
       <RouterLink v-if="popupImage.itemURL" :to="popupImage.itemURL">
-          <v-img :src="popupImage.url"></v-img>
+          <v-img :src="popupImage.url" @mouseover="mouseover()" @mouseleave="mouseleave()"/>
       </RouterLink>
-      <v-img v-else :src="popupImage.url"></v-img>
+      <v-img v-else :src="popupImage.url"/>
       <div v-if="popupImage.name.length" class="text-white">{{ popupImage.name }}</div>
    </div>
 </template>
 
 <script setup>
-   import { computed, onErrorCaptured, ref } from 'vue'
+   import { computed, onErrorCaptured } from 'vue'
+   import { useSwipeStore } from '../wall/SwipeStore'
    import { handleError } from '@/utils/utils'
    
    const props = defineProps({ popupImage: Object })
+   const swipeStore = useSwipeStore()
    
    onErrorCaptured((err) => { return handleError(err, "ItemPopup") })
   
@@ -22,6 +24,9 @@
               "left:" +  props.popupImage.x + "px; top: " +  y + "px; " +
               "width:" + props.popupImage.width + "px; height: " + props.popupImage.height + "px;"
    })     
+
+   const mouseover  = () => { swipeStore.setPopupMouseoverActive(true) }
+   const mouseleave = () => { swipeStore.setPopupMouseoverActive(false) }
 </script>
 
 <style>

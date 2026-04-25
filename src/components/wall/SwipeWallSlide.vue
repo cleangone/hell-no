@@ -26,14 +26,14 @@
 
    onMounted(() => { emit(Emit.LOADED) })
    watch(() => props.active, (isActive) => {
-      // bypass first slide becasue Wall rows not all set
-      if (isActive && swipeStore.firstActiveSlide) { 
-         swipeStore.setFirstActiveSlide(false)
+      // bypass first slide becasue wall rows not all set, which leads to it being placed incorrectly
+      if (isActive && swipeStore.firstActiveSlideDisplayed) { 
+         swipeStore.setFirstActiveSlideDisplayed(false)
          return 
       }
      
       // display popup in top row if no mouseover or other active popup
-      if (isActive && !swipeStore.mouseoverActive && !swipeStore.transitionPopupActive && props.row == 0) {
+      if (isActive && !swipeStore.thumbMouseoverActive && !swipeStore.transitionPopupActive && props.row == 0) {
          setTimeout(() => {   
             const popup = getPopupImage({ overlayThumb: true }) // wait for transition to complete for correct popup coords
             if (popup) {   
@@ -44,8 +44,10 @@
             }
          }, 250)
          setTimeout(() => { 
-            swipeStore.setTransitionPopupActive(false)
-            emit(Emit.POPUP, null)
+            if (!swipeStore.popupMouseoverActive) { 
+               swipeStore.setTransitionPopupActive(false)
+               emit(Emit.POPUP, null)
+            }
          }, 4000)  
       }
    })
@@ -75,7 +77,7 @@
       setTimeout(() => { 
          if (mouseoverTime > mouseleaveTime.value) { 
             // emit popup so it can be displayed outside of slider stacking order 
-            swipeStore.setMouseoverActive(true)
+            swipeStore.setThumbMouseoverActive(true)
             emit(Emit.POPUP, getPopupImage( {} ))
          }
       }, 250)  
@@ -83,7 +85,7 @@
 
    const mouseleave = () => {
       mouseleaveTime.value = Date.now()
-      swipeStore.setMouseoverActive(false)
+      swipeStore.setThumbMouseoverActive(false)
       emit(Emit.POPUP, null)
    }
 </script>
