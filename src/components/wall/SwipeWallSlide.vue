@@ -26,24 +26,20 @@
 
    onMounted(() => { emit(Emit.LOADED) })
    watch(() => props.active, (isActive) => {
-      // display popup if no mouseover or other active popup 
-      if (isActive && !swipeStore.mouseoverActive && !swipeStore.transitionPopupActive) {
-         // alternate rows - TODO - handle walls with only one row
-         if (swipeStore.previousRow != props.row) {
-            setTimeout(() => {   
-               const popup = getPopupImage() // wait for transition to complete to get popup
-               if (popup) {   
-                  // emit popup so it can be displayed outside of slider stacking order 
-                  swipeStore.setTransitionPopupActive(true, props.row)
-                  emit(Emit.POPUP, popup)
-               }
-            }, 250)
-            setTimeout(() => { 
-               // todo - check if row matches here?
-               swipeStore.setTransitionPopupActive(false, props.row)
-               emit(Emit.POPUP, null)
-            }, 4000)  
-         }
+      // display popup in top row if no mouseover or other active popup 
+      if (isActive && !swipeStore.mouseoverActive && !swipeStore.transitionPopupActive && props.row == 0) {
+         setTimeout(() => {   
+            const popup = getPopupImage(true) // wait for transition to complete to get popup
+            if (popup) {   
+               // emit popup so it can be displayed outside of slider stacking order 
+               swipeStore.setTransitionPopupActive(true)
+               emit(Emit.POPUP, popup)
+            }
+         }, 250)
+         setTimeout(() => { 
+            swipeStore.setTransitionPopupActive(false)
+            emit(Emit.POPUP, null)
+         }, 4000)  
       }
    })
 
@@ -51,7 +47,7 @@
    const itemURL   = computed(() => itemMgr.itemURL(props.wallItem.itemId, props.origin, props.wallItem.childNum))
    const textClass = computed(() => xs.value ? "text-caption" : "")
    
-   const getPopupImage = () => { 
+   const getPopupImage = (overlayThumb = false) => { 
       const boundingRect = cardRef.value.$el.getBoundingClientRect()
 
       // check if visible to user
@@ -61,7 +57,11 @@
       return itemMgr.getPopupImage(
          wallItem.value.name, 
          wallItem.value.artist ? wallItem.value.artist.fullName : null, 
-         wallItem.value.largeThumbUrl, boundingRect, aspectRatio, xs.value)
+         wallItem.value.largeThumbUrl, 
+         boundingRect, 
+         aspectRatio, 
+         overlayThumb, // display popup on top of image
+         xs.value) // small thumbs
    }
 
    const mouseover = () => {

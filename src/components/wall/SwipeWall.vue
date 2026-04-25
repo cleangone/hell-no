@@ -2,8 +2,8 @@
    <!-- <div class="wall-container bg-shade px-3"> -->
    <div class="wall-container px-3" :class="background">
       <swiper v-for="(slideRow, index) in slideRows" key="slideRow.id" slides-per-view="auto" :space-between="spaceBetweenSlides" 
-            :pagination="{clickable: true}" :navigation="true" :loop="true" 
-            :autoplay="{ delay:4500, pauseOnMouseEnter:true }" :modules="modules" style="--swiper-navigation-size:20px"
+            :pagination="{clickable: true}" :navigation="true" :loop="true" @sliderMove="onSliderMove"
+            :autoplay="{ delay:4000, pauseOnMouseEnter:true }" :modules="modules" style="--swiper-navigation-size:20px"
             :style="rowStyle">
          <swiper-slide v-for="slideItem in slideRow.items" :key="slideItem.itemId" :width="slideItem.width" 
                v-slot="{ isActive }" class="swipe-slide" :style="slideStyle"> 
@@ -179,8 +179,9 @@
    const slideMargin        = computed(() => xs.value ? 25 : 5) 
    const rowStyle   = computed(() => "min-height:" + (props.rowHeight + rowMargin.value)   + "px") 
    const slideStyle = computed(() => "height:"     + (props.rowHeight + slideMargin.value) + "px") 
-   const onPopup = (popup) => { popupImage.value = popup }
+   const onPopup = (popup)  => { popupImage.value = popup }
    const onSlideLoaded = () => { emit(Emit.LOADED) }
+   const onSliderMove = ()  => { popupImage.value = null }
 </script>
 
 <style>
