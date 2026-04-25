@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-   import { computed, onErrorCaptured, onMounted, ref } from 'vue'
+   import { computed, onErrorCaptured, onMounted, onUnmounted, ref } from 'vue'
    import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
    import { Swiper, SwiperSlide } from "swiper/vue"
    import { Autoplay, Navigation, Pagination } from 'swiper/modules'
@@ -37,6 +37,10 @@
    const modules = ref([Autoplay, Navigation, Pagination])
    const popupImage = ref(null)
    
+   onMounted(()   => window.addEventListener('scroll', handleScroll))
+   onUnmounted(() => window.removeEventListener('scroll', handleScroll))
+   const handleScroll = () => { if (popupImage.value) { popupImage.value = null } }
+
    onErrorCaptured((err) => { return handleError(err, "SwipeWall") })
 
    const background = computed(() => props.transparent ? "" : "bg-shade" )
