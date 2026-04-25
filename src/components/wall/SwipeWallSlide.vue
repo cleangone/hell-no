@@ -29,9 +29,10 @@
       // display popup in top row if no mouseover or other active popup 
       if (isActive && !swipeStore.mouseoverActive && !swipeStore.transitionPopupActive && props.row == 0) {
          setTimeout(() => {   
-            const popup = getPopupImage(true) // wait for transition to complete to get popup
+            const popup = getPopupImage({ overlayThumb: true }) // wait for transition to complete for correct popup coords
             if (popup) {   
                // emit popup so it can be displayed outside of slider stacking order 
+               popup.itemURL = itemURL.value
                swipeStore.setTransitionPopupActive(true)
                emit(Emit.POPUP, popup)
             }
@@ -47,21 +48,18 @@
    const itemURL   = computed(() => itemMgr.itemURL(props.wallItem.itemId, props.origin, props.wallItem.childNum))
    const textClass = computed(() => xs.value ? "text-caption" : "")
    
-   const getPopupImage = (overlayThumb = false) => { 
+   const getPopupImage = (settings) => { 
       const boundingRect = cardRef.value.$el.getBoundingClientRect()
-
-      // check if visible to user
-      if (boundingRect.y < 0) { return null}
+      if (boundingRect.y < 0) { return null } // thumbnail not visible to user 
 
       const aspectRatio = objAspectRatio(props.wallItem.dimensions)
       return itemMgr.getPopupImage(
          wallItem.value.name, 
          wallItem.value.artist ? wallItem.value.artist.fullName : null, 
-         wallItem.value.largeThumbUrl, 
-         boundingRect, 
+         wallItem.value.largeThumbUrl,
+         boundingRect,  
          aspectRatio, 
-         overlayThumb, // display popup on top of image
-         xs.value) // small thumbs
+         { ...settings, smallThumb: xs.value })
    }
 
    const mouseover = () => {
@@ -72,7 +70,7 @@
          if (mouseoverTime > mouseleaveTime.value) { 
             // emit popup so it can be displayed outside of slider stacking order 
             swipeStore.setMouseoverActive(true)
-            emit(Emit.POPUP, getPopupImage())
+            emit(Emit.POPUP, getPopupImage( {} ))
          }
       }, 250)  
    }

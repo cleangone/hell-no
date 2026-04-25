@@ -1,6 +1,9 @@
 <template>
    <div class="image-popup" :style="popupStyle">
-      <v-img :src="popupImage.url"></v-img>
+      <RouterLink v-if="popupImage.itemURL" :to="popupImage.itemURL">
+          <v-img :src="popupImage.url"></v-img>
+      </RouterLink>
+      <v-img v-else :src="popupImage.url"></v-img>
       <div v-if="popupImage.name.length" class="text-white">{{ popupImage.name }}</div>
    </div>
 </template>
