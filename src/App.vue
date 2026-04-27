@@ -36,9 +36,7 @@
             <nav v-else>
                <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.HOME" :url="URL.HOME" text="Home" />
                <span v-if="!inRoutes(Route.ACCOUNT, Route.ADMIN, Route.REGISTER)">
-                  <span v-if="galleriesExist">
-                     | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.GALLERIES" :targetId="Defaults.SITE_ID" :url="URL.GALLERIES + Defaults.SITE_ID" text="Galleries" />
-                  </span> 
+                  | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.GALLERIES" :targetId="Defaults.SITE_ID" :url="URL.GALLERIES + Defaults.SITE_ID" text="Galleries" />
                   | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.SEARCH" :url="URL.SEARCH" text="Search"/>
                   <span v-if="userExists && !viewMgr.solo">
                      | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.MESSAGE" :url="URL.MESSAGE" text="Messages" />
@@ -243,8 +241,7 @@
    const userId      = computed(() => userStore.userId )
    const userIsAdmin = computed(() => adminStore.isAdmin )
    const firstName   = computed(() => user.value ? user.value.firstName : "")
-   const galleriesExist = computed(() => galleryStore.myGalleriesExist)        
-
+   
    const version = computed(() => { return versions[0][0] })
    const userAgent = computed(() => navigator.userAgent)
    const isStandalone = computed(() => window.matchMedia('(display-mode: standalone)').matches)

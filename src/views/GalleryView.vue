@@ -43,7 +43,7 @@
             </v-row>
             <span style="text-align:center">
                <RouterLink v-if="gallery.parentGalleryId" :to="URL.GALLERY + gallery.parentGalleryId">{{ parentGalleryName }} Gallery</RouterLink>
-               <RouterLink v-else-if="userStore.userExists" :to="URL.GALLERIES + galleriesLinkId">Galleries</RouterLink>
+               <RouterLink v-else :to="URL.GALLERIES + galleriesLinkId">Galleries</RouterLink>
             </span>
          </v-container>
          <div style="clear:both"></div>   
