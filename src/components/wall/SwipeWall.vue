@@ -99,7 +99,7 @@
       else {
          for (const wallItem of wallItems) {
             const sizedWallItem = { ...wallItem }
-            sizedWallItem.width = sizedWallItem.width * WallRowHeight.XS /  WallRowHeight.DEFAULT - 10
+            sizedWallItem.thumbWidth = sizedWallItem.thumbWidth * WallRowHeight.XS /  WallRowHeight.DEFAULT - 10
             sizedWallItems.push(sizedWallItem)
          }
       }
