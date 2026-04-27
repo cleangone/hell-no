@@ -99,18 +99,12 @@
    const wallBackgroundOpacity = ref(.1) 
    // const isDark = useDark()
    
-const isDark
- = useDark
-({
-  selector
-: 'body',
-  attribute
-: 'color-scheme',
-  valueDark
-: 'dark',
-  valueLight
-: 'light',
-})
+   const isDark = useDark({
+      selector : 'body',
+      attribute: 'color-scheme',
+      valueDark: 'dark',
+      valueLight : 'light',
+   })
 
    onMounted(() => {
       // console.log("Home")
@@ -128,7 +122,7 @@ const isDark
       title: "Hell-No Gallery" // displayed in browser tabs
    })
    
-   // dark mode works if browser set to dark, but toggle doesn't work
+   // todo - dark mode works if browser set to dark, but toggle doesn't work
    // see documentation re @media (prefers-color-scheme: dark) vs css .dark 
    const toggleDark = useToggle(isDark)
 

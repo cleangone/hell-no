@@ -28,6 +28,8 @@ export const useWallMgr = defineStore('wallMgr', () => {
       // siteCopy.wallItems = firstWallItems
       
       // fill wall with current - userWallItems will be mixed in later
+
+      
       return fillWall(siteCopy, itemMgr.recentPublicItems) 
    })
 
@@ -69,11 +71,8 @@ export const useWallMgr = defineStore('wallMgr', () => {
    }   
 
    function deleteWallItem(wallItem, wallId) { 
-      if (wallId == Defaults.SITE_ID) { wallStore.removeWallItem(wallItem, wallId) }
-      else {
-          wallStore.removeWallsImageId(wallItem.imageId) // remove from all walls - remnant from potential group walls
-          itemStore.updateItem({ id: wallItem.itemId, onUserWall: false})
-      }
+      wallStore.removeWallItem(wallItem.itemId, wallId) 
+      itemStore.updateItem({ id: wallItem.itemId, onUserWall: false })
    }
    
    return { name, filledSiteWall, fillWall, userWallIncludesItem, deleteWallItem }

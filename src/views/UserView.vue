@@ -131,17 +131,7 @@
       return thumbRow.thumbs
    })
 
-   const wall = computed(() => {
-
-      // swipewall will figure out user/profile
-      return wallStore.getUserWall(userId.value)
-
-      // if (rawUser.value) { return wallStore.getUserWall(userId.value) }
-      // else if (rawProfile.value) { return  { 
-      //    id: rawProfile.value.id, type: WallType.USER, addRecent: true, wallRows: 2, wallItems: [] } }
-      // return null
-   })
-
+   const wall = computed(() => wallStore.getUserWall(userId.value))
    const displayWall = computed(() => {
       return  wall.value?.addRecent ? wallMgr.fillWall(wall.value, allRecentItems.value) : wall.value
    })

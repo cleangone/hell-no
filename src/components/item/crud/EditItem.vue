@@ -254,6 +254,7 @@
          const itemForWall = { 
             id: currItem.value.id,
             name: currItemName.value,
+            profileId: currProfileId.value,
             primaryImage: currItem.value.primaryImage, 
             primaryArtist: primaryArtist
          }
@@ -262,7 +263,20 @@
          wallStore.addWallItem(currItem.value.userId, itemForWall, currItem.value.primaryImage) 
       }
       else if (!currItemWall.value && wallIncludesItem) { 
-         wallStore.removeWallsItemId(currItem.value.id) 
+         removeWallItem(currItem.value.id, currItem.value.userId)
+      }
+
+      // update wallItem.profileId if profile updated and item was already on wall
+      if ((currProfileId.value != currItem.value.profileId) && wallIncludesItem && currItemWall.value) {
+         console.log("Checking wallItem profileId")
+         const wall = wallStore.myWall
+         const updatedWallItems = []
+         for (const wallItem of wall.wallItems) { 
+            const wallItemToUpdate = { ...wallItem }
+            if (wallItemToUpdate.itemId == currItem.value.id) { wallItemToUpdate.profileId = currProfileId.value }
+            updatedWallItems.push(wallItemToUpdate)
+         }
+         wallStore.updateWall({ id: wall.id, wallItems: updatedWallItems })  
       }
 
       if (nextItems.value.length) { setCurrItem(nextItems.value.shift()) }

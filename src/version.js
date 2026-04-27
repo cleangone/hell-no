@@ -11,6 +11,7 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.8.1",  "4/27/26"], // Add profileId to wallItem
    ["v2.8.0",  "4/26/26"], // Handle interaction between wall active popup and wallItem mouseover
                            // Fix issue with wall image that was different than item.primaryImage
                            // Initial version of profile's wall

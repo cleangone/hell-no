@@ -58,43 +58,39 @@
    const background = computed(() => props.transparent ? "" : "bg-shade" )
 
    const wallItems = computed(() => {
-      if (props.wall.displayOrder == WallDisplayOrder.RANDOM) { 
-         const maxWallItems = props.wall.maxWallItems ? props.wall.maxWallItems : Defaults.MAX_WALL_ITEMS
-         const wallItems = []
-         if (props.wall.userWallItems) {
-            const maxUserWallItems = Math.floor(maxWallItems/2)
-            const randomUserWallItems = randomizeArray(props.wall.userWallItems)
-            wallItems.push(...randomUserWallItems.slice(0, maxUserWallItems))
-         }
+      const maxWallItems = props.wall.maxWallItems ? props.wall.maxWallItems : Defaults.MAX_WALL_ITEMS
+      const wallItems = []
+      if (props.wall.id == Defaults.SITE_ID && props.wall.userWallItems) {
+         const maxUserWallItems = Math.floor(maxWallItems/2)
+         const randomUserWallItems = randomizeArray(props.wall.userWallItems)
+         wallItems.push(...randomUserWallItems.slice(0, maxUserWallItems))
+      }
 
-         for (const wallItem of props.wall.wallItems) { 
-            if (wallItems.length >= maxWallItems) { break }
-            wallItems.push(wallItem)
-         }
+      const wallItemIds = wallItems.map((obj) => obj.itemId) 
+      for (const wallItem of props.wall.wallItems) { 
+         if (wallItems.length >= maxWallItems) { break }
+         else if (!wallItemIds.includes(wallItem.itemId)) { wallItems.push(wallItem) }
+      }
 
-         // todo - workaround - should keep profileId in wallItem
-         const displayWallItems = []
-         if (props.wall.id == Defaults.SITE_ID) { displayWallItems.push( ...wallItems) }
-         else {
-            for (const wallItem of wallItems) {
-               const item = itemStore.getItem(wallItem.itemId)
-               if (item && (!props.profileId && !item.profileId || props.profileId == item.profileId)) {
-                  displayWallItems.push(wallItem) 
-               }
+      const displayWallItems = []
+      if (props.wall.id == Defaults.SITE_ID) { displayWallItems.push( ...wallItems) }
+      else {
+         for (const wallItem of wallItems) {
+            if (!props.profileId && !wallItem.profileId || props.profileId == wallItem.profileId) {
+               displayWallItems.push(wallItem) 
             }
          }
-
-         const sizedWallItems  = sizeWallItems(displayWallItems)   
-         const randomWallItems = randomizeArray(sizedWallItems)
-         let rowIndex = 1
-         for (const wallItem of randomWallItems) {   
-            wallItem.wallRow = rowIndex
-            rowIndex = rowIndex == props.wall.wallRows ? 1 : rowIndex + 1 // round-robin through rows
-         } 
-         
-         return randomWallItems 
       }
-      else { return sizeWallItems(props.wall.wallItems) }
+
+      const sizedWallItems  = sizeWallItems(displayWallItems)   
+      const randomWallItems = randomizeArray(sizedWallItems)
+      let rowIndex = 1
+      for (const wallItem of randomWallItems) {   
+         wallItem.wallRow = rowIndex
+         rowIndex = rowIndex == props.wall.wallRows ? 1 : rowIndex + 1 // round-robin through rows
+      } 
+      
+      return randomWallItems 
    })
 
    const sizeWallItems = (wallItems) => { 

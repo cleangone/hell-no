@@ -22,11 +22,7 @@ import { Defaults, DefaultWall, WallDisplayOrder, WallType } from '@/utils/const
          artist
             id
             fullName
-
-         // todo - should be kept in wallItem, but then item/profile updates need to propagate
-         profile - TODO
-            id
-            username
+         profileId
          imageId
          thumbUrl
          thumbDimensions - for display of thumb
@@ -56,6 +52,9 @@ export const useWallStore = defineStore('wall', () => {
    const walls        = useFirestore(wallCollection)   
    const siteWall     = useFirestore(wallDoc(Defaults.SITE_ID), DefaultWall)
 
+   const wallIdToWall = computed(() => { return walls.value ? new Map(walls.value.map((obj) => [obj.id, obj])) : new Map() })
+   function getWall(id) { return wallIdToWall.value.has(id) ? wallIdToWall.value.get(id) : DefaultWall } 
+
    const myWallQuery  = computed(() => userStore.userId && wallDoc(userStore.userId))
    const myWall       = useFirestore(myWallQuery, DefaultWall)
    const visibleWalls = computed(() => [ siteWall.value, myWall.value ])
@@ -71,11 +70,12 @@ export const useWallStore = defineStore('wall', () => {
    const userIdToWall = computed(() => { return userWalls.value ? new Map(userWalls.value.map((obj) => [obj.id, obj])) : new Map() })
    function getUserWall(userId) { return userIdToWall.value.has(userId) ? userIdToWall.value.get(userId) : DefaultWall } 
 
-   function getWall(id) {
-      if (id == myWall.value.id)        { return myWall.value }
-      else if (id == siteWall.value.id) { return siteWall.value }
-      else return DefaultWall
-   }
+   // todo - why was this here
+   // function getWall(id) {
+   //    if (id == myWall.value.id)        { return myWall.value }
+   //    else if (id == siteWall.value.id) { return siteWall.value }
+   //    else return DefaultWall
+   // }
 
    function addWall(id, type) {
       setDoc(wallDoc(id), {
@@ -91,6 +91,7 @@ export const useWallStore = defineStore('wall', () => {
 
    function updateWall(wall) {
       const wallToUpdate = { ...wall, dateModified: serverTimestamp() }
+      console.log("updateWall", wallToUpdate.id)
       updateDoc(wallDoc(wallToUpdate.id), wallToUpdate)
    }
 
@@ -98,11 +99,6 @@ export const useWallStore = defineStore('wall', () => {
    const myWallImageIds = computed(() => myWall.value.wallItems.map(a => a.thumbImageId) )
    function myWallIncludesItem(itemId)   { return myWallItemIds.value.includes(itemId) }   
    function myWallIncludesImage(imageId) { return myWallImageIds.value.includes(imageId) }   
-   
-   // const siteWallItemIds  = computed(() => siteWall.value.wallItems.map(a => a.itemId) )
-   // const siteWallImageIds = computed(() => siteWall.value.wallItems.map(a => a.imageId) )
-   // function siteWallIncludesItem(itemId)   { return siteWallItemIds.value.includes(itemId) }   
-   // function siteWallIncludesImage(imageId) { return siteWallImageIds.value.includes(imageId) }   
    
    // wallItem thumb might not be the primaryImage
    function addMyWallItem(item, image) {
@@ -124,7 +120,7 @@ export const useWallStore = defineStore('wall', () => {
          title:     item.name, 
          name:      item.name, 
          artist:    item.primaryArtist ? { id: item.primaryArtist.id, fullName: item.primaryArtist.fullName } : null,
-         // profileId: item.profileId ? item.profileId : null,
+         profileId: item.profileId ? item.profileId : null,
          thumbImageId:    image.id, 
          thumbUrl:        image.thumbUrl, 
          thumbDimensions: { ...image.dimensions }, 
@@ -133,26 +129,6 @@ export const useWallStore = defineStore('wall', () => {
          popupUrl: item.primaryImage.largeThumbUrl, 
          // url:      image.url, 
          popupDimensions: { ...item.primaryImage.dimensions }, 
-      }
-   }
-
-   // function addSiteWallItem(wallItem) {
-   //    const newWallItem = { ...wallItem }
-   //    newWallItem.dimensions = { ...wallItem.dimensions }   
-   //    if (wallItem.artist) { newWallItem.artist = { ...wallItem.artist } }
-   //    if (wallItem.thumbDimensions) { newWallItem.thumbDimensions = { ...wallItem.thumbDimensions } }
-        
-   //    updateWallDoc(Defaults.SITE_ID, { wallItems: arrayUnion(newWallItem) }) 
-   // }
-
-   function removeWallsItemId(itemId) {
-      // for (const wall of visibleWalls.value) { 
-      for (const wall of walls.value) { 
-         const wallItemsToRemove = [] 
-         for (const wallItem of wall.wallItems) { 
-            if (wallItem.itemId == itemId) { wallItemsToRemove.push(wallItem) }
-         }   
-         removeWallItems(wallItemsToRemove, wall.id)
       }
    }
 
@@ -166,7 +142,17 @@ export const useWallStore = defineStore('wall', () => {
       }
    }
 
-   function removeWallItem(wallItemToRemove, wallId) { updateWallDoc(wallId, { wallItems: arrayRemove(wallItemToRemove) }) }
+   function removeWallItem(itemIdToRemove, wallId) { 
+      // updateWallDoc(wallId, { wallItems: arrayRemove(wallItemToRemove) }) 
+      const wall = getWall(wallId)
+      const updatedWallItems = [] 
+      for (const wallItem of wall.wallItems) { 
+         if (wallItem.itemId != itemIdToRemove) { updatedWallItems.push(wallItem) }
+      }   
+      
+      updateWallDoc(wallId, { wallItems: updatedWallItems }) 
+   }
+
    function removeWallItems(wallItemsToRemove, wallId) {
       if (wallItemsToRemove.length) { updateWallDoc(wallId, { wallItems: arrayRemove(...wallItemsToRemove) }) }
    }
@@ -175,7 +161,6 @@ export const useWallStore = defineStore('wall', () => {
 
    return { 
       walls, siteWall, userWallItems, myWall, myWallIncludesItem, myWallIncludesImage, addMyWallItem, addWallItem,
-      getWall, getUserWall, createWallItem, addWall, updateWall, removeWallsItemId, removeWallsImageId, removeWallItem
-      // siteWallIncludesItem, siteWallIncludesImage, addSiteWallItem
+      getWall, getUserWall, createWallItem, addWall, updateWall, removeWallsImageId, removeWallItem
    }
 })

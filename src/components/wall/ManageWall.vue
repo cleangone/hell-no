@@ -26,7 +26,6 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useWallStore }    from '@/stores/wallStore'
-   import { useItemStore }    from '@/stores/itemStore'
    import { useProfileStore } from '@/stores/profileStore'
    import TableThumb     from '@/components/account/TableThumb.vue'
    import EditWall       from '@/components/wall/EditWall.vue'
@@ -38,7 +37,6 @@
    
    const props = defineProps({ wallId: String })
    const wallStore    = useWallStore()
-   const itemStore    = useItemStore()
    const profileStore = useProfileStore()
    const showEditWallDialog = ref(false)
    const showEditWallItemDialog = ref(false)
@@ -60,12 +58,7 @@
       if (wall.value) {
          for (const wallItem of wall.value.wallItems) {
             const displayItem = { ...wallItem }
-            const item = itemStore.getItem(wallItem.itemId)
-            if (item && item.profileId) {
-               console.log("wall item w profile", item)
-               displayItem.profile = profileStore.getUsername(item.profileId)
-            }
-
+            if (displayItem.profileId) { displayItem.profile = profileStore.getUsername(displayItem.profileId) }
             items.push(displayItem) 
          }
       }
