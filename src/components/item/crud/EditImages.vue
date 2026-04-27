@@ -63,10 +63,9 @@
                <v-checkbox v-else v-model="item.showWithItem" @click="toggleShowWithItem(item)" class="ml-3 mt-4"/> 
             </template>
             <template v-slot:item.wall="{ item }">
-               <div v-if=imageOnWall(item.id) class="d-flex flex-column">
-                  <div v-if=imageOnMyWall(item.id)>My Wall</div>
-                  <div v-if=imageOnSiteWall(item.id)>Site Wall</div>
-               </div>
+               <!-- <div v-if=imageOnWall(item.id) class="d-flex flex-column"> -->
+               <div v-if=imageOnMyWall(item.id)>My Wall</div>
+               <!-- </div> -->
                <TextButton v-else @click="addToWall(item)" text="Add"/>
             </template>
             <template v-slot:item.cropActions="{ item }">
@@ -106,6 +105,7 @@
    const TRUE = true
    const props = defineProps({item: Object})
    const emit  = defineEmits([Emit.DONE])
+
    const EditableImageTypes = [ ImageType.PRIMARY, ImageType.CROP, ImageType.OTHER, ImageType.HEADER, ImageType.BACKGROUND ]
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
@@ -143,13 +143,16 @@
       return item.value ? [ item.value.primaryImage, ...item.value.otherImages] : [ props.item.primaryImage, ...props.item.otherImages ]
    })
 
-   const imageOnWall     = (imageId) => { return imageOnMyWall(imageId)|| imageOnSiteWall(imageId) }
-   const imageOnMyWall   = (imageId) => { return wallStore.myWallIncludesImage(imageId) }
-   const imageOnSiteWall = (imageId) => { return wallStore.siteWallIncludesImage(imageId) }
-
+   const imageOnMyWall  = (imageId) => { return wallStore.myWallIncludesImage(imageId) }
+   
    const isPrimaryImage = (itemImage) => { return itemImage.imageType == ImageType.PRIMARY }
    const canEdit        = (itemImage) => { return EditableImageTypes.includes(itemImage.imageType) }
-   const addToWall      = (itemImage) => { wallStore.addMyWallItem(item.value, itemImage) }
+   const addToWall      = (itemImage) => {
+      
+      console.log("Adding wall item with different image", item.value)
+      console.log("Item primaryimage", item.value.primaryImage)
+         
+      wallStore.addMyWallItem(item.value, itemImage) }
 
    const showItemImage = (itemImage) => {
       itemImageToShow.value = itemImage

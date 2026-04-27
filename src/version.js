@@ -11,6 +11,9 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.8.0",  "4/26/26"], // Handle interaction between wall active popup and wallItem mouseover
+                           // Fix issue with wall image that was different than item.primaryImage
+                           // Initial version of profile's wall
    ["v2.7.1",  "4/24/26"], // Make popup image clickable - needed for active image popup
    ["v2.7.0",  "4/24/26"], // Popup Wall active image after transition if no other popup displayed
    ["v2.6.0",  "4/22/26"], // Add gallery.contributorIds, integrate with views, Gallery/Item crud 

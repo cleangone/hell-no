@@ -7,7 +7,7 @@
       <div>Add Items and Galleries in <RouterLink :to="URL.ACCOUNT">My Account</RouterLink></div>
    </div>
    <div v-if="wallItemsExist" class="walldiv" :style="wallDivStyle">
-      <SwipeWall :wall="displayWall" :rowHeight="slideRowHeight" :linkUrl="URL.USER + route.params.id"/>
+      <SwipeWall :wall="displayWall" :rowHeight="slideRowHeight" :profileId="profileId" :linkUrl="URL.USER + route.params.id"/>
    </div>
    <v-container v-if="thumbGalleries.length">
       <div class="my-5">
@@ -49,7 +49,7 @@
    import SwipeWall    from '@/components/wall/SwipeWall.vue'
    import IconButton   from '@/components/util/IconButton.vue'
    import { ThumbRow } from '@/utils/utilClasses'
-   import { GalleryThumbWidth, ItemOrigin, URL, WallDisplayOrder, WallRowHeight, WallType } from '@/utils/constants'
+   import { GalleryThumbWidth, ItemOrigin, URL, WallRowHeight, WallType } from '@/utils/constants'
    
    const route  = useRoute()
    const router = useRouter()
@@ -78,12 +78,14 @@
       return rawProfile.value ? userStore.getUser(rawProfile.value.userId) : null 
    })
 
+   const profileId = computed(() => rawProfile.value ? rawProfile.value.id : null )
    const userExists = computed(() => user.value ? true : false )
    const userId = computed(() => user.value ? user.value.id : null )
    const username = computed(() => {
       if (rawUser.value) { return rawUser.value.username }
       return rawProfile.value ? rawProfile.value.username : "User" 
    })
+
    const contentExists = computed(() => wallItemsExist.value || thumbGalleries.value.length || recentItems.value.length) 
    
    const visibleGalleries = computed(() => { 
@@ -130,17 +132,20 @@
    })
 
    const wall = computed(() => {
-      if (rawUser.value) { return wallStore.getUserWall(userId.value) }
-      else if (rawProfile.value) { return  { 
-         id: rawProfile.value.id, type: WallType.USER, displayOrder: WallDisplayOrder.RANDOM, addRecent: true, wallRows: 2, wallItems: [] } }
-      return null
+
+      // swipewall will figure out user/profile
+      return wallStore.getUserWall(userId.value)
+
+      // if (rawUser.value) { return wallStore.getUserWall(userId.value) }
+      // else if (rawProfile.value) { return  { 
+      //    id: rawProfile.value.id, type: WallType.USER, addRecent: true, wallRows: 2, wallItems: [] } }
+      // return null
    })
 
    const displayWall = computed(() => {
-      const dispWall =  wall.value?.addRecent ? wallMgr.fillWall(wall.value, allRecentItems.value) : wall.value
-      // do not show wall if it only has the recent thumbs
-      return dispWall.wallItems.length == recentItems.value.length ? null : dispWall
+      return  wall.value?.addRecent ? wallMgr.fillWall(wall.value, allRecentItems.value) : wall.value
    })
+
    const wallItemsExist = computed(() => displayWall.value?.wallItems.length ? true : false )
    const slideRowHeight = computed(() => viewMgr.isMobile ? WallRowHeight.XS : WallRowHeight.DEFAULT)
    const slideRowMargin = computed(() => viewMgr.isMobile ? 30 : 15)

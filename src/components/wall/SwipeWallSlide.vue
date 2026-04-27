@@ -1,5 +1,5 @@
 <template>
-   <v-card :width="wallItem.width" ref="cardRef" class="mb-5 d-flex flex-column text-center bg-black">
+   <v-card :width="wallItem.thumbWidth" ref="cardRef" class="mb-5 d-flex flex-column text-center bg-black">
       <RouterLink :to="itemURL">
          <v-img :src="wallItem.thumbUrl" @mouseover="mouseover()" @mouseleave="mouseleave()" />
       </RouterLink>
@@ -50,6 +50,11 @@
             }
          }, 4000)  
       }
+      // else if (isActive && props.row == 0) {
+      //    const thumbActive      = swipeStore.thumbMouseoverActive  ? " thumbMouseoverActive"  : "" 
+      //    const transitionActive = swipeStore.transitionPopupActive ? " transitionPopupActive" : ""
+      //    console.log("Active thumb not displayed: " + thumbActive + transitionActive)
+      // }
    })
 
    const wallItem  = computed(() => props.wallItem) 
@@ -57,16 +62,18 @@
    const textClass = computed(() => xs.value ? "text-caption" : "")
    
    const getPopupImage = (settings) => { 
-      const boundingRect = cardRef.value.$el.getBoundingClientRect()
-      if (boundingRect.y < 0) { return null } // thumbnail not visible to user 
+      if (!cardRef.value) { return null }
+      
+      const thumbBoundingRect = cardRef.value.$el.getBoundingClientRect()
+      if (thumbBoundingRect.y < 0) { return null } // thumbnail not visible to user 
 
-      const aspectRatio = objAspectRatio(props.wallItem.dimensions)
+      const popupAspectRatio = objAspectRatio(props.wallItem.popupDimensions)
       return itemMgr.getPopupImage(
          wallItem.value.name, 
          wallItem.value.artist ? wallItem.value.artist.fullName : null, 
-         wallItem.value.largeThumbUrl,
-         boundingRect,  
-         aspectRatio, 
+         wallItem.value.popupUrl,
+         thumbBoundingRect,  
+         popupAspectRatio, 
          { ...settings, smallThumb: xs.value })
    }
 

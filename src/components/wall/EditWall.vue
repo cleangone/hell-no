@@ -31,7 +31,7 @@
    const wallStore  = useWallStore()
    const wallMgr    = useWallMgr()
    const adminStore = useAdminStore()
-   const displayOrders = [ WallDisplayOrder.USER_SET, WallDisplayOrder.RANDOM, WallDisplayOrder.RANDOM_IN_ROW ]
+   const displayOrders = [ WallDisplayOrder.USER_SET, WallDisplayOrder.RANDOM ]
    const displayOrder = ref('')
    const wallRows = ref(0)
    const maxWallItems = ref(Defaults.MAX_WALL_ITEMS)

@@ -12,7 +12,7 @@ import { Defaults, DefaultWall, WallDisplayOrder, WallType } from '@/utils/const
       id - user/groupId or 0 for home wall
       wallRows
       type: WallType: SITE, USER
-      displayOrder: WallDisplayOrder: USER_SET, RANDOM, RANDOM_IN_ROW - option unused - all set to RANDOM
+      displayOrder: WallDisplayOrder: USER_SET, RANDOM
       addRecent: boolean
       wallItems[]
          itemId
@@ -22,17 +22,21 @@ import { Defaults, DefaultWall, WallDisplayOrder, WallType } from '@/utils/const
          artist
             id
             fullName
+
+         // todo - should be kept in wallItem, but then item/profile updates need to propagate
+         profile - TODO
+            id
+            username
          imageId
          thumbUrl
          thumbDimensions - for display of thumb
          largeThumbUrl
-         url - CHECK IF USED
+         url - used to set url in nav
          dimensions
             width
             height
          width
-         wallRow - unused - RANDOM wall rows set on the fly
-         siteWall - boolean
+
       dateCreated
       dateModified
 */
@@ -91,14 +95,14 @@ export const useWallStore = defineStore('wall', () => {
    }
 
    const myWallItemIds  = computed(() => myWall.value.wallItems.map(a => a.itemId) )
-   const myWallImageIds = computed(() => myWall.value.wallItems.map(a => a.imageId) )
+   const myWallImageIds = computed(() => myWall.value.wallItems.map(a => a.thumbImageId) )
    function myWallIncludesItem(itemId)   { return myWallItemIds.value.includes(itemId) }   
    function myWallIncludesImage(imageId) { return myWallImageIds.value.includes(imageId) }   
    
-   const siteWallItemIds  = computed(() => siteWall.value.wallItems.map(a => a.itemId) )
-   const siteWallImageIds = computed(() => siteWall.value.wallItems.map(a => a.imageId) )
-   function siteWallIncludesItem(itemId)   { return siteWallItemIds.value.includes(itemId) }   
-   function siteWallIncludesImage(imageId) { return siteWallImageIds.value.includes(imageId) }   
+   // const siteWallItemIds  = computed(() => siteWall.value.wallItems.map(a => a.itemId) )
+   // const siteWallImageIds = computed(() => siteWall.value.wallItems.map(a => a.imageId) )
+   // function siteWallIncludesItem(itemId)   { return siteWallItemIds.value.includes(itemId) }   
+   // function siteWallIncludesImage(imageId) { return siteWallImageIds.value.includes(imageId) }   
    
    // wallItem thumb might not be the primaryImage
    function addMyWallItem(item, image) {
@@ -115,29 +119,31 @@ export const useWallStore = defineStore('wall', () => {
       const aspectRatio = objAspectRatio(image.dimensions)
       return { 
          // wall shows the itemGroup child thumb but links to the parent
-         itemId:   item.id, 
-         childNum: item.childNum ? item.childNum : null, 
-         title:    item.name, 
-         name:     item.name, 
-         artist:   item.primaryArtist ? { id: item.primaryArtist.id, fullName: item.primaryArtist.fullName } : null,
-         imageId:  image.id, 
-         thumbUrl: image.thumbUrl, 
+         itemId:    item.id, 
+         childNum:  item.childNum ? item.childNum : null, 
+         title:     item.name, 
+         name:      item.name, 
+         artist:    item.primaryArtist ? { id: item.primaryArtist.id, fullName: item.primaryArtist.fullName } : null,
+         // profileId: item.profileId ? item.profileId : null,
+         thumbImageId:    image.id, 
+         thumbUrl:        image.thumbUrl, 
          thumbDimensions: { ...image.dimensions }, 
-         largeThumbUrl: image.largeThumbUrl, 
-         url:      image.url, 
-         dimensions: { ...image.dimensions }, 
-         width: aspectRatio < 1 ? 150 : Math.min(Math.floor(150 * aspectRatio), 300), // initial value - user can change
+         thumbWidth: aspectRatio < 1 ? 150 : Math.min(Math.floor(150 * aspectRatio), 300), 
+      
+         popupUrl: item.primaryImage.largeThumbUrl, 
+         // url:      image.url, 
+         popupDimensions: { ...item.primaryImage.dimensions }, 
       }
    }
 
-   function addSiteWallItem(wallItem) {
-      const newWallItem = { ...wallItem }
-      newWallItem.dimensions = { ...wallItem.dimensions }   
-      if (wallItem.artist) { newWallItem.artist = { ...wallItem.artist } }
-      if (wallItem.thumbDimensions) { newWallItem.thumbDimensions = { ...wallItem.thumbDimensions } }
+   // function addSiteWallItem(wallItem) {
+   //    const newWallItem = { ...wallItem }
+   //    newWallItem.dimensions = { ...wallItem.dimensions }   
+   //    if (wallItem.artist) { newWallItem.artist = { ...wallItem.artist } }
+   //    if (wallItem.thumbDimensions) { newWallItem.thumbDimensions = { ...wallItem.thumbDimensions } }
         
-      updateWallDoc(Defaults.SITE_ID, { wallItems: arrayUnion(newWallItem) }) 
-   }
+   //    updateWallDoc(Defaults.SITE_ID, { wallItems: arrayUnion(newWallItem) }) 
+   // }
 
    function removeWallsItemId(itemId) {
       // for (const wall of visibleWalls.value) { 
@@ -168,8 +174,8 @@ export const useWallStore = defineStore('wall', () => {
    function updateWallDoc(id, wall) { updateDoc(wallDoc(id), { ...wall, dateModified: serverTimestamp() }) }
 
    return { 
-      walls, userWallItems, myWall, myWallIncludesItem, myWallIncludesImage, addMyWallItem, addWallItem,
-      getWall, getUserWall, createWallItem, addWall, updateWall, removeWallsItemId, removeWallsImageId, removeWallItem,
-      siteWall, siteWallIncludesItem, siteWallIncludesImage, addSiteWallItem
+      walls, siteWall, userWallItems, myWall, myWallIncludesItem, myWallIncludesImage, addMyWallItem, addWallItem,
+      getWall, getUserWall, createWallItem, addWall, updateWall, removeWallsItemId, removeWallsImageId, removeWallItem
+      // siteWallIncludesItem, siteWallIncludesImage, addSiteWallItem
    }
 })

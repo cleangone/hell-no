@@ -233,7 +233,6 @@ export const URL = {
 export const WallDisplayOrder = {
    USER_SET:  'User Set',
    RANDOM:    'Random',
-   RANDOM_IN_ROW: 'Random In Row',
 }
 
 export const WallRowHeight = {

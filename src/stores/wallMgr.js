@@ -5,7 +5,7 @@ import { useWallStore } from '@/stores/wallStore'
 import { useItemStore } from '@/stores/itemStore'
 import { useItemMgr }   from '@/stores/itemMgr'
 import { randomizeArray } from '@/utils/utils'
-import { Defaults, WallType } from '@/utils/constants' 
+import { Defaults, ItemType, WallType } from '@/utils/constants' 
  
 export const useWallMgr = defineStore('wallMgr', () => { 
    const userStore = useUserStore()
@@ -22,10 +22,12 @@ export const useWallMgr = defineStore('wallMgr', () => {
    const filledSiteWall = computed(() => {
       // add a selection of existing user wall items 
       const siteCopy = { ...wallStore.siteWall }
-      const userWallItems = randomizeArray(wallStore.userWallItems)
-      const firstWallItems = userWallItems.slice(0, 5)
-      siteCopy.wallItems = firstWallItems
-   
+      siteCopy.userWallItems = [ ...wallStore.userWallItems ]
+      // siteCopy.userWallItems = randomizeArray(wallStore.userWallItems)
+      // const firstWallItems = userWallItems.slice(0, 5)
+      // siteCopy.wallItems = firstWallItems
+      
+      // fill wall with current - userWallItems will be mixed in later
       return fillWall(siteCopy, itemMgr.recentPublicItems) 
    })
 
@@ -34,7 +36,8 @@ export const useWallMgr = defineStore('wallMgr', () => {
       const wallItemIds = wall.wallItems.map((obj) => obj.itemId)
 
       const filledWall = { ...wall }
-      filledWall.wallItems = [ ...wall.wallItems ]
+      filledWall.wallItems     = [ ...wall.wallItems ]
+      if (wall.userWallItems) { filledWall.userWallItems = [ ...wall.userWallItems ] }
       
       const randomUngroupedItems = [ ...itemMgr.ungroupItems(items) ]
       for (const item of randomUngroupedItems) { 
@@ -44,10 +47,13 @@ export const useWallMgr = defineStore('wallMgr', () => {
 
       for (const ungroupedItem of randomUngroupedItems) { 
          if (filledWall.wallItems.length >= maxItems) { break }
-         if (!wallItemIds.includes(ungroupedItem.id)) {
+         
+         // workaround - having issues with actual ungrouped item not having a primaryImage
+         if (!wallItemIds.includes(ungroupedItem.id) && ungroupedItem.type == ItemType.SINGLE) {
             const wallItem = { ...ungroupedItem }
             const imageItem = itemMgr.extractFromItemGroup(ungroupedItem)
             wallItem.name = imageItem.name
+            // console.log("Filling wall", wallItem)
             filledWall.wallItems.push(wallStore.createWallItem(wallItem, imageItem.primaryImage))
          }
       }

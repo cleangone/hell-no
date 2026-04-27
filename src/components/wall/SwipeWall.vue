@@ -20,20 +20,23 @@
    import { storeToRefs } from 'pinia'
    import { Swiper, SwiperSlide } from "swiper/vue"
    import { Autoplay, Navigation, Pagination } from 'swiper/modules'
+   import { useItemStore }  from '@/stores/itemStore'
    import { useSwipeStore } from './SwipeStore'
    import { useViewStore }  from '@/stores/viewStore'
    import SwipeWallSlide from './SwipeWallSlide.vue'
    import ItemPopup      from '@/components/item/ItemPopup.vue'
-   import { handleError } from '@/utils/utils'
-   import { Emit, ItemOrigin, URL, WallDisplayOrder, WallRowHeight } from '@/utils/constants'
+   import { handleError, randomizeArray } from '@/utils/utils'
+   import { Defaults, Emit, ItemOrigin, URL, WallDisplayOrder, WallRowHeight } from '@/utils/constants'
    import 'swiper/css'
    import 'swiper/css/navigation'
    import 'swiper/css/pagination'
 
-   const props = defineProps({ wall:Object, rowHeight:Number, linkUrl:String, transparent:Boolean })
+   const props = defineProps({ wall:Object, rowHeight:Number, profileId:String, linkUrl:String, transparent:Boolean })
    const emit  = defineEmits([ Emit.LOADED ])
+
    const breakpoints = useBreakpoints(breakpointsTailwind)
    const xs = breakpoints.smaller('sm')
+   const itemStore  = useItemStore()
    const swipeStore = useSwipeStore()
    const viewStore  = useViewStore()
    const modules = ref([Autoplay, Navigation, Pagination])
@@ -41,7 +44,7 @@
    const popupImage = ref(null)
    
    onMounted(() => {
-      swipeStore.setFirstActiveSlideDisplayed(true)
+      swipeStore.reset()
       window.addEventListener('scroll', handleScroll)
    })
    onUnmounted(() => window.removeEventListener('scroll', handleScroll))
@@ -55,101 +58,56 @@
    const background = computed(() => props.transparent ? "" : "bg-shade" )
 
    const wallItems = computed(() => {
+      if (props.wall.displayOrder == WallDisplayOrder.RANDOM) { 
+         const maxWallItems = props.wall.maxWallItems ? props.wall.maxWallItems : Defaults.MAX_WALL_ITEMS
+         const wallItems = []
+         if (props.wall.userWallItems) {
+            const maxUserWallItems = Math.floor(maxWallItems/2)
+            const randomUserWallItems = randomizeArray(props.wall.userWallItems)
+            wallItems.push(...randomUserWallItems.slice(0, maxUserWallItems))
+         }
+
+         for (const wallItem of props.wall.wallItems) { 
+            if (wallItems.length >= maxWallItems) { break }
+            wallItems.push(wallItem)
+         }
+
+         // todo - workaround - should keep profileId in wallItem
+         const displayWallItems = []
+         if (props.wall.id == Defaults.SITE_ID) { displayWallItems.push( ...wallItems) }
+         else {
+            for (const wallItem of wallItems) {
+               const item = itemStore.getItem(wallItem.itemId)
+               if (item && (!props.profileId && !item.profileId || props.profileId == item.profileId)) {
+                  displayWallItems.push(wallItem) 
+               }
+            }
+         }
+
+         const sizedWallItems  = sizeWallItems(displayWallItems)   
+         const randomWallItems = randomizeArray(sizedWallItems)
+         let rowIndex = 1
+         for (const wallItem of randomWallItems) {   
+            wallItem.wallRow = rowIndex
+            rowIndex = rowIndex == props.wall.wallRows ? 1 : rowIndex + 1 // round-robin through rows
+         } 
+         
+         return randomWallItems 
+      }
+      else { return sizeWallItems(props.wall.wallItems) }
+   })
+
+   const sizeWallItems = (wallItems) => { 
       const sizedWallItems = []
-      if (props.rowHeight == WallRowHeight.DEFAULT) { sizedWallItems.push( ...props.wall.wallItems ) }
+      if (props.rowHeight == WallRowHeight.DEFAULT) { sizedWallItems.push( ...wallItems ) }
       else {
-         for (const wallItem of props.wall.wallItems) {
-             const sizedWallItem = { ...wallItem }
+         for (const wallItem of wallItems) {
+            const sizedWallItem = { ...wallItem }
             sizedWallItem.width = sizedWallItem.width * WallRowHeight.XS /  WallRowHeight.DEFAULT - 10
             sizedWallItems.push(sizedWallItem)
          }
       }
-
-      const rows = getRowContainter()
-      let usePreviousWallOrder = rows.length == viewStore.previousWallOrder.rows.length
-      if (usePreviousWallOrder) {
-         for (const wallItem of sizedWallItems) {
-            if (!viewStore.previousWallOrder.itemIds.includes(wallItem.itemId)) { usePreviousWallOrder = false }
-         }
-      }
- 
-      if (usePreviousWallOrder) {
-         const itemIdToWallItem  = new Map(sizedWallItems.map((obj) => [obj.itemId, obj]))
-
-         const previousOrderWallItems = []
-         let rowIndex = 0
-         for (const row of viewStore.previousWallOrder.rows) {   
-            for (const itemId of row) {   
-               const wallItem = { ...itemIdToWallItem.get(itemId) }
-               wallItem.wallRow = rowIndex + 1
-               previousOrderWallItems.push(wallItem)
-            }
-            rowIndex++
-         }
-
-         return previousOrderWallItems // no need to update previousWallOrder
-      }
-      else if (props.wall.displayOrder == WallDisplayOrder.RANDOM_IN_ROW) { 
-         for (const wallItem of sizedWallItems) {    
-            if (wallItem.wallRow) {  
-               const randomWallItem = { ...wallItem, random: Math.random() }
-               rows[wallItem.wallRow - 1].items.push(randomWallItem)
-            }
-         }
-
-         const randomInRowWallItems = []
-         for (const row of rows) {   
-            row.items.sort(function(a, b){return a.random - b.random}) 
-            randomInRowWallItems.push( ...row.items )
-         }
-
-         setPreviousWallOrder(rows)
-         return randomInRowWallItems
-      }
-      else if (props.wall.displayOrder == WallDisplayOrder.RANDOM) { 
-         const randomWallItems = []
-         for (const wallItem of sizedWallItems) {    
-            const randomWallItem = { ...wallItem, random: Math.random() }
-            randomWallItems.push(randomWallItem)
-         }
-         randomWallItems.sort(function(a, b){return a.random - b.random}) 
-
-         let rowIndex = 0
-         for (const wallItem of randomWallItems) {   
-            wallItem.wallRow = rowIndex + 1
-            rows[rowIndex].items.push(wallItem)
-            rowIndex = rowIndex == rows.length - 1 ? 0 : rowIndex+1 
-         } 
-         
-         const sortedWallItems = []
-         for (const row of rows) {   
-            sortedWallItems.push( ...row.items) 
-         } 
-
-         setPreviousWallOrder(rows)
-         return sortedWallItems
-      }
-      else {
-         for (const wallItem of sizedWallItems) {    
-            rows[wallItem.wallRow - 1].items.push(wallItem)
-         }
-
-         setPreviousWallOrder(rows)
-         return sizedWallItems
-      }
-   })
-
-   const setPreviousWallOrder = (rows) => { 
-      const newWallOrder = { 
-         itemIds: [],  // all itemIds in wall
-         rows: [] }    // each row contains an array of itemIds
-      
-      for (const row of rows) {   
-         const rowItemIds = row.items.map((obj) => obj.itemId)
-         newWallOrder.itemIds.push( ...rowItemIds )
-         newWallOrder.rows.push(rowItemIds)
-      } 
-      viewStore.setPreviousWallOrder(newWallOrder) 
+      return sizedWallItems
    }
 
    const getRowContainter = () => { 

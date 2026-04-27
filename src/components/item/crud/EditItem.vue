@@ -258,6 +258,7 @@
             primaryArtist: primaryArtist
          }
          // wallStore.addMyWallItem(itemForWall, currItem.value.primaryImage) 
+         console.log("Adding wall item with primary image", itemForWall)
          wallStore.addWallItem(currItem.value.userId, itemForWall, currItem.value.primaryImage) 
       }
       else if (!currItemWall.value && wallIncludesItem) { 

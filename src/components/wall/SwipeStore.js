@@ -7,6 +7,13 @@ export const useSwipeStore = defineStore('wall-popup', () => {
    const thumbMouseover   = ref(false)   
    const transitionPopup  = ref(false)
 
+   function reset() { 
+      firstActiveSlide.value = true
+      popupMouseover.value   = false
+      thumbMouseover.value   = false
+      transitionPopup.value  = false
+   }
+ 
    const firstActiveSlideDisplayed = computed(() => firstActiveSlide.value)
    function setFirstActiveSlideDisplayed(active) { firstActiveSlide.value = active }
   
@@ -22,7 +29,9 @@ export const useSwipeStore = defineStore('wall-popup', () => {
    const transitionPopupActive = computed(() => transitionPopup.value)
    function setTransitionPopupActive(active) { transitionPopup.value = active }
   
-   return { firstActiveSlideDisplayed, setFirstActiveSlideDisplayed, 
+   
+   return { reset, 
+      firstActiveSlideDisplayed, setFirstActiveSlideDisplayed, 
       popupMouseoverActive, setPopupMouseoverActive,
       thumbMouseoverActive, setThumbMouseoverActive, 
       transitionPopupActive, setTransitionPopupActive 

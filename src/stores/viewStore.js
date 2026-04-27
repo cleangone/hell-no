@@ -131,8 +131,8 @@ export const useViewStore = defineStore('view', () => {
    const showSavedFeedItems = ref(false)
    function setShowSavedFeedItems(showSaved) { showSavedFeedItems.value = showSaved }
    
-   const previousWallOrder = ref({ itemIds: [], rows: [] })
-   function setPreviousWallOrder(wallOrder) { previousWallOrder.value = wallOrder }
+   // const previousWallOrder = ref({ itemIds: [], rows: [] })
+   // function setPreviousWallOrder(wallOrder) { previousWallOrder.value = wallOrder }
 
    const msgColors = ["indigo-lighten-5", "cyan-lighten-5", "teal-lighten-5", "deep-purple-lighten-5"]
    const colorIndex = ref(0)
@@ -195,7 +195,7 @@ export const useViewStore = defineStore('view', () => {
       getVisiblity, getIdVisiblity, setVisiblity, resetVisiblity,
       addItemDefaults, setAddItemDefaults,
       showSavedFeedItems, setShowSavedFeedItems,
-      previousWallOrder, setPreviousWallOrder, 
+      // previousWallOrder, setPreviousWallOrder, 
       getMsgColor,
       selectedChatId, setSelectedChatId,
       searchQuery, setSearchQuery,

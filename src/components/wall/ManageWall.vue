@@ -3,11 +3,8 @@
       <v-data-table :headers="headers" :items="wallItems" item-key="itemId" items-per-page="25">
          <template v-slot:item.image="{ item }">
             <span style="min-width:90px" class="d-flex justify-center align-center">
-               <TableThumb :item="popupItem(item)"/>
+               <TableThumb :item="popupItem(item)" pointer/>
             </span>
-         </template>
-         <template v-slot:item.siteWall="{ item }">
-            {{ onSiteWall(item) }}
          </template>
          <template v-slot:item.actions="{ item }">
             <EditButton @click="editItem(item)"></EditButton>
@@ -28,45 +25,58 @@
 
 <script setup>
    import { computed, ref } from 'vue'
-   import { useWallStore } from '@/stores/wallStore'
+   import { useWallStore }    from '@/stores/wallStore'
+   import { useItemStore }    from '@/stores/itemStore'
+   import { useProfileStore } from '@/stores/profileStore'
    import TableThumb     from '@/components/account/TableThumb.vue'
    import EditWall       from '@/components/wall/EditWall.vue'
    import EditWallItem   from '@/components/wall/EditWallItem.vue'
    import DeleteWallItem from '@/components/wall/DeleteWallItem.vue'
    import EditButton     from '@/components/util/EditButton.vue'
    import DeleteButton   from '@/components/util/DeleteButton.vue'
-   import { Defaults } from '@/utils/constants'  
+   // import { Defaults } from '@/utils/constants'  
    
    const props = defineProps({ wallId: String })
-   const wallStore = useWallStore()
+   const wallStore    = useWallStore()
+   const itemStore    = useItemStore()
+   const profileStore = useProfileStore()
    const showEditWallDialog = ref(false)
    const showEditWallItemDialog = ref(false)
    const showDeleteWallItemDialog = ref(false)
    const selectedWallItem = ref({})
 
-   const headers = computed(() => {
-      const hdrs = [ 
+   const headers = computed(() => [
          { title: 'Thumb Text', value: 'title', sortable: true },
          { title: 'Popup Text', value: 'name',  sortable: true },
+         { title: 'Profile',    value: 'profile' },
          { title: '',           value: 'image', align: 'center' },
+         { title: '', key: 'actions' }
       ]
-      
-      if (!isSiteWall.value) { hdrs.push({ title: 'Site Wall', key: 'siteWall',  align: 'center' })}
-      hdrs.push({ title: '', key: 'actions' })
-
-      return hdrs 
-   })
+   )
 
    const wall = computed(() => wallStore.getWall(props.wallId) )
    const wallItems = computed(() => {
-      const items = wall.value ? [ ...wall.value.wallItems ] : []
+      const items = []
+      if (wall.value) {
+         for (const wallItem of wall.value.wallItems) {
+            const displayItem = { ...wallItem }
+            const item = itemStore.getItem(wallItem.itemId)
+            if (item && item.profileId) {
+               console.log("wall item w profile", item)
+               displayItem.profile = profileStore.getUsername(item.profileId)
+            }
+
+            items.push(displayItem) 
+         }
+      }
+
       items.sort((a, b) => a.title.localeCompare(b.title))
       return items
    })
    
-   const isSiteWall = computed(() => props.wallId == Defaults.SITE_ID)
-   const onSiteWall = (wallItem) => { return wallStore.siteWallIncludesImage(wallItem.imageId) ? "Yes" : "" }
-   const popupItem  = (wallItem) => { return { primaryImage: wallItem } }
+   const popupItem  = (wallItem) => { 
+      return { primaryImage: { ...wallItem, dimensions: wallItem.popupDimensions, largeThumbUrl:  wallItem.popupUrl }}
+   }
 
    const editItem = (wallItem) => {
       selectedWallItem.value = wallItem
