@@ -17,6 +17,7 @@
    
    const props = defineProps({ wallItem:Object, origin:String, row:Number, active:Boolean })
    const emit  = defineEmits([ Emit.POPUP, Emit.LOADED ])
+
    const breakpoints = useBreakpoints(breakpointsTailwind)
    const xs = breakpoints.smaller('sm')
    const itemMgr    = useItemMgr()
@@ -50,11 +51,6 @@
             }
          }, 4000)  
       }
-      // else if (isActive && props.row == 0) {
-      //    const thumbActive      = swipeStore.thumbMouseoverActive  ? " thumbMouseoverActive"  : "" 
-      //    const transitionActive = swipeStore.transitionPopupActive ? " transitionPopupActive" : ""
-      //    console.log("Active thumb not displayed: " + thumbActive + transitionActive)
-      // }
    })
 
    const wallItem  = computed(() => props.wallItem) 

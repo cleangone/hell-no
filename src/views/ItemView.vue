@@ -85,6 +85,7 @@
 
    <div v-if="paramItem" style="position:relative" class="w-100" ref="imageDivRef">  
       <div v-if="viewMgr.isMobile">
+         <!-- mobile swipe -->
          <div v-if="viewStore.isMobileSwipe">  
             <div ref="swipeElement" class="center d-flex justify-center">  
                <ItemSwipe v-for="item in swipeItems" :key="item.id" :item="item" v-on:done="onSwipeDone"
@@ -95,10 +96,13 @@
             </div>
          </div>
          <div v-else>
-            <v-img :src="paramItem.primaryImage.url" contain :min-width="windowWidth" :class="imageClass" :style="xsExpandedImageStyle"/>
+            <!-- mobile image -->
+            <v-img :src="paramItem.primaryImage.url" contain  :class="imageClass" />
+             <!-- <v-img :src="paramItem.primaryImage.url" contain :min-width="windowWidth" :class="imageClass" :style="xsExpandedImageStyle"/> -->
             <div class="text-left mt-2">
                <ItemArtistYear :item="paramItem" />
             </div>
+            <!-- mobile infinite scroll -->
             <v-infinite-scroll :items="scrollItems" :onLoad="loadItems">
                <template v-for="item in scrollItems" :key="item.id">
                   <div v-if="item.id != route.params.id" class="mt-5">
@@ -110,7 +114,8 @@
                         </span>
                      </div>
                   </div>
-                  <v-img :src="item.primaryImage.url" contain :min-width="windowWidth" :class="imageClass" :style="xsExpandedImageStyle"/>
+                  <!-- <v-img :src="item.primaryImage.url" contain :min-width="windowWidth" :class="imageClass" class="my-2" :style="xsExpandedImageStyle"/> -->
+                  <v-img :src="item.primaryImage.url" contain  :class="imageClass"/>
                   <div class="text-left mt-2">
                      <ItemArtistYear :item="item"/>
                   </div>

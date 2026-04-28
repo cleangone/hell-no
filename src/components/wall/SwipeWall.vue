@@ -6,7 +6,7 @@
             style="--swiper-navigation-size:20px; --swiper-pagination-color: var(--color-link);">
          <swiper-slide v-for="slideItem in slideRow.items" :key="slideItem.itemId" :width="slideItem.width" 
                v-slot="{ isActive }" class="swipe-slide" :style="slideStyle"> 
-            <SwipeWallSlide :wallItem="slideItem" :origin="ItemOrigin.WALL" :row=index :active="isActive"
+            <SwipeWallSlide :wallItem="slideItem" :origin="ItemOrigin.WALL" :row=index :active="!xs && isActive"
                @loaded="onSlideLoaded" @popup="onPopup"/>
          </swiper-slide>
       </swiper>

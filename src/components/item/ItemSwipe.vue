@@ -1,7 +1,7 @@
 <template>
    <div ref="swipeEle" :style="{transform:transform, transition:transition, touchAction:'none'}"> <!-- :setup="..." -->
       <v-img v-if="showImage" :src="imageUrl"/>
-      <div v-if="showText" :style="slideStyle" class="mt-n2 pt-3 px-1 text-left bg-white">
+      <div v-if="showText" :style="slideStyle" class="mt-n2 pt-3 px-1 text-left swipe-container">
          <div v-if="artist" class="text-h6">{{ artist }}</div>
          <div v-if="populated(props.item.subtitle)" class="font-weight-medium">{{ props.item.subtitle }}</div>
          <div v-html="props.item.desc"></div>

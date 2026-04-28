@@ -24,6 +24,8 @@ a, .blue, .icon-btn {
 .box-border-color       { border-color: var(--vt-c-black-mute); } 
 .dark .box-border-color { border-color: var(--vt-c-text-dark-2); } 
 
+.swipe-container { background-color: var(--color-background); }
+
 @media (prefers-color-scheme: dark) {
    a, .icon-btn {
       color: #9cdcfe; /* Lighter blue */
