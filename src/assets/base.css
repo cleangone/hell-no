@@ -34,9 +34,12 @@
   --color-text: var(--vt-c-text-light-1);
 
   --color-shade: rgb(234, 234, 235);
+  --color-shade-light: #c2c2c2;
   --color-shade-med: rgb(126, 126, 126);
   --color-shade-dark: rgb(60, 60, 60);
   
+  --color-link-dark: #186dc2;
+  --color-link: #1976D2;
   --section-gap: 160px;
 }
 
@@ -52,6 +55,20 @@
     --color-heading: var(--vt-c-text-dark-1);
     --color-text: var(--vt-c-text-dark-2);
   }
+}
+
+.dark {
+    --color-background: var(--vt-c-black);
+    --color-background-soft: var(--vt-c-black-soft);
+    --color-background-mute: var(--vt-c-black-mute);
+
+    --color-border: var(--vt-c-divider-dark-2);
+    --color-border-hover: var(--vt-c-divider-dark-1);
+
+    --color-heading: var(--vt-c-text-dark-1);
+    --color-text: var(--vt-c-text-dark-2);
+
+    --color-link: #9cdcfe;
 }
 
 *,

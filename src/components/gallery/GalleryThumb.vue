@@ -1,6 +1,6 @@
 <template>
-   <v-card :width="cardWidth" ref="cardRef" class="d-flex flex-column text-center" :class="cardMargin"
-         :style="backgroundStyle" style="z-index: 1">
+   <v-card :width="cardWidth" ref="cardRef" class="d-flex flex-column text-center thumb-link" 
+         :class="cardMargin" :style="backgroundStyle" style="z-index: 1">
       <RouterLink :to="galleryUrl">
          <v-carousel v-if="galleryImages.length>1" cycle :interval="carouselInterval" :height="carouselHeight"
             hide-delimiters :show-arrows="false" v-on:update:modelValue="setGalleryImageIndex">

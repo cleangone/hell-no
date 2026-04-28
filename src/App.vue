@@ -12,10 +12,15 @@
             <nav v-if="viewMgr.isMobile">
                <v-menu v-if="currentRouteName==Route.HOME && user"> <!-- force user evaluation to verify solo -->
                   <template v-slot:activator="{ props }">
-                     <v-btn v-bind="props" icon="mdi-menu" 
-                        color="blue-darken-2" size="medium" variant="text"></v-btn>
+                     <v-btn v-bind="props" icon="mdi-menu" class="icon-btn" size="medium" variant="text"></v-btn>
                   </template>
                   <v-list>
+                     <v-list-item @click="router.push(URL.ADD_ITEM)">
+                        <template v-slot:prepend>
+                           <v-icon icon="mdi-plus" color="blue-darken-3"></v-icon>
+                        </template>
+                        <v-list-item-title>Add Item</v-list-item-title>
+                     </v-list-item>
                      <v-list-item @click="router.push(URL.MESSAGE)">
                         <template v-slot:prepend>
                            <v-icon icon="mdi-message" color="blue-darken-3"></v-icon>
@@ -72,9 +77,11 @@
          <!-- top right icons -->
          <v-col :cols="sideCols" class="flex-grow-0 flex-shrink-0 nav-right">
             <!-- top right icon for mobile -->
+
+
             <div v-if="viewMgr.isMobile">
                <span v-if="isRoute(Route.HOME)">
-                  <Icon icon="mdi-plus" @click="router.push(URL.ADD_ITEM)"/>
+                  <DarkButton class="mr-n2"/>
                </span>
                <span v-else-if="isRoute(Route.GALLERIES)">
                   <GalleryThumbsConfig/>
@@ -141,7 +148,7 @@
 
       <!-- Bottom nav for mobile -->
       <v-layout v-if="viewMgr.isMobile" style="height:60px">
-         <v-bottom-navigation v-model="navIndex" color="primary" style="min-height:60px" grow>
+         <v-bottom-navigation v-model="navIndex" color="primary" style="min-height:60px" grow class="mobile-nav">
             <v-btn @click="router.push(URL.HOME)">
                <Icon icon="mdi-home"/>
                <span class="nav-text"></span>
@@ -174,7 +181,6 @@
    import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
    import { useUserStore }    from '@/stores/userStore'
    import { useAdminStore }   from '@/stores/adminStore'
-   import { useGalleryStore } from '@/stores/galleryStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { useLocalStore }   from '@/stores/localStore'
@@ -183,7 +189,7 @@
    import MessageSetup        from '@/components/notification/MessageSetup.vue'
    import LinkOrText          from '@/components/util/LinkOrText.vue'
    import Icon                from '@/components/util/Icon.vue'
-   import MultiStateIcon      from '@/components/util/MultiStateIcon.vue'
+   import DarkButton          from '@/components/util/DarkButton.vue'
    import ToggleIcon          from '@/components/util/ToggleIcon.vue'
    import { handleError } from '@/utils/utils'
    import { Defaults, Route, URL } from '@/utils/constants'
@@ -193,7 +199,6 @@
    const router = useRouter()
    const userStore    = useUserStore()
    const adminStore   = useAdminStore()
-   const galleryStore = useGalleryStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
    const localStore   = useLocalStore()
@@ -294,10 +299,9 @@
 .title    { font-size: 35px; }
 .title-sm { font-size: 16px; }
 
-/* moved to main.css */
-/* .bg-shade {
-   background-color: rgb(234, 234, 235);
-} */
+.mobile-nav { 
+   min-height: 60px; 
+}
 .edit-dialog {
    min-width: 500px;  
 }
@@ -321,7 +325,6 @@
    align-items: center;
 }
 .nav-text {
-   color: #1976D2;
    min-height:25px
 }
 .pointer {

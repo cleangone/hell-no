@@ -6,34 +6,44 @@
   margin: 0 auto;
   padding: 1rem;
   font-weight: normal;
-  /* background-color: blueviolet; */
 }
 
 a, .blue, .icon-btn {
   text-decoration: none;
-  color: #1976D2;
+  color: var(--color-link); /* changes based on .dark */
   transition: 0.4s;
 }
 
-.bg-shade { background-color: var(--color-shade); }
-.box-border-color { border-color: var(--vt-c-black-mute); } 
+.nav-text { color: var(--color-link); }
+
+.dark .v-bottom-navigation                { background-color: var(--color-shade-dark); }
+.dark .v-bottom-navigation .v-btn--active { background-color: black!important; }
+
+.dark .thumb-link   { background-color: var(--color-shade-light); }
+.dark .thumb-link a { color: var(--color-link-dark); }
+.bg-shade       { background-color: var(--color-shade); }
+.dark .bg-shade { background-color: var(--color-shade-dark); }
+.box-border-color       { border-color: var(--vt-c-black-mute); } 
+.dark .box-border-color { border-color: var(--vt-c-text-dark-2); } 
 
 @media (prefers-color-scheme: dark) {
    a, .icon-btn {
-      color: #9cdcfe; /* Lighter blue/cyan */
+      color: #9cdcfe; /* Lighter blue */
    }
    .bg-shade { background-color: var(--color-shade-dark); }
    .box-border-color { border-color: var(--vt-c-text-dark-2); } 
 }
 
-@media (hover: hover) {
+/* @media (hover: hover) {
    a:hover {
-      /* background-color: hsla(160, 100%, 37%, 0.2); */
-      background-color: #f2f6fc;
+      background-color: var(--vt-c-black);
    }
+} */
+
+a:hover {
+   font-weight: bold;
 }
 
-/* was min-width: 1024px, then I set it to 1980 */
 @media (min-width: 3000px) {
   body {
     display: flex;

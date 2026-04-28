@@ -2,8 +2,8 @@
    <div class="wall-container px-3" :class="background">
       <swiper v-for="(slideRow, index) in slideRows" key="slideRow.id" slides-per-view="auto" :space-between="spaceBetweenSlides" 
             :pagination="{clickable: true}" :navigation="true" :loop="true" @sliderMove="onSliderMove"
-            :autoplay="{ delay:4000, pauseOnMouseEnter:true }" :modules="modules" style="--swiper-navigation-size:20px"
-            :style="rowStyle">
+            :autoplay="{ delay:4000, pauseOnMouseEnter:true }" :modules="modules" :style="rowStyle" 
+            style="--swiper-navigation-size:20px; --swiper-pagination-color: var(--color-link);">
          <swiper-slide v-for="slideItem in slideRow.items" :key="slideItem.itemId" :width="slideItem.width" 
                v-slot="{ isActive }" class="swipe-slide" :style="slideStyle"> 
             <SwipeWallSlide :wallItem="slideItem" :origin="ItemOrigin.WALL" :row=index :active="isActive"
@@ -20,13 +20,12 @@
    import { storeToRefs } from 'pinia'
    import { Swiper, SwiperSlide } from "swiper/vue"
    import { Autoplay, Navigation, Pagination } from 'swiper/modules'
-   import { useItemStore }  from '@/stores/itemStore'
    import { useSwipeStore } from './SwipeStore'
    import { useViewStore }  from '@/stores/viewStore'
    import SwipeWallSlide from './SwipeWallSlide.vue'
    import ItemPopup      from '@/components/item/ItemPopup.vue'
    import { handleError, randomizeArray } from '@/utils/utils'
-   import { Defaults, Emit, ItemOrigin, URL, WallDisplayOrder, WallRowHeight } from '@/utils/constants'
+   import { Defaults, Emit, ItemOrigin, URL, WallRowHeight } from '@/utils/constants'
    import 'swiper/css'
    import 'swiper/css/navigation'
    import 'swiper/css/pagination'
@@ -36,7 +35,6 @@
 
    const breakpoints = useBreakpoints(breakpointsTailwind)
    const xs = breakpoints.smaller('sm')
-   const itemStore  = useItemStore()
    const swipeStore = useSwipeStore()
    const viewStore  = useViewStore()
    const modules = ref([Autoplay, Navigation, Pagination])

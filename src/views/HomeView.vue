@@ -7,7 +7,7 @@
             <span class="title">Hell-No Gallery</span>
          </v-col>
          <v-col cols="1" class="flex-grow-0 flex-shrink-0 d-flex justify-end">
-            <!-- <IconButton :icon="isDark?'mdi-brightness-5':'mdi-brightness-3'" @click="toggleDark()" class="mr-n2"/> -->
+            <DarkButton class="mr-n2"/>
          </v-col>
       </v-row>
    </v-container>
@@ -61,7 +61,7 @@
 
 <script setup>
    import { computed, onMounted, ref } from 'vue'
-   import { useDark, useElementSize, useToggle } from '@vueuse/core'
+   import { useElementSize } from '@vueuse/core'
    import { useSeoMeta } from '@unhead/vue'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
@@ -71,10 +71,10 @@
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { useLocalStore }   from '@/stores/localStore'
-   import ItemThumb     from '@/components/item/thumb/ItemThumb.vue'
-   import GalleryThumb  from '@/components/gallery/GalleryThumb.vue'
-   import SwipeWall     from '@/components/wall/SwipeWall.vue'
-   import IconButton    from '@/components/util/IconButton.vue'
+   import ItemThumb    from '@/components/item/thumb/ItemThumb.vue'
+   import GalleryThumb from '@/components/gallery/GalleryThumb.vue'
+   import SwipeWall    from '@/components/wall/SwipeWall.vue'
+   import DarkButton   from '@/components/util/DarkButton.vue'
    import ShowNotifications from '@/components/notification/ShowNotifications.vue'
    import { timestampsEqual } from '@/utils/dateUtils'
    import { ThumbRow } from '@/utils/utilClasses'
@@ -97,15 +97,8 @@
    const images = [ "/images/speakeasy.jpg", "/images/hell-no-sofia.jpg", "/images/hell-no-solo.jpg" ]
    const currSiteWall = ref(null)
    const wallBackgroundOpacity = ref(.1) 
-   // const isDark = useDark()
+   const isBrowserDarkMode = ref(false)
    
-   const isDark = useDark({
-      selector : 'body',
-      attribute: 'color-scheme',
-      valueDark: 'dark',
-      valueLight : 'light',
-   })
-
    onMounted(() => {
       // console.log("Home")
       viewMgr.init()
@@ -116,16 +109,15 @@
             fadeWallBackground()
          }, 1000)  
       }
+
+      // not working
+      isBrowserDarkMode.value = window.matchMedia('(prefers-color-scheme: dark)').matches
    })
 
    useSeoMeta({
       title: "Hell-No Gallery" // displayed in browser tabs
    })
    
-   // todo - dark mode works if browser set to dark, but toggle doesn't work
-   // see documentation re @media (prefers-color-scheme: dark) vs css .dark 
-   const toggleDark = useToggle(isDark)
-
    // const seconds = () => { return " (" + viewStore.getSeconds() + " seconds)" }
    const showWall = computed(() => viewStore.showSiteWall)
    const fadeWallBackground = () => {

@@ -1,6 +1,6 @@
 <template>
-   <v-card :width="groupWidth.cardWidth" ref="cardRef" class="mb-5 d-flex flex-column text-center thumb-container" 
-      :style="itemEditBackground" style="z-index: 1">
+   <v-card :width="groupWidth.cardWidth" ref="cardRef" :style="itemEditBackground" style="z-index: 1"
+      class="mb-5 d-flex flex-column text-center thumb-container thumb-link" >
 
       <RouterLink :to="itemMgr.itemURL(item.id, origin)" class="d-flex justify-center">
          <v-img v-for="(childItem, index) in childItems" :key="childItem.id" 
@@ -9,10 +9,10 @@
             :class="index==0 ? 'first-image' : 'next-image'"></v-img>
       </RouterLink>
       <ItemThumbText :item="item" :origin="origin" 
-         :useAltName="useAltName" :useLocalName="useLocalName" :bypassShowUser="bypassShowUser" :showAdminIcons="showAdminIcons"/>
+         :useAltName="useAltName" :useLocalName="useLocalName" :bypassShowUser="bypassShowUser"/>
    </v-card>
 
-   <ItemPopup v-if="popup && !showAdminIcons" :popupImage="popup"/>
+   <ItemPopup v-if="popup" :popupImage="popup"/>
 </template>
 
 <script setup>
@@ -54,9 +54,6 @@
       // subtract to account for borders
       return (groupWidth.value.targetWidth * childItem.primaryImage.dimensions.width / groupWidth.value.totalWidth) - 5
    }
-
-   const showAdminIcons = computed(() => props.admin || viewStore.editInPlace && (userStore.userId == props.item.userId))    
-   const itemEditBackground = computed(() => showAdminIcons.value ? backgroundColorStyle(props.item.state) : "") 
 
    const mouseover = (childItem) => {
       const mouseoverTime = Date.now()     

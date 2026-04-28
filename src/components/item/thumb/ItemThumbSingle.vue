@@ -1,32 +1,28 @@
 <template>
-   <v-card :width="cardWidth" ref="cardRef" class="mb-5 d-flex flex-column text-center thumb-container" 
-      :style="itemEditBackground" style="z-index: 1">
+   <v-card :width="cardWidth" ref="cardRef"  style="z-index: 1"
+         class="mb-5 d-flex flex-column text-center thumb-container thumb-link">
       <RouterLink :to="itemURL">
          <v-img :src="thumbUrl" @mouseover="mouseover()" @mouseleave="mouseleave()"></v-img>
       </RouterLink>
       <ItemThumbText :item="item" :origin="origin" 
-         :useAltName="useAltName" :useLocalName="useLocalName" :bypassShowUser="bypassShowUser" :showAdminIcons="showAdminIcons"/>
+         :useAltName="useAltName" :useLocalName="useLocalName" :bypassShowUser="bypassShowUser"/>
    </v-card>
    
-   <ItemPopup v-if="popup && !showAdminIcons" :popupImage="popup"/>
+   <ItemPopup v-if="popup" :popupImage="popup"/>
 </template>
 
 <script setup>
    import { computed, onErrorCaptured, ref } from 'vue'
-   import { useUserStore } from '@/stores/userStore'
    import { useItemMgr }   from '@/stores/itemMgr'
    import { useViewStore } from '@/stores/viewStore'
    import { useViewMgr }   from '@/stores/viewMgr'
    import ItemPopup     from '@/components/item/ItemPopup.vue'
    import ItemThumbText from './ItemThumbText.vue'
-   import { backgroundColorStyle, handleError } from '@/utils/utils'
+   import { handleError } from '@/utils/utils'
    import { ItemThumbOptions as ThumbOptions } from '@/utils/constants'
    
-   const props = defineProps({ item: Object, origin: String, 
-      useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean, admin: Boolean
-   })
+   const props = defineProps({ item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean })
 
-   const userStore = useUserStore()
    const itemMgr   = useItemMgr()
    const viewStore = useViewStore()
    const viewMgr   = useViewMgr()
@@ -51,9 +47,6 @@
       const targetWidth = Math.round(targetHeight * aspectRatio.value)
       return targetWidth > 300 ? 300 : targetWidth
    })
-
-   const showAdminIcons = computed(() => props.admin || viewStore.editInPlace && !item.value.isFeedItem && userStore.userId == item.value.userId)
-   const itemEditBackground = computed(() => showAdminIcons.value ? backgroundColorStyle(props.item.state) : "") 
 
    const mouseover = () => {
       if (viewMgr.isMobile) { return }
