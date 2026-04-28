@@ -147,12 +147,7 @@
    
    const isPrimaryImage = (itemImage) => { return itemImage.imageType == ImageType.PRIMARY }
    const canEdit        = (itemImage) => { return EditableImageTypes.includes(itemImage.imageType) }
-   const addToWall      = (itemImage) => {
-      
-      console.log("Adding wall item with different image", item.value)
-      console.log("Item primaryimage", item.value.primaryImage)
-         
-      wallStore.addMyWallItem(item.value, itemImage) }
+   const addToWall      = (itemImage) => { wallStore.addMyWallItem(item.value, itemImage) }
 
    const showItemImage = (itemImage) => {
       itemImageToShow.value = itemImage

@@ -1,7 +1,6 @@
 <template>
-   <v-card :width="groupWidth.cardWidth" ref="cardRef" :style="itemEditBackground" style="z-index: 1"
-      class="mb-5 d-flex flex-column text-center thumb-container thumb-link" >
-
+   <v-card :width="groupWidth.cardWidth" ref="cardRef" style="z-index: 1"
+         class="mb-5 d-flex flex-column text-center thumb-container thumb-link" >
       <RouterLink :to="itemMgr.itemURL(item.id, origin)" class="d-flex justify-center">
          <v-img v-for="(childItem, index) in childItems" :key="childItem.id" 
             :src="childItem.primaryImage.thumbUrl" :width="thumbWidth(childItem)"

@@ -148,7 +148,7 @@
 
       <!-- Bottom nav for mobile -->
       <v-layout v-if="viewMgr.isMobile" style="height:60px">
-         <v-bottom-navigation v-model="navIndex" color="primary" style="min-height:60px" grow class="mobile-nav">
+         <v-bottom-navigation v-model="navIndex" color="primary" style="min-height:60px" grow>
             <v-btn @click="router.push(URL.HOME)">
                <Icon icon="mdi-home"/>
                <span class="nav-text"></span>
@@ -298,10 +298,6 @@
 }
 .title    { font-size: 35px; }
 .title-sm { font-size: 16px; }
-
-.mobile-nav { 
-   min-height: 60px; 
-}
 .edit-dialog {
    min-width: 500px;  
 }

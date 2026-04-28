@@ -330,7 +330,7 @@
       let galleryIds = item.galleryIds
       if (!galleryIds) {
          // workaround for wall items
-         console.log("Retrieving " + item.name + " galleries")
+         // console.log("Retrieving " + item.name + " galleries")
          const fullItem = itemStore.getItem(item.id)
          galleryIds = fullItem ? fullItem.galleryIds : []
       }

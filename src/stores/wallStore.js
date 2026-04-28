@@ -23,16 +23,12 @@ import { Defaults, DefaultWall, WallDisplayOrder, WallType } from '@/utils/const
             id
             fullName
          profileId
-         imageId
+         thumbImageId
          thumbUrl
-         thumbDimensions - for display of thumb
-         largeThumbUrl
-         url - used to set url in nav
-         dimensions
-            width
-            height
-         width
-
+         thumbDimensions 
+         thumbWidth
+         popupUrl - for popup and mobile infinite scroll
+         popupDimensions
       dateCreated
       dateModified
 */
@@ -69,13 +65,6 @@ export const useWallStore = defineStore('wall', () => {
 
    const userIdToWall = computed(() => { return userWalls.value ? new Map(userWalls.value.map((obj) => [obj.id, obj])) : new Map() })
    function getUserWall(userId) { return userIdToWall.value.has(userId) ? userIdToWall.value.get(userId) : DefaultWall } 
-
-   // todo - why was this here
-   // function getWall(id) {
-   //    if (id == myWall.value.id)        { return myWall.value }
-   //    else if (id == siteWall.value.id) { return siteWall.value }
-   //    else return DefaultWall
-   // }
 
    function addWall(id, type) {
       setDoc(wallDoc(id), {
@@ -124,10 +113,8 @@ export const useWallStore = defineStore('wall', () => {
          thumbImageId:    image.id, 
          thumbUrl:        image.thumbUrl, 
          thumbDimensions: { ...image.dimensions }, 
-         thumbWidth: aspectRatio < 1 ? 150 : Math.min(Math.floor(150 * aspectRatio), 300), 
-      
-         popupUrl: item.primaryImage.largeThumbUrl, 
-         // url:      image.url, 
+         thumbWidth:      aspectRatio < 1 ? 150 : Math.min(Math.floor(150 * aspectRatio), 300), 
+         popupUrl:        item.primaryImage.largeThumbUrl, 
          popupDimensions: { ...item.primaryImage.dimensions }, 
       }
    }

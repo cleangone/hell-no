@@ -16,9 +16,7 @@ a, .blue, .icon-btn {
 
 .nav-text { color: var(--color-link); }
 
-.dark .v-bottom-navigation                { background-color: var(--color-shade-dark); }
-.dark .v-bottom-navigation .v-btn--active { background-color: black!important; }
-
+.dark .v-bottom-navigation { background-color: var(--color-shade-dark); }
 .dark .thumb-link   { background-color: var(--color-shade-light); }
 .dark .thumb-link a { color: var(--color-link-dark); }
 .bg-shade       { background-color: var(--color-shade); }

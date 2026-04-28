@@ -127,7 +127,7 @@
                name:     wallItem.name, 
                primaryImage: { 
                   thumbUrl: wallItem.thumbUrl, 
-                  url: wallItem.url, 
+                  url: wallItem.popupUrl, 
                   dimensions: wallItem.thumbDimensions ? wallItem.thumbDimensions : wallItem.dimensions // backward compatible
                } 
             })
