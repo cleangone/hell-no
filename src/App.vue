@@ -57,6 +57,7 @@
                <span v-else-if="isRoute(Route.GALLERIES)">Galleries</span>
                <span v-else-if="isRoute(Route.GALLERY)">{{ pageName }} Gallery</span>
                <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD)">{{ pageName }}</span>
+               <span v-else-if="isRoute(Route.ARTIST)">{{ pageName }}</span>
                <span v-else-if="isRoute(Route.SEARCH)">Search</span>
                <span v-else-if="isRoute(Route.FAVORITES)">My Favorites</span>
                <span v-else-if="isRoute(Route.RECENT)">Updates</span>
