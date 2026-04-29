@@ -128,6 +128,7 @@ export const ItemOrigin = {
    FAVORITES: 'favorites',
    SEARCH:    'search',
    GALLERY:   'gallery',
+   ARTIST:    'artist',
    ADMIN:     'admin',
    EXTERNAL:  'ext',
 }
@@ -161,6 +162,7 @@ export const Route = {
    GROUP:     'group',
    GALLERY:   'gallery',
    GALLERIES: 'galleries',
+   ARTIST:    'artist',
    SEARCH:    'search',
    FEED:      'feed',
    RECENT:    'recent',
@@ -213,6 +215,7 @@ export const URL = {
    GROUP:     '/group/',
    GALLERY:   '/gallery/',
    GALLERIES: '/galleries/',
+   ARTIST:    '/artist/',
    SEARCH:    '/search',
    FEED:      '/feed',
    RECENT:    '/recent/',

@@ -32,7 +32,7 @@
             <v-row no-gutters class="d-flex align-center flex-nowrap">
                <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
                <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
-                  <span class="title">{{ gallery.name }}</span>
+                  <span class="title">{{ gallery.name }} Gallery</span>
                </v-col>
                <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
                   <PlayItems :items="galleryItems" buttonClass="mr-n2"/>

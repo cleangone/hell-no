@@ -1,9 +1,8 @@
 <template>
    <div class="wall-container px-3" :class="background">
       <swiper v-for="(slideRow, index) in slideRows" key="slideRow.id" slides-per-view="auto" :space-between="spaceBetweenSlides" 
-            :pagination="{clickable: true}" :navigation="true" :loop="true" @sliderMove="onSliderMove"
-            :autoplay="{ delay:4000, pauseOnMouseEnter:true }" :modules="modules" :style="rowStyle" 
-            style="--swiper-navigation-size:20px; --swiper-pagination-color: var(--color-link);">
+            :autoplay="{ delay:4000, pauseOnMouseEnter:true }" navigation loop @sliderMove="onSliderMove" 
+            :modules="modules" :style="rowStyle" style="--swiper-navigation-size:20px;"">
          <swiper-slide v-for="slideItem in slideRow.items" :key="slideItem.itemId" :width="slideItem.width" 
                v-slot="{ isActive }" class="swipe-slide" :style="slideStyle"> 
             <SwipeWallSlide :wallItem="slideItem" :origin="ItemOrigin.WALL" :row=index :active="!xs && isActive"

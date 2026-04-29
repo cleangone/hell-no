@@ -1,13 +1,11 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { db } from '@/firebase'
-import { collection, doc, query, where, setDoc, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore"
+import { collection, doc, setDoc, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore"
 import { useFirestore } from '@vueuse/firebase/useFirestore'
-import { useUserStore }  from './userStore'
-import { useAdminStore } from './adminStore'
 import { dateUuid } from '@/utils/utils'
-import { ArtistVisibility } from '@/utils/constants'
-   
+import { ArtistState } from '@/utils/constants'
+
 /* 
    Artist
       id
@@ -16,9 +14,9 @@ import { ArtistVisibility } from '@/utils/constants'
       middleName
       fullName: first middle last
       sortName
-      userId
-      visibility: All, User
-      state: Primary, AKA
+      userId: user that created artist 
+      visibility: unused, was SITE, USER
+      state: ArtistState: PRIMARY, AKA
       akaForId
       allNames: concatintaed string of all names & AKAs, ie "Barry Smith Windsor-Smith BWS"
       dateCreated
@@ -28,38 +26,51 @@ import { ArtistVisibility } from '@/utils/constants'
 const TABLE = 'artists'
 
 export const useArtistStore = defineStore('artistStore', () => {
-   const userStore  = useUserStore()
-   const adminStore = useAdminStore()
    const artistCollection = collection(db, TABLE)
    function artistDoc(id) { return doc(db, TABLE, id) }
 
-   const myArtistsQuery = computed(() => userStore.userId && query(artistCollection, 
-         where('userId', '==', userStore.userId), 
-         where('visibility', '==', ArtistVisibility.USER)))
-   const siteArtistsQuery = computed(() => userStore.userId && query(artistCollection, 
-      where('visibility', '==', ArtistVisibility.SITE)))
-   
    const rawArtists = useFirestore(artistCollection)      
-   const myRawArtists = useFirestore(myArtistsQuery, null)
-   const siteRawArtists = useFirestore(siteArtistsQuery, null)
-    
-   const allArtists = computed(() => { return adminStore.isAdmin && rawArtists.value ? sort([ ...rawArtists.value ]) : [] })
-   const myArtists  = computed(() => { return myRawArtists.value ? sort([ ...myRawArtists.value ]) : [] })
+
+   // artist list is sorted every time it's used
+   const artists = computed(() => rawArtists.value ? sort([ ...rawArtists.value ]) : [])
+   const primaryArtists = computed(() => artists.value.filter(a => a.state == ArtistState.PRIMARY) )
+
+   const artistIdToArtist = computed(() => new Map(artists.value.map((obj) => [obj.id, obj])))
+   const primaryIdToAkaIds = computed(() => {
+      const primaryToAkas = new Map()
+      for (const artist of artists.value) {
+         if (artist.akaForId) { // PRIMARY artist id if this artist is an AKA 
+            let akaIds = primaryToAkas.get(artist.akaForId) 
+            if (!akaIds) {
+               akaIds = []
+               primaryToAkas.set(artist.akaForId, akaIds)
+            }
+            akaIds.push(artist.id)
+         }
+      }
+      return primaryToAkas
+   })
    
-   const visibleSiteArtists = computed(() => {
-      const artists = siteRawArtists.value ? [ ...siteRawArtists.value ] : []
-      return sort(artists)
-   })
-   const myVisibleArtists = computed(() => {
-      const artists = myRawArtists.value ? [ ...myRawArtists.value ] : []
-      if (siteRawArtists.value) { artists.push( ...siteRawArtists.value) }
-      return sort(artists)
-   })
+   function getArtist(artistId)   { return artistIdToArtist.value.has(artistId) ? artistIdToArtist.value.get(artistId) : {} }
+   function getFullName(artistId) { return artistIdToArtist.value.has(artistId) ? artistIdToArtist.value.get(artistId).fullName : "" }
+   
+   // all artists related by aka to the specified one
+   function getAllArtistIds(artistId) {
+      // console.log("addArtist", artist) 
+      const allIds = []
+      const paramArtist = artistIdToArtist.value.get(artistId)
+      if (!paramArtist) { return allIds }
+
+      const primaryArtist = paramArtist.state == ArtistState.PRIMARY ? paramArtist : artistIdToArtist.value.get(paramArtist.akaForId)
+      allIds.push(primaryArtist.id)
+      if (primaryIdToAkaIds.value.has(primaryArtist.id)) { allIds.push(...primaryIdToAkaIds.value.get(primaryArtist.id)) }
+
+      return allIds
+   }
 
    function sort(artists) { return artists.sort((a, b) => a.sortName.localeCompare(b.sortName)) }
 
    function addArtist(artist) {
-      // console.log("addArtist", artist) 
       const artistToAdd = { ...artist, id:dateUuid(), dateCreated: serverTimestamp(), dateModified: serverTimestamp()  }
       setDoc(artistDoc(artistToAdd.id), artistToAdd)
       return artistToAdd.id
@@ -70,9 +81,7 @@ export const useArtistStore = defineStore('artistStore', () => {
       updateDoc(artistDoc(artistToUpdate.id), artistToUpdate)
    }
 
-   function deleteArtist(id) {
-      deleteDoc(doc(artistCollection, id))
-   }
+   function deleteArtist(id) { deleteDoc(doc(artistCollection, id)) }
 
-   return { allArtists, myArtists, visibleSiteArtists, myVisibleArtists, addArtist, updateArtist, deleteArtist }
+   return { artists, primaryArtists, getArtist, getFullName, getAllArtistIds, addArtist, updateArtist, deleteArtist }
 })

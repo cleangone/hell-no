@@ -11,6 +11,8 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.10.0", "4/29/26"], // Add Artist page, link artists to it
+                           // remove artist.visibility - artist edit controlled by userId and items referencing artist
    ["v2.9.0",  "4/28/26"], // Add dark mode
    ["v2.8.1",  "4/27/26"], // Add profileId to wallItem
    ["v2.8.0",  "4/26/26"], // Handle interaction between wall active popup and wallItem mouseover

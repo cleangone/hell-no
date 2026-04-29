@@ -104,6 +104,38 @@ export const useItemStore = defineStore('item', () => {
       return galleryItems
    }
 
+   function getArtistItems(artistId) {
+      const artistItems = artistIdToItems.value.get(artistId)
+      return artistItems ? artistItems : []
+   }
+
+   function getArtistPublicItems(artistIds) {
+      const artistsItems = []
+      for (const artistId of artistIds) {
+         const artistItems = artistIdToPublicItems.value ? artistIdToPublicItems.value.get(artistId) : []
+         if (artistItems) { artistsItems.push(...artistItems) }
+      }
+      return artistsItems
+   }
+
+   const artistIdToItems       = computed(() => getArtistIdToItems(items.value))
+   const artistIdToPublicItems = computed(() => getArtistIdToItems(publicItems.value))
+   function getArtistIdToItems(itemArray) {
+      const map = new Map()
+      if (!itemArray) { return map }
+      for (const item of itemArray) {
+         if (item.primaryArtist?.id) { 
+            let artistItems = map.get(item.primaryArtist.id)
+            if (!artistItems) {
+               artistItems = []
+               map.set(item.primaryArtist.id, artistItems)
+            }
+            artistItems.push(item) 
+         }
+      }
+      return map
+   }
+
    const userIdToItems       = computed(() => getUserIdMap(items.value))
    const userIdToPublicItems = computed(() => getUserIdMap(publicItems.value))
    function getUserIdMap(objects) {
@@ -161,6 +193,6 @@ export const useItemStore = defineStore('item', () => {
 
    return { items, publicItems, childItemIds, itemIdToItem, 
             myItems, myItemIdToItem, myChildItemIds, myGroupMemberItems,
-            getGalleryItems, getItem, getUserItems, getUserPubicItems,
+            getGalleryItems, getArtistItems, getArtistPublicItems, getItem, getUserItems, getUserPubicItems,
             setItem, updateItem, addOtherImage, addCroppedImage, removeOtherImage, removeGalleryId, deleteItem }
 })

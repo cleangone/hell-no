@@ -1,6 +1,6 @@
 <template>
    <div v-if="artist || year">
-      <span v-if="artist">{{ artist }}</span>
+      <RouterLink v-if="artist" :to="URL.ARTIST + artist.id">{{ artist.fullName }}</RouterLink>
       <span v-if="artist && year"> &bull; </span>
       <span v-if="year">{{ year }}</span>
    </div>
@@ -8,9 +8,10 @@
 
 <script setup>
    import { computed } from 'vue'
+   import { URL } from '@/utils/constants'
    
    const props = defineProps({ item: Object })
-   const artist = computed(() => props.item.primaryArtist ? props.item.primaryArtist.fullName : null)
+   const artist = computed(() => props.item.primaryArtist ? props.item.primaryArtist : null)
    const year   = computed(() => props.item.yearCreated   ? props.item.yearCreated : null)
 </script>
 

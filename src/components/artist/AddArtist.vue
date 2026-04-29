@@ -31,7 +31,6 @@
    import { requiredRule } from '@/utils/utils'
    import { ActionType, ArtistState, Emit } from '@/utils/constants'
    
-   const props = defineProps({ visibility: String })
    const emit = defineEmits([Emit.DONE])
 
    const userStore = useUserStore()
@@ -44,7 +43,7 @@
    const akaFor = ref()
    const dataValid = ref(true)
    
-   const primaryArtists = computed(() => artistMgr.getPrimaryArtistsForAKA(props.visibility))
+   const primaryArtists = computed(() => artistMgr.getPrimaryArtistsForAKA())
 
    const save = () => {
       // console.log("akaFor", akaFor.value ?  akaFor.value : "")
@@ -58,7 +57,6 @@
          name: name.value, 
          fullName: fullName,
          sortName: sortName.value.length ? sortName.value : name.value,
-         visibility: props.visibility,
          state: akaPrimaryId ? ArtistState.AKA  : ArtistState.PRIMARY,
          akaForId: akaPrimaryId ? akaPrimaryId : "",
          allNames: fullName,

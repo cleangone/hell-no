@@ -1,7 +1,6 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useArtistStore } from '@/stores/artistStore'
-import { ArtistState, ArtistVisibility } from '@/utils/constants'
       
 export const useArtistMgr = defineStore('artistMgr', () => {   
    const artistStore = useArtistStore()
@@ -18,20 +17,16 @@ export const useArtistMgr = defineStore('artistMgr', () => {
              name
    }
 
-   function getPrimaryArtistsForAKA(visibility) { 
+   function getPrimaryArtistsForAKA() { 
       const artists = []
-      for (const artist of artistStore.myVisibleArtists) {
-         // cannot base an SITE Aka on a USER Primary
-         const visibilityMismatch = (visibility == ArtistVisibility.SITE && artist.visibility == ArtistVisibility.USER)
-         if (artist.state == ArtistState.PRIMARY && !visibilityMismatch) {
-            artists.push({ title: artist.fullName, value: artist })
-         }
+      for (const artist of artistStore.primaryArtists) {
+         artists.push({ title: artist.fullName, value: artist })
       }
       return artists
    }
 
    function hasAKAs(artistId) { 
-      for (const artist of artistStore.myVisibleArtists) {
+      for (const artist of artistStore.artists) {
          if (artist.akaForId == artistId)  { return true }
       }
       return false

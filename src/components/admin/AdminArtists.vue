@@ -4,17 +4,12 @@
          Artists
          <TextButton @click="showAddDialog=true" text="Add Artist"></TextButton>
       </div>
-      <v-data-table :headers="headers" :items="artists" :custom-key-sort="customKeySort" 
-         items-per-page="25" density="compact">
-         <template v-slot:item.visibility="{ item }">
-            {{ item.visibility }}
-            <span v-if="canElevateArtist(item)" >  
-               <v-tooltip text="Elevate to Site">
-                  <template v-slot:activator="{ props }">
-                     <IconButton v-bind="props" icon="mdi-arrow-up-box" @click="elevateArtist(item)"/>
-                  </template>
-               </v-tooltip>
-            </span>
+      <v-data-table :headers="headers" :items="artists" items-per-page="50" density="compact">
+          <template v-slot:item.name="{ item }">
+            {{ item.fullName }}
+         </template>
+         <template v-slot:item.items="{ item }">
+            {{ item.items.length ? item.items.length : "" }}
          </template>
          <template v-slot:item.actions="{ item }">
             <EditButton @click="editArtist(item)"></EditButton>
@@ -24,10 +19,7 @@
    </div>
 
    <v-dialog v-model="showAddDialog" width="auto">
-      <AddArtist :visibility="ArtistVisibility.SITE" @done="showAddDialog=false"/>
-   </v-dialog>
-   <v-dialog v-model="showElevateDialog" width="auto">
-      <ElevateArtist :artist="selectedArtist" @done="showElevateDialog=false"/>
+      <AddArtist @done="showAddDialog=false"/>
    </v-dialog>
    <v-dialog v-model="showEditDialog" width="auto">
       <EditArtist :artist="selectedArtist" @done="showEditDialog=false"/>
@@ -40,83 +32,41 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useArtistStore } from '@/stores/artistStore'
-   import { useArtistMgr }   from '@/stores/artistMgr'
-   import AddArtist     from '@/components/artist/AddArtist.vue'
-   import ElevateArtist from '@/components/artist/ElevateArtist.vue'
-   import EditArtist    from '@/components/artist/EditArtist.vue'
-   import DeleteArtist  from '@/components/artist/DeleteArtist.vue'
-   import EditButton    from '@/components/util/EditButton.vue'
-   import DeleteButton  from '@/components/util/DeleteButton.vue'
-   import IconButton    from '@/components/util/IconButton.vue'
-   import TextButton    from '@/components/util/TextButton.vue'
-   import { ArtistState, ArtistVisibility } from '@/utils/constants'
+   import { useItemStore }   from '@/stores/itemStore'
+   import AddArtist    from '@/components/artist/AddArtist.vue'
+   import EditArtist   from '@/components/artist/EditArtist.vue'
+   import DeleteArtist from '@/components/artist/DeleteArtist.vue'
+   import EditButton   from '@/components/util/EditButton.vue'
+   import DeleteButton from '@/components/util/DeleteButton.vue'
+   import TextButton   from '@/components/util/TextButton.vue'
    
    const artistStore = useArtistStore()
-   const artistMgr   = useArtistMgr()
-   const showAddDialog     = ref(false)
-   const showElevateDialog = ref(false)
-   const showEditDialog    = ref(false)
-   const showDeleteDialog  = ref(false)
+   const itemStore   = useItemStore()
+   const showAddDialog    = ref(false)
+   const showEditDialog   = ref(false)
+   const showDeleteDialog = ref(false)
    const selectedArtist = ref({})
    
    const headers = [
-      { title: 'Artist',     key: 'displayName', value: 'displayName.fullName' },
-      { title: 'Visibility', key: 'visibility',  value: 'visibility', align: 'center' },
-      { title: 'AKA for',    key: 'akaArtist',   value: 'akaArtist'},
-      { title: '',           key: "actions" },
+      { title: 'Artist',     key: 'name',        value: 'name' },
+      { title: 'AKA for',    key: 'akaFullName', value: 'akaFullName'},
+      { title: 'Items',      key: 'items',         align: 'center' },
+      { title: '',           key: "actions",       sortable: false },
    ]
-
-   const customKeySort = {
-      displayName: (a, b) => { return a.name.localeCompare(b.name) },
-      visibility:  (a, b) => { return a.localeCompare(b) }, 
-      akaArtist:   (a, b) => { return a.localeCompare(b) }, 
-   } 
 
    const artists = computed(() => { 
       const displayArtists = []
-      const artistIdToArtist = artistMgr.getArtistIdToArtist(artistStore.allArtists)
-            
-      for (const artist of artistStore.allArtists) {
+      for (const artist of artistStore.artists) {
          const displayArtist = { ...artist }
-         displayArtist.displayName = { name: artist.name, fullName: artist.fullName }    
-         
-         if (artist.state == ArtistState.AKA ) {
-            const akaArtist = artistIdToArtist.get(artist.akaForId)
-            displayArtist.akaArtist = akaArtist ? akaArtist.fullName : "" 
-         }
-         else { displayArtist.akaArtist = "" }
-
+         displayArtist.akaFullName = artist.akaForId ? artistStore.getFullName(artist.akaForId) :  "" 
+         displayArtist.items = itemStore.getArtistItems(artist.id) 
          displayArtists.push(displayArtist)
       }
       return displayArtists
    })
 
-   const canElevateArtist = (artist) => { 
-      if (isUserArtist(artist)) {
-         if (artist.state == ArtistState.PRIMARY) { return true }
-         for (const otherArtist of artistStore.allArtists) {
-            if (artist.akaForId == otherArtist.id) { return otherArtist.visibility == ArtistVisibility.SITE }
-         }
-      }
-      return false
-   }
-
-   const isUserArtist = (artist) => { return artist.visibility == ArtistVisibility.USER }
-   
-   const disableDelete = (artist) => {
-      if (isUserArtist(artist)) { return true }
-      if (artist.state == ArtistState.PRIMARY) {
-         for (const otherArtist of artistStore.allArtists) {
-            if (otherArtist.akaFor == artist.id) { return true }
-         }
-      }
-      return false
-   }
-
-   const elevateArtist = (artist) => {
-      selectedArtist.value = artist
-      showElevateDialog.value = true
-   }
+   // admin can delete an artist if the artist isn't referenced by any items
+   const disableDelete = (artist) => { return artist.items.length ? true : false }
 
    const editArtist = (artist) => {
       selectedArtist.value = artist

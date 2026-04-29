@@ -33,27 +33,27 @@
    const emit = defineEmits([Emit.DONE])
 
    const artistStore = useArtistStore()
-   const artistMgr = useArtistMgr()
-   const firstName = ref('')
+   const artistMgr   = useArtistMgr()
+   const firstName  = ref('')
    const middleName = ref('')
-   const name = ref('')
-   const sortName = ref('')
+   const name       = ref('')
+   const sortName   = ref('')
    const akaFor = ref()
    const dataValid = ref(true)
    
    onMounted(() => {
-      firstName.value = props.artist.firstName
+      firstName.value  = props.artist.firstName
       middleName.value = props.artist.middleName
-      name.value = props.artist.name
-      sortName.value = props.artist.sortName
+      name.value       = props.artist.name
+      sortName.value   = props.artist.sortName
 
       if (props.artist.akaForId) {
-         const akaArtist = artistMgr.myVisibleArtistIdToArtist.get(props.artist.akaForId)
+         const akaArtist = artistStore.getArtist(props.artist.akaForId)
          akaFor.value = { title: akaArtist.fullName, value: akaArtist }
       }
    })
    
-   const primaryArtists = computed(() => artistMgr.getPrimaryArtistsForAKA(props.visibility))
+   const primaryArtists = computed(() => artistMgr.getPrimaryArtistsForAKA())
 
    const save = () => {
       const fullName = artistMgr.getFullName(firstName.value, middleName.value, name.value)
