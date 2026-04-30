@@ -3,12 +3,11 @@
       <v-row no-gutters class="d-flex align-center flex-nowrap">
          <v-col v-if="viewMgr.isDeskTop" cols="2" class="flex-grow-0 flex-shrink-0"></v-col>
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
-            <div v-if="viewMgr.isDeskTop" class="title">
-               My Favorites <PlayItems :items="recentItems" buttonClass="mb-1"/>
-            </div>
+            <div v-if="viewMgr.isDeskTop" class="title">My Favorites</div>
             <RouterLink v-if="username" :to="URL.USER + route.params.id">{{ username }}</RouterLink>
          </v-col>
          <v-col v-if="viewMgr.isDeskTop" cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
+            <ExpandItems :items="favoriteItems" buttonClass="mb-1"/>
             <ItemThumbConfig/>
          </v-col>
       </v-row>
@@ -27,7 +26,7 @@
    import { useItemMgr }   from '@/stores/itemMgr'
    import { useViewStore } from '@/stores/viewStore'
    import { useViewMgr }   from '@/stores/viewMgr'
-   import PlayItems       from '@/components/item/PlayItems.vue'
+   import ExpandItems     from '@/components/item/ExpandItems.vue'
    import ItemThumb       from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig from '@/components/item/thumb/ItemThumbConfig.vue'
    import { Defaults, ItemOrigin, URL } from '@/utils/constants'

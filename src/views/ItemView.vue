@@ -24,7 +24,7 @@
             <span style="font-size: 30px">{{ paramItem.name }}</span>
          </v-col>
          <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
-            <PlayItems :items="viewStoreItems" :item="paramItem" buttonClass="mr-n2"/>
+            <ExpandItems :items="viewStoreItems" :item="paramItem" buttonClass="mr-n2"/>
             <CopyLink :route="Route.ITEM" :id="route.params.id"/>
             <EditButton v-if="isOwnedByUser" @click="editItem(paramItem)" class="mx-n2"/>
          </v-col>
@@ -129,7 +129,7 @@
       <!-- desktop - image and info -->
       <div v-else class="text-left"> 
          <IconButton :icon="descBeside?'mdi-image':'mdi-image-text'" @click="viewStore.toggleItemDescBesideImage()" class="mx-n2"/>
-         <PlayItems :items="viewStoreItems" :item="paramItem" icon="mdi-arrow-expand" fullscreen :buttonClass="PLAY_ITEMS_CLASS"/>
+         <ExpandItems :items="viewStoreItems" :item="paramItem" fullscreen :buttonClass="EXPAND_ITEMS_CLASS"/>
          <IconButton v-if="userStore.userExists" :icon="isUserFavorite?'mdi-heart':'mdi-heart-plus-outline'" @click="toggleUserFavorite()" class="mx-n2"/>
          <v-row class="w-100">
             <v-col :cols="descBeside ? 8 : 12">
@@ -203,7 +203,7 @@
    import ItemArtistYear   from '@/components/item/ItemArtistYear.vue'
    import ItemGroupSmThumb from '@/components/item/ItemGroupSmThumb.vue'
    import ItemSwipe        from '@/components/item/ItemSwipe.vue'
-   import PlayItems        from '@/components/item/PlayItems.vue'
+   import ExpandItems      from '@/components/item/ExpandItems.vue'
    import ShowItemImages   from '@/components/item/ShowItemImages.vue'
    import ShowItemGroupImages from '@/components/item/ShowItemGroupImages.vue'
    import EditItemDialog   from '@/components/item/crud/EditItemDialog.vue'
@@ -213,7 +213,7 @@
    import { handleError, isOwned, isPublic, populated } from '@/utils/utils'
    import { Emit, ItemNavAction, ItemOrigin, ParentFeedType, Route, URL } from '@/utils/constants'
 
-   const PLAY_ITEMS_CLASS = "PlayItems"
+   const EXPAND_ITEMS_CLASS = "ExpandItems"
    const AdditionalImagesType = { ITEM: 'item', IMAGE: 'image' }
    const route = useRoute()
    const router = useRouter()
@@ -623,12 +623,12 @@
    const showingDialog = computed(() => showItemImagesDialog.value || showItemGroupImagesDialog.value || showEditDialog.value)
    onKeyStroke('ArrowLeft', (e) => {
       // console.log("ItemView.ArrowLeft")
-      if (navItems.value.prev && !showingDialog.value && !eventClass(e, PLAY_ITEMS_CLASS)) { router.push(prevItemUrl.value) }  
+      if (navItems.value.prev && !showingDialog.value && !eventClass(e, EXPAND_ITEMS_CLASS)) { router.push(prevItemUrl.value) }  
       if (!showEditDialog.value) { e.preventDefault() }
    })
    onKeyStroke('ArrowRight', (e) => {
       // console.log("ItemView.ArrowRight")
-      if (navItems.value.next && !showingDialog.value && !eventClass(e, PLAY_ITEMS_CLASS)) { router.push(nextItemUrl.value) } 
+      if (navItems.value.next && !showingDialog.value && !eventClass(e, EXPAND_ITEMS_CLASS)) { router.push(nextItemUrl.value) } 
       if (!showEditDialog.value) { e.preventDefault() }
    })
    onKeyStroke('ArrowUp', (e) => {

@@ -35,7 +35,7 @@
                   <span class="title">{{ gallery.name }} Gallery</span>
                </v-col>
                <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
-                  <PlayItems :items="galleryItems" buttonClass="mr-n2"/>
+                  <ExpandItems :items="galleryItems" buttonClass="mr-n2"/>
                   <CopyLink :route="Route.GALLERY" :id="galleryId"/>
                   <ItemThumbConfig/>
                   <EditButton v-if="canEdit" @click="showEditGalleryDialog=true" class="mx-n2"/>
@@ -87,7 +87,7 @@
    import ItemThumb       from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig from '@/components/item/thumb/ItemThumbConfig.vue'
    import ItemPopup       from '@/components/item/ItemPopup.vue'
-   import PlayItems       from '@/components/item/PlayItems.vue'
+   import ExpandItems     from '@/components/item/ExpandItems.vue'
    import EditButton      from '@/components/util/EditButton.vue'
    import CopyLink        from '@/components/util/CopyLink.vue'
    import { objAspectRatio } from '@/utils/utils'
