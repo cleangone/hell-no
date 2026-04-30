@@ -4,7 +4,7 @@
          <v-col cols="2" class="flex-grow-0 flex-shrink-0"></v-col>
          <v-col class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
             <div v-if="viewMgr.isDeskTop" class="title">
-               {{ artistName }} 
+               {{ artistFullName }} 
                <!-- <PlayItems :items="recentItems" buttonClass="mb-1"/> -->
             </div>
          </v-col>
@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-   import { computed, onMounted, ref } from 'vue'
+   import { computed, ref } from 'vue'
    import { useRoute } from 'vue-router'
    import { useArtistStore } from '@/stores/artistStore'
    import { useItemStore }   from '@/stores/itemStore'
@@ -39,19 +39,22 @@
    const itemMgr     = useItemMgr()
    const viewStore   = useViewStore()
    const viewMgr     = useViewMgr()
-   const artistName = ref("")
-  
-   onMounted(async() => {
-      // console.log("ItemView.onMounted")
-      artistName.value = artistStore.getFullName(route.params.id)
-      viewStore.setPageName(artistName.value)
-   })
    
+   const artistFullName = computed(() => {
+      const artistName = artistStore.getFullName(route.params.id)
+      viewStore.setPageName(artistName)
+      return artistName
+   })
+
    const items = computed(() => {
+      // needed to drive the viewStore for mobile (not reactive in onMounted?)
+      artistFullName.value 
+
       // todo - add my private and invisible items
       const allArtistIds = artistStore.getAllArtistIds(route.params.id) // all artists related by aka
-
       const items =  [ ...itemStore.getArtistPublicItems(allArtistIds) ]
+
+      console.log("itemMgr", itemMgr) // todo - seems like this is needed to force itemMgr instantiation
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
       ungroupedItems.sort((a, b) => a.name.localeCompare(b.name))
       return viewStore.setVisibleItems(ItemOrigin.ARTIST, "Artist", URL.ARTIST + route.params.id, ungroupedItems)
