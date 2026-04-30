@@ -16,19 +16,16 @@
 
 <script setup>
    import { computed, ref } from 'vue'
-   import { useUserStore } from '@/stores/userStore'
    import { useItemMgr } from '@/stores/itemMgr'
-   import { useViewStore } from '@/stores/viewStore'
    import ItemPopup     from '@/components/item/ItemPopup.vue'
    import ItemThumbText from './ItemThumbText.vue'
    import { backgroundColorStyle } from '@/utils/utils'
    
    const props = defineProps({ item:Object, origin:String, 
-      useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean, admin:Boolean
+      useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean
    })
-   const userStore = useUserStore()
+
    const itemMgr = useItemMgr()
-   const viewStore = useViewStore()
    const cardRef = ref(null)
    const popup = ref(null)
    const mouseleaveTime = ref(Date.now())

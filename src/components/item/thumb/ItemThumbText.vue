@@ -4,13 +4,6 @@
       <ItemArtistYear v-if="showArtist" :item="item"/>
    </div>
    <UserDateText :user="fromUser" :date="showDateModified ? item.dateContentModified : null" class="text-body-2"/>
-   <!-- <div v-if="showAdminIcons" class="mt-auto text-right">
-      <EditButton @click="showEditDialog=true" ></EditButton>
-   </div> -->
-
-   <!-- <v-dialog v-model="showEditDialog" width="auto">
-      <EditItemDialog :item="item" @done="showEditDialog=false"/>
-   </v-dialog> -->
 </template>
 
 <script setup>
@@ -19,22 +12,16 @@
    import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
    import ItemArtistYear   from '../ItemArtistYear.vue'
-   // import EditItemDialog   from '../crud/EditItemDialog.vue'
-   // import EditButton       from '@/components/util/EditButton.vue'
    import UserDateText     from '@/components/util/UserDateText.vue'
    import { handleError }  from '@/utils/utils'
    import { ItemThumbOptions as ThumbOptions } from '@/utils/constants'
    
    onErrorCaptured((err) => { return handleError(err, "ItemThumbText") })
 
-   // todo - remove showAdminIcons
-   const props = defineProps({ item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, 
-      bypassShowUser:Boolean, showAdminIcons: Boolean
-   })
+   const props = defineProps({ item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean })
    const userStore    = useUserStore()
    const profileStore = useProfileStore()
    const viewStore    = useViewStore()
-   // const showEditDialog = ref(false)
    
    const item = computed(() => props.item)
    const selectedFields = computed(() => {
