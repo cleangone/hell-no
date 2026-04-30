@@ -5,9 +5,6 @@ import { useArtistStore } from '@/stores/artistStore'
 export const useArtistMgr = defineStore('artistMgr', () => {   
    const artistStore = useArtistStore()
    
-   const myVisibleArtistIdToArtist = computed(() => { 
-      return getArtistIdToArtist(artistStore.myVisibleArtists)
-   })
    
    function getArtistIdToArtist(artists) { return new Map(artists.map((obj) => [obj.id, obj])) }
 
@@ -44,6 +41,5 @@ export const useArtistMgr = defineStore('artistMgr', () => {
       return options
    }
 
-   return { myVisibleArtistIdToArtist, getArtistIdToArtist, hasAKAs, 
-      getPrimaryArtistsForAKA, getFullName, getItemArtist, getArtistOptions }
+   return { getArtistIdToArtist, hasAKAs, getPrimaryArtistsForAKA, getFullName, getItemArtist, getArtistOptions }
 })

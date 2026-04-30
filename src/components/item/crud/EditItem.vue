@@ -162,7 +162,7 @@
 
    const artistOptions = computed(() => { 
       const options = []
-      for (const artist of artistStore.myVisibleArtists) {
+      for (const artist of artistStore.artists) {
          const option = { title: artist.fullName, value: artist }
          options.push(option)
          if (currItem.value.primaryArtist?.id == option.value.id) { artistOption.value = option }

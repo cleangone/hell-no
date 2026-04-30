@@ -143,7 +143,7 @@
       }
    })
 
-   const artistOptions = computed(() => { return artistMgr.getArtistOptions(artistStore.myVisibleArtists) })
+   const artistOptions = computed(() => { return artistMgr.getArtistOptions(artistStore.artists) })
    
    const profiles = computed(() => { 
       const profiles = [ ...profileStore.myProfiles ]

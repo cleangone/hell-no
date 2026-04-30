@@ -53,10 +53,16 @@
          <TextButton @click="showAdd=true" text="Add Image" class="mx-3"/>
          <v-data-table :headers="headers" :items="displayImages" item-key="id">
             <template v-slot:header.showWithItem="{ header }">
-               Item Page<!-- Show on<br>Item Page --> 
+               Item<br>Page
             </template>
             <template v-slot:item.image="{ item }">
                <img :src="item.thumbUrl" @click="showItemImage(item)" height="100" class="hand"/>
+            </template>
+            <template v-slot:header.imageType="{ }">
+               <div class="d-flex justify-center align-center">
+                  Type
+                  <ToolTip iconClass="ml-n2">Background, Gallery and Header images visible to Gallery</ToolTip>
+               </div>
             </template>
             <template v-slot:item.showWithItem="{ item }">
                <v-checkbox v-if="isPrimaryImage(item)" v-model="TRUE" disabled class="ml-3 mt-4"/> 
@@ -99,6 +105,7 @@
    import DeleteButton from '@/components/util/DeleteButton.vue'
    import IconButton   from '@/components/util/IconButton.vue'
    import TextButton   from '@/components/util/TextButton.vue'
+   import ToolTip      from '@/components/util/ToolTip.vue'
    import { Emit, GalleryImageTypes, ImageType } from '@/utils/constants'
    import 'vue-advanced-cropper/dist/style.css'
 

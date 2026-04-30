@@ -11,6 +11,7 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.10.3", "4/30/26"], // Add ToolTip component
    ["v2.10.2", "4/30/26"], // Rename PlayItems to ExpandItems, integrate with Recent,FavoritesView
    ["v2.10.1", "4/30/26"], // Link ItemView artist to ArtistView
                            // Add large thumbnail option for desktop

@@ -1,39 +1,30 @@
 <template>
-   <!-- <v-card> -->
-      
-      <div class="text-left">
-         <TextButton text="Add item images" @click="addItemImages()" class="ml-3"/>
-         <TextButton v-if="viewTable" @click="viewTable=false" text="Sort Thumbnails"/>
-         <TextButton v-else           @click="viewTable=true"  text="View All"/>
-      </div>
-      <v-data-table v-if="viewTable" :headers="headers" :items="displayImages" item-key="id">
-         <template v-slot:item.active="{ item }" >
-            <div width="100%" class="d-flex justify-center align-center">
-               <div><v-checkbox v-model="item.active" @change="updateActive(item)"></v-checkbox></div>
-            </div>
-         </template>
-         <template v-slot:header.actions="{ }">
-            <div class="d-flex justify-center align-center">
-               <v-tooltip interactive>
-                  <template v-slot:activator="{ props: activatorProps }">
-                     <IconButton icon="mdi-information-outline" v-bind="activatorProps""/>
-                  </template>
-                  <div class="d-flex justify-center align-center">
-                     <Icon icon="mdi-arrow-up-box" class="mr-2"/>Elevate image to parent
-                  </div>
-               </v-tooltip>
-            </div>
-         </template>
-         <template v-slot:item.image="{ item }"><img :src="item.thumbUrl" height="100"/></template>
-         <template v-slot:item.actions="{ item }">
-            <IconButton v-if="gallery.parentGalleryId" icon="mdi-arrow-up-box" @click="elevateImage(item)" :disabled="parentHasImage(item)"/>
-            <DeleteButton @click="deleteImage(item)"/>
-         </template>
-      </v-data-table>
-      <div v-else class="ma-4">
-         <draggable v-model="displayThumbImages" item-key="id" class=" main">
-            <template #item="{element}">
-               <v-card :width="250" class="ma-4 card">
+   <div class="text-left">
+      <TextButton text="Add item images" @click="addItemImages()" class="ml-3"/>
+      <TextButton v-if="viewTable" @click="viewTable=false" text="Sort Thumbnails"/>
+      <TextButton v-else           @click="viewTable=true"  text="View All"/>
+   </div>
+   <v-data-table v-if="viewTable" :headers="headers" :items="displayImages" item-key="id">
+      <template v-slot:item.active="{ item }" >
+         <div width="100%" class="d-flex justify-center align-center">
+            <div><v-checkbox v-model="item.active" @change="updateActive(item)"></v-checkbox></div>
+         </div>
+      </template>
+      <template v-slot:header.actions="{ }">
+         <div class="d-flex justify-center align-center">
+            <ToolTip><Icon icon="mdi-arrow-up-box" class="mr-2"/>Elevate image to parent</ToolTip>
+         </div>
+      </template>
+      <template v-slot:item.image="{ item }"><img :src="item.thumbUrl" height="100"/></template>
+      <template v-slot:item.actions="{ item }">
+         <IconButton v-if="gallery.parentGalleryId" icon="mdi-arrow-up-box" @click="elevateImage(item)" :disabled="parentHasImage(item)"/>
+         <DeleteButton @click="deleteImage(item)"/>
+      </template>
+   </v-data-table>
+   <div v-else class="ma-4">
+      <draggable v-model="displayThumbImages" item-key="id" class=" main">
+         <template #item="{element}">
+            <v-card :width="250" class="ma-4 card">
                <v-card-text class="text-center my-0 py-0">
                   <v-icon icon="mdi-drag" color="blue-darken-2" class="justify-center"></v-icon>
                </v-card-text>
@@ -41,8 +32,7 @@
             </v-card>
          </template>
       </draggable>
-      </div>
-   <!-- </v-card>  -->
+   </div>
 </template>
 
 <script setup>
@@ -55,6 +45,7 @@
    import IconButton   from '@/components/util/IconButton.vue'
    import TextButton   from '@/components/util/TextButton.vue'
    import DeleteButton from '@/components/util/DeleteButton.vue'
+   import ToolTip      from '@/components/util/ToolTip.vue'
    import { Emit, GalleryImageTypes, ImageType } from '@/utils/constants'
    
    const props = defineProps({ galleryId: String })

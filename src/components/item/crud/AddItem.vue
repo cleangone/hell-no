@@ -87,9 +87,7 @@
 
    const artists = computed(() => { 
       const options = [{ title: null, value: {} }]
-
-      const artists = props.userId ? artistStore.visibleSiteArtists : artistStore.myVisibleArtists
-      for (const artist of artists) {
+      for (const artist of artistStore.artists) {
          const option = { title: artist.fullName, value: artist }
          options.push(option)
       }
