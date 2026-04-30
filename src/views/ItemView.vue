@@ -3,7 +3,9 @@
       <div v-if="alternateName" class="mt-n2">
          also <span class="text-h5">{{ alternateName }}</span>
       </div>
-      <div class="text-h6 mt-n2">{{ artist }}</div>
+      <div v-if="artist" class="text-h6 mt-n2">
+         <RouterLink :to="URL.ARTIST + artist.id">{{ artist.fullName }}</RouterLink> 
+      </div>
       <div v-if="paramItem.yearCreated" class="text-h6 mt-n2">{{ paramItem.yearCreated }}</div>
       <div v-if="populated(paramItem.subtitle)" class="font-weight-medium mb-1">{{ paramItem.subtitle }}</div>
       <div v-if="paramItem.size" class="mt-n2">{{ paramItem.size }}</div>
@@ -301,7 +303,7 @@
    const alternateName = computed(() => paramItem.value.alternateName?.length ? paramItem.value.alternateName : null)
    const itemUser      = computed(() => userStore.getUser(paramItem.value.userId)) 
    const descBeside    = computed(() => viewStore.itemDescBesideImage)
-   const artist        = computed(() => paramItem.value.primaryArtist ? paramItem.value.primaryArtist.fullName : null) 
+   const artist        = computed(() => paramItem.value.primaryArtist) 
    
    const fromUser = computed(() => paramItem.value.profileId ?
       { id: paramItem.value.profileId, username: profileStore.getUsername(paramItem.value.profileId) } :

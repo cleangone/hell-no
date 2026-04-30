@@ -37,7 +37,10 @@ export const ChatState = {
 export const Defaults = {
    DELETED_USER_ID: "0",
    MAX_WALL_ITEMS:  20,
-   SITE_ID:         "0"
+   SITE_ID:         "0",
+   THUMB_HEIGHT:    200,
+   SM_THUMB_HEIGHT: 150,
+   LG_THUMB_HEIGHT: 250,
 }
 export const DefaultWall = { wallRows:0, wallItems:[] }    
 
@@ -140,6 +143,7 @@ export const ItemType = {
 
 export const ItemThumbOptions = { 
    SM_THUMB: 'Small Thumbnails',
+   LG_THUMB: 'Large Thumbnails',
    TITLE:    'Title',
    ARTIST:   'Artist',
    UPDATED:  'Date Updated',

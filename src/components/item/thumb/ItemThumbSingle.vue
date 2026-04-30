@@ -13,27 +13,24 @@
 
 <script setup>
    import { computed, onErrorCaptured, ref } from 'vue'
-   import { useItemMgr }   from '@/stores/itemMgr'
-   import { useViewStore } from '@/stores/viewStore'
-   import { useViewMgr }   from '@/stores/viewMgr'
+   import { useItemMgr } from '@/stores/itemMgr'
+   import { useViewMgr } from '@/stores/viewMgr'
    import ItemPopup     from '@/components/item/ItemPopup.vue'
    import ItemThumbText from './ItemThumbText.vue'
    import { handleError } from '@/utils/utils'
-   import { ItemThumbOptions as ThumbOptions } from '@/utils/constants'
    
    const props = defineProps({ item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean })
 
-   const itemMgr   = useItemMgr()
-   const viewStore = useViewStore()
-   const viewMgr   = useViewMgr()
+   const itemMgr = useItemMgr()
+   const viewMgr = useViewMgr()
    const cardRef = ref(null)
    const popup = ref(null)
    const mouseleaveTime = ref(Date.now())
    
    onErrorCaptured((err) => { return handleError(err, "ItemThumbSingle") })
 
-   const item     = computed(() => props.item)
-   const itemURL  = computed(() => {   
+   const item    = computed(() => props.item)
+   const itemURL = computed(() => {   
       const id = props.item.linkId ? props.item.linkId : props.item.id
       return itemMgr.itemURL(id, props.origin, props.item.childNum)
    })
@@ -41,11 +38,10 @@
    const artist   = computed(() => item.value.primaryArtist ? item.value.primaryArtist.fullName : null)
    
    const aspectRatio = computed(() => itemMgr.itemAspectRatio(item.value))
-   const smallThumb = computed(() => viewMgr.isXs && viewStore.itemThumbOptions.includes(ThumbOptions.SM_THUMB))
    const cardWidth = computed(() => { 
-      const targetHeight = smallThumb.value ? 150 : 200
+      const targetHeight = viewMgr.targetThumbHeight
       const targetWidth = Math.round(targetHeight * aspectRatio.value)
-      return targetWidth > 300 ? 300 : targetWidth
+      return targetWidth 
    })
 
    const mouseover = () => {

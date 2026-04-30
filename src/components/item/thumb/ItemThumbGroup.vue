@@ -17,6 +17,7 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useItemMgr } from '@/stores/itemMgr'
+   import { useViewMgr } from '@/stores/viewMgr'
    import ItemPopup     from '@/components/item/ItemPopup.vue'
    import ItemThumbText from './ItemThumbText.vue'
    import { backgroundColorStyle } from '@/utils/utils'
@@ -26,6 +27,7 @@
    })
 
    const itemMgr = useItemMgr()
+   const viewMgr = useViewMgr()
    const cardRef = ref(null)
    const popup = ref(null)
    const mouseleaveTime = ref(Date.now())
@@ -40,7 +42,7 @@
          totalHeight += childItem.primaryImage.dimensions.height
       }
       const avghHeight = totalHeight/props.item.childItems.length
-      const targetHeight = 200
+      const targetHeight = viewMgr.targetThumbHeight
       const aspectRatio = totalWidth / avghHeight
       const targetWidth = Math.round(targetHeight * aspectRatio)
       return { totalWidth: totalWidth, targetWidth: targetWidth, cardWidth: targetWidth.toString()}

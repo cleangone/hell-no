@@ -11,6 +11,8 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.10.1", "4/30/26"], // Link ItemView artist to ArtistView
+                           // Add large thumbnail option for desktop
    ["v2.10.0", "4/29/26"], // Add Artist page, link artists to it
                            // remove artist.visibility - artist edit controlled by userId and items referencing artist
    ["v2.9.0",  "4/28/26"], // Add dark mode

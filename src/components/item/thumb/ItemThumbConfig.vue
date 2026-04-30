@@ -18,20 +18,17 @@
 
 <script setup>
    import { computed } from 'vue'
-   // import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
    import { useViewStore } from '@/stores/viewStore'
    import { useViewMgr }   from '@/stores/viewMgr'
    import IconButton       from '@/components/util/IconButton.vue'
    import { ItemThumbOptions as ThumbOptions } from '@/utils/constants'
 
-   // const breakpoints = useBreakpoints(breakpointsTailwind)
-   // const xs = breakpoints.smaller('sm')
    const viewStore = useViewStore()
    const viewMgr    = useViewMgr()
    
    const defaultOptions = [ ThumbOptions.TITLE, ThumbOptions.ARTIST, ThumbOptions.USER, ThumbOptions.UPDATED ]  
    const allOptions = computed(() => {
-       const options = viewMgr.isXs ? [ ThumbOptions.SM_THUMB ] : []
+       const options = viewMgr.isXs ? [ ThumbOptions.SM_THUMB ] : [  ThumbOptions.LG_THUMB ]
        options.push(...defaultOptions)
        return options
    })

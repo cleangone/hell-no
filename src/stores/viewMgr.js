@@ -1,13 +1,14 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
-import { useUserStore }    from '@/stores/userStore'
-import { useItemMgr }      from '@/stores/itemMgr'
-import { useGalleryMgr }   from '@/stores/galleryMgr'
-import { useWallStore }    from '@/stores/wallStore'
-import { useHitStore }     from '@/stores/hitStore'
-import { useViewStore }    from '@/stores/viewStore'
-import { useLocalStore }   from '@/stores/localStore'
+import { useUserStore }  from '@/stores/userStore'
+import { useItemMgr }    from '@/stores/itemMgr'
+import { useGalleryMgr } from '@/stores/galleryMgr'
+import { useWallStore }  from '@/stores/wallStore'
+import { useHitStore }   from '@/stores/hitStore'
+import { useViewStore }  from '@/stores/viewStore'
+import { useLocalStore } from '@/stores/localStore'
+import { Defaults, ItemThumbOptions } from '@/utils/constants'
 import { dateUuid, isHidden, isInvisible, isOwned, isPublic } from '@/utils/utils'  
    
 export const useViewMgr = defineStore('viewMgr', () => {   
@@ -92,7 +93,13 @@ export const useViewMgr = defineStore('viewMgr', () => {
       } 
       return itemIds.size
    }
+
+   const targetThumbHeight = computed(() => {
+      if (isXs.value  && viewStore.itemThumbOptions.includes(ItemThumbOptions.SM_THUMB)) { return Defaults.SM_THUMB_HEIGHT }
+      if (!isXs.value && viewStore.itemThumbOptions.includes(ItemThumbOptions.LG_THUMB)) { return Defaults.LG_THUMB_HEIGHT }
+      return Defaults.THUMB_HEIGHT
+   })    
       
    return { init, isMobile, isXs, isDeskTop, solo, addHit, itemIsVisibleToUser, itemThumbVisibleToUser, 
-      galleryIsVisibleToUser, galleryThumbVisibleToUser, galleryItemCount }
+      galleryIsVisibleToUser, galleryThumbVisibleToUser, galleryItemCount, targetThumbHeight }
 })
