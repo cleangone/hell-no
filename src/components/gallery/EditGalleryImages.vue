@@ -11,7 +11,7 @@
          </div>
       </template>
       <template v-slot:header.actions="{ }">
-         <div class="d-flex justify-center align-center">
+         <div v-if="gallery.parentGalleryId" class="d-flex justify-center align-center">
             <ToolTip><Icon icon="mdi-arrow-up-box" class="mr-2"/>Elevate image to parent</ToolTip>
          </div>
       </template>

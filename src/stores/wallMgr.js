@@ -4,7 +4,7 @@ import { useUserStore } from '@/stores/userStore'
 import { useWallStore } from '@/stores/wallStore'
 import { useItemStore } from '@/stores/itemStore'
 import { useItemMgr }   from '@/stores/itemMgr'
-import { randomizeArray } from '@/utils/utils'
+import { useViewMgr }   from '@/stores/viewMgr'
 import { Defaults, ItemType, WallType } from '@/utils/constants' 
  
 export const useWallMgr = defineStore('wallMgr', () => { 
@@ -12,6 +12,7 @@ export const useWallMgr = defineStore('wallMgr', () => {
    const wallStore = useWallStore()
    const itemStore = useItemStore()
    const itemMgr   = useItemMgr()
+   const viewMgr   = useViewMgr()
    
    function name(wall) { 
       if (wall.type == WallType.SITE) { return "Site" }
@@ -22,14 +23,8 @@ export const useWallMgr = defineStore('wallMgr', () => {
    const filledSiteWall = computed(() => {
       // add a selection of existing user wall items 
       const siteCopy = { ...wallStore.siteWall }
+      // if (viewMgr.isMobile && siteCopy.wallRows) { siteCopy.wallRows = 1 }
       siteCopy.userWallItems = [ ...wallStore.userWallItems ]
-      // siteCopy.userWallItems = randomizeArray(wallStore.userWallItems)
-      // const firstWallItems = userWallItems.slice(0, 5)
-      // siteCopy.wallItems = firstWallItems
-      
-      // fill wall with current - userWallItems will be mixed in later
-
-      
       return fillWall(siteCopy, itemMgr.recentPublicItems) 
    })
 
@@ -38,7 +33,7 @@ export const useWallMgr = defineStore('wallMgr', () => {
       const wallItemIds = wall.wallItems.map((obj) => obj.itemId)
 
       const filledWall = { ...wall }
-      filledWall.wallItems     = [ ...wall.wallItems ]
+      filledWall.wallItems = [ ...wall.wallItems ]
       if (wall.userWallItems) { filledWall.userWallItems = [ ...wall.userWallItems ] }
       
       const randomUngroupedItems = [ ...itemMgr.ungroupItems(items) ]

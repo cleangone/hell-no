@@ -119,7 +119,7 @@
    })
    
    // const seconds = () => { return " (" + viewStore.getSeconds() + " seconds)" }
-   const showWall = computed(() => viewStore.showSiteWall)
+   const showWall = computed(() => viewStore.showSiteWall) // allows for image fade out
    const fadeWallBackground = () => {
       if (wallBackgroundOpacity.value > .10) { 
          wallBackgroundOpacity.value -= .04
@@ -146,16 +146,14 @@
 
       // use currWall if it exists - prevent flashing of retrieved after display of one from local store
       if (currSiteWall.value) { 
-         // console.log("currSiteWall")
          return currSiteWall.value }
       if (wall.wallRows) { currSiteWall.value = wall }
       return wall
    })
    
    const slideRowHeight = computed(() => viewMgr.isMobile ? WallRowHeight.XS : WallRowHeight.DEFAULT)
-   const slideRowMargin = computed(() => viewMgr.isMobile ? 30 : 10 )
    const wallRows       = computed(() => displayWall.value ? displayWall.value.wallRows : 2 )
-   const wallDivStyle   = computed(() => "height:" + (((slideRowHeight.value + slideRowMargin.value) * wallRows.value)) + "px;")
+   const wallDivStyle   = computed(() => "height:" + (((slideRowHeight.value + 10) * wallRows.value)) + "px;")
    const wallBackgroundStyle = computed(() => wallDivStyle.value + " opacity:" + wallBackgroundOpacity.value + ";")
 
    const recentGalleries = computed(() => { 

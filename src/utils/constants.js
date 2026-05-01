@@ -215,7 +215,7 @@ export const WallDisplayOrder = {
 
 export const WallRowHeight = {
    DEFAULT: 320,
-   XS:      200,
+   XS:      250,
 }
 
 export const WallType = {
