@@ -4,7 +4,7 @@
          <v-col v-if="viewMgr.isDeskTop" cols="2" class="flex-grow-0 flex-shrink-0"></v-col>
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
             <div v-if="viewMgr.isDeskTop" class="title">Recent Updates</div>
-            <RouterLink v-if="username" :to="URL.USER + route.params.id">{{ username }}</RouterLink>
+            <RouterLink v-if="username" :to="Route.USER.url + route.params.id">{{ username }}</RouterLink>
          </v-col>
          <v-col v-if="viewMgr.isDeskTop" cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
             <ExpandItems :items="recentItems" buttonClass="mb-1"/>
@@ -31,7 +31,7 @@
    import ExpandItems     from '@/components/item/ExpandItems.vue'
    import ItemThumb       from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig from '@/components/item/thumb/ItemThumbConfig.vue'
-   import { Defaults, ItemOrigin, URL } from '@/utils/constants'
+   import { Defaults, ItemOrigin, Route } from '@/utils/constants'
    
    const route = useRoute()
    const userStore    = useUserStore()
@@ -68,7 +68,7 @@
          if (viewMgr.itemThumbVisibleToUser(item)) { visibleItems.push(item) }
       }
 
-      return viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates", URL.RECENT + route.params.id, visibleItems)
+      return viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates", Route.RECENT.url + route.params.id, visibleItems)
    })
 
    const bypassShowUser = computed(() => username.value ? true : false)

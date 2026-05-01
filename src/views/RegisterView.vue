@@ -22,7 +22,7 @@
    import { useWallStore }   from '@/stores/wallStore'
    import { useViewMgr }     from '@/stores/viewMgr'   
    import { emailRule, requiredRule } from '@/utils/utils'
-   import { ActionType, URL, WallType } from '@/utils/constants'
+   import { ActionType, Route, WallType } from '@/utils/constants'
    
    const route = useRoute()
    const router = useRouter()
@@ -108,7 +108,7 @@
             actionStore.addAction(action)
 
             console.log("Forwarding to Home")
-            router.push(URL.HOME)
+            router.push(Route.HOME.url)
          })
          .catch((error) => {
             if      (error.code == "auth/invalid-email")  { errMsg.value = "Email invalid" }

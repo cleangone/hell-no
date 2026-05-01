@@ -4,15 +4,15 @@
    </div>
    <div v-if="!contentExists">
       <div class="pt-10 pb=5 text-h5">No Content</div>
-      <div>Add Items and Galleries in <RouterLink :to="URL.ACCOUNT">My Account</RouterLink></div>
+      <div>Add Items and Galleries in <RouterLink :to="Route.ACCOUNT.url">My Account</RouterLink></div>
    </div>
    <div v-if="wallItemsExist" class="walldiv" :style="wallDivStyle">
-      <SwipeWall :wall="displayWall" :rowHeight="slideRowHeight" :profileId="profileId" :linkUrl="URL.USER + route.params.id"/>
+      <SwipeWall :wall="displayWall" :rowHeight="slideRowHeight" :profileId="profileId" :linkUrl="Route.USER.url + route.params.id"/>
    </div>
    <v-container v-if="thumbGalleries.length">
       <div class="my-5">
          <span class="font-weight-bold">Galleries</span> |
-         <RouterLink :to="URL.GALLERIES + route.params.id">View all</RouterLink>   
+         <RouterLink :to="Route.GALLERIES.url + route.params.id">View all</RouterLink>   
       </div>
       <v-row justify="space-around" ref="galleryRef" class="mb-md-4" >
          <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" bypassShowUser showChildImages dense />
@@ -21,7 +21,7 @@
    <v-container v-if="recentItems.length" class="mt-4 pt-1 bg-shade">
       <div class="my-3">
          <span class="font-weight-bold">Recent Updates</span> |
-         <RouterLink :to="URL.RECENT + route.params.id">View all</RouterLink>   
+         <RouterLink :to="Route.RECENT.url + route.params.id">View all</RouterLink>   
       </div>
       <v-container>
          <v-row justify="space-around" ref="recentRef" class="mb-md-4" >
@@ -49,7 +49,7 @@
    import SwipeWall    from '@/components/wall/SwipeWall.vue'
    import IconButton   from '@/components/util/IconButton.vue'
    import { ThumbRow } from '@/utils/utilClasses'
-   import { GalleryThumbWidth, ItemOrigin, URL, WallRowHeight, WallType } from '@/utils/constants'
+   import { GalleryThumbWidth, ItemOrigin, Route, WallRowHeight, WallType } from '@/utils/constants'
    
    const route  = useRoute()
    const router = useRouter()
@@ -118,7 +118,7 @@
          if (rawUser.value && !item.profileId || rawProfile.value && item.profileId == rawProfile.value.id) { visibleItems.push(item) }
       } 
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupItems(visibleItems) : visibleItems
-      return viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates", URL.USER + route.params.id, ungroupedItems)
+      return viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates",  + route.params.id, ungroupedItems)
    })
 
    const recentItems = computed(() => {
@@ -143,7 +143,7 @@
 
    const sendEmail = () => {
       viewStore.setEmailContext(user.value)
-      router.push(URL.MESSAGE)
+      router.push(Route.MESSAGE.url)
    }
 </script>
 

@@ -35,7 +35,7 @@
    import { useViewMgr }    from '@/stores/viewMgr'
    import ItemThumb  from '@/components/item/thumb/ItemThumb.vue'
    import TextButton from '@/components/util/TextButton.vue'
-   import { ItemOrigin, URL } from '@/utils/constants'
+   import { ItemOrigin, Route } from '@/utils/constants'
   
    const userStore = useUserStore()
    const feedMgr   = useFeedMgr()

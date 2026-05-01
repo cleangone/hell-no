@@ -43,7 +43,7 @@
    import AccountItems     from '@/components/account/AccountItems.vue'
    import AccountProfiles  from '@/components/account/AccountProfiles.vue'
    import AccountWall      from '@/components/account/AccountWall.vue'
-   import { URL } from '@/utils/constants'
+   import { Route } from '@/utils/constants'
    
    const router = useRouter()
    const viewMgr = useViewMgr()
@@ -74,7 +74,7 @@
 
    const logout = () => { 
       signOut(getAuth()) 
-      router.push(URL.HOME)
+      router.push(Route.HOME.url)
    }
 </script>
 

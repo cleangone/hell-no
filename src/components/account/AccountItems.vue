@@ -127,7 +127,7 @@
    import DeleteButton   from '@/components/util/DeleteButton.vue'
    import TextButton     from '@/components/util/TextButton.vue'
    import { isHidden } from '@/utils/utils'
-   import { ItemOrigin, ItemType, URL } from '@/utils/constants'
+   import { ItemOrigin, ItemType, Route } from '@/utils/constants'
    
    const userStore    = useUserStore()
    const userMgr      = useUserMgr()
@@ -293,7 +293,7 @@
       }
 
       displayItems.sort(function(a, b) {return b.dateModified - a.dateModified}) // most recent modified first
-      return viewStore.setVisibleItems(ItemOrigin.ADMIN, "Admin", URL.USER, displayItems)
+      return viewStore.setVisibleItems(ItemOrigin.ADMIN, "Admin", Route.USER.url, displayItems)
    })
 
    const groupIdToGroup = computed(() => { return groupStore.getUserGroupsMap(userStore.userId) })

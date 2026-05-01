@@ -11,6 +11,8 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+
+   ["v2.10.4", "4/30/26"], // Refactor/combine ROUTE ahd URL constants
    ["v2.10.3", "4/30/26"], // Add ToolTip component
    ["v2.10.2", "4/30/26"], // Rename PlayItems to ExpandItems, integrate with Recent,FavoritesView
    ["v2.10.1", "4/30/26"], // Link ItemView artist to ArtistView

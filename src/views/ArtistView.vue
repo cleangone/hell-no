@@ -29,7 +29,7 @@
    import ExpandItems     from '@/components/item/ExpandItems.vue'
    import ItemThumb       from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig from '@/components/item/thumb/ItemThumbConfig.vue'
-   import { ItemOrigin, URL } from '@/utils/constants'
+   import { ItemOrigin, Route } from '@/utils/constants'
    
    const route = useRoute()
    const artistStore = useArtistStore()
@@ -55,7 +55,7 @@
       console.log("itemMgr", itemMgr) // todo - seems like this is needed to force itemMgr instantiation
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
       ungroupedItems.sort((a, b) => a.name.localeCompare(b.name))
-      return viewStore.setVisibleItems(ItemOrigin.ARTIST, "Artist", URL.ARTIST + route.params.id, ungroupedItems)
+      return viewStore.setVisibleItems(ItemOrigin.ARTIST, "Artist", Route.ARTIST.url + route.params.id, ungroupedItems)
    })
 </script>
 

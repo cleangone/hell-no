@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { useWindowSize } from '@vueuse/core'
 import { useItemStore } from '@/stores/itemStore'
 import { dateUuid, objAspectRatio } from '@/utils/utils'
-import { ItemNavAction, ItemType, URL } from '@/utils/constants'
+import { ItemNavAction, ItemType, Route } from '@/utils/constants'
    
 export const useItemMgr = defineStore('itemMgr', () => {   
    const { width: windowWidth, height: windowHeight } = useWindowSize()
@@ -177,7 +177,7 @@ export const useItemMgr = defineStore('itemMgr', () => {
    }
 
    function itemNavURL(itemId, origin, navAction, childNum) { 
-      return URL.ITEM + origin + '/' + navAction + '/' + itemId + (childNum ? '/' + childNum : '') }
+      return Route.ITEM.url + origin + '/' + navAction + '/' + itemId + (childNum ? '/' + childNum : '') }
    function itemURL(itemId, origin, childNum) { return itemNavURL(itemId, origin, ItemNavAction.EXTERNAL, childNum) }
    
    function getPopupImage(imageName, artistName, url, boundingRect, aspectRatio, settings = {}) { // settings are optional

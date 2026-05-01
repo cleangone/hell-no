@@ -17,7 +17,7 @@ import AccountView   from '../views/AccountView.vue'
 import AdminView     from '../views/AdminView.vue'
 import AddItemView   from '../views/AddItemView.vue'
 import EditItemView  from '../views/EditItemView.vue'
-import { Route, URL } from '@/utils/constants'
+import { Route } from '@/utils/constants'
 
 // lazy load not working - chunk retrieval error
 // Account works, but others do not
@@ -29,25 +29,25 @@ import { Route, URL } from '@/utils/constants'
 const router = createRouter({
    history: createWebHistory(import.meta.env.BASE_URL),
    routes: [
-      createRoute(Route.HOME,      HomeView,      URL.HOME),
-      createRoute(Route.GALLERY,   GalleryView,   URL.GALLERY + ':id'),
-      createRoute(Route.GALLERIES, GalleriesView, URL.GALLERIES + ':id'),
-      createRoute(Route.ARTIST,    ArtistView,    URL.ARTIST + ':id'),
-      createRoute(Route.SEARCH,    SearchView,    URL.SEARCH),
-      createRoute(Route.FEED,      FeedView,      URL.FEED),
-      createRoute(Route.RECENT,    RecentView,    URL.RECENT + ':id'),
-      createRoute(Route.ITEM,      ItemView,      URL.ITEM + ':origin/:nav/:id'),
-      createRoute(Route.ITEM_CHILD,ItemView,      URL.ITEM + ':origin/:nav/:id/:child'),
-      createRoute(Route.USER,      UserView,      URL.USER + ':id'),
-      createRoute(Route.FAVORITES, FavoritesView, URL.FAVORITES),
-      createRoute(Route.LOGIN,     LoginView,     URL.LOGIN),
-      createRoute(Route.REGISTER,  RegisterView,  URL.REGISTER + ':registerId'),
-      createRoute(Route.MESSAGE,   MessageView,   URL.MESSAGE),
-      createRoute(Route.ABOUT,     AboutView,     URL.ABOUT),
-      createRoute(Route.ACCOUNT,   AccountView,   URL.ACCOUNT),
-      createRoute(Route.ADMIN,     AdminView,     URL.ADMIN),
-      createRoute(Route.ADD_ITEM,  AddItemView,   URL.ADD_ITEM),
-      createRoute(Route.EDIT_ITEM, EditItemView,  URL.EDIT_ITEM + ':id')
+      createRoute(Route.HOME,      HomeView),
+      createRoute(Route.GALLERY,   GalleryView,   ':id'),
+      createRoute(Route.GALLERIES, GalleriesView, ':id'),
+      createRoute(Route.ARTIST,    ArtistView,    ':id'),
+      createRoute(Route.SEARCH,    SearchView),
+      createRoute(Route.FEED,      FeedView),
+      createRoute(Route.RECENT,    RecentView,    ':id'),
+      createRoute(Route.ITEM,      ItemView,      ':origin/:nav/:id'),
+      createRoute(Route.ITEM_CHILD,ItemView,      ':origin/:nav/:id/:child'),
+      createRoute(Route.USER,      UserView,      ':id'),
+      createRoute(Route.FAVORITES, FavoritesView),
+      createRoute(Route.LOGIN,     LoginView),
+      createRoute(Route.REGISTER,  RegisterView,  ':registerId'),
+      createRoute(Route.MESSAGE,   MessageView),
+      createRoute(Route.ABOUT,     AboutView),
+      createRoute(Route.ACCOUNT,   AccountView),
+      createRoute(Route.ADMIN,     AdminView),
+      createRoute(Route.ADD_ITEM,  AddItemView),
+      createRoute(Route.EDIT_ITEM, EditItemView,  ':id')
       
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route
@@ -56,6 +56,8 @@ const router = createRouter({
   ]
 })
 
-function createRoute(name, component, path) { return { name: name, component: component, path: path } }
+function createRoute(route, component, urlParams = "") { 
+   return { name: route.name, component: component, path: route.url + urlParams } 
+}
 
 export default router

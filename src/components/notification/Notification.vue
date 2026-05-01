@@ -13,7 +13,7 @@
 <script setup>
    import { computed, ref } from 'vue'
    import AcceptGroupInvite from '@/components/invite/AcceptGroupInvite.vue'
-   import { InviteType, TodoType, URL } from '@/utils/constants'
+   import { InviteType, TodoType, Route } from '@/utils/constants'
    
    const props = defineProps({ notification: Object })
    const showAcceptGroupInviteDialog = ref(false)
@@ -22,7 +22,7 @@
       const invite = props.notification.type == TodoType.INVITE && props.notification.invite.type == InviteType.SITE ? 
          props.notification.invite : null
       return invite ? 
-         { name: invite.toFirstName, text: "Accept invitation and register", link: URL.REGISTER + invite.registerId } : null
+         { name: invite.toFirstName, text: "Accept invitation and register", link: Route.REGISTER.url + invite.registerId } : null
    })
 
    const groupInviteNotification = computed(() => {

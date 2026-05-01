@@ -3,13 +3,13 @@
       via
       <span v-for="(group, index) in groups" :key="group.id">
          <span v-if="index">, </span>
-         <RouterLink :to="URL.GROUP + group.id">{{ group.name }}</RouterLink>
+         <RouterLink :to="Route.GROUP.url + group.id">{{ group.name }}</RouterLink>
       </span>
    </div>
 </template>
 
 <script setup>
-   import { URL } from '@/utils/constants'
+   import { Route } from '@/utils/constants'
    
    const props = defineProps({ groups: Object })
 </script>

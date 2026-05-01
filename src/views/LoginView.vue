@@ -15,7 +15,7 @@
    import { useRouter } from 'vue-router'
    import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
    import { requiredRule } from '@/utils/utils'
-   import { URL } from '@/utils/constants'
+   import { Route } from '@/utils/constants'
    
    const router = useRouter()
    const email = ref("")
@@ -30,7 +30,7 @@
             email.value = ""
             password.value = ""
             errMsg.value = ""
-            router.push(URL.HOME)
+            router.push(Route.HOME.url)
          })
          .catch((error) => {
             if (error.code == "auth/invalid-email") { errMsg.value = "Email invalid" }

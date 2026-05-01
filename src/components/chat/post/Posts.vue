@@ -2,7 +2,7 @@
    <v-card v-for="post in posts" :key="post.id" :class="getClass(post)" class="mb-2">
       <v-card-item class="pr-0 pt-0">
          <div v-if="!isDeleted(post)">
-            <RouterLink :to="URL.USER + post.userId" class="mr-2">{{ getUsername(post.userId) }}</RouterLink>
+            <RouterLink :to="Route.USER.url + post.userId" class="mr-2">{{ getUsername(post.userId) }}</RouterLink>
             <span class="text-overline"> 
                {{ getDate(post) }}
                <IconButton  @click="reply(post)" icon="mdi-reply" />
@@ -39,7 +39,7 @@
    import DeleteButton  from '@/components/util/DeleteButton.vue'
    import IconButton    from '@/components/util/IconButton.vue'
    import { chatDate } from '@/utils/dateUtils'
-   import { Defaults, URL } from '@/utils/constants'
+   import { Defaults, Route } from '@/utils/constants'
    
    const props = defineProps({ chatId: String })
    const userStore = useUserStore()

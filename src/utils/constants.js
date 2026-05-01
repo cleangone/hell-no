@@ -162,34 +162,28 @@ export const NotificationOptions = {
 }
 
 export const Route = {
-   HOME:      'home',
-   GROUP:     'group',
-   GALLERY:   'gallery',
-   GALLERIES: 'galleries',
-   ARTIST:    'artist',
-   SEARCH:    'search',
-   FEED:      'feed',
-   RECENT:    'recent',
-   ITEM:      'item',
-   ITEM_CHILD:'itemch',
-   USER:      'user',
-   FAVORITES: 'favorites',
-   
-   // CATEGORY:  'Category',
-   // RECENT:    'Recent Updates',
-   // CURRENT:   'Current Activity',
-   // ACTIVITY:  'Activity',
-   LOGIN:     'login',
-   REGISTER:  'register',
-   MESSAGE:   'message',
-   BROADCAST: 'broadcast',
-   ABOUT:     'about',
-   ACCOUNT:   'account',
-   ADMIN:     'admin',
-   ADD_ITEM:  'add-item',
-   EDIT_ITEM: 'edit-item',
-   // FORGOT:    'Forgot Password',
-   // TODO:      'ToDo',
+   HOME:      { name: 'home',      url: '/'           },
+   GROUP:     { name: 'group',     url: '/group/'     },
+   GALLERY:   { name: 'gallery',   url: '/gallery/'   },
+   GALLERIES: { name: 'galleries', url: '/galleries/' },
+   ARTIST:    { name: 'artist',    url: '/artist/'    },
+   SEARCH:    { name: 'search',    url: '/search'     },
+   FEED:      { name: 'feed',      url: '/feed'       },
+   RECENT:    { name: 'recent',    url: '/recent/'    },
+   ITEM:      { name: 'item',      url: '/item/'      },
+   ITEM_CHILD:{ name: 'itemch',    url: '/item/'      },  // overload item with additional params
+   USER:      { name: 'user',      url: '/user/'      },
+   FAVORITES: { name: 'favorites', url: '/favorites'  },
+   LOGIN:     { name: 'login',     url: '/login'      },
+   REGISTER:  { name: 'register',  url: '/register/'  },
+   MESSAGE:   { name: 'message',   url: '/message'    },
+   BROADCAST: { name: 'broadcast', url: '/broadcast'  },
+   ABOUT:     { name: 'about',     url: '/about'      },
+   ACCOUNT:   { name: 'account',   url: '/account'    },
+   ADMIN:     { name: 'admin',     url: '/admin'      },
+   ADD_ITEM:  { name: 'add-item',  url: '/add-item'   },
+   EDIT_ITEM: { name: 'edit-item', url: '/edit-item/' },
+    // FORGOT:    'Forgot Password',
 }
 
 export const State = {
@@ -212,29 +206,6 @@ export const ThumbType = {
 export const TodoType = {
    INVITE:       'Invite',
    GROUP_INVITE: 'GroupInvite',
-}
-
-export const URL = {
-   HOME:      '/',
-   GROUP:     '/group/',
-   GALLERY:   '/gallery/',
-   GALLERIES: '/galleries/',
-   ARTIST:    '/artist/',
-   SEARCH:    '/search',
-   FEED:      '/feed',
-   RECENT:    '/recent/',
-   ITEM:      '/item/',
-   USER:      '/user/',
-   FAVORITES: '/favorites',
-   LOGIN:     '/login',
-   REGISTER:  '/register/',
-   MESSAGE:   '/message',
-   BROADCAST: '/broadcast',
-   ABOUT:     '/about',
-   ACCOUNT:   '/account',
-   ADMIN:     '/admin',
-   ADD_ITEM:  '/add-item',
-   EDIT_ITEM: '/edit-item/',
 }
    
 export const WallDisplayOrder = {

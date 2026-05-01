@@ -45,7 +45,7 @@
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { handleError, objAspectRatio, thumbBackgroundColorStyle } from '@/utils/utils'
-   import { GalleryThumbOptions, GalleryThumbWidth, ImageType, URL } from '@/utils/constants'
+   import { GalleryThumbOptions, GalleryThumbWidth, ImageType, Route } from '@/utils/constants'
    
    const XsGalleryThumbWidth = 125
    const props = defineProps({ gallery: Object, showChildImages:Boolean, bypassShowUser:Boolean, dense:Boolean })
@@ -65,7 +65,7 @@
    
    onErrorCaptured((err) => { return handleError(err, "GalleryThumb") })
 
-   const galleryUrl = computed(() => URL.GALLERY + (props.gallery?.tag?.length ? props.gallery.tag : props.gallery.id))
+   const galleryUrl = computed(() => Route.GALLERY.url + (props.gallery?.tag?.length ? props.gallery.tag : props.gallery.id))
    const smallThumb = computed(() => viewMgr.isXs && viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SM_THUMB))
    const cardWidth = computed(() =>  {
       if (viewMgr.isXs) { 

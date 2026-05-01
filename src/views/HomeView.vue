@@ -28,7 +28,7 @@
          <v-col v-if="recentGalleries.length">
             <div class="my-5">
                <span class="font-weight-bold">Galleries</span> |
-               <RouterLink :to="URL.GALLERIES + Defaults.SITE_ID">View all</RouterLink>
+               <RouterLink :to="Route.GALLERIES.url + Defaults.SITE_ID">View all</RouterLink>
             </div>
             <v-row justify="space-around" ref="galleryRef" class="mb-md-4" >
                <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" showChildImages dense />
@@ -36,7 +36,7 @@
          </v-col>
          <v-col v-if="favoriteItems?.length" class="box-border box-border-color ma-4 px-3">
             <div class="font-weight-bold">
-               Favorites | <RouterLink :to="URL.FAVORITES">View all</RouterLink>
+               Favorites | <RouterLink :to="Route.FAVORITES.url">View all</RouterLink>
             </div>
             <v-row justify="space-around" ref="favoritesRef" class="mt-4">
                <ItemThumb v-for="item in favoriteItems" :key="item.id" :item="item" :origin="ItemOrigin.FAVORITES" tight/>
@@ -49,7 +49,7 @@
    <v-container class="mt-5 pt-3 bg-shade">
       <div class="mb-3">
          <span class="font-weight-bold">Recent Updates</span> |
-         <RouterLink :to="URL.RECENT + Defaults.SITE_ID">View all</RouterLink>
+         <RouterLink :to="Route.RECENT.url + Defaults.SITE_ID">View all</RouterLink>
       </div>
       <v-container>
          <v-row justify="space-around" ref="recentRef" class="mb-md-4">
@@ -78,7 +78,7 @@
    import ShowNotifications from '@/components/notification/ShowNotifications.vue'
    import { timestampsEqual } from '@/utils/dateUtils'
    import { ThumbRow } from '@/utils/utilClasses'
-   import { Defaults, GalleryThumbWidth, ItemOrigin, TodoType, URL, WallRowHeight } from '@/utils/constants'
+   import { Defaults, GalleryThumbWidth, ItemOrigin, TodoType, Route, WallRowHeight } from '@/utils/constants'
    
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
@@ -199,7 +199,7 @@
 
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
       viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates", 
-         URL.RECENT + (userStore.userExists ? userStore.userId : Defaults.SITE_ID), ungroupedItems)
+         Route.RECENT.url + (userStore.userExists ? userStore.userId : Defaults.SITE_ID), ungroupedItems)
       return ungroupedItems
    })
 
@@ -213,7 +213,7 @@
             if (viewMgr.itemIsVisibleToUser(item)) { visibleItems.push(item) }
          }
       }
-      return viewStore.setVisibleItems(ItemOrigin.FAVORITES, "My Favorites", URL.FAVORITES, visibleItems)
+      return viewStore.setVisibleItems(ItemOrigin.FAVORITES, "My Favorites", Route.FAVORITES.url, visibleItems)
    })
 
    const recentItems   = computed(() => getThumbItems(allRecentItems.value,   2, recentWidth.value, 500))

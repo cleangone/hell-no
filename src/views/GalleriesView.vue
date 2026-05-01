@@ -1,13 +1,13 @@
 <template>
    <div v-if="viewMgr.isMobile && username" class="mt-n2">
-      <RouterLink :to="URL.USER + route.params.id">{{ username }}</RouterLink>
+      <RouterLink :to="Route.USER.url + route.params.id">{{ username }}</RouterLink>
    </div>
    <v-container v-if="!viewMgr.isMobile" class="mt-4 pa-0 pb-3 width-100">
       <v-row no-gutters class="d-flex align-center flex-nowrap">
          <v-col cols="1" class="flex-grow-0 flex-shrink-0"/>
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
             <div class="title">Galleries</div>
-            <RouterLink v-if="username" :to="URL.USER + route.params.id" class="mt-n4">{{ username }}</RouterLink>
+            <RouterLink v-if="username" :to="Route.USER.url + route.params.id" class="mt-n4">{{ username }}</RouterLink>
          </v-col>      
          <v-col cols="1" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
             <GalleryThumbsConfig/>
@@ -35,7 +35,7 @@
    import GalleryThumb        from '@/components/gallery/GalleryThumb.vue'
    import GalleryThumbsConfig from '@/components/gallery/GalleryThumbsConfig.vue'
    import { handleError, isPrivate } from '@/utils/utils'
-   import { GalleryThumbOptions, URL } from '@/utils/constants'
+   import { GalleryThumbOptions, Route } from '@/utils/constants'
   
    const route = useRoute()
    const userStore    = useUserStore()

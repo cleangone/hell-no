@@ -99,7 +99,7 @@
    import IconButton      from '@/components/util/IconButton.vue'
    import TextButton      from '@/components/util/TextButton.vue'
    import { isHidden } from '@/utils/utils'
-   import { Emit, ItemOrigin, URL } from '@/utils/constants'
+   import { Emit, ItemOrigin, Route } from '@/utils/constants'
    
    const THUMB_HEIGHT = 200
 
@@ -157,7 +157,7 @@
          displayItems.push(displayItem) 
       }
       displayItems.sort(function(a, b){return a.position - b.position}) 
-      return viewStore.setVisibleItems(ItemOrigin.ADMIN, "Admin", URL.USER, displayItems)
+      return viewStore.setVisibleItems(ItemOrigin.ADMIN, "Admin", Route.USER.url, displayItems)
    })
 
    const ownerExists = computed(() => { 
@@ -176,7 +176,7 @@
             else { displayItems.push(displayItem) }
          }
          displayItems.sort(function(a, b){return a.position - b.position}) 
-         return viewStore.setVisibleItems(ItemOrigin.ADMIN, "Admin", URL.USER, displayItems)
+         return viewStore.setVisibleItems(ItemOrigin.ADMIN, "Admin", Route.USER.url, displayItems)
       },
       set(updatedItemArray) {
          // save the itemIds in the new order

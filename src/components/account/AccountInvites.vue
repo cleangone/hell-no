@@ -13,7 +13,7 @@
          </template>
          <template v-slot:item.link="{ item }">
             <RouterLink v-if="item.type == InviteType.SITE && item.state != InviteState.ACCEPTED" 
-               :to="URL.REGISTER + item.registerId">Register Link</RouterLink>
+               :to="Route.REGISTER.url + item.registerId">Register Link</RouterLink>
          </template>
          <template v-slot:item.dateCreated="{ item }">
             {{ item.dateCreated ? item.dateCreated.toDate().toLocaleDateString() : "" }}
@@ -64,7 +64,7 @@
    import IconButton     from '@/components/util/IconButton.vue'
    import TextButton     from '@/components/util/TextButton.vue'
    import { removeArrayEntry } from '@/utils/utils'
-   import { InviteState, InviteType, URL } from '@/utils/constants'
+   import { InviteState, InviteType, Route } from '@/utils/constants'
    
    const inviteStore = useInviteStore()
    const expandedInviteIds = ref([]) 

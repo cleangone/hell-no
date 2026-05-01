@@ -4,13 +4,13 @@
          also <span class="text-h5">{{ alternateName }}</span>
       </div>
       <div v-if="artist" class="text-h6 mt-n2">
-         <RouterLink :to="URL.ARTIST + artist.id">{{ artist.fullName }}</RouterLink> 
+         <RouterLink :to="Route.ARTIST.url + artist.id">{{ artist.fullName }}</RouterLink> 
       </div>
       <div v-if="paramItem.yearCreated" class="text-h6 mt-n2">{{ paramItem.yearCreated }}</div>
       <div v-if="populated(paramItem.subtitle)" class="font-weight-medium mb-1">{{ paramItem.subtitle }}</div>
       <div v-if="paramItem.size" class="mt-n2">{{ paramItem.size }}</div>
       <div v-if="itemUser" class="mt-n1">
-         From <RouterLink :to="URL.USER + fromUser.id">{{ fromUser.username }}</RouterLink> 
+         From <RouterLink :to="Route.USER.url + fromUser.id">{{ fromUser.username }}</RouterLink> 
          <IconButton v-if="!isOwnedByUser" icon="mdi-email" @click="sendEmail()"/>
       </div>
       <div v-if="isOwnedByUser && !isPublic(paramItem)">{{ paramItem.state }}</div> 
@@ -25,7 +25,7 @@
          </v-col>
          <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
             <ExpandItems :items="viewStoreItems" :item="paramItem" buttonClass="mr-n2"/>
-            <CopyLink :route="Route.ITEM" :id="route.params.id"/>
+            <CopyLink :route="Route.ITEM.name" :id="route.params.id"/>
             <EditButton v-if="isOwnedByUser" @click="editItem(paramItem)" class="mx-n2"/>
          </v-col>
       </v-row>
@@ -211,7 +211,7 @@
    import IconButton       from '@/components/util/IconButton.vue'
    import CopyLink         from '@/components/util/CopyLink.vue'
    import { handleError, isOwned, isPublic, populated } from '@/utils/utils'
-   import { Emit, ItemNavAction, ItemOrigin, ParentFeedType, Route, URL } from '@/utils/constants'
+   import { Emit, ItemNavAction, ItemOrigin, ParentFeedType, Route } from '@/utils/constants'
 
    const EXPAND_ITEMS_CLASS = "ExpandItems"
    const AdditionalImagesType = { ITEM: 'item', IMAGE: 'image' }
@@ -391,7 +391,7 @@
    const nextItemUrl = computed(() => itemMgr.itemNavURL(linkId(navItems.value.next), route.params.origin, ItemNavAction.NEXT, navItems.value.next.childNum))
    const linkId     = (item)      => { return item.linkId ? item.linkId : item.id }
    const itemUrl    = (itemId)    => { return itemMgr.itemURL(itemId, route.params.origin) }
-   const galleryUrl = (galleryId) => { return URL.GALLERY + galleryId }
+   const galleryUrl = (galleryId) => { return Route.GALLERY.url + galleryId }
    
    const imageWidth = computed(() => { return paramItem.value?.primaryImage?.dimensions ? paramItem.value.primaryImage.dimensions.width : 500 })
 
@@ -475,10 +475,9 @@
       return "position:relative;left:-" + left + "px"
    })
    
-
    const sendEmail = () => {
       viewStore.setEmailContext(itemUser.value, paramItem.value)
-      router.push(URL.MESSAGE)
+      router.push(Route.MESSAGE.url)
    }
 
    // --- Infinite Scroll ------------------------------------------------------------------ 

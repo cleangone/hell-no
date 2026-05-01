@@ -20,8 +20,8 @@
 
    <div v-if="viewMgr.isMobile">
       <span style="text-align:center">
-         <RouterLink v-if="gallery.parentGalleryId" :to="URL.GALLERY + gallery.parentGalleryId">{{ parentGalleryName }} Gallery</RouterLink>
-         <RouterLink v-else :to="URL.GALLERIES + galleriesLinkId">Galleries</RouterLink>
+         <RouterLink v-if="gallery.parentGalleryId" :to="Route.GALLERY.url + gallery.parentGalleryId">{{ parentGalleryName }} Gallery</RouterLink>
+         <RouterLink v-else :to="Route.GALLERIES.url + galleriesLinkId">Galleries</RouterLink>
       </span>
       <ReuseTemplate/>
    </div>
@@ -36,14 +36,14 @@
                </v-col>
                <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
                   <ExpandItems :items="galleryItems" buttonClass="mr-n2"/>
-                  <CopyLink :route="Route.GALLERY" :id="galleryId"/>
+                  <CopyLink :route="Route.GALLERY.name" :id="galleryId"/>
                   <ItemThumbConfig/>
                   <EditButton v-if="canEdit" @click="showEditGalleryDialog=true" class="mx-n2"/>
                </v-col>
             </v-row>
             <span style="text-align:center">
-               <RouterLink v-if="gallery.parentGalleryId" :to="URL.GALLERY + gallery.parentGalleryId">{{ parentGalleryName }} Gallery</RouterLink>
-               <RouterLink v-else :to="URL.GALLERIES + galleriesLinkId">Galleries</RouterLink>
+               <RouterLink v-if="gallery.parentGalleryId" :to="Route.GALLERY.url + gallery.parentGalleryId">{{ parentGalleryName }} Gallery</RouterLink>
+               <RouterLink v-else :to="Route.GALLERIES.url + galleriesLinkId">Galleries</RouterLink>
             </span>
          </v-container>
          <div style="clear:both"></div>   
@@ -91,7 +91,7 @@
    import EditButton      from '@/components/util/EditButton.vue'
    import CopyLink        from '@/components/util/CopyLink.vue'
    import { objAspectRatio } from '@/utils/utils'
-   import { ImageType, ItemOrigin, Route, URL } from '@/utils/constants'
+   import { ImageType, ItemOrigin, Route } from '@/utils/constants'
   
    const route = useRoute()
    const router = useRouter()
@@ -122,7 +122,7 @@
       // console.log("GalleryView - gallery", gallery)
       if (!gallery) { return null }  // galleryStore has not intiailized yet
 
-      if (!viewMgr.galleryIsVisibleToUser(gallery)) { router.push(URL.HOME) }
+      if (!viewMgr.galleryIsVisibleToUser(gallery)) { router.push(Route.HOME.url) }
 
       viewStore.setPageName(gallery.name)
       return gallery 
@@ -183,7 +183,7 @@
          setLocalName(item) 
       }
       
-      viewStore.setVisibleItems(ItemOrigin.GALLERY, gallery.value.name + " Gallery", URL.GALLERY + route.params.id, visibleItems, route.params.id)
+      viewStore.setVisibleItems(ItemOrigin.GALLERY, gallery.value.name + " Gallery", Route.GALLERY.url + route.params.id, visibleItems, route.params.id)
       return visibleItems
    })
 

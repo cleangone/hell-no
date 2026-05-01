@@ -34,7 +34,7 @@
    import ItemThumb  from '@/components/item/thumb/ItemThumb.vue'
    import BlueBtn    from '@/components/util/BlueBtn.vue'
    import TextButton from '@/components/util/TextButton.vue'
-   import { ItemOrigin, URL } from '@/utils/constants'
+   import { ItemOrigin, Route } from '@/utils/constants'
    
    const SortOptions = { NAME: "Name",  DATE: "Date" }
    const userStore = useUserStore()
@@ -119,7 +119,7 @@
          if (sortBy.value == SortOptions.NAME)      { items.sort((a, b) => a.name.localeCompare(b.name)) }
          else if (sortBy.value == SortOptions.DATE) { items.sort((a, b) => b.dateModified - a.dateModified) }
          
-         viewStore.setVisibleItems(ItemOrigin.SEARCH, "Search Results", URL.SEARCH, items)
+         viewStore.setVisibleItems(ItemOrigin.SEARCH, "Search Results", Route.SEARCH.url, items)
          viewStore.setSearchQuery(searchQuery.value)
       }
       return items

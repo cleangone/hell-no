@@ -13,7 +13,7 @@
                      <!-- xs -->
                      <div v-if="viewMgr.isMobile">
                         <v-row class="d-flex align-center text-subtitle-1 mx-0 mt-0">
-                           <RouterLink v-for="contact in getEmailContacts(thread)" :to="URL.USER + contact.userId" class="mr-2">{{contact.username }}</RouterLink>
+                           <RouterLink v-for="contact in getEmailContacts(thread)" :to="Route.USER.url + contact.userId" class="mr-2">{{contact.username }}</RouterLink>
                            {{ thread.name }} ({{ thread.emails.length }})
                         </v-row>
                         <v-row class="d-flex justify-end text-overline mx-0 mt-n2 mb-0">
@@ -24,7 +24,7 @@
                      <div v-else class="d-flex align-center">
                         <v-row class="d-flex align-center text-subtitle-1">
                            <v-col cols="8" class="text-subtitle-1">
-                              <RouterLink v-for="contact in getEmailContacts(thread)" :to="URL.USER + contact.userId" class="mr-2">{{contact.username }}</RouterLink>
+                              <RouterLink v-for="contact in getEmailContacts(thread)" :to="Route.USER.url + contact.userId" class="mr-2">{{contact.username }}</RouterLink>
                               {{ thread.name }} ({{ thread.emails.length }})
                            </v-col>
                            <v-col class="d-flex justify-end text-overline">
@@ -62,14 +62,14 @@
                      <v-row v-if="email.itemId" class="pt-2 mb-2">
                         <ItemThumb :item="getItem(email.itemId)" :origin="ItemOrigin.EXTERNAL"/>
                         <div v-if="viewMgr.isDesktop">
-                           <div>To: <RouterLink :to="URL.USER + email.toContact.userId" class="ml-2">{{ email.toContact.username }}</RouterLink></div>
-                           <div>From: <RouterLink :to="URL.USER + email.fromContact.userId" class="ml-2">{{ email.fromContact.username }}</RouterLink></div>
+                           <div>To: <RouterLink :to="Route.USER.url + email.toContact.userId" class="ml-2">{{ email.toContact.username }}</RouterLink></div>
+                           <div>From: <RouterLink :to="Route.USER.url + email.fromContact.userId" class="ml-2">{{ email.fromContact.username }}</RouterLink></div>
                            <div>{{ email.content }}</div>
                         </div>
                      </v-row>
                      <div v-if="viewMgr.isMobile || !email.itemId"  class="ml-2">
-                        <div>To: <RouterLink :to="URL.USER + email.toContact.userId" class="ml-2">{{ email.toContact.username }}</RouterLink></div>
-                        <div>From: <RouterLink :to="URL.USER + email.fromContact.userId" class="ml-2">{{ email.fromContact.username }}</RouterLink></div>
+                        <div>To: <RouterLink :to="Route.USER.url + email.toContact.userId" class="ml-2">{{ email.toContact.username }}</RouterLink></div>
+                        <div>From: <RouterLink :to="Route.USER.url + email.fromContact.userId" class="ml-2">{{ email.fromContact.username }}</RouterLink></div>
                         <div>{{ email.content }}</div>
                      </div>
                   </div>
@@ -81,7 +81,7 @@
       <div v-else>
          <div style="max-width:600px">
             <div v-if="toContact" class="d-flex align-center">
-               To: <RouterLink :to="URL.USER + toContact.userId" class="ml-2">{{ toContact.username }}</RouterLink>
+               To: <RouterLink :to="Route.USER.url + toContact.userId" class="ml-2">{{ toContact.username }}</RouterLink>
                <IconButton @click="clearToContact()" icon="mdi-close-circle"/>
             </div>
             <v-select v-else v-model="toContact" label="To" :items="userContacts" clearable density="compact"/>
@@ -127,7 +127,7 @@
    import IconButton  from '@/components/util/IconButton.vue'
    import TextButton  from '@/components/util/TextButton.vue'
    import { emailThreadDate, emailDate } from '@/utils/dateUtils'
-   import { ItemOrigin, URL } from '@/utils/constants'
+   import { ItemOrigin, Route } from '@/utils/constants'
    
    const userStore  = useUserStore()
    const userMgr    = useUserMgr()

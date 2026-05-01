@@ -24,7 +24,7 @@
    import SwipeWallSlide from './SwipeWallSlide.vue'
    import ItemPopup      from '@/components/item/ItemPopup.vue'
    import { handleError, randomizeArray } from '@/utils/utils'
-   import { Defaults, Emit, ItemOrigin, URL, WallRowHeight } from '@/utils/constants'
+   import { Defaults, Emit, ItemOrigin, Route, WallRowHeight } from '@/utils/constants'
    import 'swiper/css'
    import 'swiper/css/navigation'
    import 'swiper/css/pagination'
@@ -133,7 +133,7 @@
          }
       }
 
-      viewStore.setVisibleItems(ItemOrigin.WALL, "Art Wall", props.linkUrl ? props.linkUrl : URL.HOME, navItems) 
+      viewStore.setVisibleItems(ItemOrigin.WALL, "Art Wall", props.linkUrl ? props.linkUrl : Route.HOME.url, navItems) 
       return rows
    }) 
    
