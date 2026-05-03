@@ -15,21 +15,27 @@
                      <v-btn v-bind="props" icon="mdi-menu" class="icon-btn" size="medium" variant="text"></v-btn>
                   </template>
                   <v-list>
-                     <v-list-item @click="router.push(Route.ADD_ITEM.url)">
+                     <v-list-item @click="toggleDark()">
                         <template v-slot:prepend>
-                           <v-icon icon="mdi-plus" color="blue-darken-3"></v-icon>
+                           <v-icon :icon="isDark?'mdi-brightness-5':'mdi-brightness-3'" class="menu-icon"></v-icon>
+                        </template>
+                        <v-list-item-title>{{isDark ? "Light mode" : "Dark mode"}}</v-list-item-title>
+                     </v-list-item>
+                      <v-list-item @click="router.push(Route.ADD_ITEM.url)">
+                        <template v-slot:prepend>
+                           <v-icon icon="mdi-plus" class="menu-icon"></v-icon>
                         </template>
                         <v-list-item-title>Add Item</v-list-item-title>
                      </v-list-item>
                      <v-list-item @click="router.push(Route.MESSAGE.url)">
                         <template v-slot:prepend>
-                           <v-icon icon="mdi-message" color="blue-darken-3"></v-icon>
+                           <v-icon icon="mdi-message" class="menu-icon"></v-icon>
                         </template>
                         <v-list-item-title>Messages</v-list-item-title>
                      </v-list-item>
                      <v-list-item @click="router.push(Route.ACCOUNT.url)">
                         <template v-slot:prepend>
-                           <v-icon icon="mdi-cog" color="blue-darken-3"></v-icon>
+                           <v-icon icon="mdi-cog" class="menu-icon"></v-icon>
                         </template>
                         <v-list-item-title>Settings</v-list-item-title>
                      </v-list-item>
@@ -53,55 +59,52 @@
          <!-- top center title for mobile -->
          <v-col cols="2" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
             <div v-if="viewMgr.isMobile" class="text-h6"> 
-               <span v-if="isRoute(Route.HOME.name)">Hell-No Gallery</span>
-               <span v-else-if="isRoute(Route.GALLERIES.name)">Galleries</span>
-               <span v-else-if="isRoute(Route.GALLERY.name)">{{ pageName }} Gallery</span>
-               <span v-else-if="inRoutes(Route.ITEM.name, Route.ITEM_CHILD.name)">{{ pageName }}</span>
-               <span v-else-if="isRoute(Route.ARTIST.name)">{{ pageName }}</span>
-               <span v-else-if="isRoute(Route.SEARCH.name)">Search</span>
-               <span v-else-if="isRoute(Route.FAVORITES.name)">My Favorites</span>
-               <span v-else-if="isRoute(Route.RECENT.name)">Updates</span>
-               <span v-else-if="isRoute(Route.ABOUT.name)">About</span>
-               <span v-else-if="isRoute(Route.USER.name)">{{ userTitle }}</span>
-               <span v-else-if="isRoute(Route.MESSAGE.name)">Messages</span>
-               <span v-else-if="isRoute(Route.ACCOUNT.name)" class="text-subtitle-1">My Account</span>
-               <span v-else-if="isRoute(Route.ADMIN.name)" class="text-subtitle-1">Admin</span>
-               <span v-else-if="isRoute(Route.ADD_ITEM.name)">Add Item</span>
-               <span v-else-if="isRoute(Route.EDIT_ITEM.name)">Edit Item</span>
+               <span v-if="isRoute(Route.HOME)">Hell-No Gallery</span>
+               <span v-else-if="isRoute(Route.GALLERIES)">Galleries</span>
+               <span v-else-if="isRoute(Route.GALLERY)">{{ pageName }} Gallery</span>
+               <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD), Route.RANDOM, Route.ARTIST">{{ pageName }}</span>
+               <span v-else-if="isRoute(Route.SEARCH)">Search</span>
+               <span v-else-if="isRoute(Route.FAVORITES)">My Favorites</span>
+               <span v-else-if="isRoute(Route.RECENT)">Updates</span>
+               <span v-else-if="isRoute(Route.ABOUT)">About</span>
+               <span v-else-if="isRoute(Route.USER)">{{ userTitle }}</span>
+               <span v-else-if="isRoute(Route.MESSAGE)">Messages</span>
+               <span v-else-if="isRoute(Route.ACCOUNT)" class="text-subtitle-1">My Account</span>
+               <span v-else-if="isRoute(Route.ADMIN)" class="text-subtitle-1">Admin</span>
+               <span v-else-if="isRoute(Route.ADD_ITEM)">Add Item</span>
+               <span v-else-if="isRoute(Route.EDIT_ITEM)">Edit Item</span>
             </div>
             <nav v-else>
                <!-- <span v-if="currentRoute == Route.MESSAGE.name" class="text-h6">Messages</span> -->
-               <span v-if="isRoute(Route.ACCOUNT.name)" class="title-sm">My Account</span>
-               <span v-if="isRoute(Route.ADMIN.name)"   class="text-subtitle-1">Admin</span>
+               <span v-if="isRoute(Route.ACCOUNT)" class="title-sm">My Account</span>
+               <span v-if="isRoute(Route.ADMIN)"   class="text-subtitle-1">Admin</span>
             </nav>
          </v-col>
          <!-- top right icons -->
          <v-col :cols="sideCols" class="flex-grow-0 flex-shrink-0 nav-right">
             <!-- top right icon for mobile -->
-
-
             <div v-if="viewMgr.isMobile">
-               <span v-if="isRoute(Route.HOME.name)">
-                  <DarkButton class="mr-n2"/>
+               <span v-if="isRoute(Route.HOME)">
+                  <Icon icon="mdi-dice-multiple" @click="router.push(Route.RANDOM.url)"/>
                </span>
-               <span v-else-if="isRoute(Route.GALLERIES.name)">
+               <span v-else-if="isRoute(Route.GALLERIES)">
                   <GalleryThumbsConfig/>
                </span>
-               <span v-else-if="inRoutes(Route.GALLERY.name, Route.FAVORITES.name, Route.RECENT.name)">
+               <span v-else-if="inRoutes(Route.GALLERY, Route.FAVORITES, Route.RECENT)">
                   <ItemThumbConfig/>
                   <!-- <MultiStateIcon icon="mdi-text-box-plus" :stateColors="viewStore.xsThumbFieldsColors" 
                      :stateIndex="viewStore.xsThumbFieldsIndex" @click="viewStore.incrementXsThumbFieldsIndex()"/> -->
                </span>
-               <span v-else-if="inRoutes(Route.ITEM.name, Route.ITEM_CHILD.name)">
+               <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD)">
                   <ToggleIcon icon="mdi-gesture-swipe" :state="viewStore.isMobileSwipe" @click="viewStore.toggleMobileSwipe()"/>
                </span>
-               <span v-else-if="isRoute(Route.USER.name)">
+               <span v-else-if="isRoute(Route.USER)">
                   <Icon icon="mdi-cog" @click="router.push(Route.ACCOUNT.url)"/>
                </span>
                <!-- <span v-else-if="currentRoute == Route.ACCOUNT.name && userIsAdmin">
                   <Icon icon="mdi-cog" @click="router.push(Route.ADMIN.url)"/>
                </span> -->
-               <span v-else-if="isRoute(Route.ADD_ITEM.name)">
+               <span v-else-if="isRoute(Route.ADD_ITEM)">
                   <Icon icon="mdi-close" @click="router.back()"/>
                </span>
             </div>
@@ -136,10 +139,10 @@
   
       <RouterView/>
  
-      <div v-if="isRoute(Route.HOME.name)" class="small">
+      <div v-if="isRoute(Route.HOME)" class="small">
          {{ version }}<span v-if="appEnv.length"> - {{ appEnv }}</span>
       </div>
-      <div v-else-if="isRoute(Route.ABOUT.name)" class="small">
+      <div v-else-if="isRoute(Route.ABOUT)" class="small">
          <div>{{ version }} ({{ windowSize.width }} x {{ windowSize.height }})</div>
          <div>{{ userAgent }}</div>
          <div v-if="isStandalone">Standalone</div>
@@ -179,6 +182,7 @@
    import { computed, onErrorCaptured, onMounted, ref } from 'vue'
    import { useRoute, useRouter } from 'vue-router'
    import { Head } from '@unhead/vue/components'
+   import { useDark, useToggle } from '@vueuse/core'
    import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
    import { useUserStore }    from '@/stores/userStore'
    import { useAdminStore }   from '@/stores/adminStore'
@@ -221,6 +225,9 @@
 
    onErrorCaptured((err) => { return handleError(err, "App") })
 
+   const isDark = useDark()
+   const toggleDark = useToggle(isDark)
+
    router.beforeEach((to, from) => {
       if (to.name == Route.ADMIN.name   && !adminStore.isAdmin)   { return {name: Route.HOME.name}  }
       if (to.name == Route.ACCOUNT.name && !userStore.userExists) { return {name: Route.LOGIN.name} }
@@ -233,9 +240,9 @@
    const currentRouteName = computed(() => router.currentRoute.value ? router.currentRoute.value.name : "")
    const isMyUserPage     = computed(() => currentRouteName.value == Route.USER.name && route.params.id == userStore.userId)
 
-   const isRoute  = (route) => { return currentRouteName.value == route }
-   const inRoutes = (...routes) => { return routes.includes(currentRouteName.value) }  
-   
+   const isRoute  = (route) => { return currentRouteName.value == route.name }
+   const inRoutes = (...routes) => { return routes.map(route => route.name).includes(currentRouteName.value) }  
+
    const user = computed(() => { 
       const currUser = userStore.userExists ? userStore.user : null 
       // logStore.info("user update: " + (currUser ? currUser.firstName : "null"))

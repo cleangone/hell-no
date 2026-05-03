@@ -16,6 +16,8 @@ a, .blue, .icon-btn {
 
 .nav-text { color: var(--color-link); }
 
+.menu-icon { color: var(--color-link-dark); }
+
 .dark .v-bottom-navigation { background-color: var(--color-shade-dark); }
 .dark .thumb-link   { background-color: var(--color-shade-light); }
 .dark .thumb-link a { color: var(--color-link-dark); }

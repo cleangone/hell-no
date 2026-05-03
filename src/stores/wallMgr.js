@@ -23,7 +23,7 @@ export const useWallMgr = defineStore('wallMgr', () => {
    const filledSiteWall = computed(() => {
       // add a selection of existing user wall items 
       const siteCopy = { ...wallStore.siteWall }
-      // if (viewMgr.isMobile && siteCopy.wallRows) { siteCopy.wallRows = 1 }
+      if (viewMgr.isMobile && siteCopy.wallRows) { siteCopy.wallRows = 1 }
       siteCopy.userWallItems = [ ...wallStore.userWallItems ]
       return fillWall(siteCopy, itemMgr.recentPublicItems) 
    })

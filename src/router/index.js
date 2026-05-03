@@ -9,6 +9,7 @@ import RecentView    from '../views/RecentView.vue'
 import ItemView      from '../views/ItemView.vue'
 import UserView      from '../views/UserView.vue'
 import FavoritesView from '../views/FavoritesView.vue'
+import RandomView    from '../views/RandomView.vue'
 import LoginView     from '../views/LoginView.vue'
 import RegisterView  from '../views/RegisterView.vue'
 import MessageView   from '../views/MessageView.vue'
@@ -40,6 +41,7 @@ const router = createRouter({
       createRoute(Route.ITEM_CHILD,ItemView,      ':origin/:nav/:id/:child'),
       createRoute(Route.USER,      UserView,      ':id'),
       createRoute(Route.FAVORITES, FavoritesView),
+      createRoute(Route.RANDOM,    RandomView),
       createRoute(Route.LOGIN,     LoginView),
       createRoute(Route.REGISTER,  RegisterView,  ':registerId'),
       createRoute(Route.MESSAGE,   MessageView),

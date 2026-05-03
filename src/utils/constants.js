@@ -23,12 +23,6 @@ export const ArtistState = {
    AKA:      'AKA',
 }
 
-export const ArtistVisibility = {
-   ALL:     'All',
-   SITE:    'Site',
-   USER:    'User',
-}
-
 export const ChatState = {
    ACTIVE:   'Active',
    ARCHIVED: 'Archived',
@@ -65,8 +59,8 @@ export const Emit = {
 }
 
 export const FeedAction = {
-   PUBLISH:  'Publish',
-   RETRACT:  'Retract',
+   PUBLISH:    'Publish',
+   RETRACT:    'Retract',
 }
 
 export const GalleryThumbWidth = 250
@@ -90,19 +84,19 @@ export const FeedType = {
 }
 
 export const GroupUserState = {
-   OWNER:   'Owner',
-   MODERATOR: 'Moderator',
-   MEMBER:  'Member',
-   VIEWER:  'Viewer', // read-only
-   INVITED: 'Invited',
+   OWNER:      'Owner',
+   MODERATOR:  'Moderator',
+   MEMBER:     'Member',
+   VIEWER:     'Viewer', // read-only
+   INVITED:    'Invited',
 }
 
 export const ImageType = {
-   PRIMARY: 'Primary',
-   OTHER:   'Other',
-   CROP:    'Crop',
-   GALLERY: 'Gallery',
-   HEADER:  'Header',
+   PRIMARY:    'Primary',
+   OTHER:      'Other',
+   CROP:       'Crop',
+   GALLERY:    'Gallery',
+   HEADER:     'Header',
    BACKGROUND: 'Background',
 }
 export const GalleryImageTypes = [ ImageType.GALLERY, ImageType.HEADER, ImageType.BACKGROUND ]
@@ -129,6 +123,7 @@ export const ItemOrigin = {
    WALL:      'wall',
    RECENT:    'recent',
    FAVORITES: 'favorites',
+   RANDOM:    'random',
    SEARCH:    'search',
    GALLERY:   'gallery',
    ARTIST:    'artist',
@@ -174,6 +169,7 @@ export const Route = {
    ITEM_CHILD:{ name: 'itemch',    url: '/item/'      },  // overload item with additional params
    USER:      { name: 'user',      url: '/user/'      },
    FAVORITES: { name: 'favorites', url: '/favorites'  },
+   RANDOM:    { name: 'random',    url: '/random'     },
    LOGIN:     { name: 'login',     url: '/login'      },
    REGISTER:  { name: 'register',  url: '/register/'  },
    MESSAGE:   { name: 'message',   url: '/message'    },

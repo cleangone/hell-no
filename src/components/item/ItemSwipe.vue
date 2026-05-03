@@ -1,6 +1,10 @@
 <template>
-   <div ref="swipeEle" :style="{transform:transform, transition:transition, touchAction:'none'}"> <!-- :setup="..." -->
-      <v-img v-if="showImage" :src="imageUrl"/>
+   <div ref="swipeEle" :style="{transform:transform, transition:transition, touchAction:'none'}">
+      <v-img v-if="showImage" :src="imageUrl">
+         <div v-if="isFavorite" class="pa-3 d-flex fill-height align-start justify-end">
+             <Icon icon="mdi-heart" />
+         </div>
+      </v-img>
       <div v-if="showText" :style="slideStyle" class="mt-n2 pt-3 px-1 text-left swipe-container">
          <div v-if="artist" class="text-h6">{{ artist }}</div>
          <div v-if="populated(props.item.subtitle)" class="font-weight-medium">{{ props.item.subtitle }}</div>
@@ -13,6 +17,7 @@
    import { computed, onUnmounted, onMounted, ref } from 'vue'
    import {useWindowSize } from '@vueuse/core'
    import interact from "interactjs"
+   import Icon     from '@/components/util/Icon.vue'
    import { populated } from '@/utils/utils'
    import { Emit } from '@/utils/constants'
   
@@ -22,8 +27,8 @@
    const INFINITE_X = 500
    const INFINITE_Y = 900
  
-   const props = defineProps({ item:Object, canSwipeLeft:Boolean, canSwipeRight:Boolean, canSwipeUp:Boolean, canSwipeDown:Boolean })
-   const emit  = defineEmits([ Emit.SWIPE_LEFT, Emit.SWIPE_RIGHT, Emit.DONE ])
+   const props = defineProps({ item:Object, isFavorite:Boolean, canSwipeLeft:Boolean, canSwipeRight:Boolean, canSwipeUp:Boolean, canSwipeDown:Boolean })
+   const emit  = defineEmits([ Emit.SWIPE_LEFT, Emit.SWIPE_RIGHT, Emit.SWIPE_UP, Emit.SWIPE_DOWN, Emit.DONE ])
    const { height: windowHeight } = useWindowSize()
    const swipeEle = ref(null)
    const showImage = ref(false)
@@ -61,7 +66,15 @@
          onmove: (event) => {
             const x = position.value.x + event.dx
             const y = position.value.y + event.dy
-            emitSwipeDirectionChange(x<0 ? Emit.SWIPE_LEFT : Emit.SWIPE_RIGHT) 
+
+            if (Math.abs(x) > Math.abs(y)) {
+               if (props.canSwipeLeft && x < 0) { emitSwipe(Emit.SWIPE_LEFT) }
+               else if (props.canSwipeRight && x > 0) { emitSwipe(Emit.SWIPE_RIGHT) }
+            }
+            else {
+               if (props.canSwipeUp && y < 0) { emitSwipe(Emit.SWIPE_UP) }
+               else if (props.canSwipeDown && y > 0) { emitSwipe(Emit.SWIPE_DOWN) }
+            }
             setPosition({ x, y })
          },
          onend: () => {
@@ -99,7 +112,8 @@
       return false
    }
 
-   const emitSwipeDirectionChange = (swipeEmit) => {
+   // emit the swipe if the direction has changed
+   const emitSwipe = (swipeEmit) => {
       if (prevEmit.value != swipeEmit) {
          prevEmit.value = swipeEmit
          emit(swipeEmit, props.item.name)

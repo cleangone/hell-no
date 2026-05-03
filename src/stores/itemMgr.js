@@ -2,7 +2,7 @@ import { computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useWindowSize } from '@vueuse/core'
 import { useItemStore } from '@/stores/itemStore'
-import { dateUuid, objAspectRatio } from '@/utils/utils'
+import { dateUuid, objAspectRatio, randomizeArray } from '@/utils/utils'
 import { ItemNavAction, ItemType, Route } from '@/utils/constants'
    
 export const useItemMgr = defineStore('itemMgr', () => {   
@@ -83,6 +83,12 @@ export const useItemMgr = defineStore('itemMgr', () => {
          if (item) { items.push(item) }
       }
       return items
+   }
+
+   function getRandomItems() { 
+      const items = [ ...itemStore.publicItems ]
+      const random = randomizeArray(ungroupAndExtractItems(items))
+      return random.slice(0, 20)
    }
 
    function isItemGroup(item) { return item.type == ItemType.GROUP }
@@ -202,7 +208,7 @@ export const useItemMgr = defineStore('itemMgr', () => {
    }
 
    return { 
-      myItemIdToItem, artistIdToMyItemIds, getItems, getProfileCount,
+      myItemIdToItem, artistIdToMyItemIds, getItems, getRandomItems, getProfileCount,
       recentPublicItems, recentGroupMemberItems, myRecentItems, getRecentItems, getRecentPublicItems,
       isItemGroup, ungroupItems, ungroupItem, ungroupAndExtractItems, extractFromItemGroup,
       itemAspectRatio, itemNavURL, itemURL, getPopupImage, createItemImage }
