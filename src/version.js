@@ -11,6 +11,7 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.12.0", "5/3/26"],  // Update apple icon quote to Hell No
    ["v2.11.0", "5/3/26"],  // Add RandomView for mobile
    ["v2.10.5", "4/30/26"], // Larger mobile/xs Wallitem size - xs site wall has one row
    ["v2.10.4", "4/30/26"], // Refactor/combine ROUTE ahd URL constants
