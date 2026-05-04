@@ -45,14 +45,14 @@
             </nav>
             <!-- top left links for desktop -->
             <nav v-else>
-               <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.HOME.name" :url="Route.HOME.url" text="Home" />
-               <span v-if="!inRoutes(Route.ACCOUNT.name, Route.ADMIN.name, Route.REGISTER.name)">
-                  | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.GALLERIES.name" :targetId="Defaults.SITE_ID" :url="Route.GALLERIES.url + Defaults.SITE_ID" text="Galleries" />
-                  | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.SEARCH.name" :url="Route.SEARCH.url" text="Search"/>
+               <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.HOME"/>
+               <span v-if="!inRoutes(Route.ACCOUNT, Route.ADMIN, Route.REGISTER)">
+                  | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.GALLERIES" :targetId="Defaults.SITE_ID" :url="Route.GALLERIES.url + Defaults.SITE_ID"/>
+                  | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.SEARCH"/>
                   <span v-if="userExists && !viewMgr.solo">
-                     | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.MESSAGE.name" :url="Route.MESSAGE.url" text="Messages" />
+                     | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.MESSAGE"/>
                   </span> 
-                  | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.ABOUT.name" :url="Route.ABOUT.url" text="About"/>
+                  | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.ABOUT"/>
                </span> 
             </nav>
          </v-col>
@@ -60,24 +60,24 @@
          <v-col cols="2" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
             <div v-if="viewMgr.isMobile" class="text-h6"> 
                <span v-if="isRoute(Route.HOME)">Hell-No Gallery</span>
-               <span v-else-if="isRoute(Route.GALLERIES)">Galleries</span>
+               <span v-else-if="isRoute(Route.GALLERIES)">{{ Route.GALLERIES.display }}</span>
                <span v-else-if="isRoute(Route.GALLERY)">{{ pageName }} Gallery</span>
-               <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD), Route.RANDOM, Route.ARTIST">{{ pageName }}</span>
-               <span v-else-if="isRoute(Route.SEARCH)">Search</span>
-               <span v-else-if="isRoute(Route.FAVORITES)">My Favorites</span>
-               <span v-else-if="isRoute(Route.RECENT)">Updates</span>
-               <span v-else-if="isRoute(Route.ABOUT)">About</span>
+               <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD, Route.RANDOM, Route.ARTIST)">{{ pageName }}</span>
+               <span v-else-if="isRoute(Route.SEARCH)">{{ Route.SEARCH.display }}</span>
+               <span v-else-if="isRoute(Route.FAVORITES)">{{ Route.FAVORITES.display }}</span>
+               <span v-else-if="isRoute(Route.RECENT)">{{ Route.RECENT.display }}</span>
+               <span v-else-if="isRoute(Route.ABOUT)">{{ Route.ABOUT.display }}</span>
                <span v-else-if="isRoute(Route.USER)">{{ userTitle }}</span>
-               <span v-else-if="isRoute(Route.MESSAGE)">Messages</span>
-               <span v-else-if="isRoute(Route.ACCOUNT)" class="text-subtitle-1">My Account</span>
-               <span v-else-if="isRoute(Route.ADMIN)" class="text-subtitle-1">Admin</span>
+               <span v-else-if="isRoute(Route.MESSAGE)">{{ Route.MESSAGE.display }}</span>
+               <span v-else-if="isRoute(Route.ACCOUNT)" class="text-subtitle-1">{{ Route.ACCOUNT.display }}</span>
+               <span v-else-if="isRoute(Route.ADMIN)"   class="text-subtitle-1">{{ Route.ADMIN.display }}</span>
                <span v-else-if="isRoute(Route.ADD_ITEM)">Add Item</span>
                <span v-else-if="isRoute(Route.EDIT_ITEM)">Edit Item</span>
             </div>
             <nav v-else>
                <!-- <span v-if="currentRoute == Route.MESSAGE.name" class="text-h6">Messages</span> -->
-               <span v-if="isRoute(Route.ACCOUNT)" class="title-sm">My Account</span>
-               <span v-if="isRoute(Route.ADMIN)"   class="text-subtitle-1">Admin</span>
+               <span v-if="isRoute(Route.ACCOUNT)" class="title-sm">{{ Route.ACCOUNT.display }}</span>
+               <span v-if="isRoute(Route.ADMIN)"   class="text-subtitle-1">{{ Route.ADMIN.display }}</span>
             </nav>
          </v-col>
          <!-- top right icons -->
@@ -132,7 +132,7 @@
                </v-menu>
             </div>
             <div v-else>
-               <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.LOGIN.name" :url="Route.LOGIN.url" text="Login"/>
+               <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.LOGIN"/>
             </div> 
          </v-col>
       </v-row>
@@ -194,7 +194,6 @@
    import MessageSetup        from '@/components/notification/MessageSetup.vue'
    import LinkOrText          from '@/components/util/LinkOrText.vue'
    import Icon                from '@/components/util/Icon.vue'
-   import DarkButton          from '@/components/util/DarkButton.vue'
    import ToggleIcon          from '@/components/util/ToggleIcon.vue'
    import { handleError } from '@/utils/utils'
    import { Defaults, Route } from '@/utils/constants'

@@ -157,28 +157,28 @@ export const NotificationOptions = {
 }
 
 export const Route = {
-   HOME:      { name: 'home',      url: '/'           },
+   HOME:      { name: 'home',      url: '/',          display: 'Home' },
    GROUP:     { name: 'group',     url: '/group/'     },
    GALLERY:   { name: 'gallery',   url: '/gallery/'   },
-   GALLERIES: { name: 'galleries', url: '/galleries/' },
+   GALLERIES: { name: 'galleries', url: '/galleries/',display: 'Galleries' },
    ARTIST:    { name: 'artist',    url: '/artist/'    },
-   SEARCH:    { name: 'search',    url: '/search'     },
+   SEARCH:    { name: 'search',    url: '/search',    display: 'Search'},
    FEED:      { name: 'feed',      url: '/feed'       },
-   RECENT:    { name: 'recent',    url: '/recent/'    },
+   RECENT:    { name: 'recent',    url: '/recent/',   display: 'Updates' },
    ITEM:      { name: 'item',      url: '/item/'      },
-   ITEM_CHILD:{ name: 'itemch',    url: '/item/'      },  // overload item with additional params
+   ITEM_CHILD:{ name: 'itemch',    url: '/item/'      }, // overload item with additional params
    USER:      { name: 'user',      url: '/user/'      },
-   FAVORITES: { name: 'favorites', url: '/favorites'  },
+   FAVORITES: { name: 'favorites', url: '/favorites', display: 'My Favorites' },
    RANDOM:    { name: 'random',    url: '/random'     },
-   LOGIN:     { name: 'login',     url: '/login'      },
+   LOGIN:     { name: 'login',     url: '/login',     display: 'Login' },
    REGISTER:  { name: 'register',  url: '/register/'  },
-   MESSAGE:   { name: 'message',   url: '/message'    },
+   MESSAGE:   { name: 'message',   url: '/message',   display: 'Message' },
    BROADCAST: { name: 'broadcast', url: '/broadcast'  },
-   ABOUT:     { name: 'about',     url: '/about'      },
-   ACCOUNT:   { name: 'account',   url: '/account'    },
-   ADMIN:     { name: 'admin',     url: '/admin'      },
-   ADD_ITEM:  { name: 'add-item',  url: '/add-item'   },
-   EDIT_ITEM: { name: 'edit-item', url: '/edit-item/' },
+   ABOUT:     { name: 'about',     url: '/about',     display: 'About' },
+   ACCOUNT:   { name: 'account',   url: '/account',   display: 'My Account' },
+   ADMIN:     { name: 'admin',     url: '/admin',     display: 'Admin' },
+   ADD_ITEM:  { name: 'add-item',  url: '/add-item',  display: 'Add Item' },
+   EDIT_ITEM: { name: 'edit-item', url: '/edit-item/',display: 'Edit Item' },
     // FORGOT:    'Forgot Password',
 }
 

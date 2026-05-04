@@ -75,7 +75,7 @@
             else if (next == null || prevHorSwipe.value == Emit.SWIPE_RIGHT) {  swipeBotItem.value = prev } 
             else { swipeBotItem.value = next } 
          }
-      }, 500)
+      }, 200)
          
       return { prev: prev, next: next }
    })
@@ -107,7 +107,9 @@
          }
          else if (swipeEmit == Emit.SWIPE_UP) {            
             if (userStore.userExists) { userMgr.addFavoriteItem(currItem.value.id) }
-            currItems.value.splice(currItemIndex.value, 1)
+            // keep item in list
+            prevHorSwipe.value = Emit.SWIPE_LEFT
+            if (navItems.value.next) { currItemIndex.value = currItemIndex.value + 1 } 
          }
          else if (swipeEmit == Emit.SWIPE_DOWN) {
             if (userStore.userExists) { userMgr.removeFavoriteItem(currItem.value.id) }

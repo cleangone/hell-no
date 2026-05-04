@@ -88,7 +88,7 @@ export const useItemMgr = defineStore('itemMgr', () => {
    function getRandomItems() { 
       const items = [ ...itemStore.publicItems ]
       const random = randomizeArray(ungroupAndExtractItems(items))
-      return random.slice(0, 20)
+      return random.slice(0, 50)
    }
 
    function isItemGroup(item) { return item.type == ItemType.GROUP }
