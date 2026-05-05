@@ -10,7 +10,7 @@
          <v-col :cols="sideCols" class="flex-grow-0 flex-shrink-0 nav-left" style="white-space:nowrap">
             <!-- top left icon for mobile -->
             <nav v-if="viewMgr.isMobile">
-               <v-menu v-if="currentRouteName==Route.HOME.name && user"> <!-- force user evaluation to verify solo -->
+               <v-menu v-if="isRoute(Route.HOME)">
                   <template v-slot:activator="{ props }">
                      <v-btn v-bind="props" icon="mdi-menu" class="icon-btn" size="medium" variant="text"></v-btn>
                   </template>
@@ -21,24 +21,24 @@
                         </template>
                         <v-list-item-title>{{isDark ? "Light mode" : "Dark mode"}}</v-list-item-title>
                      </v-list-item>
-                      <v-list-item @click="toRoute(Route.ADD_ITEM)">
+                     <v-list-item v-if="user" @click="toRoute(Route.ADD_ITEM)">
                         <template v-slot:prepend>
                            <v-icon icon="mdi-plus" class="menu-icon"></v-icon>
                         </template>
                         <v-list-item-title>Add Item</v-list-item-title>
                      </v-list-item>
-                     <v-list-item @click="toRoute(Route.MESSAGE)">
+                     <v-list-item v-if="user" @click="toRoute(Route.MESSAGE)">
                         <template v-slot:prepend>
                            <v-icon icon="mdi-message" class="menu-icon"></v-icon>
                         </template>
                         <v-list-item-title>Messages</v-list-item-title>
                      </v-list-item>
-                     <v-list-item @click="toRoute(Route.ACCOUNT)">
+                     <!-- <v-list-item @click="toRoute(Route.ACCOUNT)">
                         <template v-slot:prepend>
                            <v-icon icon="mdi-cog" class="menu-icon"></v-icon>
                         </template>
                         <v-list-item-title>Settings</v-list-item-title>
-                     </v-list-item>
+                     </v-list-item> -->
                   </v-list>
                </v-menu>
                <Icon v-if="currentRouteName!=Route.HOME.name" icon="mdi-chevron-left" @click="router.back()"/>
