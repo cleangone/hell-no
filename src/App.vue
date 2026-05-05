@@ -21,19 +21,19 @@
                         </template>
                         <v-list-item-title>{{isDark ? "Light mode" : "Dark mode"}}</v-list-item-title>
                      </v-list-item>
-                      <v-list-item @click="router.push(Route.ADD_ITEM.url)">
+                      <v-list-item @click="toRoute(Route.ADD_ITEM)">
                         <template v-slot:prepend>
                            <v-icon icon="mdi-plus" class="menu-icon"></v-icon>
                         </template>
                         <v-list-item-title>Add Item</v-list-item-title>
                      </v-list-item>
-                     <v-list-item @click="router.push(Route.MESSAGE.url)">
+                     <v-list-item @click="toRoute(Route.MESSAGE)">
                         <template v-slot:prepend>
                            <v-icon icon="mdi-message" class="menu-icon"></v-icon>
                         </template>
                         <v-list-item-title>Messages</v-list-item-title>
                      </v-list-item>
-                     <v-list-item @click="router.push(Route.ACCOUNT.url)">
+                     <v-list-item @click="toRoute(Route.ACCOUNT)">
                         <template v-slot:prepend>
                            <v-icon icon="mdi-cog" class="menu-icon"></v-icon>
                         </template>
@@ -84,26 +84,14 @@
          <v-col :cols="sideCols" class="flex-grow-0 flex-shrink-0 nav-right">
             <!-- top right icon for mobile -->
             <div v-if="viewMgr.isMobile">
-               <span v-if="isRoute(Route.HOME)">
-                  <Icon icon="mdi-dice-multiple" @click="router.push(Route.RANDOM.url)"/>
+               <span v-if="inRoutes(Route.HOME, Route.USER)">
+                  <Icon icon="mdi-dice-multiple" @click="toRoute(Route.RANDOM)"/>
                </span>
-               <span v-else-if="isRoute(Route.GALLERIES)">
-                  <GalleryThumbsConfig/>
-               </span>
-               <span v-else-if="inRoutes(Route.GALLERY, Route.FAVORITES, Route.RECENT)">
-                  <ItemThumbConfig/>
-                  <!-- <MultiStateIcon icon="mdi-text-box-plus" :stateColors="viewStore.xsThumbFieldsColors" 
-                     :stateIndex="viewStore.xsThumbFieldsIndex" @click="viewStore.incrementXsThumbFieldsIndex()"/> -->
-               </span>
+               <span v-else-if="isRoute(Route.GALLERIES)"><GalleryThumbsConfig/></span>
+               <span v-else-if="inRoutes(Route.GALLERY, Route.FAVORITES, Route.RECENT)"><ItemThumbConfig/></span>
                <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD)">
                   <ToggleIcon icon="mdi-gesture-swipe" :state="viewStore.isMobileSwipe" @click="viewStore.toggleMobileSwipe()"/>
                </span>
-               <span v-else-if="isRoute(Route.USER)">
-                  <Icon icon="mdi-cog" @click="router.push(Route.ACCOUNT.url)"/>
-               </span>
-               <!-- <span v-else-if="currentRoute == Route.ACCOUNT.name && userIsAdmin">
-                  <Icon icon="mdi-cog" @click="router.push(Route.ADMIN.url)"/>
-               </span> -->
                <span v-else-if="isRoute(Route.ADD_ITEM)">
                   <Icon icon="mdi-close" @click="router.back()"/>
                </span>
@@ -119,10 +107,10 @@
                      <v-list-item @click="toggleSoloMode()">
                         <v-list-item-title>{{ viewMgr.solo ? "Exit " : "" }}Solo Mode</v-list-item-title>
                      </v-list-item>
-                     <v-list-item @click="router.push(Route.ACCOUNT.url)">
+                     <v-list-item @click="toRoute(Route.ACCOUNT)">
                         <v-list-item-title>My Account</v-list-item-title>
                      </v-list-item>
-                     <v-list-item  v-if="userIsAdmin" @click="router.push(Route.ADMIN.url)">
+                     <v-list-item v-if="userIsAdmin" @click="toRoute(Route.ADMIN)">
                         <v-list-item-title>Admin</v-list-item-title>
                      </v-list-item>
                      <v-list-item @click="logout">
@@ -153,25 +141,29 @@
       <!-- Bottom nav for mobile -->
       <v-layout v-if="viewMgr.isMobile" style="height:60px">
          <v-bottom-navigation v-model="navIndex" color="primary" style="min-height:60px" grow>
-            <v-btn @click="router.push(Route.HOME.url)">
+            <v-btn @click="toRoute(Route.HOME)">
                <Icon icon="mdi-home"/>
                <span class="nav-text"></span>
             </v-btn>
-            <v-btn @click="router.push(Route.GALLERIES.url + Defaults.SITE_ID)">
+            <v-btn @click="toSiteRoute(Route.GALLERIES)">
                <Icon icon="mdi-image-multiple"/>
                <span class="nav-text">Galleries</span>
             </v-btn>
-            <v-btn @click="router.push(Route.SEARCH.url)">
+            <v-btn @click="toRoute(Route.SEARCH)">
                <Icon icon="mdi-magnify"/>
                <span class="nav-text">&nbsp;</span>
             </v-btn>
-            <v-btn @click="router.push(Route.RECENT.url + userStore.userId)">
+            <v-btn @click="toSiteRoute(Route.RECENT)">
                <Icon icon="mdi-history"/>
                <span class="nav-text">Updates</span>
             </v-btn>   
-            <v-btn @click="router.push(userExists ? Route.USER.url + userId : Route.LOGIN.ur)">
-               <Icon icon="mdi-account"/>
+            <v-btn v-if="userExists" @click="router.push(isRoute(Route.USER) ? Route.ACCOUNT.url : Route.USER.url + userId)"> 
+               <Icon :icon="isRoute(Route.USER) ? 'mdi-cog' : 'mdi-account'"/>
                <span class="nav-text"></span>
+            </v-btn>
+            <v-btn v-else @click="toRoute(Route.LOGIN)">
+               <Icon icon="mdi-account"/>
+               <span class="nav-text">Login</span>
             </v-btn>
          </v-bottom-navigation>
       </v-layout>
@@ -241,6 +233,8 @@
 
    const isRoute  = (route) => { return currentRouteName.value == route.name }
    const inRoutes = (...routes) => { return routes.map(route => route.name).includes(currentRouteName.value) }  
+   const toRoute     = (route) => { router.push(route.url) }
+   const toSiteRoute = (route) => { router.push(route.url + Defaults.SITE_ID) }
 
    const user = computed(() => { 
       const currUser = userStore.userExists ? userStore.user : null 
@@ -288,12 +282,12 @@
       const settings = { ...user.value.settings }
       settings.soloMode = settings.soloMode ? false : true 
       userStore.updateSettings(settings)
-      router.push(Route.HOME.url)
+      toRoute(Route.HOME)
    }
 
    const logout = () => { 
       signOut(getAuth()) 
-      router.push(Route.HOME.url)
+      toRoute(Route.HOME)
    }
 </script>
 
