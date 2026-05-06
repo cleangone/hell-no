@@ -11,6 +11,8 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.14.0", "5/6/26"],  // Add SearchBox to desktop home
+   ["v2.13.0", "5/5/26"],  // Refactor/reconfigure search
    ["v2.12.1", "5/5/26"],  // Update mobile User/Account icon display
    ["v2.12.0", "5/3/26"],  // Update apple icon quote to Hell No
    ["v2.11.0", "5/3/26"],  // Add RandomView for mobile

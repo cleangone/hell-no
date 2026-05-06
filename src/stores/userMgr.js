@@ -86,7 +86,7 @@ export const useUserMgr = defineStore('userMgr', () => {
    }
    
    function setItemThumbOptions(options) {
-      console.log("updating user itemThumbOptions")
+      // console.log("updating user itemThumbOptions")
       const settings = { ...userStore.mySettings }
       settings.itemThumbOptions = options
       userStore.updateSettings(settings)

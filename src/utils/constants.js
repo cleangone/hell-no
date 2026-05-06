@@ -143,6 +143,8 @@ export const ItemThumbOptions = {
    ARTIST:   'Artist',
    UPDATED:  'Date Updated',
    USER:     'User',
+   SORT_BY_NAME: 'Sort by Name',
+   SORT_BY_DATE: 'Sort by Date',
 } 
 
 export const LogEntryType = {

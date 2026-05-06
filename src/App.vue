@@ -88,7 +88,8 @@
                   <Icon icon="mdi-dice-multiple" @click="toRoute(Route.RANDOM)"/>
                </span>
                <span v-else-if="isRoute(Route.GALLERIES)"><GalleryThumbsConfig/></span>
-               <span v-else-if="inRoutes(Route.GALLERY, Route.FAVORITES, Route.RECENT)"><ItemThumbConfig/></span>
+               <span v-else-if="inRoutes(Route.GALLERY, Route.RECENT)"><ItemThumbConfig/></span>
+               <span v-else-if="inRoutes(Route.SEARCH, Route.FAVORITES)"><ItemThumbConfig showSort/></span>
                <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD)">
                   <ToggleIcon icon="mdi-gesture-swipe" :state="viewStore.isMobileSwipe" @click="viewStore.toggleMobileSwipe()"/>
                </span>
@@ -98,6 +99,7 @@
             </div>
             <!-- top right icon for desktop -->
             <div v-else-if="userExists">
+               <SearchBox class="mr-2"/>
                <RouterLink :to="isMyUserPage ? Route.ACCOUNT.url : Route.USER.url + userId">{{ firstName }}</RouterLink>
                <v-menu>
                   <template v-slot:activator="{ props }">
@@ -120,6 +122,7 @@
                </v-menu>
             </div>
             <div v-else>
+               <SearchBox class="mr-2"/>
                <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.LOGIN"/>
             </div> 
          </v-col>
@@ -186,6 +189,7 @@
    import MessageSetup        from '@/components/notification/MessageSetup.vue'
    import LinkOrText          from '@/components/util/LinkOrText.vue'
    import Icon                from '@/components/util/Icon.vue'
+   import SearchBox           from '@/components/util/SearchBox.vue'
    import ToggleIcon          from '@/components/util/ToggleIcon.vue'
    import { handleError } from '@/utils/utils'
    import { Defaults, Route } from '@/utils/constants'

@@ -44,7 +44,8 @@ export const useViewStore = defineStore('view', () => {
    }
 
    // save options in user settings and locally if not logged in
-   const defaultItemThumbOptions = [ ItemThumbOptions.TITLE, ItemThumbOptions.ARTIST, ItemThumbOptions.UPDATED ]
+   const defaultItemThumbOptions = [ 
+      ItemThumbOptions.TITLE, ItemThumbOptions.ARTIST, ItemThumbOptions.UPDATED, ItemThumbOptions.SORT_BY_NAME ]
    const currItemThumbOptions = ref([ ...defaultItemThumbOptions ] )
    const itemThumbOptions = computed(() => { 
       return userStore.userExists && userStore.mySettings.itemThumbOptions ?
