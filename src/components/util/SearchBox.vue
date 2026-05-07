@@ -1,7 +1,7 @@
 <template>
    <div class="search-wrapper">
       <v-icon icon="mdi-magnify" size="small" class="search-icon"/>
-      <input v-model="query" type="text" class="small-grey-box ml-n6" @keyup.enter="search()"/>
+      <input v-model="query" type="text" class="search-grey-box ml-n6" @keyup.enter="search()"/>
    </div>         
 </template>
 
@@ -30,15 +30,15 @@
   display: inline-block;
 }
 .search-icon {
-  color: #888;
+  color: var(--color-search-icon);
 }
-.small-grey-box {
-  background-color: #f5f5f5;
+.search-grey-box {
+  background-color: var(--color-search-background);
+  color: var(--color-search-text);
   width: 10em;  
   font-size: 14px;
   padding: 2px 2px 2px 24px; /* Extra left padding for icon */
   border: 1px solid #ccc;
   border-radius: 4px;
 }
-
 </style>

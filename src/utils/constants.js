@@ -35,6 +35,7 @@ export const Defaults = {
    THUMB_HEIGHT:    200,
    SM_THUMB_HEIGHT: 150,
    LG_THUMB_HEIGHT: 250,
+   MAX_THUMB_SIDE:  300, // thumb was resized to a 300x300 box
 }
 export const DefaultWall = { wallRows:0, wallItems:[] }    
 

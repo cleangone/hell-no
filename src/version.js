@@ -9,8 +9,11 @@
       - add filter to RecentView
       - lazy loading in router - chunk retrieval errors with Admin, others
       - requiredRule does not invalidate "   "
+      - carol thumbs too wide - need largeThumb
 */
 export const versions = [    
+   ["v2.14.1", "5/7/26"],  // Update SearchBox css to use css vars
+                           // Item thumb cannot exceed width image was resized to by extension
    ["v2.14.0", "5/6/26"],  // Add SearchBox to desktop home
    ["v2.13.0", "5/5/26"],  // Refactor/reconfigure search
    ["v2.12.1", "5/5/26"],  // Update mobile User/Account icon display

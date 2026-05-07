@@ -14,12 +14,12 @@
       <v-text-field v-model="searchQuery" prepend-inner-icon="mdi-magnify" placeholder="Search" density="compact" @keyup.enter="search()" class="search"/>
       <BlueBtn text="Search" @click="search()" :disabled="!validQuery" class="ml-2 mb-4"/>
    </v-row>
-   <div v-if="userStore.userExists" class="text-left mb-4">
+   <!-- <div v-if="userStore.userExists" class="text-left mb-4">
       <BlueBtn v-if="showSave" text="Save Search" @click="saveQuery()"/>
       <BlueBtn v-if="isSavedQuery" text="Remove Saved" @click="removeSavedQuery()"/>
       <TextButton v-for="query in savedQueries" @click="useQuery(query)" :text="query"/>
-   </div>
-   <v-container>
+   </div> -->
+   <v-container class="mt-4">
       <v-row justify="space-around">
          <ItemThumb v-for="item in sortedItems" :key="item.id" :item="item" :origin="ItemOrigin.SEARCH"/>
       </v-row>
@@ -28,66 +28,66 @@
  
 <script setup>
    import { computed, onMounted, ref } from 'vue'
-   import { useUserStore } from '@/stores/userStore'
+   // import { useUserStore } from '@/stores/userStore'
    import { useSearchMgr } from '@/stores/searchMgr'
    import { useViewStore } from '@/stores/viewStore'
    import { useViewMgr }   from '@/stores/viewMgr'
    import ItemThumb       from '@/components/item/thumb/ItemThumb.vue'
    import BlueBtn         from '@/components/util/BlueBtn.vue'
-   import TextButton      from '@/components/util/TextButton.vue'
+   // import TextButton      from '@/components/util/TextButton.vue'
    import ItemThumbConfig from '@/components/item/thumb/ItemThumbConfig.vue'
    import { ItemOrigin, ItemThumbOptions } from '@/utils/constants'
    
-   const userStore = useUserStore()
+   // const userStore = useUserStore()
    const searchMgr = useSearchMgr()
    const viewStore = useViewStore()
    const viewMgr   = useViewMgr()
-   const savedQueries = ref([])
+   // const savedQueries = ref([])
 
-   onMounted(() => {
-      // console.log("onMounted")
-      if (userStore.userExists && userStore.mySettings.searches) { 
-         savedQueries.value = [ ...userStore.mySettings.searches ] 
-      } 
-   })
+   // onMounted(() => {
+   //    // console.log("onMounted")
+   //    if (userStore.userExists && userStore.mySettings.searches) { 
+   //       savedQueries.value = [ ...userStore.mySettings.searches ] 
+   //    } 
+   // })
 
    const searchQuery = computed({ 
       get() { return viewStore.searchQuery },
-      set(query) {  viewStore.setSearchQuery(query) }
+      set(query) { viewStore.setSearchQuery(query) }
    })
 
-   const validQuery = computed(() => searchQuery.value.length && searchQuery.value.length > 1)
-   const isSavedQuery = computed(() => savedQueries.value.includes(searchQuery.value))
-   const showSave = computed(() => validQuery.value && !isSavedQuery.value)
+   const validQuery = computed(() => searchQuery.value?.length > 1)
+   // const isSavedQuery = computed(() => savedQueries.value.includes(searchQuery.value))
+   // const showSave = computed(() => validQuery.value && !isSavedQuery.value)
 
-   const saveQuery = () => { 
-      const sortedQueries = [ ...savedQueries.value, searchQuery.value ] 
-      sortedQueries.sort((a, b) => a.localeCompare(b))
-      savedQueries.value = [ ...sortedQueries ]
+   // const saveQuery = () => { 
+   //    const sortedQueries = [ ...savedQueries.value, searchQuery.value ] 
+   //    sortedQueries.sort((a, b) => a.localeCompare(b))
+   //    savedQueries.value = [ ...sortedQueries ]
       
-      updateSettings()
-   } 
+   //    updateSettings()
+   // } 
 
-   const removeSavedQuery = () => { 
-      const index = savedQueries.value.indexOf(searchQuery.value)
-      if (index != -1) { 
-         savedQueries.value.splice(index, 1) 
-         updateSettings()
-      }
-   } 
+   // const removeSavedQuery = () => { 
+   //    const index = savedQueries.value.indexOf(searchQuery.value)
+   //    if (index != -1) { 
+   //       savedQueries.value.splice(index, 1) 
+   //       updateSettings()
+   //    }
+   // } 
 
-   const updateSettings = () => { 
-      if (userStore.userExists) {
-         const mySettings = { ...userStore.mySettings }
-         mySettings.searches = [ ...savedQueries.value ]
-         userStore.updateSettings(mySettings) 
-      }
-   } 
+   // const updateSettings = () => { 
+   //    if (userStore.userExists) {
+   //       const mySettings = { ...userStore.mySettings }
+   //       mySettings.searches = [ ...savedQueries.value ]
+   //       userStore.updateSettings(mySettings) 
+   //    }
+   // } 
 
-   const useQuery = (query) => { 
-      searchQuery.value = query
-      search()
-   }
+   // const useQuery = (query) => { 
+   //    searchQuery.value = query
+   //    search()
+   // }
 
    const search = () => { if (validQuery.value) { searchMgr.search(searchQuery.value) }}
 

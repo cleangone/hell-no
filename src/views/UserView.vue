@@ -118,7 +118,7 @@
          if (rawUser.value && !item.profileId || rawProfile.value && item.profileId == rawProfile.value.id) { visibleItems.push(item) }
       } 
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupItems(visibleItems) : visibleItems
-      return viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates",  + route.params.id, ungroupedItems)
+      return viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates",  Route.RECENT.url + route.params.id, ungroupedItems)
    })
 
    const recentItems = computed(() => {

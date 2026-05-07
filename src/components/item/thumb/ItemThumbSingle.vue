@@ -18,6 +18,8 @@
    import ItemPopup     from '@/components/item/ItemPopup.vue'
    import ItemThumbText from './ItemThumbText.vue'
    import { handleError } from '@/utils/utils'
+   import { Defaults } from '@/utils/constants'
+   
    
    const props = defineProps({ item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean })
 
@@ -41,7 +43,7 @@
    const cardWidth = computed(() => { 
       const targetHeight = viewMgr.targetThumbHeight
       const targetWidth = Math.round(targetHeight * aspectRatio.value)
-      return targetWidth 
+      return targetWidth > Defaults.MAX_THUMB_SIDE ? Defaults.MAX_THUMB_SIDE : targetWidth
    })
 
    const mouseover = () => {
