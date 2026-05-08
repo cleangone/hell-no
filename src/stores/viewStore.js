@@ -43,6 +43,9 @@ export const useViewStore = defineStore('view', () => {
       if (visibleItems.value.has(origin)) { visibleItems.value.get(origin).items = [...items] }
    }
 
+   const searchItems = ref([])
+   function setSearchItems(items) { searchItems.value = items }
+
    // save options in user settings and locally if not logged in
    const defaultItemThumbOptions = [ 
       ItemThumbOptions.TITLE, ItemThumbOptions.ARTIST, ItemThumbOptions.UPDATED, ItemThumbOptions.SORT_BY_NAME ]
@@ -182,6 +185,7 @@ export const useViewStore = defineStore('view', () => {
       isInitialized, init, resetView, getSeconds,
       showSiteWall, setShowSiteWall,
       getVisibleItems, setVisibleItems, updateVisibleItems, 
+      searchItems, setSearchItems,
       itemThumbOptions, setItemThumbOptions,      
       galleryThumbOptions, setGalleryThumbOptions, 
       xsThumbFieldsColors, xsThumbFieldsIndex, incrementXsThumbFieldsIndex, 

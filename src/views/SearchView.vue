@@ -30,16 +30,18 @@
    import { computed, onMounted, ref } from 'vue'
    // import { useUserStore } from '@/stores/userStore'
    import { useSearchMgr } from '@/stores/searchMgr'
+   import { useItemMgr }   from '@/stores/itemMgr'
    import { useViewStore } from '@/stores/viewStore'
    import { useViewMgr }   from '@/stores/viewMgr'
    import ItemThumb       from '@/components/item/thumb/ItemThumb.vue'
    import BlueBtn         from '@/components/util/BlueBtn.vue'
    // import TextButton      from '@/components/util/TextButton.vue'
    import ItemThumbConfig from '@/components/item/thumb/ItemThumbConfig.vue'
-   import { ItemOrigin, ItemThumbOptions } from '@/utils/constants'
+   import { ItemOrigin, ItemThumbOptions, Route } from '@/utils/constants'
    
    // const userStore = useUserStore()
    const searchMgr = useSearchMgr()
+   const itemMgr   = useItemMgr()
    const viewStore = useViewStore()
    const viewMgr   = useViewMgr()
    // const savedQueries = ref([])
@@ -94,13 +96,14 @@
    const sortByName = computed(() => viewStore.itemThumbOptions.includes(ItemThumbOptions.SORT_BY_NAME))
    const sortByDate = computed(() => viewStore.itemThumbOptions.includes(ItemThumbOptions.SORT_BY_DATE))
    const sortedItems = computed(() => {
-      const items = []    
-      const visibleItems = viewStore.getVisibleItems(ItemOrigin.SEARCH) 
-      if (visibleItems) { items.push(...visibleItems.items)}
+      const items = [ ...viewStore.searchItems ]    
       if (items.length) {
          if (sortByName.value)      { items.sort((a, b) => a.name.localeCompare(b.name)) }
          else if (sortByDate.value) { items.sort((a, b) => b.dateModified - a.dateModified) }
       }
+
+      const itemViewItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
+      viewStore.setVisibleItems(ItemOrigin.SEARCH, "Search Results", Route.SEARCH.url, itemViewItems)
       return items
    })
 </script>

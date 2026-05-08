@@ -21,7 +21,7 @@ export const useSearchMgr = defineStore('searchMgr', () => {
             const item = itemStore.itemIdToItem.get(hit.objectID)
             if (isPublic(item)) { items.push(item) }
          }
-         viewStore.setVisibleItems(ItemOrigin.SEARCH, "Search Results", Route.SEARCH.url, items)
+         viewStore.setSearchItems(items)
       })
    }
 
