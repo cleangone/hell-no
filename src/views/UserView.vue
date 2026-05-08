@@ -1,7 +1,15 @@
 <template>
-   <div v-if="viewMgr.isDeskTop" class="title">
-      {{ username }} <IconButton v-if="userExists" icon="mdi-email" @click="sendEmail()"/>
-   </div>
+   <v-container v-if="viewMgr.isDeskTop" class="pa-0 width-100">
+      <v-row no-gutters class="d-flex align-center flex-nowrap">
+         <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
+         <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
+            <div class="title">{{ username }} </div>
+         </v-col>
+         <v-col cols="2" class="mr-n2 d-flex flex-grow-0 flex-shrink-0 justify-end">
+            <IconButton v-if="userExists" icon="mdi-email" @click="sendEmail()"/>
+         </v-col>
+      </v-row>
+   </v-container>
    <div v-if="!contentExists">
       <div class="pt-10 pb=5 text-h5">No Content</div>
       <div>Add Items and Galleries in <RouterLink :to="Route.ACCOUNT.url">My Account</RouterLink></div>

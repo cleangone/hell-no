@@ -61,14 +61,15 @@
       else { items.push(...itemMgr.recentPublicItems) }
 
       items.sort(function(a, b){return b.dateContentModified - a.dateContentModified})    
-
-      const displayItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
+      // const displayItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
       const visibleItems = []
-      for (const item of displayItems) {
+      for (const item of items) {
          if (viewMgr.itemThumbVisibleToUser(item)) { visibleItems.push(item) }
       }
 
-      return viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates", Route.RECENT.url + route.params.id, visibleItems)
+      const itemViewItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(visibleItems) : visibleItems
+      viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates", Route.RECENT.url + route.params.id, itemViewItems)
+      return visibleItems
    })
 
    const bypassShowUser = computed(() => username.value ? true : false)

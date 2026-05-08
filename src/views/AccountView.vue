@@ -1,5 +1,5 @@
 <template>
-   <v-card class="mt-2">
+   <v-card class="mt-2 mx-0">
       <v-tabs v-model="tab" bg-color="primary">
          <v-tab v-if="viewMgr.isDeskTop" :value="tabs.items">Items</v-tab>
          <v-tab v-if="viewMgr.isDeskTop" :value="tabs.galleries">Galleries</v-tab>

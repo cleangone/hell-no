@@ -67,7 +67,7 @@
                <span v-else-if="isRoute(Route.FAVORITES)">{{ Route.FAVORITES.display }}</span>
                <span v-else-if="isRoute(Route.RECENT)">{{ Route.RECENT.display }}</span>
                <span v-else-if="isRoute(Route.ABOUT)">{{ Route.ABOUT.display }}</span>
-               <span v-else-if="isRoute(Route.USER)">{{ userTitle }}</span>
+               <span v-else-if="isRoute(Route.USER)">{{ username }}</span>
                <span v-else-if="isRoute(Route.MESSAGE)">{{ Route.MESSAGE.display }}</span>
                <span v-else-if="isRoute(Route.ACCOUNT)" class="text-subtitle-1">{{ Route.ACCOUNT.display }}</span>
                <span v-else-if="isRoute(Route.ADMIN)"   class="text-subtitle-1">{{ Route.ADMIN.display }}</span>
@@ -180,6 +180,7 @@
    import { useDark, useToggle } from '@vueuse/core'
    import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
    import { useUserStore }    from '@/stores/userStore'
+   import { useProfileStore } from '@/stores/profileStore'
    import { useAdminStore }   from '@/stores/adminStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
@@ -198,6 +199,7 @@
    const route = useRoute()
    const router = useRouter()
    const userStore    = useUserStore()
+   const profileStore = useProfileStore()
    const adminStore   = useAdminStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
@@ -277,9 +279,10 @@
       set(index) {} 
    })
 
-   const userTitle = computed(() => {
-      const pageUser = userStore.getUser(route.params.id)
-      return pageUser ? pageUser.username : "User" 
+   const username = computed(() => {
+      let owner = userStore.getUser(route.params.id)
+      if (!owner) { owner = profileStore.getProfile(route.params.id) }
+      return owner ? owner.username : "User" 
    })
    
    const toggleSoloMode = () => {      

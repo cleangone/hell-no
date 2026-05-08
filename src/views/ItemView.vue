@@ -405,17 +405,20 @@
       for (let i=0; i<viewStoreItems.value.length; i++) {
          const viewStoreItem = viewStoreItems.value[i]
          // console.log("viewStoreItem", linkId(viewStoreItem), viewStoreItem.childNum)
-         if (linkId(viewStoreItem) == route.params.id &&
-             ((!viewStoreItem.childNum && !route.params.child) || 
-              (viewStoreItem.childNum  ==  route.params.child))) {
 
+         // can be a link to the groupItem
+         // if (linkId(viewStoreItem) == route.params.id &&
+         //     ((!viewStoreItem.childNum && !route.params.child) || 
+         //      (viewStoreItem.childNum  ==  route.params.child))) { 
+         if (viewStoreItem.id == route.params.id ||
+             viewStoreItem.linkId == route.params.id && 
+               (route.params.child == null || route.params.child == viewStoreItem.childNum)) 
+         {
+            // console.log("navItem " + viewStoreItem.name, viewStoreItem.id, viewStoreItem.childNum)
             // console.log("found navItem " + viewStoreItem.name, viewStoreItem.id, viewStoreItem.childNum)
             let prev = i > 0 ? viewStoreItems.value[i-1] : null
             let next = i < viewStoreItems.value.length - 1 ? viewStoreItems.value[i+1] : null
          
-            // console.log("prev", prev)
-            // console.log("next", next)
-
             // preload next image (prev probably already been displayed)
             if (next) { 
                if (isItemGroup(next)) {
@@ -485,17 +488,21 @@
    const scrollEndIndex = ref(0)
    const setScrollEndIndex = (startIndex) => { scrollEndIndex.value = viewStoreItems.value.length > startIndex + 2 ? startIndex + 2 : viewStoreItems.value.length } 
    
-   const initializeScrollItems = () => { 
-      if (viewStoreItems.value?.length) {
-         let startIndex = 0
+   const initializeScrollItems = () => { scrollItems.value.push(...getNewScrollItems(getScrollStartIndex())) }
+   const getScrollStartIndex = () => { 
+      if (viewStoreItems.value) { 
          for (var i=0; i<viewStoreItems.value.length; i++) { 
             const viewItem = viewStoreItems.value[i]
-            if (route.params.id == viewItem.id || route.params.id == viewItem.linkId && route.params.child == viewItem.childNum) {
-               startIndex = i + 1  // scroll starts after paramItem
+            // phasing out links to ungrouped child
+            // if (route.params.id == viewItem.id || route.params.id == viewItem.linkId && route.params.child == viewItem.childNum) {
+            if (route.params.id == viewItem.id || 
+                  route.params.id == viewItem.linkId && route.params.child == null  ||
+                  route.params.id == viewItem.linkId && route.params.child == viewItem.childNum) {
+               return i + 1  // scroll starts after paramItem
             } 
          }
-         scrollItems.value.push(...getNewScrollItems(startIndex))
       }
+      return 0
    }
    
    const getNewScrollItems = (startIndex) => { 

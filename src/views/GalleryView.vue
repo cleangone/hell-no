@@ -173,18 +173,13 @@
             const displayItem = { ...item, position: galleryItemIds.indexOf(item.id) + 1 }  
             setLocalName(displayItem) 
             displayItems.push(displayItem) 
-            // if (displayItem.childNum) { console.log("childNum", displayItem.name, displayItem.childNum) }
          }
       }
    
       displayItems.sort(function(a, b) {return a.position - b.position}) 
-      const visibleItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(displayItems) : displayItems
-      for (const item of visibleItems) {
-         setLocalName(item) 
-      }
-      
-      viewStore.setVisibleItems(ItemOrigin.GALLERY, gallery.value.name + " Gallery", Route.GALLERY.url + route.params.id, visibleItems, route.params.id)
-      return visibleItems
+      const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(displayItems) : displayItems
+      viewStore.setVisibleItems(ItemOrigin.GALLERY, gallery.value.name + " Gallery", Route.GALLERY.url + route.params.id, ungroupedItems, route.params.id)
+      return displayItems
    })
 
    const setLocalName = (displayItem) => { 

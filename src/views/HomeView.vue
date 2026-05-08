@@ -196,9 +196,8 @@
       }
 
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
-      viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates", 
-         Route.RECENT.url + (userStore.userExists ? userStore.userId : Defaults.SITE_ID), ungroupedItems)
-      return ungroupedItems
+      viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates", Route.RECENT.url + Defaults.SITE_ID, ungroupedItems)
+      return items
    })
 
    const allFavoriteItems = computed(() => {

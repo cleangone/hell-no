@@ -1,17 +1,12 @@
 /*
-   Post 1.0:
-      
+   Future: 
       - Add parallax to gallery header
-      - Deleted status, trash
       - Add all metadata to mobile ItemView 
-      - review/refactor stores, esp default returns of collection queries
-      - finish wall automation - no more set random, auto figure out rows
-      - add filter to RecentView
       - lazy loading in router - chunk retrieval errors with Admin, others
       - requiredRule does not invalidate "   "
-      - carol thumbs too wide - need largeThumb
 */
 export const versions = [    
+   ["v2.15.0", "5/8/26"],  // Mobile/xs shows grouped item thumbs
    ["v2.14.1", "5/7/26"],  // Update SearchBox css to use css vars
                            // Item thumb cannot exceed width image was resized to by extension
    ["v2.14.0", "5/6/26"],  // Add SearchBox to desktop home
