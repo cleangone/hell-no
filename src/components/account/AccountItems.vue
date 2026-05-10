@@ -11,7 +11,8 @@
             </span>
             <span v-else>
                <TextButton @click="showAddDialog=true"               text="Add Item"/>
-               <TextButton @click="showBulkUploadDialog=true"        text="Bulk Upload"/>
+               <TextButton @click="showBulkUpload=true"              text="Bulk Upload"/>
+               <TextButton @click="showManifestUpload=true"          text="Manifest Upload"/>
                <TextButton v-if="showTable" @click="showTable=false" text="View Thumbnails"/>
                <TextButton v-else @click="showTable=true"            text="View Table"/>
             </span>
@@ -72,32 +73,35 @@
    <v-dialog v-model="showAddDialog" width="auto">
       <AddItemDialog :gallery="selectedGallery" @done="showAddDialog=false"/>
    </v-dialog>
-   <v-dialog v-model="showBulkUploadDialog" width="auto">
-      <BulkUpload @done="showBulkUploadDialog=false"/>
+   <v-dialog v-model="showBulkUpload" width="auto">
+      <BulkUpload @done="showBulkUpload=false"/>
+   </v-dialog>
+   <v-dialog v-model="showManifestUpload" width="auto">
+      <ManifestUpload @done="showManifestUpload=false"/>
    </v-dialog>
    <v-dialog v-model="showEditDialog" width="auto" height="auto">
       <EditItemDialog :item="selectedItem" @done="showEditDialog=false"/>
    </v-dialog>
-   <v-dialog v-model="showCreateGroupDialog" width="auto">
+   <v-dialog v-model="showCreateGroup" width="auto">
       <GroupItems :items="selectedItems" :gallery="selectedGallery" @done="createGroupDone()"/>
    </v-dialog>
-   <v-dialog v-model="showEditSelectedDialog" width="auto">
+   <v-dialog v-model="showEditSelected" width="auto">
       <EditItemDialog :items="selectedItems" @done="editSelectedDone()"/>
    </v-dialog>
    <v-dialog v-model="showBulkEditDialog" width="auto">
       <BulkEditItems :items="selectedItems" @done="bulkEditDone()"/>
    </v-dialog>
-   <v-dialog v-model="showEditImagesDialog" width="auto">
-      <EditImages :item="selectedItem" @done="showEditImagesDialog=false"/>
+   <v-dialog v-model="showEditImages" width="auto">
+      <EditImages :item="selectedItem" @done="showEditImages=false"/>
    </v-dialog>
-   <v-dialog v-model="showEditGroupItemsDialog" width="auto">
-      <EditGroupItems :item="selectedItem" @done="showEditGroupItemsDialog=false"/>
+   <v-dialog v-model="showEditGroupItems" width="auto">
+      <EditGroupItems :item="selectedItem" @done="showEditGroupItems=false"/>
    </v-dialog>
    <v-dialog v-model="showDeleteDialog" width="auto">
       <DeleteItem :item="selectedItem" @done="showDeleteDialog=false"/>
    </v-dialog>
-   <v-dialog v-model="showDeleteSelectedDialog" width="auto">
-      <DeleteItem :items="selectedItems" @done="showDeleteSelectedDialog=false"/>
+   <v-dialog v-model="showDeleteSelected" width="auto">
+      <DeleteItem :items="selectedItems" @done="showDeleteSelected=false"/>
    </v-dialog>
 </template>
 
@@ -116,6 +120,7 @@
    import TableThumb     from '@/components/account/TableThumb.vue'
    import AddItemDialog  from '@/components/item/crud/AddItemDialog.vue'
    import BulkUpload     from '@/components/item/crud/BulkUpload.vue'
+   import ManifestUpload from '@/components/item/crud/ManifestUpload.vue'
    import EditItemDialog from '@/components/item/crud/EditItemDialog.vue'
    import GroupItems     from '@/components/item/crud/GroupItems.vue'
    import EditImages     from '@/components/item/crud/EditImages.vue'
@@ -140,16 +145,17 @@
    const profileStore = useProfileStore()
    const viewStore    = useViewStore()
    const showTable = ref(true)
-   const showAddDialog            = ref(false)
-   const showBulkUploadDialog     = ref(false)
-   const showEditDialog           = ref(false)
-   const showCreateGroupDialog    = ref(false)
-   const showEditSelectedDialog   = ref(false)
-   const showBulkEditDialog       = ref(false)
-   const showEditImagesDialog     = ref(false)
-   const showEditGroupItemsDialog = ref(false)
-   const showDeleteDialog         = ref(false)
-   const showDeleteSelectedDialog = ref(false)
+   const showAddDialog       = ref(false)
+   const showBulkUpload      = ref(false)
+   const showManifestUpload  = ref(false)
+   const showEditDialog      = ref(false)
+   const showCreateGroup     = ref(false)
+   const showEditSelected    = ref(false)
+   const showBulkEditDialog  = ref(false)
+   const showEditImages      = ref(false)
+   const showEditGroupItems  = ref(false)
+   const showDeleteDialog    = ref(false)
+   const showDeleteSelected  = ref(false)
    const selectedItem = ref({})
    const selectedItemIds = ref([])
    const selectedItems = ref([])
@@ -309,17 +315,17 @@
 
    const thumbClicked   = (item) => { isItemGroup(item) ? editGroupItems(item) : editImages(item) }
    const editItem       = (item) => { showItemDialog(item, showEditDialog) }
-   const editImages     = (item) => { showItemDialog(item, showEditImagesDialog) }
-   const editGroupItems = (item) => { showItemDialog(item, showEditGroupItemsDialog) }
+   const editImages     = (item) => { showItemDialog(item, showEditImages) }
+   const editGroupItems = (item) => { showItemDialog(item, showEditGroupItems) }
    const deleteItem     = (item) => { showItemDialog(item, showDeleteDialog) }
    const showItemDialog = (item, showDialog) => {
       selectedItem.value = item
       showDialog.value = true
    }
 
-   const groupItems    = () => { showItemsDialog(showCreateGroupDialog) }
-   const editItems     = () => { showItemsDialog(showEditSelectedDialog) }
-   const deleteItems   = () => { showItemsDialog(showDeleteSelectedDialog) }
+   const groupItems    = () => { showItemsDialog(showCreateGroup) }
+   const editItems     = () => { showItemsDialog(showEditSelected) }
+   const deleteItems   = () => { showItemsDialog(showDeleteSelected) }
    const bulkEditItems = () => { showItemsDialog(showBulkEditDialog) }
    const showItemsDialog = (showDialog) => {
       selectedItems.value = []
@@ -329,8 +335,8 @@
       showDialog.value = true
    }
 
-   const editSelectedDone = () => { selectedItemsActionDone(showEditSelectedDialog) }
-   const createGroupDone  = () => { selectedItemsActionDone(showCreateGroupDialog) }
+   const editSelectedDone = () => { selectedItemsActionDone(showEditSelected) }
+   const createGroupDone  = () => { selectedItemsActionDone(showCreateGroup) }
    const bulkEditDone     = () => { selectedItemsActionDone(showBulkEditDialog) }
    const selectedItemsActionDone = (showDialog) => {
       showDialog.value = false

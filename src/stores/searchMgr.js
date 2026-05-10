@@ -5,7 +5,6 @@ import { AlgoliaConfig } from '@/config/config'
 import { useItemStore }  from '@/stores/itemStore'
 import { useViewStore }  from '@/stores/viewStore'
 import { isPublic }      from '@/utils/utils' 
-import { ItemOrigin, Route } from '@/utils/constants'
    
 export const useSearchMgr = defineStore('searchMgr', () => {   
    const searchClient = algoliasearch(AlgoliaConfig.applicationId, AlgoliaConfig.searchApiKey)
