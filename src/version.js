@@ -6,6 +6,8 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.16.1", "5/10/26"], // AccountGalleryItems can reorder items after sort
+                           // Manifest Upload into a gallery
    ["v2.16.0", "5/9/26"],  // Initial Manifest Upload
    ["v2.15.0", "5/8/26"],  // Mobile/xs shows grouped item thumbs
    ["v2.14.1", "5/7/26"],  // Update SearchBox css to use css vars

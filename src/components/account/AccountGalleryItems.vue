@@ -4,7 +4,8 @@
          <a @click="$emit(Emit.DONE)">{{ isMyGallery ? "Galleries": "My ContributingGalleries" }}</a> > {{ gallery.name }}
          <EditButton v-if="isMyGallery" @click="showEditGalleryDialog=true"/>
          <TextButton v-if="!selectedItemIds.length" @click="showAddItemDialog=true" text="Add Item"/>
-         <TextButton v-if="isMyGallery && !selectedItemIds.length" @click="showBulkUploadDialog=true" text="Bulk Upload"/>
+         <TextButton v-if="isMyGallery && !selectedItemIds.length" @click="showBulkUpload=true"     text="Bulk Upload"/>
+         <TextButton v-if="isMyGallery && !selectedItemIds.length" @click="showManifestUpload=true" text="Manifest Upload"/>
          <TextButton v-if="selectedItemIds.length"  @click="editItems()"     text="Edit Selected"/>
          <TextButton v-if="selectedItemIds.length"  @click="bulkEditItems()" text="Bulk Edit"/>
          <TextButton v-if="selectedItemIds.length"  @click="groupItems()"    text="Group Items"/>
@@ -14,7 +15,20 @@
 
       <v-data-table v-if="viewTable" v-model="selectedItemIds" :headers="itemHeaders" 
             :items="galleryDisplayItems" item-key="id" :custom-key-sort="customKeySort" 
-            :show-select="isMyGallery" :item-selectable="item => item.isMyItem">
+            :show-select="isMyGallery" :item-selectable="item => item.isMyItem"
+            @update:currentItems="handleTableUpdate">
+         <template v-slot:header.position="{ }">
+            <div v-if="canReorder" class="d-flex justify-center align-center">
+               <v-tooltip interactive >
+                  <template v-slot:activator="{ props: activatorProps }">
+                     <Icon icon="mdi-database" @click.stop="reorderItems()" v-bind="activatorProps"/>
+                  </template>
+                  <div class="d-flex justify-center align-center"> 
+                     <slot>Save new order</slot>
+                  </div>
+               </v-tooltip>    
+            </div>
+         </template>
          <template v-slot:item.position="{ item }">
             <div v-if="!isHidden(item)">{{ item.position }}</div>
          </template>
@@ -59,8 +73,11 @@
    <v-dialog v-model="showAddItemDialog" width="auto">
       <AddItemDialog :gallery="gallery"  @done="showAddItemDialog=false"/>
    </v-dialog>
-   <v-dialog v-model="showBulkUploadDialog" width="auto">
-      <BulkUpload :gallery="gallery" @done="showBulkUploadDialog=false"/>
+   <v-dialog v-model="showBulkUpload" width="auto">
+      <BulkUpload :gallery="gallery" @done="showBulkUpload=false"/>
+   </v-dialog>
+    <v-dialog v-model="showManifestUpload" width="auto">
+      <ManifestUpload :gallery="gallery" @done="showManifestUpload=false"/>
    </v-dialog>
    <v-dialog v-model="showEditItemDialog" width="auto">
       <EditItemDialog :item="selectedItem" @done="showEditItemDialog=false"/>
@@ -92,14 +109,17 @@
    import RemoveItem      from '@/components/gallery/RemoveItem.vue'
    import AddItemDialog   from '@/components/item/crud/AddItemDialog.vue'
    import BulkUpload      from '@/components/item/crud/BulkUpload.vue'
+   import ManifestUpload  from '@/components/item/crud/ManifestUpload.vue'
    import EditItemDialog  from '@/components/item/crud/EditItemDialog.vue'
    import BulkEditItems   from '@/components/item/crud/BulkEditItems.vue'
    import GroupItems      from '@/components/item/crud/GroupItems.vue'
    import EditButton      from '@/components/util/EditButton.vue'
+   import Icon            from '@/components/util/Icon.vue'
    import IconButton      from '@/components/util/IconButton.vue'
    import TextButton      from '@/components/util/TextButton.vue'
+   import ToolTip         from '@/components/util/ToolTip.vue'
    import { isHidden } from '@/utils/utils'
-   import { Emit, ItemOrigin, Route } from '@/utils/constants'
+   import { Defaults, Emit, ItemOrigin, Route } from '@/utils/constants'
    
    const THUMB_HEIGHT = 200
 
@@ -112,7 +132,8 @@
    const viewStore    = useViewStore()
    const showEditGalleryDialog = ref(false)
    const showAddItemDialog     = ref(false)
-   const showBulkUploadDialog  = ref(false)
+   const showBulkUpload        = ref(false)
+   const showManifestUpload    = ref(false)
    const showEditItemDialog    = ref(false)
    const showEditItemsDialog   = ref(false)
    const showGroupItemsDialog  = ref(false)
@@ -126,6 +147,7 @@
 
     const itemHeaders = computed(() => { 
       const headers = [
+         { title: 'ID',      key: 'id',                   align: ' d-none' }, // hide column, keep data
          { title: '',            value: 'position',       align: 'center', sortable: true },
          { title: 'Name',        value: 'name',                            sortable: true },
          { title: 'Image',       value: 'image',          align: 'center' },
@@ -134,7 +156,7 @@
          { title: 'Modified',    value: 'dateModified',   align: 'center', sortable: true },
       ]
       if (ownerExists.value) { headers.push({ title: 'Owner', value: 'ownerUsername', align: 'center' })}
-      headers.push({ title: '', key: "actions" })
+      headers.push({ title: '', key: "actions", sortable: false })
       return headers
    })
 
@@ -167,7 +189,31 @@
       return false
    })
 
-  const galleryThumbItems = computed({ 
+   // -- Reorder item position based on current table order 
+   const currTableRows = ref([])
+   const handleTableUpdate = (tableRows) => { currTableRows.value = tableRows }
+   const canReorder = computed(() => {
+      if (currTableRows.value.length != galleryDisplayItems.value.length) { return false }
+
+      let prevPosition = 0
+      for (const currRow of currTableRows.value) {
+         if (currRow.columns.position) {
+            if (currRow.columns.position < prevPosition) { return true }
+            prevPosition = currRow.columns.position
+         }
+      }
+      return false
+   })
+   const reorderItems = () => { 
+      const galleryItemIds = currTableRows.value.map(a => a.columns.id)
+      console.log("galleryItemIds", galleryItemIds)
+      galleryStore.updateGallery({
+         id: props.galleryId,
+         itemIds: galleryItemIds
+      })
+   }
+   
+   const galleryThumbItems = computed({ 
       get() {
          groupedGalleryItemIds.value = []
          const displayItems = []
@@ -196,7 +242,7 @@
 
       const aspectRatio = itemMgr.itemAspectRatio(item)
       const targetWidth = Math.round(THUMB_HEIGHT * aspectRatio)
-      return targetWidth.toString()
+      return targetWidth > Defaults.MAX_THUMB_SIDE ? Defaults.MAX_THUMB_SIDE : targetWidth
    }
 
    const groupWidth = (item) => { 

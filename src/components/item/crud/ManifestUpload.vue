@@ -51,22 +51,24 @@
    import { storage } from '@/firebase'
    import { ref as storageRef } from 'firebase/storage'
    import { uploadBytesResumable, getDownloadURL } from 'firebase/storage'
-   import { useUserStore }  from '@/stores/userStore'
-   import { useItemStore }  from '@/stores/itemStore'
-   import { useItemMgr }    from '@/stores/itemMgr'
-   import { useArtistMgr }  from '@/stores/artistMgr'
+   import { useUserStore }    from '@/stores/userStore'
+   import { useItemStore }    from '@/stores/itemStore'
+   import { useItemMgr }      from '@/stores/itemMgr'
+   import { useGalleryStore } from '@/stores/galleryStore'
+   import { useArtistMgr }    from '@/stores/artistMgr'
    import TextButton from '@/components/util/TextButton.vue'
    import { dateUuid } from '@/utils/utils'
    import { Emit, ImageType, ItemType, State } from '@/utils/constants'
    
-   const props = defineProps({ userId: String })
+   const props = defineProps({ gallery: Object, userId: String })
    const emit  = defineEmits([ Emit.DONE ])
    
    const { open:openManifest, onChange:onManifestChange } = useFileDialog({ accept: 'text/*',  multiple: false })
-   const userStore = useUserStore()
-   const itemStore = useItemStore()   
-   const itemMgr   = useItemMgr()
-   const artistMgr = useArtistMgr()
+   const userStore    = useUserStore()
+   const itemStore    = useItemStore()   
+   const itemMgr      = useItemMgr()
+   const galleryStore = useGalleryStore()
+   const artistMgr    = useArtistMgr()
    const uploadFilename  = ref('')
    const uploadStatus    = ref('')
    const uploadFileIndex = ref(0)
@@ -188,12 +190,16 @@
                // successful upload
                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                   uploadContainer.item.primaryImage.url = downloadURL
+                  const galleryIds = props.gallery ? [props.gallery.id] : []
+                  console.log("galleryIds", galleryIds)
+
+
                   const manifest = fileNameToManifest.value.get(uploadContainer.uploadFile.filename)
                   const newItem = { 
                      id: uploadContainer.item.id,
                      name: manifest ? manifest.title: uploadContainer.uploadFile.filename,
                      userId: userId.value,
-                     galleryIds: [],
+                     galleryIds: galleryIds,
                      primaryImage:  uploadContainer.item.primaryImage,
                      type: ItemType.SINGLE,
                      state: State.PRIVATE,
@@ -211,6 +217,18 @@
                      }
                   }
                   itemStore.setItem(newItem)
+
+                  if (props.gallery) {
+                     // add new item at front of gallery
+                     const itemIds = [ newItem.id ]
+                     if (props.gallery.itemIds ) { itemIds.push(...props.gallery.itemIds) }
+                     console.log("gallery.itemIds", itemIds)
+                     galleryStore.updateGallery({
+                        id: props.gallery.id,
+                        itemIds: itemIds,
+                     })
+                  }
+
                   resolve() // resolve promise
                })
             }
