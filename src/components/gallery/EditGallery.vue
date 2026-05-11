@@ -24,7 +24,10 @@
             <div class="pt-2 pb-1 text-caption text-grey-darken-1">Description</div>
             <EditHtml :contentContainer="galleryDescContainer"/>
          </div>
-         <v-checkbox v-model="descInHeader" label="Position description inside bottom of header image" class="ms-n1 mt-n2 tight-checkbox"/> 
+         <v-row >
+            <v-col cols="8"><v-checkbox v-model="descInHeader" label="Place description inside bottom/right of header image" class="ms-n1 mt-n2 tight-checkbox"/></v-col> 
+            <v-col><v-text-field v-if="descInHeader" v-model="descHeaderPct" label="Width in header" suffix="%" type="number" class="mt-1"/></v-col>
+         </v-row>
          <v-checkbox v-model="useAltItemName" label="Use Item Alternate Name, if set, for Thumbnail" class="ms-n2 mt-2 tight-checkbox"/> 
          <v-checkbox v-model="useLocalItemName" label="Localize Item Name in Thumbnail" class="ms-n2 tight-checkbox"/> 
          <v-row v-if="useLocalItemName" class="mt-3">
@@ -60,13 +63,14 @@
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
    const profileStore = useProfileStore()
-   const galleryName = ref('')
-   const galleryTag = ref('')
+   const galleryName  = ref('')
+   const galleryTag   = ref('')
    const galleryState = ref('')
    const galleryDescContainer = ref({ content: "" })
    const galleryProfileId = ref(null)
    const galleryContributorIds = ref(null)
-   const descInHeader = ref(false)
+   const descInHeader  = ref(false)
+   const descHeaderPct = ref(60)
    const childGalleries = ref([])
    const itemThumbPrefix = ref('')
    const itemThumbPrefixReplace = ref('')
@@ -82,6 +86,7 @@
       galleryContributorIds.value  = props.gallery.contributorIds ? props.gallery.contributorIds : null
       galleryDescContainer.value.content = props.gallery.desc ? props.gallery.desc : ""
       descInHeader.value     = props.gallery.descInHeader     ? props.gallery.descInHeader     : false
+      descHeaderPct.value    = props.gallery.descHeaderPct    ? props.gallery.descHeaderPct    : 60
       useAltItemName.value   = props.gallery.useAltItemName   ? props.gallery.useAltItemName   : false
       useLocalItemName.value = props.gallery.useLocalItemName ? props.gallery.useLocalItemName : false
       itemThumbPrefix.value         = props.gallery.itemThumbPrefix        ? props.gallery.itemThumbPrefix : ""
@@ -178,6 +183,7 @@
          contributorIds: galleryContributorIds.value,
          desc: galleryDescContainer.value.content,
          descInHeader:     descInHeader.value,
+         descHeaderPct:    descHeaderPct.value,
          useAltItemName:   useAltItemName.value,
          useLocalItemName: useLocalItemName.value,
          itemThumbPrefix:  itemThumbPrefix.value,
