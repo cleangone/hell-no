@@ -25,8 +25,8 @@
       </span>
       <ReuseTemplate/>
    </div>
-   <div v-else-if="headerImage">
-      <!-- ugly cut & paste fm below -->
+   <div v-else-if="headerImage"> 
+      <!-- title - background image starts to below header (ugly cut & paste fm below) -->
       <v-container class="mt-4 pa-0 pb-3 width-100">
          <v-row no-gutters class="d-flex align-center flex-nowrap">
             <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
@@ -45,25 +45,27 @@
             <RouterLink v-else :to="Route.GALLERIES.url + galleriesLinkId">Galleries</RouterLink>
          </span>
       </v-container>
+      <!-- header -->
       <div class="bg-white mb-20"> 
          <RouterLink :to="itemMgr.itemURL(headerImage.itemId, ItemOrigin.GALLERY)">
             <v-img :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" cover>
                <div v-if="descExists && descInHeader" class="pa-1 d-flex fill-height align-end justify-end">
-                  <div v-html="gallery.desc" class="text-left desc-header-div bg-white" :style="headerDescStyle"></div>   
+                  <div v-html="gallery.desc" class="text-left desc-header-div" :style="headerDescStyle"></div>   
                </div>
             </v-img>
          </RouterLink>
       </div>  
+      <!-- background image below content -->
       <div :style="contentStyle" class="content-wrapper">
          <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
          <div class="content">
-<div style="clear:both"></div>   
+         <div style="clear:both"></div>
          <ReuseTemplate/>
          </div>
       </div>
-    
    </div>
    <div v-else :style="contentStyle" class="content-wrapper mt-1">
+      <!-- background image below title and content -->
       <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
       <div class="content">
          <v-container class="mt-4 pa-0 pb-3 width-100">
@@ -88,41 +90,6 @@
          <ReuseTemplate/>
       </div>
    </div>
-
-   <!-- <div v-else :style="contentStyle" class="content-wrapper">
-      <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
-      <div class="content">
-         <v-container class="mt-4 pa-0 pb-3 width-100">
-            <v-row no-gutters class="d-flex align-center flex-nowrap">
-               <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
-               <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
-                  <span class="title">{{ gallery.name }} Gallery</span>
-               </v-col>
-               <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
-                  <ExpandItems :items="galleryItems" buttonClass="mr-n2"/>
-                  <CopyLink :route="Route.GALLERY.name" :id="galleryId"/>
-                  <ItemThumbConfig/>
-                  <EditButton v-if="canEdit" @click="showEditGalleryDialog=true" class="mx-n2"/>
-               </v-col>
-            </v-row>
-            <span style="text-align:center">
-               <RouterLink v-if="gallery.parentGalleryId" :to="Route.GALLERY.url + gallery.parentGalleryId">{{ parentGalleryName }} Gallery</RouterLink>
-               <RouterLink v-else :to="Route.GALLERIES.url + galleriesLinkId">Galleries</RouterLink>
-            </span>
-         </v-container>
-         <div style="clear:both"></div>   
-         <div v-if="headerImage" class="bg-white mb-20"> 
-            <RouterLink :to="itemMgr.itemURL(headerImage.itemId, ItemOrigin.GALLERY)">
-               <v-img :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" cover>
-                  <div v-if="descExists && descInHeader" class="pa-1 d-flex fill-height align-end justify-end">
-                     <div v-html="gallery.desc" class="text-left desc-header-div bg-white" :style="headerDescStyle"></div>   
-                  </div>
-               </v-img>
-            </RouterLink>
-         </div>   
-         <ReuseTemplate/> 
-      </div>
-   </div> -->
 
    <ItemPopup v-if="headerPopup" :popupImage="headerPopup"/>
 
@@ -294,7 +261,8 @@
    border: 2px solid rgb(179, 177, 177);
    border-radius: 5px;
    padding: 10px; 
-   width: 75%;
+   background-color: var(--color-header-text-background);
+   color: black;
 }
 .content-wrapper {
   overflow: hidden;
