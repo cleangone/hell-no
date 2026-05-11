@@ -69,6 +69,7 @@
                <span v-else-if="isRoute(Route.ABOUT)">{{ Route.ABOUT.display }}</span>
                <span v-else-if="isRoute(Route.USER)">{{ username }}</span>
                <span v-else-if="isRoute(Route.MESSAGE)">{{ Route.MESSAGE.display }}</span>
+               <span v-else-if="isRoute(Route.LOGIN)">{{ Route.LOGIN.display }}</span>
                <span v-else-if="isRoute(Route.ACCOUNT)" class="text-subtitle-1">{{ Route.ACCOUNT.display }}</span>
                <span v-else-if="isRoute(Route.ADMIN)"   class="text-subtitle-1">{{ Route.ADMIN.display }}</span>
                <span v-else-if="isRoute(Route.ADD_ITEM)">Add Item</span>

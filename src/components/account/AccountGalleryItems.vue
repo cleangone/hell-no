@@ -17,16 +17,15 @@
             :items="galleryDisplayItems" item-key="id" :custom-key-sort="customKeySort" 
             :show-select="isMyGallery" :item-selectable="item => item.isMyItem"
             @update:currentItems="handleTableUpdate">
-         <template v-slot:header.position="{ }">
-            <div v-if="canReorder" class="d-flex justify-center align-center">
-               <v-tooltip interactive >
-                  <template v-slot:activator="{ props: activatorProps }">
-                     <Icon icon="mdi-database" @click.stop="reorderItems()" v-bind="activatorProps"/>
-                  </template>
-                  <div class="d-flex justify-center align-center"> 
-                     <slot>Save new order</slot>
-                  </div>
-               </v-tooltip>    
+         <template v-slot:header.position="{ column, getSortIcon }">
+            <div class="d-inline-flex align-center text-no-wrap">
+               <div v-if="canReorder" class="d-flex justify-center align-center">
+                  <ToolTipFull>
+                     <template #tip>Save new Item order</template>
+                     <Icon icon="mdi-database" @click.stop="reorderItems()"/>
+                  </ToolTipFull>
+               </div>
+               <v-icon class="v-data-table-header__sort-icon" :icon="getSortIcon(column)" />
             </div>
          </template>
          <template v-slot:item.position="{ item }">
@@ -117,7 +116,7 @@
    import Icon            from '@/components/util/Icon.vue'
    import IconButton      from '@/components/util/IconButton.vue'
    import TextButton      from '@/components/util/TextButton.vue'
-   import ToolTip         from '@/components/util/ToolTip.vue'
+   import ToolTipFull     from '@/components/util/ToolTipFull.vue'
    import { isHidden } from '@/utils/utils'
    import { Defaults, Emit, ItemOrigin, Route } from '@/utils/constants'
    

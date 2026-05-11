@@ -28,7 +28,8 @@
                </v-row>
                <v-row class="mt-n5">        
                   <v-col cols="8"><v-combobox v-model="artistOption" label="Artist" :items="artistOptions" clearable compact class="ms-2"/></v-col>
-                   <v-col><v-text-field v-model="currYearCreated" label="Year Created" :rules="optionalYearRule"/></v-col>
+                  <!-- <v-col><v-text-field v-model="currYearCreated" label="Year Created" :rules="optionalYearRule"/></v-col> -->
+                  <v-col><v-text-field v-model="currYearCreated" label="Year Created"/></v-col>
                </v-row>
             </v-col>
             <v-col>

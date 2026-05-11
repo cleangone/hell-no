@@ -1,19 +1,18 @@
 <template>
    <v-tooltip interactive >
       <template v-slot:activator="{ props: activatorProps }">
-         <IconButton icon="mdi-information-outline" v-bind="activatorProps" :class="iconClass"/>
+         <div v-bind="activatorProps">
+            <slot></slot>
+         </div>
       </template>
       <div class="d-flex justify-center align-center"> 
-         <slot>ToolTip Text</slot>
+         <slot name="tip"></slot>
       </div>
-   </v-tooltip>            
+   </v-tooltip>
 </template>
 
 <script setup>
    import { computed, ref } from 'vue'
-   import IconButton from '@/components/util/IconButton.vue'
-   
-   const props = defineProps({ iconClass: String })
 </script>
 
 <style>
