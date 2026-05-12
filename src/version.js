@@ -6,7 +6,9 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
-   ["v2.17.0", "5/11/26"], // Add Forgot Password to LoginView
+   ["v2.18.0", "5/11/26"], // Manifest upload optionally creates new gallery
+                           // Add gallery header max height
+   ["v2.17.0", "5/10/26"], // Add Forgot Password to LoginView
    ["v2.16.1", "5/10/26"], // AccountGalleryItems can reorder items after sort
                            // Manifest Upload into a gallery
    ["v2.16.0", "5/9/26"],  // Initial Manifest Upload

@@ -1,15 +1,11 @@
 <template>
    <DefineTemplate>
       <v-container style="width: 100%" class="mt-3">
-         <v-row v-if="hasChildGalleries || descExists">
-            <v-col v-if="hasChildGalleries" class="d-flex flex-grow-1 flex-shrink-1" >
-               <v-row justify="space-around" class="mt-1"> 
-                  <GalleryThumb v-for="gallery in childThumbGalleries" :key="gallery.id" :gallery="gallery"/>
-               </v-row>
-            </v-col>
-            <v-col v-if="descExists && !descInHeader" cols="6" class="d-flex flex-grow-1 flex-shrink-1">
-               <div v-html="gallery.desc" class="mb-1 text-left desc-div bg-white"></div>   
-            </v-col>
+          <v-row v-if="descExists && !descInHeader" cols="6" class="d-flex flex-grow-1 flex-shrink-1">
+            <div v-html="gallery.desc" class="mb-1 text-left desc-div bg-white"></div>   
+         </v-row>
+         <v-row v-if="hasChildGalleries" justify="space-around" class="mt-1"> 
+            <GalleryThumb v-for="gallery in childThumbGalleries" :key="gallery.id" :gallery="gallery"/>
          </v-row>
          <v-row justify="space-around" class="pt-4">
             <ItemThumb v-for="item in galleryItems" :key="item.id" :item="item" :origin="ItemOrigin.GALLERY"
@@ -26,7 +22,7 @@
       <ReuseTemplate/>
    </div>
    <div v-else-if="headerImage"> 
-      <!-- title - background image starts to below header (ugly cut & paste fm below) -->
+      <!-- title - background image starts to below header -->
       <v-container class="mt-4 pa-0 pb-3 width-100">
          <v-row no-gutters class="d-flex align-center flex-nowrap">
             <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
@@ -46,15 +42,15 @@
          </span>
       </v-container>
       <!-- header -->
-      <div class="bg-white mb-20"> 
+      <div class="bg-white mb-20">
          <RouterLink :to="itemMgr.itemURL(headerImage.itemId, ItemOrigin.GALLERY)">
-            <v-img :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" cover>
+            <v-img :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" cover max-height="400">
                <div v-if="descExists && descInHeader" class="pa-1 d-flex fill-height align-end justify-end">
                   <div v-html="gallery.desc" class="text-left desc-header-div" :style="headerDescStyle"></div>   
                </div>
             </v-img>
          </RouterLink>
-      </div>  
+      </div> 
       <!-- background image below content -->
       <div :style="contentStyle" class="content-wrapper">
          <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
@@ -65,7 +61,7 @@
       </div>
    </div>
    <div v-else :style="contentStyle" class="content-wrapper mt-1">
-      <!-- background image below title and content -->
+      <!-- background image below title and content (ugly cut & paste) -->
       <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
       <div class="content">
          <v-container class="mt-4 pa-0 pb-3 width-100">

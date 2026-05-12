@@ -3,6 +3,7 @@
       <div class="text-h5">
          {{ showMyGalleries ?  "Galleries" : "My Contributing Galleries"  }}
          <TextButton v-if="showMyGalleries" @click="showAddGalleryDialog=true" text="Add Gallery"/>
+         <TextButton v-if="showMyGalleries" @click="showManifestUpload=true"   text="Manifest Upload"/>      
          <TextButton v-if="showMyGalleries && galleryStore.myContributingGalleriesExist" @click="showMyGalleries=false" text="View My Contributing Galleries"/>
          <TextButton v-if="!showMyGalleries" @click="showMyGalleries=true" text="View My Galleries"/>
       </div>
@@ -50,6 +51,9 @@
    <v-dialog v-model="showAddGalleryDialog" width="auto">
       <AddGallery :userId="userStore.userId" @done="showAddGalleryDialog=false"/>
    </v-dialog>
+    <v-dialog v-model="showManifestUpload" width="auto">
+      <ManifestUpload @done="showManifestUpload=false"/>
+   </v-dialog>
    <v-dialog v-model="showEditGalleryDialog" width="75%" height="90%">
       <EditGalleryCard :gallery="selectedGallery" :editImages="showEditImages" @done="showEditGalleryDialog=false"/>
    </v-dialog>
@@ -67,10 +71,11 @@
    import AddGallery          from '@/components/gallery/AddGallery.vue'
    import EditGalleryCard     from '@/components/gallery/EditGalleryCard.vue'
    import DeleteGallery       from '@/components/gallery/DeleteGallery.vue'
-   import EditButton   from '@/components/util/EditButton.vue'
-   import DeleteButton from '@/components/util/DeleteButton.vue'
-   import IconButton   from '@/components/util/IconButton.vue'
-   import TextButton   from '@/components/util/TextButton.vue'
+   import EditButton          from '@/components/util/EditButton.vue'
+   import DeleteButton        from '@/components/util/DeleteButton.vue'
+   import IconButton          from '@/components/util/IconButton.vue'
+   import TextButton          from '@/components/util/TextButton.vue'
+   import ManifestUpload      from '@/components/item/crud/ManifestUpload.vue'
    import { ImageType } from '@/utils/constants'
    import { removeArrayEntry } from '@/utils/utils'
    
@@ -79,6 +84,7 @@
    const profileStore = useProfileStore()
    const showMyGalleries = ref(true)
    const showAddGalleryDialog = ref(false)
+   const showManifestUpload   = ref(false)
    const showEditGalleryDialog = ref(false)
    const showDeleteGalleryDialog = ref(false)
    const showGalleries = ref(true)

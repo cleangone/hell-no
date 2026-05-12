@@ -1,43 +1,45 @@
 <template>
-   <v-card title="Manifest Upload" class="upload-dialog">
-      <v-container>
-         <v-row>
-            <v-col v-if="filesExist" class="text-center">
-               <v-img :src="fileUrl" width="200"/>
-               <div> {{ fileName  }}</div>
-               <TextButton v-if="filesExist" @click="removeFile()" text="Remove from upload"></TextButton>
-            </v-col>
-            <v-col>
-               <div class="mb-3">
-                  <v-btn  @click="openManifest()" flat class="artist-sm-btn">
-                     Open Manifest
-                  </v-btn>
-                  {{ manifestFileName }}   
-                  <div v-if="unknownManifestArtists">
-                     <div class="artist-title">Unknown Artists</div>
-                     <v-row v-for="artist in unknownManifestArtists" :key="artist"  no-gutters dense>
-                        <v-col class="ml-10">{{ artist }}</v-col>
-                        <v-col><TextButton @click="addArtist(artist)" text="Add"/></v-col>
-                     </v-row> 
-                  </div>              
-               </div>
-
-               <input multiple @change="handleFileChange" type="file" id="fileInput" />
-               <div v-if="filesExist" class="mt-10"> 
-                  {{ uploadFiles.length }} {{ uploadFiles.length > 1 ? "Files" : "File" }} to upload
-               </div>
-               <div v-if="filesExist" >
-                  <TextButton @click="prev()" text="Prev" :disabled="!prevFileExists" ></TextButton>
-                  <TextButton @click="next()" text="Next" :disabled="!nextFileExists"></TextButton>
-               </div>
-               <v-card-text>
-                  <div>{{ uploadFilename }}</div>
-                  <div>{{ uploadStatus }}</div>
-               </v-card-text>
-            </v-col>
-         </v-row>
+   <v-card :title="isNewGallery?'Manifest Upload to New Gallery':'Manifest Upload'" class="upload-dialog">
+      <div class="horizontal-container px-2">
+         <div class="pr-2">
+            <v-btn @click="openManifest()" flat class="artist-sm-btn">Open Manifest</v-btn>
+         </div>
+         <div v-if="manifestFileName.length" class="mt-n2">
+            <div>{{ manifestFileName }}</div>
+            <div v-if="isNewGallery && manifestGallery">Gallery: {{ manifestGallery.title }}</div>
+            <div class="mt">{{ manifestItems.length }} Items</div>
+         </div>
+         <div v-else class="mt-1">Upload a .json manifest file</div>
+      </div>
+      <v-container v-if="unknownManifestArtists">
+         <div class="manifest-upload-title">Unknown Artists</div>
+         <v-row v-for="artist in unknownManifestArtists" :key="artist"  no-gutters dense>
+            <v-col class="ml-10">{{ artist }}</v-col>
+            <v-col><TextButton @click="addArtist(artist)" text="Add"/></v-col>
+         </v-row> 
       </v-container>
-      
+      <div class="px-2 pt-4">
+         <input multiple @change="handleFileChange" type="file" id="fileInput" />
+      </div>
+      <div v-if="filesExist" class="horizontal-container px-2 pt-4">
+         <div class="d-flex flex-column align-center">
+            <div><v-img :src="fileUrl" width="200"/></div>
+            <div>{{ fileName  }}</div>
+            <div><TextButton v-if="filesExist" @click="removeFile()" text="Remove from upload"></TextButton></div>
+         </div>
+         <div class="ml-10">
+            <div>{{ uploadFiles.length }} {{ uploadFiles.length > 1 ? "Files" : "File" }} to upload</div>
+            <div>
+               <TextButton @click="prev()" text="Prev" :disabled="!prevFileExists" ></TextButton>
+               <TextButton @click="next()" text="Next" :disabled="!nextFileExists"></TextButton>
+            </div>
+
+            <div v-if="isUploading" class="manifest-upload-title mt-3">Uploading Files</div>
+            <div>{{ uploadFilename }}</div>
+            <div>{{ uploadStatus }}</div>
+         </div>
+      </div>
+
       <v-card-actions class="justify-end">
          <v-btn color="primary" @click="uploadAllFiles()" :disabled="!filesExist">Upload files</v-btn>
          <v-btn color="primary" @click="$emit('done')">Cancel</v-btn>
@@ -63,18 +65,20 @@
    const props = defineProps({ gallery: Object, userId: String })
    const emit  = defineEmits([ Emit.DONE ])
    
-   const { open:openManifest, onChange:onManifestChange } = useFileDialog({ accept: 'text/*',  multiple: false })
+   const { open:openManifest, onChange:onManifestChange } = useFileDialog({ accept: '.json',  multiple: false })
    const userStore    = useUserStore()
    const itemStore    = useItemStore()   
    const itemMgr      = useItemMgr()
    const galleryStore = useGalleryStore()
    const artistMgr    = useArtistMgr()
-   const uploadFilename  = ref('')
-   const uploadStatus    = ref('')
-   const uploadFileIndex = ref(0)
+   const uploadFilename   = ref('')
+   const uploadStatus     = ref('')
+   const uploadFileIndex  = ref(0)
    const manifestFileName = ref('')
    const manifestContents = ref('')
-   const uploadFiles = ref([])
+   const isUploading      = ref(false)
+   const newGalleryId     = ref(null)
+   const uploadFiles      = ref([])
    const manifestArtistToArtist = new Map()
 
    const userId = computed(() => props.userId ? props.userId : userStore.userId)
@@ -85,12 +89,17 @@
 
       const file = selectedFiles[0]
       manifestFileName.value = file.name
-         
+
       const reader = new FileReader()
       reader.onload = (e) => { manifestContents.value = e.target.result }
       reader.readAsText(file) // text/json
    })
 
+   const isNewGallery = computed(() => props.gallery ? false : true)
+   const manifestJson    = computed(() => manifestContents.value ? JSON.parse(manifestContents.value) : null)
+   const manifestGallery = computed(() => manifestJson.value ? manifestJson.value.gallery : null)
+   const manifestItems   = computed(() => manifestJson.value ? manifestJson.value.items : [])
+   
    // image file upload
    const handleFileChange = (e) => {
       uploadFileIndex.value = 0
@@ -102,8 +111,6 @@
       }
    }
 
-   const manifestItems = computed(() => { return manifestContents.value ? JSON.parse(manifestContents.value) : [] })
-  
    const fileNameToManifest = computed(() => { 
       const map = new Map()
       for (const manifestItem of manifestItems.value) {
@@ -147,6 +154,22 @@
 
    // upload files synchronously so people can have fun watching the pct numbers
    const uploadAllFiles = async () => {
+      isUploading.value = true
+
+      // create gallery if necc
+      const desc = manifestGallery.value.desc?.length ?  manifestGallery.value.desc : ""
+      if (isNewGallery.value) {
+         newGalleryId.value = galleryStore.addGallery({
+            name: manifestGallery.value.title,
+            desc: desc,
+            userId: userId.value,
+            state: State.PRIVATE,
+            itemIds: [],
+            groupIds: []
+         })
+      }
+      console.log("Created new gallery", newGalleryId.value)
+
       const uploadContainers = []
       for (const [index, uploadFile] of uploadFiles.value.entries()) {
          uploadFileIndex.value = index // show file in being uploaded
@@ -162,7 +185,6 @@
             getThumbUrls(uploadContainer) 
          }
       }, 10000)
-
       
       emit(Emit.DONE)
    }
@@ -190,16 +212,16 @@
                // successful upload
                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                   uploadContainer.item.primaryImage.url = downloadURL
-                  const galleryIds = props.gallery ? [props.gallery.id] : []
-                  console.log("galleryIds", galleryIds)
 
+                  const galleryId = props.gallery ? props.gallery.id : newGalleryId.value
+                  // console.log((isNewGallery.value ? "New" : "Existing") + "galleryId", galleryId)
 
                   const manifest = fileNameToManifest.value.get(uploadContainer.uploadFile.filename)
                   const newItem = { 
                      id: uploadContainer.item.id,
                      name: manifest ? manifest.title: uploadContainer.uploadFile.filename,
                      userId: userId.value,
-                     galleryIds: galleryIds,
+                     galleryIds: [ galleryId ],
                      primaryImage:  uploadContainer.item.primaryImage,
                      type: ItemType.SINGLE,
                      state: State.PRIVATE,
@@ -218,16 +240,18 @@
                   }
                   itemStore.setItem(newItem)
 
-                  if (props.gallery) {
+                  galleryStore.addItem(galleryId, { id: newItem.id, otherImages: [] })
+                  
+                  // if (props.gallery) {
                      // add new item at front of gallery
-                     const itemIds = [ newItem.id ]
-                     if (props.gallery.itemIds ) { itemIds.push(...props.gallery.itemIds) }
-                     console.log("gallery.itemIds", itemIds)
-                     galleryStore.updateGallery({
-                        id: props.gallery.id,
-                        itemIds: itemIds,
-                     })
-                  }
+                     //const itemIds = [ newItem.id ]
+                     //if (props.gallery.itemIds ) { itemIds.push(...props.gallery.itemIds) }
+                     // console.log("gallery.itemIds", itemIds)
+                     // galleryStore.updateGallery({
+                     //    id: props.gallery.id,
+                     //    itemIds: itemIds,
+                     // })
+                  // }
 
                   resolve() // resolve promise
                })
@@ -268,6 +292,9 @@
    min-width: 500px;  
    min-height: 400px;  
 }
+.horizontal-container {
+  display: flex; /* align children horizontally by default */
+}
 .artist-sm-btn {
    /* Background and Border */
    background-color: #efefef !important;
@@ -289,7 +316,7 @@
    /* Padding adjustment for compact look */
    padding: 0px 3px !important; 
 }
-.artist-title {
+.manifest-upload-title {
    font-weight: bold;
 }
 </style>

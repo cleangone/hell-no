@@ -12,7 +12,6 @@
             <span v-else>
                <TextButton @click="showAddDialog=true"               text="Add Item"/>
                <TextButton @click="showBulkUpload=true"              text="Bulk Upload"/>
-               <TextButton @click="showManifestUpload=true"          text="Manifest Upload"/>
                <TextButton v-if="showTable" @click="showTable=false" text="View Thumbnails"/>
                <TextButton v-else @click="showTable=true"            text="View Table"/>
             </span>
@@ -76,9 +75,6 @@
    <v-dialog v-model="showBulkUpload" width="auto">
       <BulkUpload @done="showBulkUpload=false"/>
    </v-dialog>
-   <v-dialog v-model="showManifestUpload" width="auto">
-      <ManifestUpload @done="showManifestUpload=false"/>
-   </v-dialog>
    <v-dialog v-model="showEditDialog" width="auto" height="auto">
       <EditItemDialog :item="selectedItem" @done="showEditDialog=false"/>
    </v-dialog>
@@ -120,7 +116,6 @@
    import TableThumb     from '@/components/account/TableThumb.vue'
    import AddItemDialog  from '@/components/item/crud/AddItemDialog.vue'
    import BulkUpload     from '@/components/item/crud/BulkUpload.vue'
-   import ManifestUpload from '@/components/item/crud/ManifestUpload.vue'
    import EditItemDialog from '@/components/item/crud/EditItemDialog.vue'
    import GroupItems     from '@/components/item/crud/GroupItems.vue'
    import EditImages     from '@/components/item/crud/EditImages.vue'
@@ -147,7 +142,6 @@
    const showTable = ref(true)
    const showAddDialog       = ref(false)
    const showBulkUpload      = ref(false)
-   const showManifestUpload  = ref(false)
    const showEditDialog      = ref(false)
    const showCreateGroup     = ref(false)
    const showEditSelected    = ref(false)
