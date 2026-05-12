@@ -1,5 +1,5 @@
 <template>
-   <v-card :title="isNewGallery?'Manifest Upload to New Gallery':'Manifest Upload'" class="upload-dialog">
+   <v-card :title="title" class="upload-dialog">
       <div class="horizontal-container px-2">
          <div class="pr-2">
             <v-btn @click="openManifest()" flat class="artist-sm-btn">Open Manifest</v-btn>
@@ -95,6 +95,7 @@
       reader.readAsText(file) // text/json
    })
 
+   const title = computed(() => "Manifest Upload to " + (props.gallery ? props.gallery.name : "New") + " Gallery")
    const isNewGallery = computed(() => props.gallery ? false : true)
    const manifestJson    = computed(() => manifestContents.value ? JSON.parse(manifestContents.value) : null)
    const manifestGallery = computed(() => manifestJson.value ? manifestJson.value.gallery : null)
@@ -214,8 +215,7 @@
                   uploadContainer.item.primaryImage.url = downloadURL
 
                   const galleryId = props.gallery ? props.gallery.id : newGalleryId.value
-                  // console.log((isNewGallery.value ? "New" : "Existing") + "galleryId", galleryId)
-
+                  
                   const manifest = fileNameToManifest.value.get(uploadContainer.uploadFile.filename)
                   const newItem = { 
                      id: uploadContainer.item.id,
@@ -242,17 +242,6 @@
 
                   galleryStore.addItem(galleryId, { id: newItem.id, otherImages: [] })
                   
-                  // if (props.gallery) {
-                     // add new item at front of gallery
-                     //const itemIds = [ newItem.id ]
-                     //if (props.gallery.itemIds ) { itemIds.push(...props.gallery.itemIds) }
-                     // console.log("gallery.itemIds", itemIds)
-                     // galleryStore.updateGallery({
-                     //    id: props.gallery.id,
-                     //    itemIds: itemIds,
-                     // })
-                  // }
-
                   resolve() // resolve promise
                })
             }
