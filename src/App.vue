@@ -342,6 +342,9 @@
 .tight-checkbox { 
    max-height: 30px;
 }
+.horizontal-container {
+  display: flex; /* align children horizontally by default */
+}
 .walldiv {
   width: 100%;
   position: relative;

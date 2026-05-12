@@ -1,11 +1,20 @@
 // ==UserScript==
-// @name       CAF Download
-// @namespace  http://tampermonkey.net/
-// @match      https://www.comicartfans.com/*
-// @require    https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js
-// @grant      GM_download
+// @name        CAF Download
+// @namespace   http://tampermonkey.net/
+// @match       https://www.comicartfans.com/*
+// @description CAF Download
+// @version     0.5
+// @require     https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js
+// @grant       GM_getValue
+// @grant       GM_setValue
+// @grant       GM_download
 // ==/UserScript==
 
+/* eslint-disable no-multi-spaces */
+
+const TRUE  = "true"
+const FALSE = "false"
+const ACTIVE_ID = "gmActiveId"
 const Status = {
    FOUND:      "Found",
    RETRIEVED:  "Retrieved",
@@ -13,23 +22,20 @@ const Status = {
    ERROR:      "Error"
 }
 
+/* eslint-disable no-undef */
 const now = dayjs().format('MM-DD-YYYY_HH-mm-ss');
+/* eslint-enable no-undef */
 const gallery = {};
 const urlToItem = new Map();
-const statusDiv = document.createElement("div")
-statusDiv.setAttribute("style", "position:fixed; z-index:1000; top:10%; left:.5%; background-color:white; text-align:left;" );
-statusDiv.style.padding = "10px 20px";
-statusDiv.style.border = "2px solid black";
-
-const titleDiv = appendChildDiv(statusDiv)
-titleDiv.innerHTML = "CAF Download";
-titleDiv.style.fontWeight = 'bold';
-
-var galleryStatusDiv = appendChildDiv(statusDiv)
-
-var retrieveBtn = createButton("Retrieve");
-var downloadBtn = createButton("Download");
+const baseDiv   = document.createElement("div")
+const titleDiv  = appendChildDiv(baseDiv)
+const statusDiv = appendChildDiv(baseDiv)
+const retrieveBtn = createButton("Retrieve");
+const downloadBtn = createButton("Download");
 const broadcast = new BroadcastChannel('channel');
+
+baseDiv.setAttribute("style", "position:fixed; z-index:1000; top:.5%; left:.5%; background-color:white; text-align:left;");
+baseDiv.style.padding = "2px 5px";
 
 (function() {
     'use strict';
@@ -43,14 +49,25 @@ const broadcast = new BroadcastChannel('channel');
         setStatusHtml();
     }
 
-    document.body.appendChild(statusDiv)
+    document.body.appendChild(baseDiv)
+    document.body.addEventListener("click", function(e) {
+        if (e.target == null) { return } // e.target is clicked element
+        else if (e.target.id == ACTIVE_ID) { toggle(ACTIVE_ID) }
+    });
+
     setStatusHtml()
     processPage()
 })();
 
 function processPage() {
-    if (isPage("galleryroom.asp")) { processGalleryPage() }
-    else if (isPage("gallerypiece.asp")) { processItemPage() }
+    // remove top ad that floats above Download panel
+    const adDiv = getElementByClassName(document, "container mashead");
+    if (adDiv) { adDiv.remove() }
+
+    if(isSet(ACTIVE_ID)) {
+        if (isPage("galleryroom.asp")) { processGalleryPage() }
+        else if (isPage("gallerypiece.asp")) { processItemPage() }
+    }
 }
 
 function processGalleryPage() {
@@ -187,6 +204,10 @@ function downloadFile(url, filename) {
 }
 
 function setStatusHtml() {
+    setModalDiv(titleDiv, ACTIVE_ID, "Download")
+    statusDiv.innerHTML = "";
+    if(!isSet(ACTIVE_ID)) { return }
+
     var retrieved = 0
     var downloaded = 0
     var error = 0
@@ -199,19 +220,19 @@ function setStatusHtml() {
     }
 
     var table = document.createElement("table");
-    galleryStatusDiv.innerHTML = "";
+    statusDiv.innerHTML = "";
     if (urlToItem.size) {
-        galleryStatusDiv.appendChild(table);
+        statusDiv.appendChild(table);
         var tr = appendChildEle(table, "tr");
         var td = appendChildEle(tr, "td");
-        td.innerHTML = urlToItem.size + " Items in Gallery";
+        td.innerHTML = urlToItem.size + " Items in Gallery &nbsp;";
         td = appendChildEle(tr, "td");
         td.appendChild(retrieveBtn);
     }
     if (retrieved) {
         tr = appendChildEle(table, "tr");
         td = appendChildEle(tr, "td");
-        td.innerHTML = retrieved + " Retrieved";
+        td.innerHTML = retrieved + " Retrieved &nbsp;";
         td = appendChildEle(tr, "td");
         td.appendChild(downloadBtn);
     }
@@ -225,6 +246,19 @@ function setStatusHtml() {
         td = appendChildEle(tr, "td");
         td.innerHTML = error + " Error" + (error > 1 ? "s" : "")
     }
+}
+
+function setModalDiv(div, valueId, text) { div.innerHTML = getModalLink(isSet(valueId), valueId, text, text) }
+function getModalLink(isSet, name, onText, offText) {
+  return isSet ?
+     "<a id='" + name + "' href='#' style='color:green;font-weight:bold'>" + onText + "</a>" :
+     "<a id='" + name + "' href='#' style='color:red'>" + offText + "</a>";
+}
+
+function toggle(name) {
+    set(name, (isSet(name) ? FALSE : TRUE))
+    setStatusHtml()
+    processPage()
 }
 
 function createButton(text) {
@@ -263,4 +297,9 @@ function appendChildEle(parent, childType) {
 }
 
 function isPage(page) { return window.location.href.indexOf(page) != -1; }
+function isSet(name) { return isSetToValue(name, FALSE, TRUE); }
+function isSetToValue(name, defaultValue, value) { return get(name, defaultValue) == value; }
+function get(name, defaultValue) { return GM_getValue(name, defaultValue); }
+function set(name, value) { GM_setValue(name, value); }
+
 

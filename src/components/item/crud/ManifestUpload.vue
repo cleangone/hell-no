@@ -7,7 +7,7 @@
          <div v-if="manifestFileName.length" class="mt-n2">
             <div>{{ manifestFileName }}</div>
             <div v-if="isNewGallery && manifestGallery">Gallery: {{ manifestGallery.title }}</div>
-            <div class="mt">{{ manifestItems.length }} Items</div>
+            <div>{{ manifestItems.length }} Items</div>
          </div>
          <div v-else class="mt-1">Upload a .json manifest file</div>
       </div>
@@ -19,7 +19,7 @@
          </v-row> 
       </v-container>
       <div class="px-2 pt-4">
-         <input multiple @change="handleFileChange" type="file" id="fileInput" />
+         <input multiple @change="handleFileChange" type="file" accept=".jpg, .jpeg, .png" id="fileInput" />
       </div>
       <div v-if="filesExist" class="horizontal-container px-2 pt-4">
          <div class="d-flex flex-column align-center">
@@ -126,9 +126,9 @@
       console.log("unknownManifestArtists")
       const unknownArtists = []
       for (const manifestItem of manifestItems.value) {
-         const manifestArtist = manifestItem.artist
-         if (!manifestArtistToArtist.has(manifestArtist) && !unknownArtists.includes(manifestArtist)) {
-            console.log("check Artist", manifestArtist)
+         const manifestArtist = manifestItem.artist 
+         if (manifestArtist && !manifestArtistToArtist.has(manifestArtist) && !unknownArtists.includes(manifestArtist)) {
+            // console.log("check Artist", manifestArtist)
             const artist = artistMgr.getMatchingArtist(manifestArtist) 
             if (artist) { manifestArtistToArtist.set(manifestArtist, artist) }
             else { unknownArtists.push(manifestArtist) }
@@ -280,9 +280,6 @@
 .upload-dialog {
    min-width: 500px;  
    min-height: 400px;  
-}
-.horizontal-container {
-  display: flex; /* align children horizontally by default */
 }
 .artist-sm-btn {
    /* Background and Border */

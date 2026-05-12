@@ -6,6 +6,7 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.19.1", "5/12/26"], // Vertical gallery header
    ["v2.19.0", "5/11/26"], // Add scripts dir with caf-download.js script
    ["v2.18.0", "5/11/26"], // Manifest upload optionally creates new gallery
                            // Add gallery header max height

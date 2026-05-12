@@ -42,21 +42,25 @@
          </span>
       </v-container>
       <!-- header -->
-      <div class="bg-white mb-20">
-         <RouterLink :to="itemMgr.itemURL(headerImage.itemId, ItemOrigin.GALLERY)">
-            <v-img :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" cover max-height="400">
-               <div v-if="descExists && descInHeader" class="pa-1 d-flex fill-height align-end justify-end">
-                  <div v-html="gallery.desc" class="text-left desc-header-div" :style="headerDescStyle"></div>   
-               </div>
-            </v-img>
-         </RouterLink>
-      </div> 
-      <!-- background image below content -->
-      <div :style="contentStyle" class="content-wrapper">
-         <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
-         <div class="content">
-         <div style="clear:both"></div>
-         <ReuseTemplate/>
+      <div :class="verticalHeader?'horizontal-container':''">
+         <div class="bg-white mb-20">
+            <RouterLink :to="itemMgr.itemURL(headerImage.itemId, ItemOrigin.GALLERY)">
+               <!-- no description in vertical headers  -->
+               <v-img v-if="verticalHeader" :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" width="400"/>
+               <v-img v-else :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" cover max-height="400">
+                  <div v-if="descExists && descInHeader" class="pa-1 d-flex fill-height align-end justify-end">
+                     <div v-html="gallery.desc" class="text-left desc-header-div" :style="headerDescStyle"></div>   
+                  </div>
+               </v-img>
+            </RouterLink>
+         </div> 
+         <!-- background image below content -->
+         <div :style="contentStyle" class="content-wrapper">
+            <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
+            <div class="content">
+            <div style="clear:both"></div>
+            <ReuseTemplate/>
+            </div>
          </div>
       </div>
    </div>
@@ -187,6 +191,7 @@
    const canEdit         = computed(() => userStore.userId == gallery.value.userId)
    const backgroundStyle = computed(() => "opacity: .05;") // make this configurable?
    const backgroundImage = computed(() => getImage(ImageType.BACKGROUND))
+   const verticalHeader  = computed(() => headerImage.value?.dimensions && objAspectRatio(headerImage.value.dimensions) < 1)
    const headerImage     = computed(() => getImage(ImageType.HEADER))
    const getImage = (imageType)  => {
       for (const image of gallery.value.images) {
