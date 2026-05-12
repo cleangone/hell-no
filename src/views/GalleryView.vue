@@ -47,7 +47,7 @@
             <RouterLink :to="itemMgr.itemURL(headerImage.itemId, ItemOrigin.GALLERY)">
                <!-- no description in vertical headers  -->
                <v-img v-if="verticalHeader" :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" width="400"/>
-               <v-img v-else :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" cover max-height="400">
+               <v-img v-else :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" cover max-height="300">
                   <div v-if="descExists && descInHeader" class="pa-1 d-flex fill-height align-end justify-end">
                      <div v-html="gallery.desc" class="text-left desc-header-div" :style="headerDescStyle"></div>   
                   </div>
