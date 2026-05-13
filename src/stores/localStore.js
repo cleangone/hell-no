@@ -43,8 +43,8 @@ export const useLocalStore = defineStore('local', () => {
    // local storage serialization recreates date but not the object w methods
    function fixDates(obj) { 
       const clone = { ...obj }
-      clone.dateCreated  = getTimestamp(clone.dateCreated)
-      clone.dateModified = getTimestamp(clone.dateModified)
+      if (clone.dateCreated)  { clone.dateCreated  = getTimestamp(clone.dateCreated)  }
+      if (clone.dateModified) { clone.dateModified = getTimestamp(clone.dateModified) }
       if (clone.dateContentModified) { clone.dateContentModified = getTimestamp(clone.dateContentModified) }
       return clone
    }

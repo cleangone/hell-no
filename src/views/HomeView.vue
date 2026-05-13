@@ -12,12 +12,13 @@
       </v-row>
    </v-container>
    <!-- greeting, notifications, wall -->
-   <v-container class="pa-0 mb-2 width-100">   
+   <v-container class="pa-0 mb-2 width-100">
+      <div v-if="viewMgr.solo" class="text-subtitle-1 mt-n2 mb-2">Solo Mode</div>
       <ShowNotifications v-if="notifications.length" :notifications="notifications" class="mb-3"/>
       <div class="walldiv" :style="wallDivStyle">
          <v-img :src="wallImage" cover :style="wallBackgroundStyle" class="wall-background"></v-img>
          <div class="wall-content">
-            <SwipeWall v-if="showWall" :wall="displayWall" :rowHeight="slideRowHeight" transparent/>
+            <SwipeWall v-if="showWall" :wall="displayWall" :rowHeight="slideRowHeight"/>
          </div> 
       </div>
    </v-container>
@@ -78,6 +79,7 @@
    import ShowNotifications from '@/components/notification/ShowNotifications.vue'
    import { timestampsEqual } from '@/utils/dateUtils'
    import { ThumbRow } from '@/utils/utilClasses'
+   import { randomizeArray } from '@/utils/utils'
    import { Defaults, GalleryThumbWidth, ItemOrigin, TodoType, Route, WallRowHeight } from '@/utils/constants'
    
    const userStore    = useUserStore()
@@ -94,8 +96,8 @@
    const { width: galleryWidth   } = useElementSize(galleryRef)
    const { width: favoritesWidth } = useElementSize(favoritesRef)
    const { width: recentWidth    }  = useElementSize(recentRef)
-   const images = [ "/images/speakeasy.jpg", "/images/hell-no-sofia.jpg", "/images/hell-no-solo.jpg" ]
    const currSiteWall = ref(null)
+   const currMyWall   = ref(null)
    const wallBackgroundOpacity = ref(.1) 
    const isBrowserDarkMode = ref(false)
    
@@ -137,17 +139,35 @@
       return todos
    })
 
-   const wallImage = computed(() => { return images[Math.floor(Math.random() * images.length)] })
-   const displayWall = computed(() => {
-      // console.log("displayWall")
+   const wallImage = computed(() => {
+      if (viewMgr.solo && userStore.userId) {
+         const urls = itemMgr.getPublicGalleryThumbUrls(userStore.userId, null)
+         if (urls.length) { return randomizeArray(urls)[0] }
+      }
+      return  wallMgr.randomWallImage
+   })
+
+   const displayWall = computed(() => viewMgr.solo ? myDisplayWall.value : siteDisplayWall.value)
+
+   const siteDisplayWall = computed(() => {
       let wall = wallMgr.filledSiteWall
       if (wall.wallRows) { localStore.setSiteWall(wall) }
       else if (localStore.siteWall.wallRows) { wall = { ...localStore.siteWall } }
 
       // use currWall if it exists - prevent flashing of retrieved after display of one from local store
-      if (currSiteWall.value) { 
-         return currSiteWall.value }
+      if (currSiteWall.value) { return currSiteWall.value }
       if (wall.wallRows) { currSiteWall.value = wall }
+      return wall
+   })
+
+   // handle corner case of solo mode and switching to a user that doesn't have any wall items yet
+   const myDisplayWall = computed(() => {
+      let wall = wallMgr.filledMyWall
+      if (wall.wallRows) { localStore.setMyWall(wall) }
+      else if (localStore.myWall.wallRows && localStore.myWall.id == wall.id) { wall = { ...localStore.myWall } }
+
+      if (currMyWall.value && currMyWall.value.id == wall.id) { return currMyWall.value }
+      if (wall.wallRows) { currMyWall.value = wall }
       return wall
    })
    
@@ -158,8 +178,8 @@
 
    const recentGalleries = computed(() => { 
       const galleries = []     
-      const publicGalleries = galleryStore.publicGalleries
-      for (const gallery of publicGalleries) {
+      const allGalleries = viewMgr.solo ? galleryStore.myGalleries : galleryStore.publicGalleries
+      for (const gallery of allGalleries) {
          if (gallery.images.length && showGallery(gallery) ) { galleries.push(gallery) }
       }    
       galleries.sort(function(a, b) { return b.dateContentModified - a.dateContentModified }) 
@@ -185,14 +205,10 @@
    })
    
    const allRecentItems = computed(() => {
-      let items = [ ...itemMgr.recentPublicItems ]
+      let items = viewMgr.solo ? [ ...itemMgr.myRecentItems ] : [ ...itemMgr.recentPublicItems ]
       if (items.length) { 
          items.sort(function(a, b){return b.dateContentModified - a.dateContentModified}) 
          localStore.setRecentItems(items) 
-      }
-      else if (localStore.recentItems.length)  { 
-         // console.log("Replacing default recentItems with stored ones")
-         items = [ ...localStore.recentItems ]
       }
 
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items

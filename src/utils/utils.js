@@ -83,11 +83,11 @@ export function populated(str) { return str && str.length }
 
 const KNOWN_ERRORS = [ " is null", ".value is undefined" ]
 export function handleError(err, component) { 
-   for (const suffix of KNOWN_ERRORS) {
-      if (err.message.endsWith(suffix)) { 
-         console.log(component + " known error: " + err.name + " - " + err.message)
-         return false // do not bubble up error
-      }
-   } 
+   // for (const suffix of KNOWN_ERRORS) {
+   //    if (err.message.endsWith(suffix)) { 
+   //       console.log(component + " known error: " + err.name + " - " + err.message)
+   //       return false // do not bubble up error
+   //    }
+   // } 
    return true
 }

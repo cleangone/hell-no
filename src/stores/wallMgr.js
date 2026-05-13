@@ -5,7 +5,7 @@ import { useWallStore } from '@/stores/wallStore'
 import { useItemStore } from '@/stores/itemStore'
 import { useItemMgr }   from '@/stores/itemMgr'
 import { useViewMgr }   from '@/stores/viewMgr'
-import { Defaults, ItemType, WallType } from '@/utils/constants' 
+import { Defaults, ItemType, WallImages, WallType } from '@/utils/constants' 
  
 export const useWallMgr = defineStore('wallMgr', () => { 
    const userStore = useUserStore()
@@ -20,12 +20,20 @@ export const useWallMgr = defineStore('wallMgr', () => {
       return ""
    }
 
+   const randomWallImage = computed(() => WallImages[Math.floor(Math.random() * WallImages.length)])
+
    const filledSiteWall = computed(() => {
       // add a selection of existing user wall items 
       const siteCopy = { ...wallStore.siteWall }
       if (viewMgr.isMobile && siteCopy.wallRows) { siteCopy.wallRows = 1 }
       siteCopy.userWallItems = [ ...wallStore.userWallItems ]
       return fillWall(siteCopy, itemMgr.recentPublicItems) 
+   })
+
+   const filledMyWall = computed(() => {
+      const wallCopy = { ...wallStore.myWall }
+      if (viewMgr.isMobile && wallCopy.wallRows) { wallCopy.wallRows = 1 }
+      return fillWall(wallCopy, itemMgr.myRecentItems) 
    })
 
    function fillWall(wall, items) { 
@@ -70,6 +78,6 @@ export const useWallMgr = defineStore('wallMgr', () => {
       itemStore.updateItem({ id: wallItem.itemId, onUserWall: false })
    }
    
-   return { name, filledSiteWall, fillWall, userWallIncludesItem, deleteWallItem }
+   return { name, randomWallImage, filledSiteWall, filledMyWall, fillWall, userWallIncludesItem, deleteWallItem }
 })
 

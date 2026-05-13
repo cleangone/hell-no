@@ -33,6 +33,7 @@
    const infoMsg = ref("")
    const errMsg  = ref("")
    
+   // app.onAuthStateChanged updates userStore
    const login = () => {
       infoMsg.value = ""
       signInWithEmailAndPassword(getAuth(), email.value, password.value)

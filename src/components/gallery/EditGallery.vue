@@ -115,6 +115,7 @@
    const childGalleryOptions = computed(() => { 
       const galleries = [] 
 
+      // why was this changed?  editing profile gallery?  contributor?
       // for (const gallery of galleryStore.myGalleries) {
       for (const gallery of galleryMgr.getUserGalleries(props.gallery.userId) ) {
          if (isChildGalleryOption(gallery)) { galleries.push(gallery) }
@@ -123,10 +124,9 @@
    })
 
    const isChildGalleryOption = (gallery) => {
-      return (gallery.id == props.gallery.id) || // cannot be your own child
-             (props.gallery.parentGalleryId != null && gallery.id == props.gallery.parentGalleryId) || // curr be your parent 
-             (gallery.parentGalleryId != null && gallery.parentGalleryId != props.gallery.id) ? // cannot have a diff parent 
-         false : true
+      return (gallery.id != props.gallery.id) && // cannot be your own child
+             (props.gallery.parentGalleryId == null || props.gallery.parentGalleryId != gallery.id) && // cannot be your parent 
+             (gallery.parentGalleryId == null || gallery.parentGalleryId == props.gallery.id) // cannot have a diff parent 
    }
    const childGalleryCols = computed(() => { 
       if (!childGalleries.value?.length && !galleryContributorIds.value?.length ||

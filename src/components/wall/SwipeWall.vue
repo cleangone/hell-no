@@ -1,5 +1,5 @@
 <template>
-   <div class="wall-container px-3" :class="background">
+   <div class="wall-container px-3">
       <swiper v-for="(slideRow, index) in slideRows" key="slideRow.id" slides-per-view="auto" :space-between="spaceBetweenSlides" 
             :autoplay="{ delay:4000, pauseOnMouseEnter:true }" navigation loop @sliderMove="onSliderMove" 
             :modules="modules" :style="rowStyle" style="--swiper-navigation-size:20px;">
@@ -29,7 +29,7 @@
    import 'swiper/css/navigation'
    import 'swiper/css/pagination'
 
-   const props = defineProps({ wall:Object, rowHeight:Number, profileId:String, linkUrl:String, transparent:Boolean })
+   const props = defineProps({ wall:Object, rowHeight:Number, linkUrl:String })
    const emit  = defineEmits([ Emit.LOADED ])
 
    const breakpoints = useBreakpoints(breakpointsTailwind)
@@ -52,8 +52,6 @@
    // take down popup if user mouses away from it
    watch(popupMouseoverActive, (active) => { if (!active) { onPopup(null) } })
 
-   const background = computed(() => props.transparent ? "" : "bg-shade" )
-
    const wallItems = computed(() => {
       const maxWallItems = props.wall.maxWallItems ? props.wall.maxWallItems : Defaults.MAX_WALL_ITEMS
       const wallItems = []
@@ -73,9 +71,7 @@
       if (props.wall.id == Defaults.SITE_ID) { displayWallItems.push( ...wallItems) }
       else {
          for (const wallItem of wallItems) {
-            if (!props.profileId && !wallItem.profileId || props.profileId == wallItem.profileId) {
-               displayWallItems.push(wallItem) 
-            }
+            displayWallItems.push(wallItem) 
          }
       }
 

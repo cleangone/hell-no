@@ -15,10 +15,7 @@
    </DefineTemplate>
 
    <div v-if="viewMgr.isMobile">
-      <span style="text-align:center">
-         <RouterLink v-if="gallery.parentGalleryId" :to="Route.GALLERY.url + gallery.parentGalleryId">{{ parentGalleryName }} Gallery</RouterLink>
-         <RouterLink v-else :to="Route.GALLERIES.url + galleriesLinkId">Galleries</RouterLink>
-      </span>
+      <GalleryParentLink :gallery="gallery" style="text-align:center"/>
       <ReuseTemplate/>
    </div>
    <div v-else-if="headerImage"> 
@@ -36,10 +33,7 @@
                <EditButton v-if="canEdit" @click="showEditGalleryDialog=true" class="mx-n2"/>
             </v-col>
          </v-row>
-         <span style="text-align:center">
-            <RouterLink v-if="gallery.parentGalleryId" :to="Route.GALLERY.url + gallery.parentGalleryId">{{ parentGalleryName }} Gallery</RouterLink>
-            <RouterLink v-else :to="Route.GALLERIES.url + galleriesLinkId">Galleries</RouterLink>
-         </span>
+         <GalleryParentLink :gallery="gallery" style="text-align:center"/>
       </v-container>
       <!-- header -->
       <div :class="verticalHeader?'horizontal-container':''">
@@ -58,8 +52,8 @@
          <div :style="contentStyle" class="content-wrapper">
             <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
             <div class="content">
-            <div style="clear:both"></div>
-            <ReuseTemplate/>
+               <div style="clear:both"></div>
+               <ReuseTemplate/>
             </div>
          </div>
       </div>
@@ -81,10 +75,7 @@
                   <EditButton v-if="canEdit" @click="showEditGalleryDialog=true" class="mx-n2"/>
                </v-col>
             </v-row>
-            <span style="text-align:center">
-               <RouterLink v-if="gallery.parentGalleryId" :to="Route.GALLERY.url + gallery.parentGalleryId">{{ parentGalleryName }} Gallery</RouterLink>
-               <RouterLink v-else :to="Route.GALLERIES.url + galleriesLinkId">Galleries</RouterLink>
-            </span>
+            <GalleryParentLink :gallery="gallery" style="text-align:center"/>
          </v-container>
          <div style="clear:both"></div>   
          <ReuseTemplate/>
@@ -112,15 +103,16 @@
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
-   import GalleryThumb    from '@/components/gallery/GalleryThumb.vue'
-   import EditGalleryCard from '@/components/gallery/EditGalleryCard.vue'
-   import AddItemDialog   from '@/components/item/crud/AddItemDialog.vue'
-   import ItemThumb       from '@/components/item/thumb/ItemThumb.vue'
-   import ItemThumbConfig from '@/components/item/thumb/ItemThumbConfig.vue'
-   import ItemPopup       from '@/components/item/ItemPopup.vue'
-   import ExpandItems     from '@/components/item/ExpandItems.vue'
-   import EditButton      from '@/components/util/EditButton.vue'
-   import CopyLink        from '@/components/util/CopyLink.vue'
+   import GalleryParentLink   from '@/components/gallery/GalleryParentLink.vue'
+   import GalleryThumb        from '@/components/gallery/GalleryThumb.vue'
+   import EditGalleryCard     from '@/components/gallery/EditGalleryCard.vue'
+   import AddItemDialog       from '@/components/item/crud/AddItemDialog.vue'
+   import ItemThumb           from '@/components/item/thumb/ItemThumb.vue'
+   import ItemThumbConfig     from '@/components/item/thumb/ItemThumbConfig.vue'
+   import ItemPopup           from '@/components/item/ItemPopup.vue'
+   import ExpandItems         from '@/components/item/ExpandItems.vue'
+   import EditButton          from '@/components/util/EditButton.vue'
+   import CopyLink            from '@/components/util/CopyLink.vue'
    import { objAspectRatio } from '@/utils/utils'
    import { ImageType, ItemOrigin, Route } from '@/utils/constants'
   
@@ -158,11 +150,6 @@
       viewStore.setPageName(gallery.name)
       return gallery 
    })
-
-   const galleriesLinkId = computed(() => {
-      if (!gallery.value) { return "0" } // default if gallery not yet populated
-      return gallery.value.profileId ? gallery.value.profileId : gallery.value.userId
-   })
       
    useSeoMeta({ title: "Hell-No " + (gallery.value ? gallery.value.name + " " : "")  + "Gallery" })
 
@@ -172,10 +159,6 @@
    const descInHeader      = computed(() => gallery.value.descInHeader)
    const headerDescStyle   = computed(() => "width:" + (gallery.value.descHeaderPct ? gallery.value.descHeaderPct : "60") + "%")
    const hasChildGalleries = computed(() => gallery.value.childGalleryIds && gallery.value.childGalleryIds.length)
-   const parentGallery     = computed(() => galleryStore.getGallery(gallery.value.parentGalleryId))
-   const parentGalleryName = computed(() => parentGallery.value ? parentGallery.value.name : "")
-
-   
 
    const childThumbGalleries = computed(() => { 
       const galleries = []

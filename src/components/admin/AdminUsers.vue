@@ -8,6 +8,7 @@
             {{ item.items ? item.items : "" }}
          </template>
          <template v-slot:item.actions="{ item }">
+            <IconButton icon="mdi-account-arrow-right" @click="swapUser(item.id)" size="med"/>
             <DeleteButton @click="deleteUser(item)" :disabled="disableDelete(item)"></DeleteButton>
          </template>
       </v-data-table>
@@ -20,14 +21,17 @@
 
 <script setup>
    import { computed, ref } from 'vue'
+   import { useRouter }     from 'vue-router'
    import { useUserStore }  from '@/stores/userStore'
    import { useItemStore }  from '@/stores/itemStore'
    import { useAdminStore } from '@/stores/adminStore'
    import DeleteUser   from '@/components/user/DeleteUser.vue'
    import DeleteButton from '@/components/util/DeleteButton.vue'
+   import IconButton   from '@/components/util/IconButton.vue'
    import { defaultDisplayDate } from '@/utils/dateUtils'
-   import { NotificationOptions } from '@/utils/constants'
+   import { NotificationOptions, Route } from '@/utils/constants'
    
+   const router = useRouter()
    const userStore  = useUserStore()
    const itemStore  = useItemStore()
    const adminStore = useAdminStore()
@@ -72,6 +76,11 @@
    })
 
    const adminIds = computed(() => adminStore.adminIds)
+   
+   const swapUser = (userId) => {
+      userStore.userId = userId
+      router.push(Route.ACCOUNT.url)
+   }
 
    const disableDelete = (user) => { return user.id == userStore.userId || adminIds.value.includes(user.id) }
 

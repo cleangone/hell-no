@@ -52,7 +52,8 @@
 
    const recentItems = computed(() => {
       const items = [] 
-      if (username.value) { 
+      if (viewMgr.solo) { items.push(...itemMgr.myRecentItems) }
+      else if (username.value) { 
          const userId = rawUser.value ? rawUser.value.id : rawProfile.value.userId
          for (const item of itemMgr.getRecentItems(userId)) {
             if (rawUser.value && !item.profileId || rawProfile.value && item.profileId == rawProfile.value.id) { items.push(item) }

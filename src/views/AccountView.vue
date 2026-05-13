@@ -32,8 +32,6 @@
 <script setup>
    import { onMounted, ref } from 'vue'
    import { useSeoMeta } from '@unhead/vue'
-   import { useRouter } from 'vue-router'
-   import { getAuth, signOut } from "firebase/auth"
    import { useViewMgr } from '@/stores/viewMgr'
    import Account          from '@/components/account/Account.vue'
    import AccountArtists   from '@/components/account/AccountArtists.vue'
@@ -43,9 +41,7 @@
    import AccountItems     from '@/components/account/AccountItems.vue'
    import AccountProfiles  from '@/components/account/AccountProfiles.vue'
    import AccountWall      from '@/components/account/AccountWall.vue'
-   import { Route } from '@/utils/constants'
    
-   const router = useRouter()
    const viewMgr = useViewMgr()
    const wasMobile = ref()
    const tabs = { 
@@ -72,10 +68,7 @@
       wasMobile.value = viewMgr.isMobile
    }
 
-   const logout = () => { 
-      signOut(getAuth()) 
-      router.push(Route.HOME.url)
-   }
+   const logout = () => { viewMgr.logout() }
 </script>
 
 <style>

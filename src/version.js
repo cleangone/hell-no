@@ -6,6 +6,8 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.21.0", "5/13/26"], // UserView wall background is gallery thumbs
+                           // Revive solo mode
    ["v2.19.1", "5/12/26"], // Vertical gallery header
    ["v2.19.0", "5/11/26"], // Add scripts dir with caf-download.js script
    ["v2.18.0", "5/11/26"], // Manifest upload optionally creates new gallery

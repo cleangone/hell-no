@@ -1,6 +1,8 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
+import { useRouter } from 'vue-router'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+import { getAuth, signOut } from "firebase/auth"
 import { useUserStore }  from '@/stores/userStore'
 import { useItemMgr }    from '@/stores/itemMgr'
 import { useGalleryMgr } from '@/stores/galleryMgr'
@@ -8,10 +10,11 @@ import { useWallStore }  from '@/stores/wallStore'
 import { useHitStore }   from '@/stores/hitStore'
 import { useViewStore }  from '@/stores/viewStore'
 import { useLocalStore } from '@/stores/localStore'
-import { Defaults, ItemThumbOptions } from '@/utils/constants'
 import { dateUuid, isHidden, isInvisible, isOwned, isPublic } from '@/utils/utils'  
+import { Defaults, ItemThumbOptions, Route } from '@/utils/constants'
    
 export const useViewMgr = defineStore('viewMgr', () => {   
+   const router = useRouter()
    const breakpoints = useBreakpoints(breakpointsTailwind)
    const xs = breakpoints.smaller('sm')
    const userStore    = useUserStore()
@@ -42,6 +45,11 @@ export const useViewMgr = defineStore('viewMgr', () => {
       }
    }
 
+   function logout() {
+      signOut(getAuth()) 
+      router.push(Route.HOME.url)
+   }
+
    const isStandalone = computed(() => window.matchMedia('(display-mode: standalone)').matches)
    const isXs         = computed(() => xs.value)
    const isMobile     = computed(() => {
@@ -52,10 +60,7 @@ export const useViewMgr = defineStore('viewMgr', () => {
          return mobile
    })
    const isDeskTop = computed(() => !isMobile.value)
-   const solo = computed(() => { 
-      // logStore.info("viewMgr.soloMode " + localStore.soloMode)
-      return localStore.soloMode
-   })
+   const solo      = computed(() => localStore.soloMode)
 
    // can nav directly to INVISIBLE item even though thumb/link not visible, but HIDDEN items never visible
    function itemIsVisibleToUser(item)    { return itemThumbVisibleToUser(item) || isInvisible(item) }
@@ -100,6 +105,6 @@ export const useViewMgr = defineStore('viewMgr', () => {
       return Defaults.THUMB_HEIGHT
    })    
       
-   return { init, isMobile, isXs, isDeskTop, solo, addHit, itemIsVisibleToUser, itemThumbVisibleToUser, 
+   return { init, logout, isMobile, isXs, isDeskTop, solo, addHit, itemIsVisibleToUser, itemThumbVisibleToUser, 
       galleryIsVisibleToUser, galleryThumbVisibleToUser, galleryItemCount, targetThumbHeight }
 })

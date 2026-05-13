@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { useWindowSize } from '@vueuse/core'
 import { useItemStore } from '@/stores/itemStore'
 import { dateUuid, objAspectRatio, randomizeArray } from '@/utils/utils'
-import { ItemNavAction, ItemType, Route } from '@/utils/constants'
+import { ImageType, ItemNavAction, ItemType, Route } from '@/utils/constants'
    
 export const useItemMgr = defineStore('itemMgr', () => {   
    const { width: windowWidth, height: windowHeight } = useWindowSize()
@@ -89,6 +89,28 @@ export const useItemMgr = defineStore('itemMgr', () => {
       const items = [ ...itemStore.publicItems ]
       const random = randomizeArray(ungroupAndExtractItems(items))
       return random.slice(0, 50)
+   }
+
+ function getPublicGalleryThumbs(userId, profileId) {
+      const thumbs = []
+      for (const item of itemStore.getUserPubicItems(userId)) {
+         if (!profileId || item.profileId == profileId) {
+            const images = item.primaryImage ? [ item.primaryImage ] :  []
+            if (item.otherImages?.length) { images.push(...item.otherImages) }
+            for (const image of images) {
+               if (image.imageType == ImageType.GALLERY) { thumbs.push(image) }
+            }   
+         }
+      }
+      return thumbs
+   }
+
+   function getPublicGalleryThumbUrls(userId, profileId) {
+      const urls = []
+      for (const image of getPublicGalleryThumbs(userId, profileId)) {
+         urls.push(image.url) 
+      }
+      return urls
    }
 
    function isItemGroup(item) { return item.type == ItemType.GROUP }
@@ -208,7 +230,8 @@ export const useItemMgr = defineStore('itemMgr', () => {
    }
 
    return { 
-      myItemIdToItem, artistIdToMyItemIds, getItems, getRandomItems, getProfileCount,
+      myItemIdToItem, artistIdToMyItemIds, 
+      getItems, getRandomItems, getProfileCount, getPublicGalleryThumbs, getPublicGalleryThumbUrls,
       recentPublicItems, recentGroupMemberItems, myRecentItems, getRecentItems, getRecentPublicItems,
       isItemGroup, ungroupItems, ungroupItem, ungroupAndExtractItems, extractFromItemGroup,
       itemAspectRatio, itemNavURL, itemURL, getPopupImage, createItemImage }

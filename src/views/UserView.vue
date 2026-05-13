@@ -14,9 +14,14 @@
       <div class="pt-10 pb=5 text-h5">No Content</div>
       <div>Add Items and Galleries in <RouterLink :to="Route.ACCOUNT.url">My Account</RouterLink></div>
    </div>
+   <!-- wall -->
    <div v-if="wallItemsExist" class="walldiv" :style="wallDivStyle">
-      <SwipeWall :wall="displayWall" :rowHeight="slideRowHeight" :profileId="profileId" :linkUrl="Route.USER.url + route.params.id"/>
+      <v-img :src="wallImage" cover :style="wallBackgroundStyle" class="wall-background"></v-img>
+      <div class="wall-content">
+         <SwipeWall :wall="displayWall" :rowHeight="slideRowHeight"/>
+      </div> 
    </div>
+   <!-- galleries -->
    <v-container v-if="thumbGalleries.length">
       <div class="my-5">
          <span class="font-weight-bold">Galleries</span> |
@@ -26,6 +31,7 @@
          <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" bypassShowUser showChildImages dense />
       </v-row>
    </v-container>
+   <!-- recent items -->
    <v-container v-if="recentItems.length" class="mt-4 pt-1 bg-shade">
       <div class="my-3">
          <span class="font-weight-bold">Recent Updates</span> |
@@ -57,7 +63,8 @@
    import SwipeWall    from '@/components/wall/SwipeWall.vue'
    import IconButton   from '@/components/util/IconButton.vue'
    import { ThumbRow } from '@/utils/utilClasses'
-   import { GalleryThumbWidth, ItemOrigin, Route, WallRowHeight, WallType } from '@/utils/constants'
+   import { randomizeArray } from '@/utils/utils'
+   import { DefaultWall, GalleryThumbWidth, ItemOrigin, Route, WallRowHeight } from '@/utils/constants'
    
    const route  = useRoute()
    const router = useRouter()
@@ -117,11 +124,6 @@
 
    const allRecentItems = computed(() => {
       const visibleItems = []
-      // for (const item of itemMgr.getRecentItems(userId.value)) {
-      //    if (rawUser.value && !item.profileId || rawProfile.value && item.profileId == rawProfile.value.id) {
-      //       if (viewMgr.itemIsVisibleToUser(item)) { visibleItems.push(item) }
-      //    }
-      // } 
       for (const item of itemMgr.getRecentPublicItems(userId.value)) {
          if (rawUser.value && !item.profileId || rawProfile.value && item.profileId == rawProfile.value.id) { visibleItems.push(item) }
       } 
@@ -139,15 +141,23 @@
       return thumbRow.thumbs
    })
 
-   const wall = computed(() => wallStore.getUserWall(userId.value))
    const displayWall = computed(() => {
-      return  wall.value?.addRecent ? wallMgr.fillWall(wall.value, allRecentItems.value) : wall.value
+      const wall = profileId.value ? { ...DefaultWall } : wallStore.getUserWall(userId.value) 
+      if (profileId.value) { wall.wallRows = allRecentItems.value.length < 8 ? 1 : 2 }   
+      return wallMgr.fillWall(wall, allRecentItems.value)
    })
 
+   const wallBackgroundOpacity = ref(.15) // todo - configurable?
    const wallItemsExist = computed(() => displayWall.value?.wallItems.length ? true : false )
    const slideRowHeight = computed(() => viewMgr.isMobile ? WallRowHeight.XS : WallRowHeight.DEFAULT)
-   const slideRowMargin = computed(() => viewMgr.isMobile ? 30 : 15)
-   const wallDivStyle   = computed(() => "height:" + ((slideRowHeight.value + slideRowMargin.value) * wall.wallRows) + "px;")
+   const wallRows       = computed(() => displayWall.value ? displayWall.value.wallRows : 2 )
+   const wallDivStyle   = computed(() => "height:" + (((slideRowHeight.value + 10) * wallRows.value)) + "px;")
+   const wallBackgroundStyle = computed(() => wallDivStyle.value + " opacity:" + wallBackgroundOpacity.value + ";")
+
+   const wallImage = computed(() => {
+      const urls = itemMgr.getPublicGalleryThumbUrls(userId.value, profileId.value)
+      return urls.length ? randomizeArray(urls)[0] : wallMgr.randomWallImage
+   })
 
    const sendEmail = () => {
       viewStore.setEmailContext(user.value)

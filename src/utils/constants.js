@@ -212,6 +212,8 @@ export const WallDisplayOrder = {
    RANDOM:    'Random',
 }
 
+export const WallImages = [ "/images/speakeasy.jpg", "/images/hell-no-sofia.jpg", "/images/hell-no-solo.jpg" ]
+
 export const WallRowHeight = {
    DEFAULT: 320,
    XS:      250,

@@ -21,6 +21,12 @@
                         </template>
                         <v-list-item-title>{{isDark ? "Light mode" : "Dark mode"}}</v-list-item-title>
                      </v-list-item>
+                     <v-list-item @click="toggleSoloMode()">
+                        <template v-slot:prepend>
+                           <v-icon :icon="viewMgr.solo?'mdi-account-multiple': 'mdi-account'" class="menu-icon"></v-icon>
+                        </template>
+                        <v-list-item-title>{{ viewMgr.solo ? "Exit " : "" }}Solo Mode</v-list-item-title>
+                     </v-list-item>
                      <v-list-item v-if="user" @click="toRoute(Route.ADD_ITEM)">
                         <template v-slot:prepend>
                            <v-icon icon="mdi-plus" class="menu-icon"></v-icon>
@@ -212,7 +218,10 @@
       const auth = getAuth()
       onAuthStateChanged(auth, (user) => {      
          if (user) { userStore.userId = user.uid } 
-         else { userStore.userId = "" }
+         else { 
+            userStore.userId = "" 
+            localStore.setSoloMode(false) // in case user had solo set
+         }
          // console.log("onAuthStateChanged", userStore.userId)
          viewStore.resetView()
       })
@@ -293,10 +302,7 @@
       toRoute(Route.HOME)
    }
 
-   const logout = () => { 
-      signOut(getAuth()) 
-      toRoute(Route.HOME)
-   }
+   const logout = () => { viewMgr.logout() }
 </script>
 
 <style >
