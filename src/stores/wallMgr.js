@@ -4,7 +4,6 @@ import { useUserStore } from '@/stores/userStore'
 import { useWallStore } from '@/stores/wallStore'
 import { useItemStore } from '@/stores/itemStore'
 import { useItemMgr }   from '@/stores/itemMgr'
-import { useViewMgr }   from '@/stores/viewMgr'
 import { Defaults, ItemType, WallImages, WallType } from '@/utils/constants' 
  
 export const useWallMgr = defineStore('wallMgr', () => { 
@@ -12,7 +11,6 @@ export const useWallMgr = defineStore('wallMgr', () => {
    const wallStore = useWallStore()
    const itemStore = useItemStore()
    const itemMgr   = useItemMgr()
-   const viewMgr   = useViewMgr()
    
    function name(wall) { 
       if (wall.type == WallType.SITE) { return "Site" }
@@ -23,20 +21,17 @@ export const useWallMgr = defineStore('wallMgr', () => {
    const randomWallImage = computed(() => WallImages[Math.floor(Math.random() * WallImages.length)])
 
    const filledSiteWall = computed(() => {
-      // add a selection of existing user wall items 
       const siteCopy = { ...wallStore.siteWall }
-      if (viewMgr.isMobile && siteCopy.wallRows) { siteCopy.wallRows = 1 }
       siteCopy.userWallItems = [ ...wallStore.userWallItems ]
       return fillWall(siteCopy, itemMgr.recentPublicItems) 
    })
 
    const filledMyWall = computed(() => {
-      const wallCopy = { ...wallStore.myWall }
-      if (viewMgr.isMobile && wallCopy.wallRows) { wallCopy.wallRows = 1 }
-      return fillWall(wallCopy, itemMgr.myRecentItems) 
+      return fillWall({ ...wallStore.myWall }, itemMgr.myRecentItems) 
    })
 
    function fillWall(wall, items) { 
+      wall.origWallRows = wall.wallRows // transient for moving between mobile/desktop view
       const maxItems = wall.maxWallItems ? wall.maxWallItems : Defaults.MAX_WALL_ITEMS
       const wallItemIds = wall.wallItems.map((obj) => obj.itemId)
 

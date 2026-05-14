@@ -52,7 +52,11 @@
 
    const recentItems = computed(() => {
       const items = [] 
-      if (viewMgr.solo) { items.push(...itemMgr.myRecentItems) }
+      if (viewMgr.solo) {  // param could be siteId but overridden by solo
+         for (const item of itemMgr.myRecentItems) {
+            if (!item.profileId) { items.push(item) }
+         }
+      }
       else if (username.value) { 
          const userId = rawUser.value ? rawUser.value.id : rawProfile.value.userId
          for (const item of itemMgr.getRecentItems(userId)) {

@@ -147,7 +147,15 @@
       return  wallMgr.randomWallImage
    })
 
-   const displayWall = computed(() => viewMgr.solo ? myDisplayWall.value : siteDisplayWall.value)
+   const displayWall = computed(() => {
+      const wall = viewMgr.solo ? myDisplayWall.value : siteDisplayWall.value
+
+      // handle corner case of moving to/from mobile view
+      if (viewMgr.isMobile && wall.wallRows) { wall.wallRows = 1 }
+      else if (!viewMgr.isMobile) { wall.wallRows = wall.origWallRows}
+
+      return wall
+   })
 
    const siteDisplayWall = computed(() => {
       let wall = wallMgr.filledSiteWall
