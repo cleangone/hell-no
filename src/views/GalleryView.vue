@@ -18,9 +18,13 @@
       <GalleryParentLink :gallery="gallery" style="text-align:center"/>
       <ReuseTemplate/>
    </div>
-   <div v-else-if="headerImage"> 
-      <!-- title - background image starts to below header -->
-      <v-container class="mt-4 pa-0 pb-3 width-100">
+   <div v-else> 
+      <div class="content-wrapper mt-1">
+      <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
+      <div class="content">
+      <div style="clear:both"></div>
+      <!-- title -->
+      <v-container class="pa-0 width-100">
          <v-row no-gutters class="d-flex align-center flex-nowrap">
             <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
             <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
@@ -35,8 +39,8 @@
          </v-row>
          <GalleryParentLink :gallery="gallery" style="text-align:center"/>
       </v-container>
-      <!-- header -->
-      <div :class="verticalHeader?'horizontal-container':''">
+      <!-- header and content below or beside -->
+      <div v-if="headerImage" :class="verticalHeader?'horizontal-container':''">
          <div class="bg-white mb-20">
             <RouterLink :to="itemMgr.itemURL(headerImage.itemId, ItemOrigin.GALLERY)">
                <!-- no description in vertical headers  -->
@@ -48,37 +52,13 @@
                </v-img>
             </RouterLink>
          </div> 
-         <!-- background image below content -->
-         <div :style="contentStyle" class="content-wrapper">
-            <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
-            <div class="content">
-               <div style="clear:both"></div>
-               <ReuseTemplate/>
-            </div>
-         </div>
+         <div><ReuseTemplate/></div>
       </div>
-   </div>
-   <div v-else :style="contentStyle" class="content-wrapper mt-1">
-      <!-- background image below title and content (ugly cut & paste) -->
-      <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
-      <div class="content">
-         <v-container class="mt-4 pa-0 pb-3 width-100">
-            <v-row no-gutters class="d-flex align-center flex-nowrap">
-               <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
-               <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
-                  <span class="title">{{ gallery.name }} Gallery</span>
-               </v-col>
-               <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
-                  <ExpandItems :items="galleryItems" buttonClass="mr-n2"/>
-                  <CopyLink :route="Route.GALLERY.name" :id="galleryId"/>
-                  <ItemThumbConfig/>
-                  <EditButton v-if="canEdit" @click="showEditGalleryDialog=true" class="mx-n2"/>
-               </v-col>
-            </v-row>
-            <GalleryParentLink :gallery="gallery" style="text-align:center"/>
-         </v-container>
-         <div style="clear:both"></div>   
+      <!-- content w/o header -->
+      <div v-else>
          <ReuseTemplate/>
+      </div>
+      </div>
       </div>
    </div>
 
@@ -177,6 +157,7 @@
    const verticalHeader  = computed(() => headerImage.value?.dimensions && objAspectRatio(headerImage.value.dimensions) < 1)
    const headerImage     = computed(() => getImage(ImageType.HEADER))
    const getImage = (imageType)  => {
+      if (viewMgr.isMobile) { return null }
       for (const image of gallery.value.images) {
          if (image.active && image.imageType == imageType) { return image }
       }
