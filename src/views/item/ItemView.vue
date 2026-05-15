@@ -1,5 +1,5 @@
 <template>
-   <DefineTemplate> <!-- desktop item info beside or below image -->
+   <DefineTemplate> <!-- item info beside or below image -->
       <div v-if="alternateName" class="mt-n2">
          also <span class="text-h5">{{ alternateName }}</span>
       </div>

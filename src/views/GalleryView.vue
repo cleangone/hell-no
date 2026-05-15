@@ -19,7 +19,7 @@
       <ReuseTemplate/>
    </div>
    <div v-else> 
-      <div class="content-wrapper mt-1">
+      <div class="content-wrapper mt-1" :style="contentStyle">
       <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
       <div class="content">
       <div style="clear:both"></div>
@@ -133,7 +133,7 @@
       
    useSeoMeta({ title: "Hell-No " + (gallery.value ? gallery.value.name + " " : "")  + "Gallery" })
 
-   const contentStyle      = computed(() => "min-height:" + windowHeight.value + "px")
+   const contentStyle      = computed(() => "min-height:" + windowHeight.value + "px;")
    const galleryId         = computed(() => gallery.value ? gallery.value.id : "")
    const descExists        = computed(() => gallery.value.desc && gallery.value.desc.length)
    const descInHeader      = computed(() => gallery.value.descInHeader)

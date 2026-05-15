@@ -29,7 +29,7 @@
       </v-row>
    </div>
    <div style="position:relative" class="w-100" ref="imageDivRef">  
-      <div v-if="viewStore.isMobileSwipe">  
+      <div v-if="viewStore.isMobileSwipe"> <!-- swipe -->
          <div ref="swipeElement" class="center d-flex justify-center">  
             <ItemSwipe v-for="item in swipeItems" :key="item.id" :item="item" v-on:done="onSwipeDone"
                :canSwipeLeft="navItems.next!=null" :canSwipeRight="navItems.prev!=null"
@@ -79,7 +79,7 @@
 
    const props = defineProps({ item: Object, origin: String, nav: String })
   
-   const route = useRoute()
+   const route  = useRoute()
    const router = useRouter()
    const itemStore    = useItemStore()
    const itemMgr      = useItemMgr()
@@ -139,7 +139,7 @@
       return galleries
    }
 
-   // do not show prev/next if scrolling through items
+   // do not show prev/next for infinite scroll
    const showPrevNext = computed(() => viewStore.isMobileSwipe ? showNav.value : false)
    
    const viewStoreVisibleItems = computed(() => showNav.value ? viewStore.getVisibleItems(props.origin) : null)
