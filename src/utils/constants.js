@@ -182,7 +182,6 @@ export const Route = {
    ADMIN:     { name: 'admin',     url: '/admin',     display: 'Admin' },
    ADD_ITEM:  { name: 'add-item',  url: '/add-item',  display: 'Add Item' },
    EDIT_ITEM: { name: 'edit-item', url: '/edit-item/',display: 'Edit Item' },
-    // FORGOT:    'Forgot Password',
 }
 
 export const State = {
@@ -233,5 +232,3 @@ export const BackgroundColors = {
 }
 
 export const Colors = [ 'red', 'pink', 'orange', 'yellow', 'blue', 'green', 'indigo', 'purple' ]
-
-

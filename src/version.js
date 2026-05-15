@@ -7,6 +7,7 @@
 */
 export const versions = [    
    ["v2.22.0", "5/14/26"], // Optionally propagate gallery backgrounnd to items
+                           // Refactor ItemView to extract mobile - background interfered with swipe
    ["v2.21.0", "5/13/26"], // UserView wall background is gallery thumbs
                            // Revive solo mode
    ["v2.19.1", "5/12/26"], // Vertical gallery header

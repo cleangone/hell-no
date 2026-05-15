@@ -157,7 +157,7 @@
    const verticalHeader  = computed(() => headerImage.value?.dimensions && objAspectRatio(headerImage.value.dimensions) < 1)
    const headerImage     = computed(() => getImage(ImageType.HEADER))
    const getImage = (imageType)  => {
-      if (viewMgr.isMobile) { return null }
+      if (viewMgr.isMobile || !gallery.value) { return null } // gallery may not be populated yet
       for (const image of gallery.value.images) {
          if (image.active && image.imageType == imageType) { return image }
       }
