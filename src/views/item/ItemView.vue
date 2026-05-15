@@ -190,7 +190,7 @@
    
    // onMounted not guar to be called before other methods/computed
    onMounted(async() => {
-      console.log("ItemView.onMounted")
+      // console.log("ItemView.onMounted")
       if (viewStore.isInitialized && route.params.origin != ItemOrigin.EXTERNAL) { showNav.value = true }
       else {
          console.log("ItemView - external/direct link to " + route.params.id)
@@ -249,8 +249,10 @@
    
    const backgroundStyle = computed(() => "opacity: .05;") // make this configurable?
    const backgroundImage = computed(() => {
-      if (originGallery.value && originGallery.value.shareBackground) {
-         for (const image of originGallery.value.images) {
+      let gallery = originGallery.value
+      if (!gallery && singleOtherGallery.value) { gallery = otherGalleries.value[0] }
+      if (gallery && gallery.shareBackground) {
+         for (const image of gallery.images) {
             if (image.active && image.imageType == ImageType.BACKGROUND) { return image }
          }
       }
