@@ -6,6 +6,8 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.24.0", "5/16/26"], // Refactor emails to replace mirror threads with thread.userIds
+   ["v2.23.0", "5/15/26"], // Re-enabled email with Google Workspaces account
    ["v2.22.0", "5/14/26"], // Optionally propagate gallery backgrounnd to items
                            // Refactor ItemView to extract mobile - background interfered with swipe
    ["v2.21.0", "5/13/26"], // UserView wall background is gallery thumbs

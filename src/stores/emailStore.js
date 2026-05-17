@@ -9,41 +9,45 @@ import { dateUuid } from '@/utils/utils'
 /*
    emailThread
       id 
-      mirrorThreadId - prepopulated id of mirror thread
-      primaryThreadId - populated on mirror thread created by backend 
-      userId
+      name - initial email subject
+      userIds - users involved in the exchange
       emails[]
          id
-         primaryEmailId - populated on mirror email created by backend 
-         itemId - optional
+         visibleToUserIds[] - starts with both, deleting an email will remove that user, but the other user
+            still sees the email.  Once empty, the backend will delete the email and then possilby the thread
          fromContact { userId, username, email}
          toContact   { userId, username, email}
          subject
          content
+         itemId - optional
          dateCreated
       dateCreated
       dateModified
 */
 
-const TABLE = 'email_threads'
+const TABLE = 'email-threads'
 
 export const useEmailStore = defineStore('email', () => {
    const userStore = useUserStore()
    const threadCollection = collection(db, TABLE)
    function threadDoc(id) { return doc(db, TABLE, id) }
    
-   const myThreadsQuery = computed(() => userStore.userId && query(threadCollection, where('userId', '==', userStore.userId)))
+   const myThreadsQuery = computed(() => userStore.userId && query(threadCollection, where('userIds', "array-contains", userStore.userId)))
    const myEmailThreads = useFirestore(myThreadsQuery, [])
    
    function addEmailThread(email) { 
       const threadToAdd = { 
-         id:dateUuid(), mirrorThreadId: dateUuid(), userId:userStore.userId, 
-         name:email.subject, emails:[getEmailToAdd(email)],
-         dateCreated:serverTimestamp(), dateModified: serverTimestamp() }
+         id:            dateUuid(),  
+         userIds:       getlUserIds(email), 
+         name:          email.subject, 
+         emails:        [ getEmailToAdd(email) ],
+         dateCreated:   serverTimestamp(), 
+         dateModified:  serverTimestamp() }
       console.log("addEmailThread", threadToAdd)
       setDoc(threadDoc(threadToAdd.id), threadToAdd)
    }
-   function getEmailToAdd(email) { return { ...email, id:dateUuid(), dateCreated: new Date() } } 
+   function getlUserIds(email)   { return [ email.toContact.userId,  email.fromContact.userId ]}
+   function getEmailToAdd(email) { return { ...email, id:dateUuid(), visibleToUserIds: getlUserIds(email), dateCreated: new Date() }} 
 
    function updateEmailThread(thread) {
       const threadToUpdate = { ...thread, dateModified: serverTimestamp() }
@@ -56,8 +60,10 @@ export const useEmailStore = defineStore('email', () => {
          { emails: arrayUnion(getEmailToAdd(email)), dateModified:serverTimestamp() })
    }
    
-   function deleteEmail(threadId, email) { updateDoc(threadDoc(threadId), { emails: arrayRemove(email) }) }   
-   function deleteEmailThread(id) { deleteDoc(doc(threadCollection, id)) }
+   function updateEmails(threadId, emails) {
+      console.log("updateEmails", emails)
+      updateDoc(threadDoc(threadId), { emails: emails, dateModified:serverTimestamp() })
+   }
 
-   return { myEmailThreads, addEmailThread, updateEmailThread, addEmail, deleteEmail, deleteEmailThread }
+   return { myEmailThreads, addEmailThread, updateEmailThread, addEmail, updateEmails }
 })
