@@ -20,36 +20,29 @@
       <!-- non-fullscreen image -->
       <v-img v-if="!isFullscreen && currItem" :src="currItem.primaryImage.url" :aspect-ratio="aspectRatio" @click="$emit(Emit.DONE)" class="mx-3"/>
 
-
-      <!-- <div ref="fullscreenEle"> -->
-         <!-- <div class="card"
-
-            :style="'background-image: url(' +backgroundImage.url+ ');}'"  > -->
-         <!-- <v-img :src="backgroundImage.url"
-    cover
-    min-height="100vh"
-    class="dimmed-background d-flex align-start justify-center"
-   
-  > -->
-         <!-- <img v-if="backgroundImage" :src="backgroundImage.url" :style="backgroundStyle"/> -->
-         <!-- <div class="content"> -->
-            <!-- <div style="clear:both"></div> -->
-            <!-- <div v-if="isFullscreen" class="text-center">
-                
-               <ReuseTemplate/>
-            </div>
-            <v-img v-if="isFullscreen && currItem" :src="currItem.primaryImage.url" 
-               height="98vh" contain :aspect-ratio="aspectRatio" @click="$emit(Emit.DONE)"/> -->
-        
-
+      <!-- fullscreen with background image -->
       <div ref="fullscreenEle">
+         <div v-if="isFullscreen" class="full-container">
+            <img v-if="backgroundImage" :src="backgroundImage.url" class="full-dimmed"/>
+            <div class="full-content">
+               <div class="text-center">
+                  <IconButton v-if="multipleItems" icon="mdi-chevron-left" @click="prev()" size="med" class="full-text"/>
+                  <span v-if="isFullscreen" class="mx-4 full-text">{{ currItem?.name }}</span>
+                  <IconButton v-if="multipleItems" icon="mdi-chevron-right" @click="next()" size="med" class="full-text"/>
+               </div>
+               <v-img v-if="currItem" :src="currItem.primaryImage.url" @click="$emit(Emit.DONE)" class="full-image"/>
+            </div>
+         </div>
+      </div>
+
+      <!-- <div ref="fullscreenEle">
          <div v-if="isFullscreen" class="text-center">
             <IconButton v-if="multipleItems" icon="mdi-chevron-left" @click="prev()" size="med" class="color-full"/>
             <span v-if="isFullscreen" class="mx-4 color-full">{{ currItem?.name }}</span>
             <IconButton v-if="multipleItems" icon="mdi-chevron-right" @click="next()" size="med" class="color-full"/>
          </div>
          <v-img v-if="isFullscreen && currItem" :src="currItem.primaryImage.url" :aspect-ratio="aspectRatio" @click="$emit(Emit.DONE)"/>
-      </div>
+      </div> -->
    </v-card>
 </template>
 
@@ -87,16 +80,6 @@
       return item
    })
    const aspectRatio = computed(() => currItem.value ? itemMgr.itemAspectRatio(currItem.value) : 1)
- 
-
-//  const backgroundStyle = computed(() => "opacity: .10;") // make this configurable?
-   
-   // const backgroundStyle = computed(() => {
-   //    const style = props.backgroundImage ? "{ backgroundImage:url('" + props.backgroundImage.url + "'); }" : ""
-   //    // const style = props.backgroundImage ? "{ backgroundImage:url(" + props.backgroundImage.url + "); opacity: .05; }" : ""
-   //    console.log("style", style)
-   //    return style
-   // })
 
    const getItemIndex = () => { 
       for (var i=0; i<items.value.length; i++) { 
@@ -117,45 +100,33 @@
 </script>
 
 <style>
-
-.color-full {
+.full-container {
+   position: relative;
+   min-height: 100vh;
+   overflow: hidden;
+}
+.full-dimmed {
+   position: absolute;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   object-fit: cover;
+   object-position: top; 
+   filter: brightness(0.10); 
+   z-index: -1;
+}
+.full-content {
+   position: relative;
+   z-index: 1;
+   padding: 2rem;
+}
+.full-text {
    background-color: black !important; 
    color: var(--c-link-light)  !important;
 }
-.card {
-  /* Set a background color with the desired transparency layer */
-  background-color: rgb(255 255 255 / 50%); 
-  /* background-image: url('your-image.jpg'); */
-  
-  /* Blend the image into the color layer */
-  background-blend-mode: lighten; /* Or 'multiply', 'darken' depending on your color */
-  background-size: cover;
-}
-
-
-/* 
-.dimmed-background  {
-  opacity: 0.1;
-} */
-
-.fullscreen-bg {
-  /* Prevent the image from repeating */
-  background-repeat: no-repeat;
-  
-  /* Scale the image to cover the entire viewport */
-  background-size: cover;
-  
-  /* Center the image within the viewport */
-  background-position: center center;
-  
-  /* Fix the background so it doesn't move when scrolling */
-  background-attachment: fixed;
-  
-  /* Set fallback or surrounding color */
-  background-color: black; 
-  
-  /* Force it to take up the full screen height */
-  height: 100vh;
-  width: 100vw;
+.full-image {
+   height: 95vh;
+   width: auto;
 }
 </style>
