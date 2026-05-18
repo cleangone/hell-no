@@ -8,6 +8,7 @@
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
             <div class="title">Galleries</div>
             <RouterLink v-if="username" :to="Route.USER.url + route.params.id" class="mt-n4">{{ username }}</RouterLink>
+            <div v-else-if="viewMgr.solo" class="text-subtitle-1 mt-n2 mb-2">Solo Mode</div>
          </v-col>      
          <v-col cols="1" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
             <GalleryThumbsConfig/>
@@ -29,17 +30,19 @@
    import { useRoute } from 'vue-router'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
+   import { useGalleryMgr }   from '@/stores/galleryMgr'
    import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import GalleryThumb        from '@/components/gallery/GalleryThumb.vue'
    import GalleryThumbsConfig from '@/components/gallery/GalleryThumbsConfig.vue'
    import { handleError, isPrivate } from '@/utils/utils'
-   import { GalleryThumbOptions, Route } from '@/utils/constants'
+   import { Defaults, GalleryThumbOptions, Route } from '@/utils/constants'
   
    const route = useRoute()
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
+   const galleryMgr   = useGalleryMgr()
    const profileStore = useProfileStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
@@ -54,11 +57,6 @@
    // id param can be a userId, profileId or the default siteId
    const rawUser    = computed(() => userStore.getUser(route.params.id) )
    const rawProfile = computed(() => profileStore.getProfile(route.params.id)) 
-   const paramUserId = computed(() => { 
-      if (rawUser.value) { return rawUser.value.id }
-      else if (rawProfile.value) { return rawProfile.value.userId }
-      return null
-   })
    const username = computed(() => { 
       if (rawUser.value) { return rawUser.value.username }
       else if (rawProfile.value) { return rawProfile.value.username }
@@ -70,34 +68,32 @@
    const sortByDate             = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SORT_BY_DATE))
    
    const visibleGalleries = computed(() => { 
-      // user/profile can see their own galleries
-      const allGalleries = (paramUserId.value && paramUserId.value == userStore.userId) ? [...galleryStore.myGalleries] : []
-      const galleryIds = new Set()
-      for (const gallery of allGalleries) { galleryIds.add(gallery.id) }
-      
-      const publicGalleries = paramUserId.value ? galleryStore.getPublicGalleries(paramUserId.value) : galleryStore.publicGalleries
-      for (const gallery of publicGalleries) {
-         if (!galleryIds.has(gallery.id)) { allGalleries.push(gallery) }
-      }   
+      if (route.params.id == Defaults.SITE_ID) {
+         return viewMgr.solo ? galleryStore.myGalleries : galleryStore.publicGalleries 
+      }
 
-      const galleries = []     
-      for (const gallery of allGalleries) {
-         const inParamView = 
-            !username.value || // site 
-            rawUser.value && !gallery.profileId || // user view, gallery not associated with a profile
-            rawProfile.value && gallery.profileId == rawProfile.value.id // profile view, gallery matches profile
-         if (inParamView && gallery.images.length && viewMgr.galleryThumbVisibleToUser(gallery)) { galleries.push(gallery) }
-      }   
-      return galleries
+      const galleries = []
+      if (rawUser.value) { 
+         const allGalleries = rawUser.value.id == userStore.userId ? 
+            galleryStore.myGalleries : galleryStore.getPublicGalleries(rawUser.value.id)
+         galleries.push( ...allGalleries.filter(gallery => !gallery.profileId) )
+      }
+      else if (rawProfile.value) { 
+         const allGalleries = galleryStore.getPublicGalleries(rawProfile.value.userId)
+         galleries.push( ...allGalleries.filter(gallery => gallery.profileId == rawProfile.value.id) )
+      }
+
+     return galleries.filter(gallery => viewMgr.galleryThumbVisibleToUser(gallery))
    })
 
    const thumbGalleries = computed(() => { 
       const galleries = []     
       for (const gallery of visibleGalleries.value) {
-         let thumbGallery = showChildGalleries.value || !gallery.parentGalleryId ? gallery : null 
-         if (gallery && !showMyPrivateGalleries.value && isPrivate(gallery)) { thumbGallery = null }
-        
-         if (thumbGallery) { galleries.push(thumbGallery) }
+         if (galleryMgr.hasGalleryThumbImage(gallery)) {
+            let thumbGallery = showChildGalleries.value || !gallery.parentGalleryId ? gallery : null 
+            if (gallery && !showMyPrivateGalleries.value && isPrivate(gallery)) { thumbGallery = null }
+            if (thumbGallery) { galleries.push(thumbGallery) }
+         }
       }  
       
       if (sortByDate.value) { galleries.sort(function(a, b) { return b.dateContentModified - a.dateContentModified }) }

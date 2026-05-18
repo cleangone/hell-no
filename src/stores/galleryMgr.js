@@ -2,6 +2,7 @@ import { computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useGalleryStore } from './galleryStore'
 import { useItemStore }    from './itemStore'
+import { ImageType } from '@/utils/constants'
    
 export const useGalleryMgr = defineStore('galleryMgr', () => {   
    const galleryStore = useGalleryStore()
@@ -64,6 +65,13 @@ export const useGalleryMgr = defineStore('galleryMgr', () => {
       }
    }
 
+   function hasGalleryThumbImage(gallery) {
+      for (const image of gallery.images) {
+         if (image.imageType == ImageType.GALLERY) { return true }
+      }
+      return false
+   }
+
    const myGalleryOptions = computed(() => { 
       const options = []
        for (const gallery of galleryStore.myGalleries) { 
@@ -119,8 +127,8 @@ export const useGalleryMgr = defineStore('galleryMgr', () => {
       return 0
    }
 
-   return { getUserGalleries, deleteGallery, uniqueItems, galleryImage, myGalleryOptions, 
-      getGalleryOptions, getProfileCount, removeItemId 
+   return { getUserGalleries, deleteGallery, uniqueItems, galleryImage, hasGalleryThumbImage, 
+      myGalleryOptions, getGalleryOptions, getProfileCount, removeItemId 
    } 
 })
 
