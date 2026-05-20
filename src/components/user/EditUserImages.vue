@@ -1,8 +1,8 @@
 <template>
    <span class="text-left">
-      <TextButton text="Add item images" @click="addItemImages()" class="ml-1 mt-n4"/>
+      <TextButton text="Add item images" @click="addItemImages()" class="ml-n2"/>
    </span>
-   <v-data-table v-if="viewTable" :headers="headers" :items="profileImages" item-key="id">
+   <v-data-table v-if="viewTable" :headers="headers" :items="userImages" item-key="id">
        <template v-slot:item.image="{ item }">
          <img :src="item.thumbUrl" height="75" class="image-circle"/>
       </template>
@@ -19,17 +19,14 @@
 
 <script setup>
    import { computed, ref } from 'vue'
-   import { useProfileStore } from '@/stores/profileStore'
-   import { useItemStore }    from '@/stores/itemStore'
+   import { useUserStore } from '@/stores/userStore'
+   import { useItemStore } from '@/stores/itemStore'
    import TextButton   from '@/components/util/TextButton.vue'
    import DeleteButton from '@/components/util/DeleteButton.vue'
-   import { Emit, ImageType } from '@/utils/constants'
-   
-   const props = defineProps({ profileId: String })
-   const emit = defineEmits([ Emit.DONE ])
+   import { ImageType } from '@/utils/constants'
 
-   const profileStore = useProfileStore()
-   const itemStore    = useItemStore()
+   const userStore = useUserStore()
+   const itemStore = useItemStore()
    const viewTable = ref(true)
    
    const headers = [
@@ -39,26 +36,26 @@
    ]
 
    // read from store so list is dynamically updated if image deleted
-   const profile       = computed(() => profileStore.getMyProfile(props.profileId))
-   const profileImages = computed(() => profile.value?.images ? profile.value.images : [])
+   const userImages = computed(() => userStore.user.images ? userStore.user.images : [])
    
    const addItemImages = () => { 
-      const imageIds = profileImages.value.map(image => image.id)
+      const images = [ ...userImages.value ]
+      const currImageIds = images.map(image => image.id)
       for (const item of itemStore.myItems) {
-          if (item.profileId == props.profileId) {
+          if (!item.profileId) {
             for (const itemImage of item.otherImages) {
-               if (itemImage.imageType == ImageType.USER && !imageIds.includes(itemImage.id))  {
-                  profileStore.addImage(props.profileId, itemImage)
-                  imageIds.push(itemImage.id)
+               if (itemImage.imageType == ImageType.USER && !currImageIds.includes(itemImage.id))  {
+                  images.push(itemImage)
                }
             }
          }
       }
+      userStore.updateImages(images)
    }
 
    const updateActive = (itemImage) => { 
       const updatedImages = []
-      for (const image of profileImages.value) {
+      for (const image of userImages.value) {
          if (image.id == itemImage.id) {
             const updatedImage = { ...image }
             updatedImage.active = itemImage.active
@@ -66,10 +63,10 @@
          }
          else { updatedImages.push(image)}
       }
-      profileStore.updateProfile({ id: props.profileId, images: updatedImages }) 
+      userStore.updateImages(updatedImages) 
    }
    
-   const deleteImage = (itemImage) => { profileStore.removeImage(props.profileId, itemImage) }
+   const deleteImage = (itemImage) => { userStore.removeImage(itemImage) }
 </script>
 
 <style>

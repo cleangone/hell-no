@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { db } from '@/firebase'
-import { arrayUnion, arrayRemove, collection, deleteDoc, doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
+import { arrayRemove, collection, deleteDoc, doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
 import { useFirestore } from '@vueuse/firebase/useFirestore'
 
 /*
@@ -11,6 +11,8 @@ import { useFirestore } from '@vueuse/firebase/useFirestore'
       firstName
       lastName
       username
+      images
+         ...itemImage
       settings
          itemHeaders[]
          galleryThumbOptions[]
@@ -73,8 +75,16 @@ export const useUserStore = defineStore('user', () => {
       deleteDoc(doc(userCollection, id))
    }
 
+   function updateImages(images) {
+      updateDoc(userDoc(userId.value), { images: images, dateModified: serverTimestamp() })
+   }
+
+   function removeImage(image) {
+      updateDoc(userDoc(userId.value), { images:arrayRemove(image), dateModified:serverTimestamp() })
+   }
+
    return { 
       userId, user, users, userIdToUser, userExists, getUser, getUsername, setUser, updateUser, deleteUser,
-      myFullName, mySettings, soloMode, updateSettings,
+      myFullName, mySettings, soloMode, updateSettings, updateImages, removeImage
    }
 })

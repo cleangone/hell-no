@@ -2,9 +2,16 @@
    <div>
       <div class="text-left"> 
          {{ user.email }} 
-         <TextButton @click="showEditEmail=true"    text="Edit Email"/>
-         <TextButton @click="showEditPassword=true" text="Edit Password"/>
+         <TextButton v-if="showImages" @click="showImages=false" text="Edit Account"/>
+         <TextButton v-else @click="showImages=true" text="Edit Images"/>
+         <TextButton @click="showEditEmail=true"     text="Edit Email"/>
+         <TextButton @click="showEditPassword=true"  text="Edit Password"/>
       </div>
+
+      <div v-if="showImages" class="text-left">
+         <EditUserImages />
+      </div>
+      <div v-else>
       <v-form v-model="dataValid" class="mt-2">
          <v-row>
             <v-col>
@@ -43,12 +50,13 @@
                <v-checkbox v-model="notifyViaMessage" label="By Message" class="mx-3 mt-n4 tight-checkbox"/>
             </v-col>
          </v-row>
-      </v-form> 
-   </div>   
-   <div class="mt-8 mb-2 text-left">
-      <v-btn @click="updateUser()" :disabled="!dataValid || !dataUpdated">Update</v-btn>
-      <v-btn @click="resetUser()" class="mx-2">Reset</v-btn>
-   </div>
+      </v-form>  
+      <div class="mt-8 mb-2 text-left">
+         <v-btn @click="updateUser()" :disabled="!dataValid || !dataUpdated">Update</v-btn>
+         <v-btn @click="resetUser()" class="mx-2">Reset</v-btn>
+      </div>
+      </div>  
+   </div>  
 
    <v-dialog v-model="showEditEmail" width="auto">
       <EditEmail :user="user" @done="showEditEmail=false"/>
@@ -62,9 +70,10 @@
    import { computed, ref } from 'vue'
    import { useUserStore }  from '@/stores/userStore'
    import { useViewMgr }    from '@/stores/viewMgr'
-   import EditEmail    from '@/components/user/EditEmail.vue'
-   import EditPassword from '@/components/user/EditPassword.vue'
-   import TextButton   from '@/components/util/TextButton.vue'
+   import EditUserImages from '@/components/user/EditUserImages.vue'
+   import EditEmail      from '@/components/user/EditEmail.vue'
+   import EditPassword   from '@/components/user/EditPassword.vue'
+   import TextButton     from '@/components/util/TextButton.vue'
    import { requiredRule } from '@/utils/utils'
    import { NotificationOptions } from '@/utils/constants'
    
@@ -76,6 +85,7 @@
    const username  = ref(userStore.user.username)
    const phone     = ref(userStore.user.phone)
    const settings  = ref(userStore.user.settings ? { ...userStore.user.settings } : { ...DEFAULT_SETTINGS })
+   const showImages       = ref(false)
    const showEditEmail    = ref(false)
    const showEditPassword = ref(false)
    const dataValid = ref(true)
