@@ -25,19 +25,9 @@
          </div>
       </div>
       <div v-else-if="showImage">
-         <v-img :src="itemImageToShow.url" contain @click="showImage=false" class="mx-3"/>
+         <v-img :src="itemImageToShow.url" contain @click="showImage=false" class="mx-3" :class="imageClass(itemImageToShow)"/>
       </div>
-      <div v-else-if="showCrop">
-         <v-form>
-            <cropper v-if="cropImageType == ImageType.GALLERY" ref="cropperElement" class="image-cropper" :src="urlToCrop" @change="onCropChange"
-               :stencil-props="{aspectRatio: 16/9}"/>
-            <cropper v-else ref="cropperElement" class="image-cropper" :src="urlToCrop" @change="onCropChange"/>
-         </v-form>
-         <div class="card-actions">  <!-- float at bottom -->
-            <v-btn @click="crop(item)"     color="primary" variant="text" class="mr-4 bg-white">crop</v-btn>
-            <v-btn @click="showCrop=false" color="primary" variant="text" class="bg-white">cancel</v-btn>
-         </div>
-      </div>
+      <CropImage v-else-if="showCrop" :item="item" :itemImageToCrop="itemImageToCrop" :cropImageType="cropImageType" @done="showCrop=false"/>
       <div v-else-if="showEdit" class="ml-5 mt-2">
          <img :src="selectedImage.thumbUrl" height="200" class="mb-2"/>
          <div style="max-width:50%">
@@ -56,7 +46,7 @@
                Item<br>Page
             </template>
             <template v-slot:item.image="{ item }">
-               <img :src="item.thumbUrl" @click="showItemImage(item)" height="100" class="hand"/>
+               <img :src="item.thumbUrl" @click="showItemImage(item)" height="75" class="hand" :class="imageClass(item)"/>
             </template>
             <template v-slot:header.imageType="{ }">
                <div class="d-flex justify-center align-center">
@@ -78,6 +68,7 @@
                <div v-if="isPrimaryImage(item)" class="d-flex flex-column">
                   <TextButton text="crop"         @click="cropImage(item, ImageType.CROP)"/>
                   <TextButton text="gallery crop" @click="cropImage(item, ImageType.GALLERY)"/>
+                  <TextButton text="avatar crop"  @click="cropImage(item, ImageType.USER)"/>
                </div>
             </template>
             <template v-slot:item.actions="{ item }">
@@ -93,21 +84,20 @@
    import { computed, ref } from 'vue'
    import { storage } from '@/firebase'
    import { ref as storageRef } from 'firebase/storage'
-   import { uploadBytes, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
-   import { Cropper } from 'vue-advanced-cropper'
+   import { uploadBytesResumable, getDownloadURL } from 'firebase/storage'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
    import { useItemStore }    from '@/stores/itemStore'
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useActionStore }  from '@/stores/actionStore'
    import { useWallStore }    from '@/stores/wallStore'
+   import CropImage    from './CropImage.vue'
    import EditButton   from '@/components/util/EditButton.vue'
    import DeleteButton from '@/components/util/DeleteButton.vue'
    import IconButton   from '@/components/util/IconButton.vue'
    import TextButton   from '@/components/util/TextButton.vue'
    import ToolTip      from '@/components/util/ToolTip.vue'
    import { Emit, GalleryImageTypes, ImageType } from '@/utils/constants'
-   import 'vue-advanced-cropper/dist/style.css'
 
    const TRUE = true
    const props = defineProps({item: Object})
@@ -124,10 +114,8 @@
    const showImage = ref(false)
    const showCrop  = ref(false)
    const showEdit  = ref(false)
-   const cropperElement = ref(null)
    const itemImageToShow = ref(null)
    const itemImageToCrop = ref(null)
-   const cropCoordinates = ref(null)
    const cropImageType = ref("")
    const selectedImage = ref({})
    
@@ -161,7 +149,9 @@
       showImage.value = true
    }
 
-   const toggleShowWithItem= (itemImage) => {
+   const imageClass = (itemImage) => { return itemImage.imageType == ImageType.USER ? "image-circle" : "" }
+
+   const toggleShowWithItem = (itemImage) => {
       const itemToUpdate = { id:item.value.id, otherImages:[ ...item.value.otherImages ] }
       for (const image of itemToUpdate.otherImages) {
          if (image.id == itemImage.id) { image.showWithItem = !itemImage.showWithItem }
@@ -182,7 +172,6 @@
    
    const saveImage = () => {
       const itemToUpdate = { id:item.value.id, otherImages:[] }
-      let feedItemToUpdate = null
       for (const image of item.value.otherImages) {
          if (image.id == selectedImage.value.id) {
             const updatedImage = { ...image }
@@ -203,26 +192,13 @@
                existingPrimaryImage.imageType = ImageType.OTHER
                itemToUpdate.otherImages.push(existingPrimaryImage)
                itemToUpdate.primaryImage = updatedImage
-
-               feedItemToUpdate = {
-                  id:      item.value.id,
-                  name:    item.value.name,
-                  state:   item.value.state,
-                  type:    item.value.type,
-                  userId:  item.value.userId,
-                  groupIds:      item.value.groupIds,
-                  primaryArtist: item.value.primaryArtist,
-                  primaryImage:  itemToUpdate.primaryImage
-               }
             }
             else { itemToUpdate.otherImages.push(updatedImage) }
          }
          else { itemToUpdate.otherImages.push(image) }
       }
      
-      const updatedItem = itemStore.updateItem(itemToUpdate)
-      if (feedItemToUpdate) { actionStore.addFeedAction({ ...feedItemToUpdate, dateModified:updatedItem.dateModified }) } 
-      
+      itemStore.updateItem(itemToUpdate)
       showEdit.value = false
    }
    
@@ -280,52 +256,11 @@
       )
    }
 
-   //
-   // crop image
-   //
-   const urlToCrop = computed(() => { 
-      const url = itemImageToCrop.value ? itemImageToCrop.value.url + "&random=" + Math.random() : ""
-      return url
-   })
-
    const cropImage = (itemImage, imageType) => {
       // todo - only ever crop the item.primaryImage - don't really need itemImageToCrop
       itemImageToCrop.value = itemImage
       cropImageType.value = imageType
       showCrop.value = true
-   }
-   
-   const onCropChange = ({ coordinates, canvas }) => { cropCoordinates.value = coordinates }
-
-   const crop = () => {
-      const result = cropperElement.value.getResult()
-      const croppedUrl = result.canvas.toDataURL("image/jpeg")
-      
-      const croppedItemImage = itemMgr.createItemImage(cropImageType.value, item.value.userId)
-      actionStore.addImageAction(props.item.id, props.item.userId, croppedItemImage)
-      croppedItemImage.dimensions = { width: cropCoordinates.value.width, height: cropCoordinates.value.height }      
-                    
-      const imageRef = storageRef(storage, croppedItemImage.filePath)
-      fetch(croppedUrl).then(result => {
-         // console.log("getting blob")
-         return result.blob()
-      }).then(blob => {
-         // console.log("uploading blob")
-         uploadBytes(imageRef, blob, { contentType: "image/jpeg" }).then(function(snapshot) {
-            // console.log("getting downloadURL", snapshot)
-            return getDownloadURL(snapshot.ref)
-         }).then(downloadURL => {
-            // console.log("Cropped downloadURL", props.item.id, downloadURL); 
-            croppedItemImage.url = downloadURL
-            croppedItemImage.thumbUrl = downloadURL // for initial image display, will be overwritten
-            
-            // possible race condition with thumb processing finishing before item updated?
-            itemStore.addCroppedImage(props.item.id, croppedItemImage)  // initial add for image display
-            showCrop.value = false
-         }) 
-      }).catch(error => {
-         console.error(error)
-      })
    }
 
    const addGalleryImage = (itemImage) => {
@@ -359,9 +294,8 @@
    min-width: 800px;  
    min-height: 600px;  
 }
-.image-cropper {
-  border: solid 1px #EEE;
-  min-height: 300px;
-  width: 100%;
-}
+.image-circle {
+  border-radius: 50%; 
+  object-fit: cover;
+}      
 </style>

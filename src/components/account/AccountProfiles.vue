@@ -5,6 +5,9 @@
          <TextButton @click="showAddDialog=true" text="Add Profile"/>
       </div>
       <v-data-table :headers="headers" :items="profiles">
+         <template v-slot:item.image="{ item }">
+            <img v-if="item.activeImage" :src="item.activeImage.thumbUrl" height="50" class="image-circle"/>
+         </template>
          <template v-slot:item.actions="{ item }">
             <EditButton   @click="editProfile(item)"/>
             <DeleteButton @click="deleteProfile(item)" :disabled="profileUsed(item)"/>
@@ -16,7 +19,7 @@
       <AddProfile :userId="userStore.userId" @done="showAddDialog=false"/>
    </v-dialog>
    <v-dialog v-model="showEditDialog" width="auto">
-      <EditProfile :profile="selectedProfile" @done="showEditDialog=false"/>
+      <EditProfileCard :profile="selectedProfile" @done="showEditDialog=false"/>
    </v-dialog>
    <v-dialog v-model="showDeleteDialog" width="auto">
       <DeleteProfile :profile="selectedProfile" @done="showDeleteDialog=false"/>
@@ -29,12 +32,12 @@
    import { useProfileStore } from '@/stores/profileStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
    import { useItemMgr }      from '@/stores/itemMgr'
-   import AddProfile     from '@/components/profile/AddProfile.vue'
-   import EditProfile    from '@/components/profile/EditProfile.vue'
-   import DeleteProfile  from '@/components/profile/DeleteProfile.vue'
-   import EditButton     from '@/components/util/EditButton.vue'
-   import DeleteButton   from '@/components/util/DeleteButton.vue'
-   import TextButton     from '@/components/util/TextButton.vue'
+   import AddProfile      from '@/components/profile/AddProfile.vue'
+   import EditProfileCard from '@/components/profile/EditProfileCard.vue'
+   import DeleteProfile   from '@/components/profile/DeleteProfile.vue'
+   import EditButton      from '@/components/util/EditButton.vue'
+   import DeleteButton    from '@/components/util/DeleteButton.vue'
+   import TextButton      from '@/components/util/TextButton.vue'
    
    const userStore    = useUserStore()
    const profileStore = useProfileStore()
@@ -47,15 +50,19 @@
    
    const headers = [
       { title: 'Username',  value: 'username',     sortable: true },
+      { title: '',          key:   'image',        align:'center' },
       { title: 'Galleries', value: 'galleryCount', align:'center' },
       { title: 'Items',     value: 'itemCount',    align:'center' },
-      { title: '',          key: "actions" },
+      { title: '',          key:   "actions" },
    ]
 
    const profiles = computed(() => { 
       const displayProfiles = []
       for (const profile of profileStore.myProfiles) {
          const displayProfile = { ...profile }
+         for (const image of profile.images) {
+            if (image.active) { displayProfile.activeImage = image }
+         }
          const itemCount = itemMgr.getProfileCount(profile.id)
          if (itemCount) { displayProfile.itemCount = itemCount }
 

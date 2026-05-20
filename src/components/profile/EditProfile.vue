@@ -1,5 +1,5 @@
 <template>
-   <v-card title="Edit Profile" class="edit-dialog">
+   <div class="edit-dialog">
       <v-form v-model="dataValid">
          <div>
             <v-text-field v-model="username" label="Username" :rules="usernameRules" class="ma-3"></v-text-field>
@@ -9,7 +9,7 @@
          <v-btn color="primary" @click="save()" :disabled="!dataValid || !dataChanged">save</v-btn>
          <v-btn color="primary" @click="$emit(Emit.DONE)">Cancel</v-btn>
       </v-card-actions>
-   </v-card>
+   </div>
 </template>
 
 <script setup>

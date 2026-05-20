@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 import { defineStore } from 'pinia'
 import { db } from '@/firebase'
-import { collection, doc, query, where, setDoc, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore"
+import { collection, doc, query, where, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, serverTimestamp } from "firebase/firestore"
 import { useFirestore } from '@vueuse/firebase/useFirestore'
 import { useUserStore } from './userStore'
    
@@ -32,6 +32,8 @@ export const useProfileStore = defineStore('profile', () => {
       sorted.sort(function(a, b){return a.username.localeCompare(b.username)}) 
       return sorted
    })
+   const myProfileIdToProfile = computed(() => myProfiles.value ? new Map(myProfiles.value.map((obj) => [obj.id, obj])) : new Map())
+   function getMyProfile(profileId) { return myProfileIdToProfile.value.get(profileId) }
 
    function getUsername(profileId) {
       const profile = profileIdToProfile.value.get(profileId)
@@ -52,6 +54,7 @@ export const useProfileStore = defineStore('profile', () => {
          id: newProfileRef.id, 
          userId: userId,
          username: username,
+         images: [],
          dateCreated:  serverTimestamp(),
          dateModified: serverTimestamp()
       })
@@ -60,7 +63,22 @@ export const useProfileStore = defineStore('profile', () => {
    function updateProfile(profile) { updateDoc(profileDoc(profile.id), { ...profile, dateModified: serverTimestamp() }) }
    function deleteProfile(id)      { deleteDoc(doc(profileCollection, id)) }
 
+   function addImage(profileId, itemImage) {
+      const imageToAdd = {
+         id:            itemImage.id, 
+         thumbUrl:      itemImage.thumbUrl, 
+         largeThumbUrl: itemImage.largeThumbUrl, 
+         dateCreated:   new Date()
+      }
+       updateDoc(profileDoc(profileId),  { images:arrayUnion(imageToAdd), dateModified:serverTimestamp() })
+   }
+
+   function removeImage(profileId, image) {
+      updateDoc(profileDoc(profileId),  { images:arrayRemove(image), dateModified:serverTimestamp() })
+   }
+   
    return { 
-      myProfiles, usernames, getProfile, getUsername, getUserId, addProfile, updateProfile, deleteProfile,
+      myProfiles, getMyProfile, usernames, getProfile, getUsername, getUserId, 
+      addProfile, updateProfile, deleteProfile, addImage, removeImage
    }
 })
