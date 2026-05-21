@@ -99,6 +99,7 @@ export const ImageType = {
    GALLERY:    'Gallery',
    HEADER:     'Header',
    BACKGROUND: 'Background',
+   UPLOAD:     'Upload',
    USER:       'User',
 }
 export const GalleryImageTypes = [ ImageType.GALLERY, ImageType.HEADER, ImageType.BACKGROUND ]

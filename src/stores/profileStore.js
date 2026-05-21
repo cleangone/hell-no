@@ -63,22 +63,28 @@ export const useProfileStore = defineStore('profile', () => {
    function updateProfile(profile) { updateDoc(profileDoc(profile.id), { ...profile, dateModified: serverTimestamp() }) }
    function deleteProfile(id)      { deleteDoc(doc(profileCollection, id)) }
 
+   // 
+   // images
+   //
    function addImage(profileId, itemImage) {
-      const imageToAdd = {
-         id:            itemImage.id, 
-         thumbUrl:      itemImage.thumbUrl, 
-         largeThumbUrl: itemImage.largeThumbUrl, 
-         dateCreated:   new Date()
+      updateDoc(profileDoc(profileId),  { images:arrayUnion(itemImage), dateModified:serverTimestamp() })
+   }
+
+   function updateImage(profileId, updatedImage) {
+      const images = []
+      const profile = getMyProfile(profileId)
+      for (const image of profile.images) {
+         images.push(image.id == updatedImage.id ? updatedImage : image)
       }
-       updateDoc(profileDoc(profileId),  { images:arrayUnion(imageToAdd), dateModified:serverTimestamp() })
+      updateDoc(profileDoc(profileId), { images: images, dateModified: serverTimestamp() })
    }
 
    function removeImage(profileId, image) {
-      updateDoc(profileDoc(profileId),  { images:arrayRemove(image), dateModified:serverTimestamp() })
+      updateDoc(profileDoc(profileId), { images:arrayRemove(image), dateModified:serverTimestamp() })
    }
    
    return { 
       myProfiles, getMyProfile, usernames, getProfile, getUsername, getUserId, 
-      addProfile, updateProfile, deleteProfile, addImage, removeImage
+      addProfile, updateProfile, deleteProfile, addImage, updateImage, removeImage
    }
 })

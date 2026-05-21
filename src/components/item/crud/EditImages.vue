@@ -8,26 +8,13 @@
          <IconButton v-else                icon="mdi-close" @click="$emit(Emit.DONE)"/>
       </template>
       <div v-if="showAdd">
-         <v-row class="mx-3 mt-2">
-            <v-col v-if="showUploadImage" class="text-center">
-               <v-img :src="fileUrl" width="200"/>
-            </v-col>
-            <v-col>
-               <input id="fileInput" type="file" @change="handleFileChange"/>
-               <v-card-text>
-                  <div>{{ uploadStatus }}</div>
-               </v-card-text>
-            </v-col>
-         </v-row>
-         <div class="card-actions">  <!-- float at bottom -->
-            <v-btn @click="uploadFile()"  color="primary" variant="text" class="mr-4 bg-white">Upload file</v-btn>
-            <v-btn @click="showAdd=false" color="primary" variant="text" class="bg-white">Cancel</v-btn>
-         </div>
+         <UploadImage :uploadHandler="imageHandler":uploadContext="uploadContext" bypassTitle @done="showAdd=false"/>
       </div>
       <div v-else-if="showImage">
          <v-img :src="itemImageToShow.url" contain @click="showImage=false" class="mx-3" :class="imageClass(itemImageToShow)"/>
       </div>
-      <CropImage v-else-if="showCrop" :item="item" :itemImageToCrop="itemImageToCrop" :cropImageType="cropImageType" @done="showCrop=false"/>
+      <CropImage v-else-if="showCrop" :item="item" :imageToCrop="imageToCrop" :cropImageType="cropImageType"
+         :uploadHandler="imageHandler" :uploadContext="uploadContext" @done="showCrop=false"/>
       <div v-else-if="showEdit" class="ml-5 mt-2">
          <img :src="selectedImage.thumbUrl" height="200" class="mb-2"/>
          <div style="max-width:50%">
@@ -82,16 +69,14 @@
 
 <script setup>
    import { computed, ref } from 'vue'
-   import { storage } from '@/firebase'
-   import { ref as storageRef } from 'firebase/storage'
-   import { uploadBytesResumable, getDownloadURL } from 'firebase/storage'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
    import { useItemStore }    from '@/stores/itemStore'
    import { useItemMgr }      from '@/stores/itemMgr'
-   import { useActionStore }  from '@/stores/actionStore'
    import { useWallStore }    from '@/stores/wallStore'
-   import CropImage    from './CropImage.vue'
+   import { useEditItemImageHandler } from '@/stores/image/editItemImageHandler'
+   import UploadImage  from '@/components/image/UploadImage.vue'
+   import CropImage    from '@/components/image/CropImage.vue'
    import EditButton   from '@/components/util/EditButton.vue'
    import DeleteButton from '@/components/util/DeleteButton.vue'
    import IconButton   from '@/components/util/IconButton.vue'
@@ -108,14 +93,14 @@
    const galleryMgr   = useGalleryMgr()
    const itemStore    = useItemStore()
    const itemMgr      = useItemMgr()
-   const actionStore  = useActionStore()
    const wallStore    = useWallStore()
+   const imageHandler = useEditItemImageHandler()
    const showAdd   = ref(false)
    const showImage = ref(false)
    const showCrop  = ref(false)
    const showEdit  = ref(false)
    const itemImageToShow = ref(null)
-   const itemImageToCrop = ref(null)
+   const imageToCrop = ref(null)
    const cropImageType = ref("")
    const selectedImage = ref({})
    
@@ -209,56 +194,11 @@
    }
 
    // 
-   // upload image
+   // upload/crop image
    //
-   const itemFile = ref('')
-   const fileUrl = ref('')
-   const uploadStatus = ref('')
-   
-   const showUploadImage = computed(() => { return fileUrl.value.length ? true : false })   
-
-   const handleFileChange = (e) => {
-      itemFile.value = e.target.files[0]
-      fileUrl.value = URL.createObjectURL(itemFile.value)
-   }
-   
-   const uploadFile = () => {
-      // console.log("addItem", itemName.value, props.gallery ? props.gallery.name : "no gallery" )
-      const itemImage = itemMgr.createItemImage(ImageType.OTHER, item.value.userId)
-      actionStore.addImageAction(props.item.id, props.item.userId, itemImage)
-      const imageRef = storageRef(storage, itemImage.filePath)
-
-      let img = new Image()
-      img.onload = () => { itemImage.dimensions = { width: img.width, height: img.height } }
-      img.src = fileUrl.value
-
-      const uploadTask = uploadBytesResumable(imageRef, itemFile.value, { contentType: itemFile.value.type })
-      uploadTask.on('state_changed',
-         (snapshot) => {
-            const progress = Math.floor((snapshot.bytesTransferred / snapshot.totalBytes) * 100)
-            uploadStatus.value = 'Upload ' + progress + '% done'
-         },
-         (error) => {
-            console.log("Upload failed", error)
-         },
-         () => {
-            // successful upload
-            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-               itemImage.url = downloadURL
-               itemImage.thumbUrl = downloadURL
-
-               console.log("Adding item.otherImages", downloadURL)
-               itemStore.addOtherImage(props.item.id, itemImage) 
-            })
-
-            showAdd.value = false
-         }
-      )
-   }
-
-   const cropImage = (itemImage, imageType) => {
-      // todo - only ever crop the item.primaryImage - don't really need itemImageToCrop
-      itemImageToCrop.value = itemImage
+   const uploadContext = computed(() => { return { uploadImageType:ImageType.OTHER, itemId:props.item.id }})
+   const cropImage = (imageSet, imageType) => {
+      imageToCrop.value = imageSet
       cropImageType.value = imageType
       showCrop.value = true
    }

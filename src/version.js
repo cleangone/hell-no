@@ -6,6 +6,8 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.25.0", "5/21/26"], // Avatars, including upload and crop of user/profile image
+                           // Refactor CropImage, Upload with imageHandlers, context
    ["v2.24.2", "5/18/26"], // Initial add of fullscreen background
    ["v2.24.1", "5/17/26"], // Clean up solo mode GalleriesView 
    ["v2.24.0", "5/16/26"], // Refactor emails to replace mirror threads with thread.userIds

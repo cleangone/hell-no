@@ -30,13 +30,14 @@
    import { uploadBytesResumable, getDownloadURL } from 'firebase/storage'
    import { useUserStore }    from '@/stores/userStore'
    import { useItemStore }    from '@/stores/itemStore'
-   import { useItemMgr }      from '@/stores/itemMgr'
    import { useGroupStore }   from '@/stores/groupStore'
    import { useGroupMgr }     from '@/stores/groupMgr'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useArtistStore }  from '@/stores/artistStore'
    import { useActionStore }  from '@/stores/actionStore'
+   import { useImageMgr }     from '@/stores/image/imageMgr'
    import { useViewStore }    from '@/stores/viewStore'
+   import { useAddItemImageHandler } from '@/stores/image/addItemImageHandler'
    import { dateUuid, isPublicOrGroup, requiredRule } from '@/utils/utils'
    import { ActionStatus, Emit, ItemStates, ImageType, ItemType, State }  from '@/utils/constants'
 
@@ -44,13 +45,14 @@
    const emit  = defineEmits([ Emit.DONE ])
    const userStore    = useUserStore()
    const itemStore    = useItemStore()
-   const itemMgr      = useItemMgr()
    const groupStore   = useGroupStore()
    const galleryStore = useGalleryStore()
    const groupMgr     = useGroupMgr()
    const artistStore  = useArtistStore()
    const actionStore  = useActionStore()
+   const imageMgr     = useImageMgr()
    const viewStore    = useViewStore()
+   const imageHandler = useAddItemImageHandler()
    const itemDefaults = ref({ state: State.PRIVATE, artistOption: null, groupOption: null })
    const itemName = ref('')
    const itemState = ref(null)
@@ -124,11 +126,11 @@
    })
 
    const addItem = () => {
-      const itemImage = itemMgr.createItemImage(ImageType.PRIMARY, userId.value)
-      const imageRef = storageRef(storage, itemImage.filePath)
+      const imageSet = imageMgr.createImageSet(ImageType.PRIMARY, userId.value)
+      const imageRef = storageRef(storage, imageSet.filePath)
 
       let img = new Image()
-      img.onload = () => { itemImage.dimensions =  { width: img.width, height: img.height } }
+      img.onload = () => { imageSet.dimensions = { width: img.width, height: img.height } }
       img.src = fileUrl.value
 
       const primaryArtist = itemDefaults.value.artistOption ? 
@@ -152,8 +154,10 @@
          () => {
             // successful upload
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-               itemImage.url = downloadURL
-               itemImage.thumbUrl = downloadURL
+               imageSet.url = downloadURL
+               imageSet.thumbUrl = downloadURL
+               imageSet.largeThumbUrl = downloadURL
+
                const item = {
                   id:     dateUuid(),
                   name:   itemName.value,
@@ -163,15 +167,15 @@
                   galleryIds: props.gallery ? [props.gallery.id] : [],
                   groupIds: itemDefaults.value.groupOption?.id ? [itemDefaults.value.groupOption.id] : [],
                   primaryArtist: primaryArtist,
-                  primaryImage: itemImage,
+                  primaryImage: imageSet,
                }
                // console.log("Adding item", item)
                const addedItem = itemStore.setItem(item)
                
                // add chained actions to populated thumb images and publish to feed
-               const chainedActionId = isPublicOrGroup(addedItem) && addedItem.groupIds.length ?
-                  actionStore.addChainedFeedAction({ ...addedItem }) : null
-               actionStore.addImageAction(item.id, userId.value, itemImage, chainedActionId)
+               // const chainedActionId = isPublicOrGroup(addedItem) && addedItem.groupIds.length ?
+               //    actionStore.addChainedFeedAction({ ...addedItem }) : null
+               // actionStore.addImageAction(item.id, userId.value, itemImage, chainedActionId)
 
                if (props.gallery) {
                   // add new item at front of gallery
@@ -179,6 +183,8 @@
                   if (props.gallery.itemIds) { itemIds.push(...props.gallery.itemIds) }
                   galleryStore.updateGallery({ id: props.gallery.id, itemIds: itemIds })
                }
+
+               imageMgr.waitForThumbUrls(imageSet, imageHandler,  { itemId:item.id })        
             })
 
             emit(Emit.DONE)

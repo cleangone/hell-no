@@ -1,42 +1,66 @@
 <template>
    <span class="text-left">
+      <TextButton text="Upload Image" @click="showUploadDialog=true" class="ml-n2"/>
       <TextButton text="Add item images" @click="addItemImages()" class="ml-n2"/>
    </span>
-   <v-data-table v-if="viewTable" :headers="headers" :items="userImages" item-key="id">
+   <CropImage v-if="showCrop" :imageToCrop="imageSetToCrop" :cropImageType="cropImageType" 
+      :uploadHandler="userImageHandler" :uploadContext="uploadContext" @done="showCrop=false"/>
+   <v-data-table v-else :headers="headers" :items="userImages" item-key="id">
        <template v-slot:item.image="{ item }">
-         <img :src="item.thumbUrl" height="75" class="image-circle"/>
+         <img :src="item.thumbUrl" height="75" :class="imageMgr.isUserImage(item) ? 'image-circle' : ''"/>
       </template>
       <template v-slot:item.active="{ item }" >
          <div width="100%" class="d-flex justify-center">
             <v-checkbox v-model="item.active" @change="updateActive(item)" class="mt-5"/>
          </div>
       </template>
-     <template v-slot:item.actions="{ item }">
+      <template v-slot:item.cropActions="{ item }">
+         <div v-if="imageMgr.isUploadImage(item)" class="d-flex flex-column">
+            <TextButton text="avatar crop" @click="cropImage(item, ImageType.USER)"/>
+         </div>
+      </template>
+      <template v-slot:item.actions="{ item }">
          <DeleteButton @click="deleteImage(item)"/>
       </template>
    </v-data-table>
+
+   <v-dialog v-model="showUploadDialog" width="auto">
+      <UploadImage :uploadHandler="userImageHandler":uploadContext="uploadContext" @done="showUploadDialog=false"/>
+   </v-dialog>
 </template>
 
 <script setup>
    import { computed, ref } from 'vue'
    import { useUserStore } from '@/stores/userStore'
    import { useItemStore } from '@/stores/itemStore'
+   import { useImageMgr }  from '@/stores/image/imageMgr'
+   import { useUserImageHandler } from '@/stores/image/userImageHandler'
+   import UploadImage  from '@/components/image/UploadImage.vue'
+   import CropImage    from '@/components/image/CropImage.vue'
    import TextButton   from '@/components/util/TextButton.vue'
    import DeleteButton from '@/components/util/DeleteButton.vue'
    import { ImageType } from '@/utils/constants'
 
    const userStore = useUserStore()
    const itemStore = useItemStore()
-   const viewTable = ref(true)
+   const imageMgr  = useImageMgr()
+   const userImageHandler = useUserImageHandler()
+   const showCrop  = ref(false)
+   const imageSetToCrop = ref(null)
+   const cropImageType = ref("")
+   const showUploadDialog = ref(false)
    
    const headers = [
-      { title: '',       key: 'image',      align: 'center', sortable: false },
-      { title: 'Active', key: 'active',     align: 'center', sortable: false },
-      { title: '',       key: 'actions',    align: 'center', sortable: false }
+      { title: '',       key: 'image',       align: 'center', sortable: false },
+      { title: 'Type',   value: 'imageType', align: 'center' },
+      { title: 'Active', key: 'active',      align: 'center', sortable: false },
+      { title: "",       key: "cropActions" },
+      { title: '',       key: 'actions',     align: 'center', sortable: false }
    ]
 
    // read from store so list is dynamically updated if image deleted
    const userImages = computed(() => userStore.user.images ? userStore.user.images : [])
+   const uploadContext = computed(() => { return { uploadImageType:ImageType.UPLOAD }})
    
    const addItemImages = () => { 
       const images = [ ...userImages.value ]
@@ -64,6 +88,12 @@
          else { updatedImages.push(image)}
       }
       userStore.updateImages(updatedImages) 
+   }
+
+   const cropImage = (itemImage, imageType) => {
+      imageSetToCrop.value = itemImage
+      cropImageType.value = imageType
+      showCrop.value = true
    }
    
    const deleteImage = (itemImage) => { userStore.removeImage(itemImage) }

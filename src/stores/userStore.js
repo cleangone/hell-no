@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { db } from '@/firebase'
-import { arrayRemove, collection, deleteDoc, doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
+import { arrayRemove, arrayUnion, collection, deleteDoc, doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
 import { useFirestore } from '@vueuse/firebase/useFirestore'
 
 /*
@@ -75,16 +75,34 @@ export const useUserStore = defineStore('user', () => {
       deleteDoc(doc(userCollection, id))
    }
 
-   function updateImages(images) {
-      updateDoc(userDoc(userId.value), { images: images, dateModified: serverTimestamp() })
+   //
+   // user images
+   //
+   function addImage(image) {
+      if (user.value.images) { 
+           updateDoc(userDoc(userId.value), { images:arrayUnion(image), dateModified:serverTimestamp() })
+      }
+      else { updateImages([ images ])  }
    }
 
    function removeImage(image) {
       updateDoc(userDoc(userId.value), { images:arrayRemove(image), dateModified:serverTimestamp() })
    }
 
+   function updateImage(updatedImage) {
+      const images = []
+      for (const image of user.value.images) {
+         images.push(image.id == updatedImage.id ? updatedImage : image)
+      }
+      updateDoc(userDoc(userId.value), { images: images, dateModified: serverTimestamp() })
+   }
+
+   function updateImages(images) {
+      updateDoc(userDoc(userId.value), { images: images, dateModified: serverTimestamp() })
+   }
+
    return { 
       userId, user, users, userIdToUser, userExists, getUser, getUsername, setUser, updateUser, deleteUser,
-      myFullName, mySettings, soloMode, updateSettings, updateImages, removeImage
+      myFullName, mySettings, soloMode, updateSettings, addImage, removeImage, updateImage, updateImages
    }
 })

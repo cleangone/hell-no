@@ -1,26 +1,42 @@
 <template>
    <span class="text-left">
-      <TextButton text="Add item images" @click="addItemImages()" class="ml-1 mt-n4"/>
+      <TextButton text="Upload Image" @click="showUploadDialog=true" />
+      <TextButton text="Add item images" @click="addItemImages()"/>
    </span>
-   <v-data-table v-if="viewTable" :headers="headers" :items="profileImages" item-key="id">
+   <CropImage v-if="showCrop" :imageToCrop="imageToCrop" :cropImageType="cropImageType" 
+      :uploadHandler="profileImageHandler" :uploadContext="uploadContext" @done="showCrop=false"/>
+   <v-data-table v-else :headers="headers" :items="profileImages" item-key="id">
        <template v-slot:item.image="{ item }">
-         <img :src="item.thumbUrl" height="75" class="image-circle"/>
+         <img :src="item.thumbUrl" height="75" :class="imageMgr.isUserImage(item) ? 'image-circle' : ''"/>
       </template>
       <template v-slot:item.active="{ item }" >
          <div width="100%" class="d-flex justify-center">
             <v-checkbox v-model="item.active" @change="updateActive(item)" class="mt-5"/>
          </div>
       </template>
-     <template v-slot:item.actions="{ item }">
+      <template v-slot:item.cropActions="{ item }">
+         <div v-if="imageMgr.isUploadImage(item)" class="d-flex flex-column">
+            <TextButton text="avatar crop" @click="cropImage(item, ImageType.USER)"/>
+         </div>
+      </template>
+      <template v-slot:item.actions="{ item }">
          <DeleteButton @click="deleteImage(item)"/>
       </template>
    </v-data-table>
+
+    <v-dialog v-model="showUploadDialog" width="auto">
+      <UploadImage :uploadHandler="imageHandler" :uploadContext="uploadContext" @done="showUploadDialog=false"/>
+   </v-dialog>
 </template>
 
 <script setup>
    import { computed, ref } from 'vue'
    import { useProfileStore } from '@/stores/profileStore'
    import { useItemStore }    from '@/stores/itemStore'
+   import { useImageMgr }     from '@/stores/image/imageMgr'
+   import { useProfileImageHandler } from '@/stores/image/profileImageHandler'
+   import UploadImage  from '@/components/image/UploadImage.vue'
+   import CropImage    from '@/components/image/CropImage.vue'
    import TextButton   from '@/components/util/TextButton.vue'
    import DeleteButton from '@/components/util/DeleteButton.vue'
    import { Emit, ImageType } from '@/utils/constants'
@@ -30,12 +46,19 @@
 
    const profileStore = useProfileStore()
    const itemStore    = useItemStore()
-   const viewTable = ref(true)
-   
+   const imageMgr     = useImageMgr()
+   const imageHandler = useProfileImageHandler()
+   const showCrop     = ref(false)
+   const imageToCrop  = ref(null)
+   const cropImageType = ref("")
+   const showUploadDialog = ref(false)
+  
    const headers = [
-      { title: '',       key: 'image',      align: 'center', sortable: false },
-      { title: 'Active', key: 'active',     align: 'center', sortable: false },
-      { title: '',       key: 'actions',    align: 'center', sortable: false }
+      { title: '',       key: 'image',       align: 'center', sortable: false },
+      { title: 'Type',   value: 'imageType', align: 'center' },
+      { title: 'Active', key: 'active',      align: 'center', sortable: false },
+      { title: "",       key: "cropActions" }, 
+      { title: '',       key: 'actions',     align: 'center', sortable: false }
    ]
 
    // read from store so list is dynamically updated if image deleted
@@ -56,17 +79,24 @@
       }
    }
 
-   const updateActive = (itemImage) => { 
+   const updateActive = (imageSet) => { 
       const updatedImages = []
       for (const image of profileImages.value) {
          if (image.id == itemImage.id) {
             const updatedImage = { ...image }
-            updatedImage.active = itemImage.active
+            updatedImage.active = imageSet.active
             updatedImages.push(updatedImage)
          }
          else { updatedImages.push(image)}
       }
       profileStore.updateProfile({ id: props.profileId, images: updatedImages }) 
+   }
+
+   const uploadContext = computed(() => { return { upLoadImageType:ImageType.UPLOAD, profileId:props.profileId }})
+   const cropImage = (image, imageType) => {
+      imageToCrop.value = image
+      cropImageType.value = imageType
+      showCrop.value = true
    }
    
    const deleteImage = (itemImage) => { profileStore.removeImage(props.profileId, itemImage) }

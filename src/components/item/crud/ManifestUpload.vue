@@ -55,9 +55,9 @@
    import { uploadBytesResumable, getDownloadURL } from 'firebase/storage'
    import { useUserStore }    from '@/stores/userStore'
    import { useItemStore }    from '@/stores/itemStore'
-   import { useItemMgr }      from '@/stores/itemMgr'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useArtistMgr }    from '@/stores/artistMgr'
+   import { useImageMgr }     from '@/stores/image/imageMgr'  
    import TextButton from '@/components/util/TextButton.vue'
    import { dateUuid } from '@/utils/utils'
    import { Emit, ImageType, ItemType, State } from '@/utils/constants'
@@ -68,9 +68,9 @@
    const { open:openManifest, onChange:onManifestChange } = useFileDialog({ accept: '.json',  multiple: false })
    const userStore    = useUserStore()
    const itemStore    = useItemStore()   
-   const itemMgr      = useItemMgr()
    const galleryStore = useGalleryStore()
    const artistMgr    = useArtistMgr()
+   const imageMgr     = useImageMgr()
    const uploadFilename   = ref('')
    const uploadStatus     = ref('')
    const uploadFileIndex  = ref(0)
@@ -175,7 +175,7 @@
       for (const [index, uploadFile] of uploadFiles.value.entries()) {
          uploadFileIndex.value = index // show file in being uploaded
          
-         const item = { id: dateUuid(), primaryImage: createItemImage(uploadFile) }
+         const item = { id: dateUuid(), primaryImage: createImageSet(uploadFile) }
          const uploadContainer = { uploadFile: uploadFile, item: item }
          await uploadSingleFile(uploadContainer)
          uploadContainers.push(uploadContainer)
@@ -251,14 +251,14 @@
       return promise
    }
 
-   const createItemImage = (uploadFile) => {
-      const itemImage = itemMgr.createItemImage(ImageType.PRIMARY, userId.value)
+   const createImageSet = (uploadFile) => {
+      const imageSet = imageMgr.createImageSet(ImageType.PRIMARY, userId.value)
       
       let img = new Image()
-      img.onload = () => { itemImage.dimensions = { width: img.width, height: img.height } }
+      img.onload = () => { imageSet.dimensions = { width: img.width, height: img.height } }
       img.src = uploadFile.url
    
-      return itemImage
+      return imageSet
    }
 
    const getThumbUrls = (uploadContainer) => {

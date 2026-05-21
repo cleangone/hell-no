@@ -9,7 +9,7 @@
       </div>
 
       <div v-if="showImages" class="text-left">
-         <EditUserImages />
+         <EditAccountImages/>
       </div>
       <div v-else>
       <v-form v-model="dataValid" class="mt-2">
@@ -70,10 +70,10 @@
    import { computed, ref } from 'vue'
    import { useUserStore }  from '@/stores/userStore'
    import { useViewMgr }    from '@/stores/viewMgr'
-   import EditUserImages from '@/components/user/EditUserImages.vue'
-   import EditEmail      from '@/components/user/EditEmail.vue'
-   import EditPassword   from '@/components/user/EditPassword.vue'
-   import TextButton     from '@/components/util/TextButton.vue'
+   import EditAccountImages from './EditAccountImages.vue'
+   import EditEmail         from '@/components/user/EditEmail.vue'
+   import EditPassword      from '@/components/user/EditPassword.vue'
+   import TextButton        from '@/components/util/TextButton.vue'
    import { requiredRule } from '@/utils/utils'
    import { NotificationOptions } from '@/utils/constants'
    

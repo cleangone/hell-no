@@ -172,10 +172,21 @@ export const useItemStore = defineStore('item', () => {
    }
 
    function updateItem(item)                   { return updateItemDoc(item.id, item) }
-   function addOtherImage(itemId, image)       { updateItemDoc(itemId, { otherImages: arrayUnion(image) }) }
-   function addCroppedImage(itemId, image)     { updateItemDoc(itemId, { otherImages: arrayUnion(image) },  false) }
+   function addOtherImage(itemId, image)       { updateItemDoc(itemId, { otherImages: arrayUnion(image) },  false) }
    function removeOtherImage(itemId, image)    { updateItemDoc(itemId, { otherImages: arrayRemove(image) }, false) }
    function removeGalleryId(itemId, galleryId) { updateItemDoc(itemId, { galleryIds: arrayRemove(galleryId) }) }
+   function updatePrimaryImage(itemId, image)  { updateItemDoc(itemId, { primaryImage: image },  false) }
+   function updateOtherImage(itemId, updatedImage) {
+      const images = []
+      const item = myItemIdToItem.value.get(itemId)
+      if (item) {
+         for (const image of item.otherImages) {
+            images.push(image.id == updatedImage.id ? updatedImage : image)
+         }
+         updateItemDoc(itemId, { otherImages: images }, false)
+      }
+      else { console.log("updateOtherImage cannot find item", itemId)}
+   }
 
    function deleteItem(id) {
       console.log("deleteItem", id) 
@@ -194,5 +205,7 @@ export const useItemStore = defineStore('item', () => {
    return { items, publicItems, childItemIds, itemIdToItem, 
             myItems, myItemIdToItem, myChildItemIds, myGroupMemberItems,
             getGalleryItems, getArtistItems, getArtistPublicItems, getItem, getUserItems, getUserPubicItems,
-            setItem, updateItem, addOtherImage, addCroppedImage, removeOtherImage, removeGalleryId, deleteItem }
+            setItem, updateItem, 
+            addOtherImage, updatePrimaryImage, updateOtherImage, removeOtherImage, 
+            removeGalleryId, deleteItem }
 })

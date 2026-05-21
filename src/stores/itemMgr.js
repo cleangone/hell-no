@@ -127,16 +127,6 @@ export const useItemMgr = defineStore('itemMgr', () => {
       }
       else { return objAspectRatio(item.primaryImage.dimensions) }
    }
-   
-   function createItemImage(imageType, subDir = null) {
-      const itemImage = { id: dateUuid(), imageType: imageType } 
-      const dir = "images/" + (subDir ? subDir + "/" : "")
-      itemImage.filePath = dir + itemImage.id 
-      itemImage.thumbFilePath = itemImage.filePath + "_300x300"
-      itemImage.largeThumbFilePath = itemImage.filePath + "_600x600"
-      
-      return itemImage
-   }
 
    function ungroupItems(items) { 
       const ungroupedItems = []
@@ -234,5 +224,5 @@ export const useItemMgr = defineStore('itemMgr', () => {
       getItems, getRandomItems, getProfileCount, getPublicGalleryThumbs, getPublicGalleryThumbUrls,
       recentPublicItems, recentGroupMemberItems, myRecentItems, getRecentItems, getRecentPublicItems,
       isItemGroup, ungroupItems, ungroupItem, ungroupAndExtractItems, extractFromItemGroup,
-      itemAspectRatio, itemNavURL, itemURL, getPopupImage, createItemImage }
+      itemAspectRatio, itemNavURL, itemURL, getPopupImage }
 })
