@@ -3,10 +3,12 @@ import { defineStore } from 'pinia'
 import { arrayUnion, arrayRemove } from "firebase/firestore"
 import { useUserStore }  from './userStore'
 import { useGroupStore } from './groupStore'
+import { useImageMgr }   from '@/stores/image/imageMgr'
 
 export const useUserMgr = defineStore('userMgr', () => {
    const userStore  = useUserStore()
    const groupStore = useGroupStore()
+   const imageMgr   = useImageMgr()
    
    const otherUsers = computed(() => { 
       const users = []
@@ -31,6 +33,16 @@ export const useUserMgr = defineStore('userMgr', () => {
    })
 
    const myUserContacts = computed(() => getUserContacts(myKnownUserIds.value))
+
+   const myAvatar = computed(() => { 
+      if (userStore.user?.images) {
+         for (const imageSet of userStore.user.images) {
+            if (imageMgr.isUserImage(imageSet) && imageSet.active) { return imageSet }
+         }
+      }
+      return null
+   })
+   
 
    // consolidate with myFullName
    function getFullName(user) {
@@ -134,6 +146,6 @@ export const useUserMgr = defineStore('userMgr', () => {
    return { 
       otherUsers, getFullName, getUserIdByEmail, getUserContactByEmail, 
       setItemHeaders, setGalleryThumbOptions, setItemThumbOptions, setShowHiddenItems, 
-      myUserContacts, getUserContactsNotInGroup, 
+      myUserContacts, myAvatar, getUserContactsNotInGroup, 
       addFavoriteItem, removeFavoriteItem, addMessagingToken }
 })

@@ -12,49 +12,52 @@
          <EditAccountImages/>
       </div>
       <div v-else>
-      <v-form v-model="dataValid" class="mt-2">
-         <v-row>
-            <v-col>
-               <v-text-field v-model="firstName" label="First Name" :rules="requiredRule"/>   
-            </v-col>
-            <v-col>
-               <v-text-field v-model="lastName" label="Last Name"/>         
-            </v-col>
-         </v-row>
-         <v-row class="mt-n5">
-            <v-col>
-               <v-text-field v-model="username" label="Username" :rules="requiredRule"/>
-               <v-text-field v-model="phone"    label="Phone"/>
-            </v-col>
-            <v-col/>
-         </v-row>
-         <v-row class="mt-n7">
-            <v-checkbox v-model="soloMode" label="Solo Mode - only view/manage my collection" class="tight-checkbox ms-1"/>
-         </v-row>
-         <v-row class="mt-5">
-            <v-col>
-               <div style="font-size: medium; font-weight: bold" class="text-left">Notifications</div>
-               <v-layout class="mx-3 mt-4 tight-checkbox">
-                  <v-sheet class="d-flex align-center">
-                     <v-checkbox v-model="notifyViaEmail" label="By Email" class="shrink mr-2"></v-checkbox>
-                     <v-radio-group v-if="viewMgr.isDeskTop && notifyViaEmail" v-model="settings.notifyViaEmail" inline>
-                        <v-radio label="Immediate/Individual" :value="NotificationOptions.IMMEDIATE"/>
-                        <v-radio label="Daily/Batched"        :value="NotificationOptions.DAILY"/>
-                     </v-radio-group>
-                  </v-sheet>
-               </v-layout>
-               <v-radio-group v-if="viewMgr.isMobile && notifyViaEmail" v-model="settings.notifyViaEmail" inline class="ml-8 mt-n3">
-                  <v-radio label="Immediate/Individual" :value="NotificationOptions.IMMEDIATE"/>
-                  <v-radio label="Daily/Batched"        :value="NotificationOptions.DAILY"/>
-               </v-radio-group>
-               <v-checkbox v-model="notifyViaMessage" label="By Message" class="mx-3 mt-n4 tight-checkbox"/>
-            </v-col>
-         </v-row>
-      </v-form>  
-      <div class="mt-8 mb-2 text-left">
-         <v-btn @click="updateUser()" :disabled="!dataValid || !dataUpdated">Update</v-btn>
-         <v-btn @click="resetUser()" class="mx-2">Reset</v-btn>
-      </div>
+         <v-form v-model="dataValid" class="mt-2" style="max-width:800px">
+            <v-row>
+               <v-col>
+                  <div class="horizontal-container">
+                     <img v-if="userMgr.myAvatar" :src="userMgr.myAvatar.thumbUrl" @click="showImages=true" class="avatar hand mt-1 mr-2" />
+                     <v-text-field v-model="firstName" label="First Name" :rules="requiredRule"/>
+                  </div>
+               </v-col>
+               <v-col>
+                  <v-text-field v-model="lastName" label="Last Name"/>         
+               </v-col>
+            </v-row>
+            <v-row class="mt-n5">
+               <v-col>
+                  <v-text-field v-model="username" label="Username" :rules="requiredRule"/>
+                  <v-text-field v-model="phone"    label="Phone"/>
+               </v-col>
+               <v-col/>
+            </v-row>
+            <v-row class="mt-n7">
+               <v-checkbox v-model="soloMode" label="Solo Mode - only view/manage my collection" class="tight-checkbox ms-1"/>
+            </v-row>
+            <v-row class="mt-5">
+               <v-col>
+                  <div style="font-size: medium; font-weight: bold" class="text-left">Notifications</div>
+                  <v-layout class="mx-3 mt-4 tight-checkbox">
+                     <v-sheet class="d-flex align-center">
+                        <v-checkbox v-model="notifyViaEmail" label="By Email" class="shrink mr-2"></v-checkbox>
+                        <v-radio-group v-if="viewMgr.isDeskTop && notifyViaEmail" v-model="settings.notifyViaEmail" inline>
+                           <v-radio label="Immediate/Individual" :value="NotificationOptions.IMMEDIATE"/>
+                           <v-radio label="Daily/Batched"        :value="NotificationOptions.DAILY"/>
+                        </v-radio-group>
+                     </v-sheet>
+                  </v-layout>
+                  <v-radio-group v-if="viewMgr.isMobile && notifyViaEmail" v-model="settings.notifyViaEmail" inline class="ml-8 mt-n3">
+                     <v-radio label="Immediate/Individual" :value="NotificationOptions.IMMEDIATE"/>
+                     <v-radio label="Daily/Batched"        :value="NotificationOptions.DAILY"/>
+                  </v-radio-group>
+                  <v-checkbox v-model="notifyViaMessage" label="By Message" class="mx-3 mt-n4 tight-checkbox"/>
+               </v-col>
+            </v-row>
+         </v-form>  
+         <div class="mt-8 mb-2 text-left">
+            <v-btn @click="updateUser()" :disabled="!dataValid || !dataUpdated">Update</v-btn>
+            <v-btn @click="resetUser()" class="mx-2">Reset</v-btn>
+         </div>
       </div>  
    </div>  
 
@@ -69,6 +72,7 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useUserStore }  from '@/stores/userStore'
+   import { useUserMgr }    from '@/stores/userMgr'
    import { useViewMgr }    from '@/stores/viewMgr'
    import EditAccountImages from './EditAccountImages.vue'
    import EditEmail         from '@/components/user/EditEmail.vue'
@@ -79,6 +83,7 @@
    
    const DEFAULT_SETTINGS =  { "notifyViaEmail": NotificationOptions.NEVER, "notifyViaMessage": NotificationOptions.NEVER }
    const userStore  = useUserStore()
+   const userMgr    = useUserMgr()
    const viewMgr    = useViewMgr()   
    const firstName = ref(userStore.user.firstName)
    const lastName  = ref(userStore.user.lastName)
@@ -136,4 +141,10 @@
 </script>
 
 <style>
+.avatar {
+   border-radius: 50%; 
+   object-fit: cover;
+   width: 50px;
+   height: 50px;
+}
 </style>
