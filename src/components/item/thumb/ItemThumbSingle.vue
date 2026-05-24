@@ -20,7 +20,6 @@
    import { handleError } from '@/utils/utils'
    import { Defaults } from '@/utils/constants'
    
-   
    const props = defineProps({ item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean })
 
    const itemMgr = useItemMgr()

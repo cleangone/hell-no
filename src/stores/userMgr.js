@@ -37,7 +37,7 @@ export const useUserMgr = defineStore('userMgr', () => {
    const myAvatar = computed(() => { 
       if (userStore.user?.images) {
          for (const imageSet of userStore.user.images) {
-            if (imageMgr.isUserImage(imageSet) && imageSet.active) { return imageSet }
+            if (imageMgr.isActiveUserImage(imageSet)) { return imageSet }
          }
       }
       return null

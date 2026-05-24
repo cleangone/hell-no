@@ -19,8 +19,13 @@ a, .blue, .icon-btn {
 .menu-icon { color: var(--color-link-dark); }
 
 .dark .v-bottom-navigation { background-color: var(--color-shade-dark); }
-.dark .thumb-link   { background-color: var(--color-shade-light); }
-.dark .thumb-link a { color: var(--color-link-dark); }
+ 
+.dark .thumb-link        { background-color: var(--color-shade-light); }
+.dark .thumb-link a      { color: var(--color-link-dark); }
+.user-thumb-link         { background-color: var(--color-lightest-grey); }
+.dark .user-thumb-link   { background-color: var(--color-shade-light); }
+.dark .user-thumb-link a { color: var(--color-link-dark); }
+
 .bg-shade       { background-color: var(--color-shade); }
 .dark .bg-shade { background-color: var(--color-shade-dark); }
 .box-border-color       { border-color: var(--vt-c-black-mute); } 

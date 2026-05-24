@@ -25,6 +25,8 @@ export const useImageMgr = defineStore('imageMgr', () => {
 
    function isUploadImage(imageSet) { return imageSet.imageType == ImageType.UPLOAD }
    function isUserImage(imageSet)   { return imageSet.imageType == ImageType.USER }
+   function isActive(imageSet)      { return imageSet.active }
+   function isActiveUserImage(imageSet) { return isUserImage(imageSet) && isActive(imageSet) }
    
    function waitForThumbUrls(imageSet, uploadHandler, uploadContext) {
       setTimeout(function() { retryThumbUrls(imageSet, uploadHandler, uploadContext) }, DELAY_MILLIS)
@@ -56,5 +58,5 @@ export const useImageMgr = defineStore('imageMgr', () => {
       uploadHandler.updateImageSet(imageSet, uploadContext)
    } 
 
-   return { createImageSet, isUploadImage, isUserImage, waitForThumbUrls }
+   return { createImageSet, isUploadImage, isUserImage, isActive, isActiveUserImage, waitForThumbUrls }
 })

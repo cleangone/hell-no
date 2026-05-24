@@ -7,7 +7,6 @@
          <TextButton @click="showEditEmail=true"     text="Edit Email"/>
          <TextButton @click="showEditPassword=true"  text="Edit Password"/>
       </div>
-
       <div v-if="showImages" class="text-left">
          <EditAccountImages/>
       </div>
@@ -16,7 +15,7 @@
             <v-row>
                <v-col>
                   <div class="horizontal-container">
-                     <img v-if="userMgr.myAvatar" :src="userMgr.myAvatar.thumbUrl" @click="showImages=true" class="avatar hand mt-1 mr-2" />
+                     <Avatar v-if="userMgr.myAvatar" :image="userMgr.myAvatar" @click="showImages=true" class="hand mt-1 mr-2" />
                      <v-text-field v-model="firstName" label="First Name" :rules="requiredRule"/>
                   </div>
                </v-col>
@@ -75,6 +74,7 @@
    import { useUserMgr }    from '@/stores/userMgr'
    import { useViewMgr }    from '@/stores/viewMgr'
    import EditAccountImages from './EditAccountImages.vue'
+   import Avatar            from '@/components/user/Avatar.vue'
    import EditEmail         from '@/components/user/EditEmail.vue'
    import EditPassword      from '@/components/user/EditPassword.vue'
    import TextButton        from '@/components/util/TextButton.vue'
@@ -141,10 +141,4 @@
 </script>
 
 <style>
-.avatar {
-   border-radius: 50%; 
-   object-fit: cover;
-   width: 50px;
-   height: 50px;
-}
 </style>
