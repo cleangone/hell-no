@@ -10,6 +10,7 @@ import { useUserStore } from './userStore'
       id
       userId
       username
+      images[]
       dateCreated
       dateModified
 */
@@ -84,7 +85,7 @@ export const useProfileStore = defineStore('profile', () => {
    }
    
    return { 
-      myProfiles, getMyProfile, usernames, getProfile, getUsername, getUserId, 
+      profiles, myProfiles, getMyProfile, usernames, getProfile, getUsername, getUserId, 
       addProfile, updateProfile, deleteProfile, addImage, updateImage, removeImage
    }
 })

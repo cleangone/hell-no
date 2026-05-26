@@ -1,9 +1,11 @@
 <template>
-   <v-card :width="cardWidth" ref="cardRef" class="d-flex flex-column text-center user-thumb-link pa-2" 
-         :class="cardMargin" :style="backgroundStyle" style="z-index: 1">
+   <v-card :width="cardWidth" ref="cardRef" class="d-flex flex-column text-center user-thumb-link hand pa-2" 
+         :class="cardMargin" :style="backgroundStyle" style="z-index: 1"
+         @mouseover="mouseover()" @mouseleave="mouseleave()"
+         >
       <HorizontalDiv>
          <RouterLink v-if="userImages.length" :to="mouseoverLink">
-            <Avatar :image="userImages[0]" @mouseover="mouseover()" @mouseleave="mouseleave()"/>
+            <Avatar :image="userImages[0]" />
          </RouterLink>
          <div class="ml-2 text-left">
             <RouterLink :to="userUrl">{{ username }} {{ itemCount ? "(" + itemCount + ")" : "" }}</RouterLink>
@@ -93,7 +95,7 @@
       mouseoverItem.value = recentItems.value[index]
       const mouseoverTime = Date.now()  
       setTimeout(() => {  
-         if (mouseoverTime > mouseleaveTime.value ) { 
+         if (mouseoverTime > mouseleaveTime.value && mouseoverItem.value) { 
             const boundingRect = cardRef.value.$el.getBoundingClientRect()
             const aspectRatio = objAspectRatio(mouseoverItem.value.primaryImage.dimensions)
             popupImage.value = itemMgr.getPopupImage(

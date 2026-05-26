@@ -14,10 +14,10 @@
          <v-form v-model="dataValid" class="mt-2" style="max-width:800px">
             <v-row>
                <v-col>
-                  <div class="horizontal-container">
+                  <HorizontalDiv>
                      <Avatar v-if="userMgr.myAvatar" :image="userMgr.myAvatar" @click="showImages=true" class="hand mt-1 mr-2" />
                      <v-text-field v-model="firstName" label="First Name" :rules="requiredRule"/>
-                  </div>
+                  </HorizontalDiv>
                </v-col>
                <v-col>
                   <v-text-field v-model="lastName" label="Last Name"/>         
@@ -77,6 +77,7 @@
    import Avatar            from '@/components/user/Avatar.vue'
    import EditEmail         from '@/components/user/EditEmail.vue'
    import EditPassword      from '@/components/user/EditPassword.vue'
+   import HorizontalDiv     from '@/components/util/HorizontalDiv.vue'
    import TextButton        from '@/components/util/TextButton.vue'
    import { requiredRule } from '@/utils/utils'
    import { NotificationOptions } from '@/utils/constants'

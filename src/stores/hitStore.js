@@ -22,21 +22,18 @@ export const useHitStore = defineStore('hit', () => {
    const idToHit = computed(() => { return hits.value ? new Map(hits.value.map((obj) => [obj.id, obj])) : new Map() })
    function getHit(id) { return idToHit.value ? idToHit.value.get(id) : null }
 
+   // assume update, add if error
    function addHit(id) { 
-      if (idToHit.value.has(id)) { 
-         updateHit(id, { views: increment(1) }) 
-      } 
-      else { 
-         setDoc(hitDoc(id), {
-            id: id,
-            views: 1,
-            dateCreated:  serverTimestamp(),
-            dateModified: serverTimestamp()
+      updateDoc(hitDoc(id), { id:id, views: increment(1), dateModified:serverTimestamp() })
+         .catch((error) => {
+            setDoc(hitDoc(id), {
+               id: id,
+               views: 1,
+               dateCreated:  serverTimestamp(),
+               dateModified: serverTimestamp()
+            })
          })
-       }
    }
-
-   function updateHit(id, hit) { updateDoc(hitDoc(id), { ...hit, dateModified: serverTimestamp() }) }
 
    return { 
       getHit, addHit

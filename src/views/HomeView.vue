@@ -39,12 +39,17 @@
                <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" showChildImages dense />
             </v-row>
          </v-col>
-         <v-col v-if="favoriteItems?.length" class="box-border box-border-color ma-4 px-3">
+         <!-- <v-col v-if="favoriteItems?.length" class="box-border box-border-color ma-4 px-3">
             <div class="font-weight-bold">
                Favorites | <RouterLink :to="Route.FAVORITES.url">View all</RouterLink>
             </div>
             <v-row justify="space-around" ref="favoritesRef" class="mt-4">
                <ItemThumb v-for="item in favoriteItems" :key="item.id" :item="item" :origin="ItemOrigin.FAVORITES" tight/>
+            </v-row>
+         </v-col> -->
+         <v-col v-if="displayUsers.length" class="box-border box-border-color ma-4 px-4">
+            <v-row justify="space-around" class="mt-4">
+               <UserThumb v-for="user in displayUsers" :key="user.id" :user="user"/>
             </v-row>
          </v-col>
       </v-row>
@@ -58,7 +63,7 @@
       </div>
       <v-container>
          <v-row justify="space-around" ref="recentRef" class="mb-md-4">
-            <ItemThumb v-for="item in recentItems" :key="item.id" :item="item" :origin="ItemOrigin.RECENT" tight/>
+            <ItemThumb v-for="item in recentItems" :key="item.id" :item="item" :origin="ItemOrigin.RECENT"/>
          </v-row>
       </v-container>
    </v-container>
@@ -73,6 +78,7 @@
    import { useInviteStore }  from '@/stores/inviteStore'
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useWallMgr }      from '@/stores/wallMgr'
+   import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { useLocalStore }   from '@/stores/localStore'
@@ -92,6 +98,7 @@
    const inviteStore  = useInviteStore()
    const itemMgr      = useItemMgr()
    const wallMgr      = useWallMgr()
+   const profileStore = useProfileStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
    const localStore   = useLocalStore()
@@ -190,11 +197,15 @@
    const wallBackgroundStyle = computed(() => wallDivStyle.value + " opacity:" + wallBackgroundOpacity.value + ";")
 
    const recentGalleries = computed(() => { 
+      console.log("recentGalleries")
       const galleries = []     
+
       const allGalleries = viewMgr.solo ? galleryStore.myGalleries : galleryStore.publicGalleries
       for (const gallery of allGalleries) {
-         if (gallery.images.length && showGallery(gallery) ) { galleries.push(gallery) }
-      }    
+         console.log("recentGalleries - gallery")
+      if (gallery.images.length && showGallery(gallery) ) { galleries.push(gallery) }
+      }   
+       console.log("recentGalleries - sort") 
       galleries.sort(function(a, b) { return b.dateContentModified - a.dateContentModified }) 
       return galleries
    })
@@ -253,6 +264,18 @@
       } 
       return thumbRow.thumbs
    }
+
+   const displayUsers = computed(() => {
+      const allUsers = []
+      for (const user of userStore.users) {
+         if (user.images?.length) { allUsers.push(user) }
+      }
+      for (const profile of profileStore.profiles) {
+         if (profile.images?.length) { allUsers.push(profile) }
+      }
+      return allUsers
+   })
+
 </script>
 
 <style>
