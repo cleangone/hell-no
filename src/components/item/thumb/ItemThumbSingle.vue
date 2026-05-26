@@ -4,8 +4,8 @@
       <RouterLink :to="itemURL">
          <v-img :src="thumbUrl" @mouseover="mouseover()" @mouseleave="mouseleave()"></v-img>
       </RouterLink>
-      <ItemThumbText :item="item" :origin="origin" 
-         :useAltName="useAltName" :useLocalName="useLocalName" :bypassShowUser="bypassShowUser"/>
+      <ItemThumbText :item="item" :origin="origin" :useAltName="useAltName" :useLocalName="useLocalName" 
+         :bypassShowUser="bypassShowUser" :showDateViewed="showDateViewed"/>
    </v-card>
    
    <ItemPopup v-if="popup" :popupImage="popup"/>
@@ -20,7 +20,8 @@
    import { handleError } from '@/utils/utils'
    import { Defaults } from '@/utils/constants'
    
-   const props = defineProps({ item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean })
+   const props = defineProps({ 
+      item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean, showDateViewed:Boolean })
 
    const itemMgr = useItemMgr()
    const viewMgr = useViewMgr()

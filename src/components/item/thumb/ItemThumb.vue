@@ -1,9 +1,9 @@
 <template>
    <div :class="paddingX">
       <ItemThumbGroup v-if="isItemGroup" :item="item" :origin="origin" :useAltName="useAltName" 
-         :useLocalName="useLocalName" :bypassShowUser="bypassShowUser"/>
+         :useLocalName="useLocalName" :bypassShowUser="bypassShowUser" :showDateViewed="showDateViewed"/>
       <ItemThumbSingle v-else :item="item" :origin="origin" :useAltName="useAltName" 
-         :useLocalName="useLocalName" :bypassShowUser="bypassShowUser"/>
+         :useLocalName="useLocalName" :bypassShowUser="bypassShowUser" :showDateViewed="showDateViewed"/>
    </div>
 </template>
 
@@ -13,13 +13,12 @@
    import { useViewStore } from '@/stores/viewStore'
    import { useViewMgr }   from '@/stores/viewMgr'
    import { ItemThumbOptions as ThumbOptions } from '@/utils/constants'
-   
    import ItemThumbSingle from './ItemThumbSingle.vue'
    import ItemThumbGroup  from './ItemThumbGroup.vue'
    
    const props = defineProps({ 
-      item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean,
-   })
+      item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean, showDateViewed:Boolean })
+   
    const itemMgr   = useItemMgr()
    const viewStore = useViewStore()
    const viewMgr   = useViewMgr()

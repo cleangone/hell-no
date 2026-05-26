@@ -18,9 +18,11 @@ export const useHitStore = defineStore('hit', () => {
    const hitCollection = collection(db, TABLE)
    function hitDoc(id) { return doc(db, TABLE, id) }
    
-   const hits = useFirestore(hitCollection)   
-   const idToHit = computed(() => { return hits.value ? new Map(hits.value.map((obj) => [obj.id, obj])) : new Map() })
-   function getHit(id) { return idToHit.value ? idToHit.value.get(id) : null }
+   const rawHits = useFirestore(hitCollection)   
+   const hits = computed(() => rawHits.value ? 
+      rawHits.value.toSorted(function(a, b) {return b.dateModified - a.dateModified}) : [])
+   const idToHit = computed(() => { return rawHits.value ? new Map(rawHits.value.map((obj) => [obj.id, obj])) : new Map() })
+   function getHit(id) { return idToHit.value ? idToHit.value.get(id) : null } 
 
    // assume update, add if error
    function addHit(id) { 
@@ -36,6 +38,6 @@ export const useHitStore = defineStore('hit', () => {
    }
 
    return { 
-      getHit, addHit
+      hits, getHit, addHit
    }
 })

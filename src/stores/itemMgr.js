@@ -1,13 +1,15 @@
 import { computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useWindowSize } from '@vueuse/core'
-import { useItemStore } from '@/stores/itemStore'
-import { dateUuid, objAspectRatio, randomizeArray } from '@/utils/utils'
+import { useItemStore }  from '@/stores/itemStore'
+import { useHitStore }   from '@/stores/hitStore'
+import { dateUuid, isPublic, objAspectRatio, randomizeArray } from '@/utils/utils'
 import { ImageType, ItemNavAction, ItemType, Route } from '@/utils/constants'
    
 export const useItemMgr = defineStore('itemMgr', () => {   
    const { width: windowWidth, height: windowHeight } = useWindowSize()
    const itemStore = useItemStore()   
+   const hitStore  = useHitStore()
    
    const myItemIdToItem = computed(() => { 
       return itemStore.myItems ? new Map(itemStore.myItems.map((obj) => [obj.id, obj])) : new Map() 
@@ -85,13 +87,24 @@ export const useItemMgr = defineStore('itemMgr', () => {
       return items
    }
 
+   const recentViewwedPublicItems = computed(() => { 
+      const items = []
+      for (const hit of hitStore.hits) {
+         const item = itemStore.getItem(hit.id)
+         if (isPublic(item)) { items.push( { ...item, dateViewed:hit.dateModified })}
+         if (items.length > 10) { break }
+      }
+
+      return items
+   })
+
    function getRandomItems() { 
       const items = [ ...itemStore.publicItems ]
       const random = randomizeArray(ungroupAndExtractItems(items))
       return random.slice(0, 50)
    }
 
- function getPublicGalleryThumbs(userId, profileId) {
+   function getPublicGalleryThumbs(userId, profileId) {
       const thumbs = []
       for (const item of itemStore.getUserPubicItems(userId)) {
          if (!profileId || item.profileId == profileId) {
@@ -222,7 +235,8 @@ export const useItemMgr = defineStore('itemMgr', () => {
    return { 
       myItemIdToItem, artistIdToMyItemIds, 
       getItems, getRandomItems, getProfileCount, getPublicGalleryThumbs, getPublicGalleryThumbUrls,
-      recentPublicItems, recentGroupMemberItems, myRecentItems, getRecentItems, getRecentPublicItems,
+      recentPublicItems, recentGroupMemberItems, myRecentItems, getRecentItems, getRecentPublicItems, 
+      recentViewwedPublicItems,
       isItemGroup, ungroupItems, ungroupItem, ungroupAndExtractItems, extractFromItemGroup,
       itemAspectRatio, itemNavURL, itemURL, getPopupImage }
 })

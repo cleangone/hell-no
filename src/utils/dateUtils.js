@@ -12,15 +12,18 @@ const DDD_MMM_DD_HH_MM  = { ...MMM_DD, ...DDD_HH_MM }  // Wed Dec 17, 3:15 PM
 const MM_DD_HH_MM    = { ...MM_DD, ...HH_MM }          // 12/17, 3:15 PM
 const MM_DD_YY       = { ...MM_DD, year:'2-digit' }    // 12/17/24
 const MM_DD_YY_HH_MM = { ...MM_DD_YY, ...HH_MM }       // 12/17/24, 3:15 PM
-
+const TIME_OPTIONS   = { hour: 'numeric', minute: '2-digit', hour12: true } // 8:32 PM
+   
 export function defaultDisplayDate(dbDate) { return dbDate ? dbDate.toDate().toLocaleDateString() : "" }
 export function displayDate(dbDate) {
-      if (!dbDate) { return "" }
+   if (!dbDate) { return "" }
    
    const date = dbDate.toDate()
    const now = new Date()
    let options = MM_DD_YY
-   if (date.valueOf() + SIX_DAYS_IN_MILLIS > now.valueOf()) { options = DDD_MM_DD }
+   
+   if (date.toDateString() == now.toDateString()) { return date.toLocaleTimeString(undefined, TIME_OPTIONS) }
+   else if (date.valueOf() + SIX_DAYS_IN_MILLIS > now.valueOf()) { options = DDD_MM_DD }
    else if (now.getYear() == date.getYear()) { options = MM_DD }
    return date.toLocaleDateString(undefined, options)
 }

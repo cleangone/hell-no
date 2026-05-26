@@ -22,10 +22,6 @@
          </div> 
       </div>
    </v-container>
-   
-   <!-- <div v-if="userStore.userId" class="my-3">
-      <UserThumb :user="userStore.user"/>
-   </div> -->
 
    <!-- galleries, favorites -->
    <div v-if="recentGalleries.length || favoriteItems?.length" class="my-3">
@@ -47,9 +43,17 @@
                <ItemThumb v-for="item in favoriteItems" :key="item.id" :item="item" :origin="ItemOrigin.FAVORITES" tight/>
             </v-row>
          </v-col> -->
-         <v-col v-if="displayUsers.length" class="box-border box-border-color ma-4 px-4">
+         <!-- <v-col v-if="displayUsers.length" class="box-border box-border-color ma-4 px-4">
             <v-row justify="space-around" class="mt-4">
                <UserThumb v-for="user in displayUsers" :key="user.id" :user="user"/>
+            </v-row>
+         </v-col> -->
+         <v-col v-if="viewedItems.length" class="box-border box-border-color ma-4 px-4">
+            <div class="mb-5">
+               <span class="font-weight-bold">Recent Viewed</span>
+            </div>
+            <v-row justify="space-around" ref="viewedRef" class="mt-4">
+               <ItemThumb v-for="item in viewedItems" :key="item.id" :item="item" :origin="ItemOrigin.VIEWED" showDateViewed/>
             </v-row>
          </v-col>
       </v-row>
@@ -105,9 +109,11 @@
    const galleryRef   = ref(null)
    const favoritesRef = ref(null)
    const recentRef    = ref(null)
+   const viewedRef    = ref(null)
    const { width: galleryWidth   } = useElementSize(galleryRef)
    const { width: favoritesWidth } = useElementSize(favoritesRef)
    const { width: recentWidth    }  = useElementSize(recentRef)
+   const { width: viewedWidth    }  = useElementSize(viewedRef)
    const currSiteWall = ref(null)
    const currMyWall   = ref(null)
    const wallBackgroundOpacity = ref(.1) 
@@ -197,15 +203,15 @@
    const wallBackgroundStyle = computed(() => wallDivStyle.value + " opacity:" + wallBackgroundOpacity.value + ";")
 
    const recentGalleries = computed(() => { 
-      console.log("recentGalleries")
+      // console.log("recentGalleries")
       const galleries = []     
 
       const allGalleries = viewMgr.solo ? galleryStore.myGalleries : galleryStore.publicGalleries
       for (const gallery of allGalleries) {
-         console.log("recentGalleries - gallery")
+         // console.log("recentGalleries - gallery")
       if (gallery.images.length && showGallery(gallery) ) { galleries.push(gallery) }
       }   
-       console.log("recentGalleries - sort") 
+      //  console.log("recentGalleries - sort") 
       galleries.sort(function(a, b) { return b.dateContentModified - a.dateContentModified }) 
       return galleries
    })
@@ -253,13 +259,22 @@
       return viewStore.setVisibleItems(ItemOrigin.FAVORITES, "My Favorites", Route.FAVORITES.url, visibleItems)
    })
 
+   const allViewedItems = computed(() => {
+      let items = viewMgr.solo ? [ ...itemMgr.myRecentItems ] : [ ...itemMgr.recentViewwedPublicItems ]
+      const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
+      viewStore.setVisibleItems(ItemOrigin.VIEWED, "Recent Viewed", Route.HOME.url, ungroupedItems)
+      return items
+   })
+
    const recentItems   = computed(() => getThumbItems(allRecentItems.value,   2, recentWidth.value, 500))
+   const viewedItems   = computed(() => getThumbItems(allViewedItems.value,   1, viewedWidth.value, 400))
    const favoriteItems = computed(() => getThumbItems(allFavoriteItems.value, 1, favoritesWidth.value, 400))
+   
    function getThumbItems(items, rows, elementWidth, defaultWidth) {
       const thumbRow = new ThumbRow(rows, elementWidth ? elementWidth : defaultWidth )  
       for (const item of items) {
          const aspectRatio = itemMgr.itemAspectRatio(item)  // w/h
-         const newThumbWidth = Math.round(200 * aspectRatio) + 5
+         const newThumbWidth = Math.round(200 * aspectRatio) + 25
          if (!thumbRow.addThumb(item, newThumbWidth))  { break }  
       } 
       return thumbRow.thumbs

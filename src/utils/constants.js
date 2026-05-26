@@ -125,6 +125,7 @@ export const ItemNavAction = {
 export const ItemOrigin = {
    WALL:      'wall',
    RECENT:    'recent',
+   VIEWED:    'viewed', // recent viewed
    FAVORITES: 'favorites',
    RANDOM:    'random',
    SEARCH:    'search',

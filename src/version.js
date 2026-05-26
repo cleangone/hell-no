@@ -6,7 +6,7 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
-
+   ["v2.27.0", "5/26/26"], // show recentViewedItems on HomeView
    ["v2.26.1", "5/25/26"], // Finish UserThumb, integrate with HomeView
    ["v2.26.0", "5/23/26"], // Initial UserThumb
    ["v2.25.0", "5/21/26"], // Avatars, including upload and crop of user/profile image

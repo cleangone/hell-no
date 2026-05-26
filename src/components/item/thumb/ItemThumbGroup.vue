@@ -7,8 +7,8 @@
             @mouseover="mouseover(childItem)" @mouseleave="mouseleave()" 
             :class="index==0 ? 'first-image' : 'next-image'"></v-img>
       </RouterLink>
-      <ItemThumbText :item="item" :origin="origin" 
-         :useAltName="useAltName" :useLocalName="useLocalName" :bypassShowUser="bypassShowUser"/>
+      <ItemThumbText :item="item" :origin="origin" :useAltName="useAltName" :useLocalName="useLocalName" 
+         :bypassShowUser="bypassShowUser" :showDateViewed="showDateViewed"/>
    </v-card>
 
    <ItemPopup v-if="popup" :popupImage="popup"/>
@@ -22,9 +22,8 @@
    import ItemThumbText from './ItemThumbText.vue'
    import { backgroundColorStyle } from '@/utils/utils'
    
-   const props = defineProps({ item:Object, origin:String, 
-      useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean
-   })
+   const props = defineProps({ 
+      item:Object, origin:String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean, showDateViewed:Boolean })
 
    const itemMgr = useItemMgr()
    const viewMgr = useViewMgr()
