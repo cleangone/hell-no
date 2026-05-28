@@ -8,7 +8,6 @@ import { DefaultWall } from '@/utils/constants'
    Local storage
       site-wall - {}
       my-wall - {}
-      recent-items - []
       device-id
       solo-mode - boolean
 */
@@ -21,10 +20,6 @@ export const useLocalStore = defineStore('local', () => {
    const myWallLocal = useLocalStorage('my-wall', DefaultWall)
    const myWall = computed(() => fixDates(myWallLocal.value))
    function setMyWall(wall) { myWallLocal.value = wall }
-   
-   const recentItemsLocal = useLocalStorage('recent-items', [])
-   const recentItems = computed(() => fixObjs(recentItemsLocal.value))
-   function setRecentItems(items) { recentItemsLocal.value = items }
    
    const deviceId = useLocalStorage('device-id', null)
    function setDeviceId(id) { deviceId.value = id }
@@ -51,8 +46,5 @@ export const useLocalStore = defineStore('local', () => {
 
    function getTimestamp(dateObj) { return new Timestamp(dateObj.seconds, dateObj.nanoseconds) }
    
-   return { 
-      siteWall, setSiteWall, myWall, setMyWall,
-      recentItems, setRecentItems, deviceId, setDeviceId, soloMode, setSoloMode 
-   }
+   return { siteWall, setSiteWall, myWall, setMyWall, deviceId, setDeviceId, soloMode, setSoloMode }
 })

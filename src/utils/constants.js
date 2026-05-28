@@ -125,7 +125,7 @@ export const ItemNavAction = {
 export const ItemOrigin = {
    WALL:      'wall',
    RECENT:    'recent',
-   VIEWED:    'viewed', // recent viewed
+   VIEWED:    'viewed',
    FAVORITES: 'favorites',
    RANDOM:    'random',
    SEARCH:    'search',
@@ -171,6 +171,7 @@ export const Route = {
    SEARCH:    { name: 'search',    url: '/search',    display: 'Search'},
    FEED:      { name: 'feed',      url: '/feed'       },
    RECENT:    { name: 'recent',    url: '/recent/',   display: 'Updates' },
+   VIEWED:    { name: 'viewed',    url: '/viewed',    display: 'Recent Viewed' },
    ITEM:      { name: 'item',      url: '/item/'      },
    ITEM_CHILD:{ name: 'itemch',    url: '/item/'      }, // overload item with additional params
    USER:      { name: 'user',      url: '/user/'      },

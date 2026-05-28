@@ -87,12 +87,12 @@ export const useItemMgr = defineStore('itemMgr', () => {
       return items
    }
 
-   const recentViewwedPublicItems = computed(() => { 
+   const recentViewedPublicItems = computed(() => { 
       const items = []
       for (const hit of hitStore.hits) {
          const item = itemStore.getItem(hit.id)
          if (isPublic(item)) { items.push( { ...item, dateViewed:hit.dateModified })}
-         if (items.length > 10) { break }
+         if (items.length > 30) { break }
       }
 
       return items
@@ -236,7 +236,7 @@ export const useItemMgr = defineStore('itemMgr', () => {
       myItemIdToItem, artistIdToMyItemIds, 
       getItems, getRandomItems, getProfileCount, getPublicGalleryThumbs, getPublicGalleryThumbUrls,
       recentPublicItems, recentGroupMemberItems, myRecentItems, getRecentItems, getRecentPublicItems, 
-      recentViewwedPublicItems,
+      recentViewedPublicItems,
       isItemGroup, ungroupItems, ungroupItem, ungroupAndExtractItems, extractFromItemGroup,
       itemAspectRatio, itemNavURL, itemURL, getPopupImage }
 })

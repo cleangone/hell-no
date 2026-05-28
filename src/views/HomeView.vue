@@ -50,7 +50,8 @@
          </v-col> -->
          <v-col v-if="viewedItems.length" class="box-border box-border-color ma-4 px-4">
             <div class="mb-5">
-               <span class="font-weight-bold">Recent Viewed</span>
+               <span class="font-weight-bold">Recent Viewed</span> | 
+               <RouterLink :to="Route.VIEWED.url">View all</RouterLink>
             </div>
             <v-row justify="space-around" ref="viewedRef" class="mt-4">
                <ItemThumb v-for="item in viewedItems" :key="item.id" :item="item" :origin="ItemOrigin.VIEWED" showDateViewed/>
@@ -85,6 +86,7 @@
    import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
+   import { useCacheStore }   from '@/stores/cacheStore'
    import { useLocalStore }   from '@/stores/localStore'
    import ItemThumb    from '@/components/item/thumb/ItemThumb.vue'
    import GalleryThumb from '@/components/gallery/GalleryThumb.vue'
@@ -105,6 +107,7 @@
    const profileStore = useProfileStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
+   const cacheStore   = useCacheStore()
    const localStore   = useLocalStore()
    const galleryRef   = ref(null)
    const favoritesRef = ref(null)
@@ -202,6 +205,7 @@
    const wallDivStyle   = computed(() => "height:" + (((slideRowHeight.value + 10) * wallRows.value)) + "px;")
    const wallBackgroundStyle = computed(() => wallDivStyle.value + " opacity:" + wallBackgroundOpacity.value + ";")
 
+   // not caching galleries - caching everything causes wall to not paint quickly
    const recentGalleries = computed(() => { 
       // console.log("recentGalleries")
       const galleries = []     
@@ -235,10 +239,10 @@
    })
    
    const allRecentItems = computed(() => {
-      let items = viewMgr.solo ? [ ...itemMgr.myRecentItems ] : [ ...itemMgr.recentPublicItems ]
+      let items = viewMgr.solo ? [ ...itemMgr.myRecentItems ] : [ ...cacheStore.recentPublicItems ]
       if (items.length) { 
          items.sort(function(a, b){return b.dateContentModified - a.dateContentModified}) 
-         localStore.setRecentItems(items) 
+         // localStore.setRecentItems(items) 
       }
 
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
@@ -260,9 +264,9 @@
    })
 
    const allViewedItems = computed(() => {
-      let items = viewMgr.solo ? [ ...itemMgr.myRecentItems ] : [ ...itemMgr.recentViewwedPublicItems ]
+      let items = viewMgr.solo ? [ ...itemMgr.myRecentItems ] : [ ...cacheStore.recentViewedPublicItems ]
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
-      viewStore.setVisibleItems(ItemOrigin.VIEWED, "Recent Viewed", Route.HOME.url, ungroupedItems)
+      viewStore.setVisibleItems(ItemOrigin.VIEWED, "Recent Viewed", Route.VIEWED.url, ungroupedItems)
       return items
    })
 
