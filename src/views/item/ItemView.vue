@@ -390,6 +390,13 @@
       if (navItems.value.next && !showingDialog.value && !eventClass(e, EXPAND_ITEMS_CLASS)) { router.push(nextItemUrl.value) } 
       if (!showEditDialog.value) { e.preventDefault() }
    })
+   onKeyStroke('ArrowUp', (e) => {
+      if (!showingDialog.value) {
+         if (singleOtherGallery.value) { router.push(galleryUrl(otherGalleries.value[0].id)) } 
+         else if (viewStoreVisibleItems.value) { router.push(viewStoreVisibleItems.value.linkUrl) } 
+      }
+      if (!showEditDialog.value) { e.preventDefault() }
+   })
    const eventClass = (e, targetClass) => {
       const eleClass = e?.originalTarget?.attributes?.getNamedItem("class")
       const textContent = eleClass ? eleClass.textContent : ""

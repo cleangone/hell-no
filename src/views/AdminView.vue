@@ -9,6 +9,7 @@
          <v-tab v-if="viewMgr.isDeskTop" :value="tabs.feeds">Feeds</v-tab>
          <v-tab v-if="viewMgr.isDeskTop" :value="tabs.chats">Chats</v-tab>
          <v-tab v-if="viewMgr.isDeskTop" :value="tabs.actions">Actions</v-tab>
+         <v-tab v-if="viewMgr.isDeskTop" :value="tabs.files">Files</v-tab>
          <v-tab v-if="viewMgr.isDeskTop" :value="tabs.test">Message Test</v-tab>
       </v-tabs>
    
@@ -21,6 +22,7 @@
             <v-window-item :value="tabs.feeds"><AdminFeeds/></v-window-item>
             <v-window-item :value="tabs.chats"><AdminChats/></v-window-item>
             <v-window-item :value="tabs.actions"><AdminActions/></v-window-item>
+            <v-window-item :value="tabs.files"><AdminFiles/></v-window-item>
             <v-window-item :value="tabs.test"><AdminTest/></v-window-item>
          </v-window>
       </v-card-text>
@@ -38,12 +40,14 @@
    import AdminArtists from '@/components/admin/AdminArtists.vue'
    import AdminFeeds   from '@/components/admin/AdminFeeds.vue'
    import AdminChats   from '@/components/admin/AdminChats.vue'
+   import AdminFiles   from '@/components/admin/AdminFiles.vue'
    import AdminActions from '@/components/admin/AdminActions.vue'
    import AdminTest    from '@/components/admin/AdminTest.vue'
    
    const viewMgr = useViewMgr()
    const tabs = { 
-      users: "users", content: "content", walls: "walls", artists: "artists", feeds: "feeds", chats: "chats", actions: "actions", test: "test" 
+      users: "users", content: "content", walls: "walls", artists: "artists", feeds: "feeds", 
+      chats: "chats", actions: "actions", files: "files", test: "test" 
    }
    const tab = ref(tabs.item)
 

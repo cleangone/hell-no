@@ -63,15 +63,14 @@ export const useItemStore = defineStore('item', () => {
    const itemCollection = collection(db, TABLE)
    function itemDoc(id) { return doc(db, TABLE, id) }
 
-   const items = useFirestore(itemCollection)   
-   const itemIdToItem = computed(() => { return items?.value ? new Map(items.value.map((obj) => [obj.id, obj])) : new Map() })
+   const rawItems = useFirestore(itemCollection)   
+   const items = computed(() => { return rawItems.value ? rawItems.value : [] })
+   const itemIdToItem = computed(() => { return new Map(items.value.map((obj) => [obj.id, obj])) })
    const childItemIds = computed(() => { 
       const ids = new Set()
-      if (items?.value) {
-         for (const item of items.value) {
-            if (item.type == ItemType.GROUP) {
-               for (const childItem of item.childItems) { ids.add(childItem.id) }
-            }
+      for (const item of items.value) {
+         if (item.type == ItemType.GROUP) {
+            for (const childItem of item.childItems) { ids.add(childItem.id) }
          }
       }
       return ids

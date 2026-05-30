@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { storage } from '@/firebase'
-import { getDownloadURL, ref as storageRef } from 'firebase/storage'
+import { ref as storageRef, getDownloadURL, deleteObject } from 'firebase/storage'
 import { dateUuid } from '@/utils/utils'
 import { ImageType } from '@/utils/constants'
    
@@ -39,7 +39,7 @@ export const useImageMgr = defineStore('imageMgr', () => {
             return
          } 
          catch (error) { 
-            console.log("Thumb error", error) 
+            //console.log("Thumb error", error) 
             await new Promise(resolve => setTimeout(resolve, DELAY_MILLIS))
          }
       }
@@ -58,5 +58,21 @@ export const useImageMgr = defineStore('imageMgr', () => {
       uploadHandler.updateImageSet(imageSet, uploadContext)
    } 
 
-   return { createImageSet, isUploadImage, isUserImage, isActive, isActiveUserImage, waitForThumbUrls }
+   async function deleteImages(imageSet) { 
+      const deleteRefs = [ 
+         storageRef(storage, imageSet.filePath),
+         storageRef(storage, imageSet.thumbFilePath),
+         storageRef(storage, imageSet.largeThumbFilePath) ]
+      try {
+         const deletePromises = deleteRefs.map((fileRef) => deleteObject(fileRef))
+         await Promise.all(deletePromises)
+      } 
+      catch (error) {
+         console.error("Failed to delete one or more files:", error);
+         throw error; 
+      }
+   }
+
+   return { 
+      createImageSet, isUploadImage, isUserImage, isActive, isActiveUserImage, waitForThumbUrls, deleteImages }
 })

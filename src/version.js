@@ -1,11 +1,11 @@
 /*
    Future: 
-      - Add parallax to gallery header
       - Add all metadata to mobile ItemView 
       - lazy loading in router - chunk retrieval errors with Admin, others
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.27.2", "5/29/26"], // Add AdminFiles - initial handling of orphan files
    ["v2.27.1", "5/27/26"], // Add RecentViewedView, cacheStore
    ["v2.27.0", "5/26/26"], // Show recentViewedItems on HomeView
    ["v2.26.1", "5/25/26"], // Finish UserThumb, integrate with HomeView

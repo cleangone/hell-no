@@ -3,6 +3,12 @@
       <div class="text-h5">Users</div>
       <v-data-table :headers="headers" :items="displayUsers" :custom-key-sort="customKeySort" 
          items-per-page="25" density="compact">
+         <template v-slot:header.actions="{ }">
+               <div class="d-flex justify-center align-center">
+                  <ToolTip iconClass="ml-n2"><v-icon icon="mdi-account-arrow-right"/> Swap to User</ToolTip> 
+                  &nbsp; &nbsp; &nbsp;
+               </div>
+            </template>
          <template v-slot:item.dateCreated="{ item }">{{ defaultDisplayDate(item.dateCreated) }}</template>
          <template v-slot:item.items="{ item }">
             {{ item.items ? item.items : "" }}
@@ -28,6 +34,7 @@
    import DeleteUser   from '@/components/user/DeleteUser.vue'
    import DeleteButton from '@/components/util/DeleteButton.vue'
    import IconButton   from '@/components/util/IconButton.vue'
+   import ToolTip      from '@/components/util/ToolTip.vue'
    import { defaultDisplayDate } from '@/utils/dateUtils'
    import { NotificationOptions, Route } from '@/utils/constants'
    

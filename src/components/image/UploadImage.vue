@@ -26,7 +26,7 @@
    import { uploadBytesResumable, getDownloadURL } from 'firebase/storage'
    import { useUserStore } from '@/stores/userStore'
    import { useImageMgr }  from '@/stores/image/imageMgr'  
-   import { Emit, ImageType }  from '@/utils/constants'
+   import { Emit }  from '@/utils/constants'
 
    const props = defineProps({ uploadHandler: Object, uploadContext: Object, bypassTitle:Boolean })
    const emit  = defineEmits([ Emit.DONE ])
@@ -77,8 +77,6 @@
          }
       )
    }
-
-
 </script>
 
 <style>
