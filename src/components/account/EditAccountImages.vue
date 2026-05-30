@@ -3,8 +3,8 @@
       <TextButton text="Upload Image" @click="showUploadDialog=true" class="ml-n2"/>
       <TextButton text="Add item images" @click="addItemImages()" class="ml-n2"/>
    </span>
-   <CropImage v-if="showCrop" :imageToCrop="imageSetToCrop" :cropImageType="cropImageType" 
-      :uploadHandler="userImageHandler" :uploadContext="uploadContext" @done="showCrop=false"/>
+   <CropImage v-if="showCrop" :imageToCrop="imageToCrop" :cropImageType="cropImageType" 
+      :uploadHandler="imageHandler" :uploadContext="uploadContext" @done="showCrop=false"/>
    <v-data-table v-else :headers="headers" :items="userImages" item-key="id">
        <template v-slot:item.image="{ item }">
          <img :src="item.thumbUrl" height="75" :class="imageMgr.isUserImage(item) ? 'image-circle' : ''"/>
@@ -25,7 +25,7 @@
    </v-data-table>
 
    <v-dialog v-model="showUploadDialog" width="auto">
-      <UploadImage :uploadHandler="userImageHandler":uploadContext="uploadContext" @done="showUploadDialog=false"/>
+      <UploadImage :uploadHandler="imageHandler":uploadContext="uploadContext" @done="showUploadDialog=false"/>
    </v-dialog>
 </template>
 
@@ -41,12 +41,12 @@
    import DeleteButton from '@/components/util/DeleteButton.vue'
    import { ImageType } from '@/utils/constants'
 
-   const userStore = useUserStore()
-   const itemStore = useItemStore()
-   const imageMgr  = useImageMgr()
-   const userImageHandler = useUserImageHandler()
+   const userStore    = useUserStore()
+   const itemStore    = useItemStore()
+   const imageMgr     = useImageMgr()
+   const imageHandler = useUserImageHandler()
    const showCrop  = ref(false)
-   const imageSetToCrop = ref(null)
+   const imageToCrop = ref(null)
    const cropImageType = ref("")
    const showUploadDialog = ref(false)
    
@@ -67,9 +67,9 @@
       const currImageIds = images.map(image => image.id)
       for (const item of itemStore.myItems) {
           if (!item.profileId) {
-            for (const itemImage of item.otherImages) {
-               if (itemImage.imageType == ImageType.USER && !currImageIds.includes(itemImage.id))  {
-                  images.push(itemImage)
+            for (const imageSet of item.otherImages) {
+               if (imageSet.imageType == ImageType.USER && !currImageIds.includes(imageSet.id))  {
+                  images.push({ ...imageSet, originItemId: item.id })
                }
             }
          }
@@ -77,26 +77,21 @@
       userStore.updateImages(images)
    }
 
-   const updateActive = (itemImage) => { 
-      const updatedImages = []
-      for (const image of userImages.value) {
-         if (image.id == itemImage.id) {
-            const updatedImage = { ...image }
-            updatedImage.active = itemImage.active
-            updatedImages.push(updatedImage)
-         }
-         else { updatedImages.push(image)}
-      }
+   const updateActive = (imageSet) => { 
+      const updatedImages = imageMgr.updateActiveImage(imageSet, userImages.value)
       userStore.updateImages(updatedImages) 
    }
 
-   const cropImage = (itemImage, imageType) => {
-      imageSetToCrop.value = itemImage
+   const cropImage = (imageSet, imageType) => {
+      imageToCrop.value = imageSet
       cropImageType.value = imageType
       showCrop.value = true
    }
    
-   const deleteImage = (itemImage) => { userStore.removeImage(itemImage) }
+   const deleteImage = (imageSet) => { 
+      userStore.removeImage(imageSet) 
+      if (!imageSet.originItemId) { imageMgr.deleteImages(imageSet) }
+   }
 </script>
 
 <style>

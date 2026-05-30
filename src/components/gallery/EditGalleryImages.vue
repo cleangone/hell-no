@@ -41,6 +41,7 @@
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
    import { useItemStore }    from '@/stores/itemStore'
+   import { useImageMgr }     from '@/stores/image/imageMgr'
    import Icon         from '@/components/util/Icon.vue'
    import IconButton   from '@/components/util/IconButton.vue'
    import TextButton   from '@/components/util/TextButton.vue'
@@ -58,6 +59,7 @@
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
    const itemStore    = useItemStore()
+   const imageMgr     = useImageMgr()
    const viewTable = ref(true)
    
    const headers = [
@@ -117,16 +119,8 @@
       }
    }
 
-   const updateActive = (itemImage) => { 
-      const updatedImages = []
-      for (const image of galleryImages.value) {
-         if (image.id == itemImage.id) {
-            const updatedImage = { ...image }
-            updatedImage.active = !updatedImage.active
-            updatedImages.push(updatedImage)
-         }
-         else { updatedImages.push(image)}
-      }
+   const updateActive = (imageSet) => { 
+      const updatedImages = imageMgr.updateActiveImage(imageSet, galleryImages.value)
       galleryStore.updateGallery({ id: props.galleryId, images: updatedImages }) 
    }
    

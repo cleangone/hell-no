@@ -58,6 +58,19 @@ export const useImageMgr = defineStore('imageMgr', () => {
       uploadHandler.updateImageSet(imageSet, uploadContext)
    } 
 
+   function updateActiveImage(imageSet, currImages) { 
+      const updatedImages = []
+      for (const image of currImages) {
+         if (image.id == imageSet.id) {
+            const updatedImage = { ...image }
+            updatedImage.active = imageSet.active
+            updatedImages.push(updatedImage)
+         }
+         else { updatedImages.push(image)}
+      }     
+      return updatedImages
+   }
+  
    async function deleteImages(imageSet) { 
       const deleteRefs = [ 
          storageRef(storage, imageSet.filePath),
@@ -74,5 +87,6 @@ export const useImageMgr = defineStore('imageMgr', () => {
    }
 
    return { 
-      createImageSet, isUploadImage, isUserImage, isActive, isActiveUserImage, waitForThumbUrls, deleteImages }
+      createImageSet, isUploadImage, isUserImage, isActive, isActiveUserImage, 
+      waitForThumbUrls, updateActiveImage, deleteImages }
 })

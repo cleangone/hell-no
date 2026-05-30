@@ -64,6 +64,7 @@
    // read from store so list is dynamically updated if image deleted
    const profile       = computed(() => profileStore.getMyProfile(props.profileId))
    const profileImages = computed(() => profile.value?.images ? profile.value.images : [])
+   const uploadContext = computed(() => { return { uploadImageType:ImageType.UPLOAD, profileId:props.profileId }})
    
    const addItemImages = () => { 
       const imageIds = profileImages.value.map(image => image.id)
@@ -80,21 +81,12 @@
    }
 
    const updateActive = (imageSet) => { 
-      const updatedImages = []
-      for (const image of profileImages.value) {
-         if (image.id == imageSet.id) {
-            const updatedImage = { ...image }
-            updatedImage.active = imageSet.active
-            updatedImages.push(updatedImage)
-         }
-         else { updatedImages.push(image)}
-      }
+      const updatedImages = imageMgr.updateActiveImage(imageSet, profileImages.value)
       profileStore.updateProfile({ id: props.profileId, images: updatedImages }) 
    }
 
-   const uploadContext = computed(() => { return { uploadImageType:ImageType.UPLOAD, profileId:props.profileId }})
-   const cropImage = (image, imageType) => {
-      imageToCrop.value = image
+   const cropImage = (imageSet, imageType) => {
+      imageToCrop.value = imageSet
       cropImageType.value = imageType
       showCrop.value = true
    }
