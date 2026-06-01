@@ -35,10 +35,16 @@ export const useArtistMgr = defineStore('artistMgr', () => {
       return { id: artist.id, name: artist.name, fullName: artist.fullName, allNames: artist.allNames } 
    }
 
+   function getArtistOption(artist) {
+      return { title: artist.fullName, value: getItemArtist(artist) }
+   } 
+
+   const artistOptions = computed(() => getArtistOptions(artistStore.artists))
+
    function getArtistOptions(artists) {
       const options = []
       for (const artist of artists) {
-         options.push({ title: artist.fullName, value: artist })
+         options.push(getArtistOption(artist))
       }
       return options
    }
@@ -97,6 +103,7 @@ export const useArtistMgr = defineStore('artistMgr', () => {
 
    return { 
       getArtistIdToArtist, hasAKAs, getPrimaryArtistsForAKA, getFullName, 
-      getItemArtist, getArtistOptions, getMatchingArtist, addArtistFirstLast
+      getItemArtist, getArtistOption, artistOptions, getArtistOptions, 
+      getMatchingArtist, addArtistFirstLast,
    }
 })

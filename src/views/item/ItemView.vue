@@ -3,8 +3,13 @@
       <div v-if="alternateName" class="mt-n2">
          also <span class="text-h5">{{ alternateName }}</span>
       </div>
-      <div v-if="artist" class="text-h6 mt-n2">
-         <RouterLink :to="Route.ARTIST.url + artist.id">{{ artist.fullName }}</RouterLink> 
+      <div v-if="primaryArtist" class="text-h6 mt-n2">
+         <RouterLink :to="Route.ARTIST.url + primaryArtist.id">{{ primaryArtist.fullName }}</RouterLink> 
+      </div>
+      <div v-if="otherArtists" v-for="artist in otherArtists" :key="artist.id" class="text-h6 mt-n1">
+         <RouterLink :to="Route.ARTIST.url + artist.id">
+            {{ artist.fullName }}
+         </RouterLink> 
       </div>
       <div v-if="paramItem.yearCreated" class="text-h6 mt-n2">{{ paramItem.yearCreated }}</div>
       <div v-if="populated(paramItem.subtitle)" class="font-weight-medium mb-1">{{ paramItem.subtitle }}</div>
@@ -247,7 +252,8 @@
    const alternateName = computed(() => paramItem.value.alternateName?.length ? paramItem.value.alternateName : null)
    const itemUser      = computed(() => userStore.getUser(paramItem.value.userId)) 
    const descBeside    = computed(() => viewStore.itemDescBesideImage)
-   const artist        = computed(() => paramItem.value.primaryArtist) 
+   const primaryArtist = computed(() => paramItem.value.primaryArtist) 
+   const otherArtists  = computed(() => paramItem.value.otherArtists) 
    
    const backgroundStyle = computed(() => "opacity: .05;") // make this configurable?
    const backgroundImage = computed(() => {

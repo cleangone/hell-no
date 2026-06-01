@@ -44,6 +44,7 @@ import { ItemType, State } from '@/utils/constants'
          id
          name
          fullName
+      otherArtists []
       parentItemIds[] - itemGroups this item is part of
       childItems[] - items this itemGroup holds
       contributingGalleryOwnerIds[] - for access rules to allow gallery owner to update item      
@@ -123,17 +124,24 @@ export const useItemStore = defineStore('item', () => {
       const map = new Map()
       if (!itemArray) { return map }
       for (const item of itemArray) {
-         if (item.primaryArtist?.id) { 
-            let artistItems = map.get(item.primaryArtist.id)
-            if (!artistItems) {
-               artistItems = []
-               map.set(item.primaryArtist.id, artistItems)
+         if (item.primaryArtist?.id) { addItemToArtistMap(item.primaryArtist, item, map) }
+         if (item.otherArtists) { 
+            for (const artist of item.otherArtists) {
+               addItemToArtistMap(artist, item, map) 
             }
-            artistItems.push(item) 
          }
       }
       return map
    }
+
+   function addItemToArtistMap(artist, item, artistIdToItem) { 
+      let artistItems = artistIdToItem.get(artist.id)
+      if (!artistItems) {
+         artistItems = []
+         artistIdToItem.set(artist.id, artistItems)
+      }
+      artistItems.push(item) 
+   }  
 
    const userIdToItems       = computed(() => getUserIdMap(items.value))
    const userIdToPublicItems = computed(() => getUserIdMap(publicItems.value))

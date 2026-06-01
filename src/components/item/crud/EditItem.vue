@@ -41,6 +41,15 @@
                <v-checkbox v-model="currItemWall" label="Display on Art Wall" class="tight-checkbox"/> 
             </v-col>
          </v-row>
+         <v-row class="mt-n6 mr-1">
+            <v-col cols="12">
+               <div class="expansion">
+                  <v-expansion-panels multiple>
+                     <EditArtists title="Other Artists" :artists="currItemOtherArtists"/>
+                  </v-expansion-panels>
+               </div>
+            </v-col>
+         </v-row>
       </div>
       <v-row>    
          <v-col>
@@ -83,8 +92,9 @@
    import { useProfileStore } from '@/stores/profileStore'
    import { useWallStore }    from '@/stores/wallStore'
    import { useWallMgr }      from '@/stores/wallMgr'
-   import EditHtml          from '@/components/util/EditHtml.vue'
-   import CheckboxExpansion from '@/components/util/CheckboxExpansion.vue'
+   import EditArtists         from './EditArtists.vue'
+   import EditHtml            from '@/components/util/EditHtml.vue'
+   import CheckboxExpansion   from '@/components/util/CheckboxExpansion.vue'
    import { optionalYearRule, requiredRule, sortByName } from '@/utils/utils'
    import { Emit, ItemStates, ItemType } from '@/utils/constants'
    
@@ -109,6 +119,7 @@
    const currYearCreated   = ref(null)
    const currItemDescContainer = ref({ content: "" })
    const currItemWall = ref(false)  
+   const currItemOtherArtists = ref([]) 
    const currItemGalleries = ref([])       
    const currItemGalleryCheckboxes = ref([])
    const artistOption  = ref(null)
@@ -135,6 +146,7 @@
       currProfileId.value = item.profileId ? item.profileId : null
       currYearCreated.value = item.yearCreated
       currItemDescContainer.value.content = item.desc ? item.desc : ""
+      currItemOtherArtists.value = item.otherArtists ? item.otherArtists : []
       currItemWall.value = wallStore.myWallIncludesItem(item.id)
       
       // once, twice, refactor... 
@@ -216,6 +228,7 @@
          subtitle: currItemSubtitle.value,
          desc: currItemDescContainer.value.content,
          galleryIds: updatedGalleryIds,
+         otherArtists: currItemOtherArtists.value,
          onUserWall: currItemWall.value
       }
 
