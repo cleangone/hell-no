@@ -1,15 +1,21 @@
 <template>
-   <div class="text-left">
-      <div class="text-h5">Files</div>
+   <div v-if="orphanFolder">
+      <AdminFileOrphans :folder="orphanFolder" @done="orphanFolder=null"/>
+   </div>
+   <div v-else class="text-left">
+      <div>
+         <span class="text-h5">Files</span>
+         <TextButton text="refresh files" @click="refresh=refresh+1"/>
+      </div>
       <v-data-table :headers="headers" :items="displayFolders" items-per-page="25" density="compact">
          <template v-slot:item.files="{ item }">
             {{ item.files.length ? item.files.length : " "}}
          </template>
          <template v-slot:item.orphans="{ item }">
-            {{ orphanCount(item) }}
+            {{ item.orphanFiles.length ? item.orphanFiles.length : " "}}
          </template>
          <template v-slot:item.actions="{ item }">
-            <TextButton v-if="item.files.length" text="check orphans" @click="handleOrphans(item)"/>
+            <TextButton v-if="item.files.length" text="handle orphans" @click="handleOrphans(item)"/>
          </template>
       </v-data-table>
    </div>
@@ -18,17 +24,20 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { storage }       from '@/firebase'
-   import { listAll, ref as storageRef } from "firebase/storage"
+   import { ref as storageRef, listAll } from "firebase/storage"
    import { computedAsync } from '@vueuse/core';
    import { useUserStore }    from '@/stores/userStore'
    import { useItemStore }    from '@/stores/itemStore'
    import { useProfileStore } from '@/stores/profileStore'
-   import TextButton   from '@/components/util/TextButton.vue'
+   import AdminFileOrphans from './AdminFileOrphans.vue'
+   import TextButton       from '@/components/util/TextButton.vue'
    
    const BASE_DIR = 'images/'   
    const userStore    = useUserStore()
    const itemStore    = useItemStore()
    const profileStore = useProfileStore()
+   const orphanFolder = ref(null)
+   const refresh      = ref(0) // force refresh of displayFolders - storage not reactive
    
    const headers = [
       { title: 'Username',  key: 'name',    value: 'name' },
@@ -39,41 +48,51 @@
    ]
 
    const displayFolders = computedAsync(async () => {
+      const unused = refresh.value
       const folders = [] 
-      const baseDirFiles = await getFiles(BASE_DIR)
-      folders.push({ name: "", dir: BASE_DIR, files: baseDirFiles })
-      
-      const subDirToFiles = new Map()
+      const dirs = [ BASE_DIR ] 
+      const subDirToUserId = new Map()
       const subDirs = await getSubDirs(BASE_DIR)
       for (const subDir of subDirs) {
-         const subDirFiles = await getFiles(getDir(subDir))
-         subDirToFiles.set(subDir, subDirFiles)
+         dirs.push(getDir(subDir))
+         subDirToUserId.set(getDir(subDir), subDir)
       }
 
-      for (const user of userStore.users) {
-         const files = subDirToFiles.get(user.id)
-         folders.push({ name:user.username, user:user, dir:getDir(user.id), files: files ? files : [] })
+      const dirFiles = await getDirFiles(dirs) 
+      for (const dirFile of dirFiles) {
+         if (dirFile.dir == BASE_DIR) {
+            const folder = { 
+               name: "", 
+               dir: BASE_DIR, 
+               files: dirFile.files,
+               orphanFiles: getOrphanFiles(dirFile.files) }
+            folders.push(folder)
+         }
+         else { 
+            const user = userStore.getUser(subDirToUserId.get(dirFile.dir)) 
+            const folder = { 
+               name: user.username, 
+               user: user, 
+               dir: dirFile.dir, 
+               files: dirFile.files,
+               orphanFiles: getOrphanFiles(dirFile.files, user) }
+            folders.push(folder)
+         }
       }
+
       folders.sort((a, b) => a.name.localeCompare(b.name))
       return folders
    }, [] ) // initial default
-   
+
    const getDir = (subDir) => { return BASE_DIR + subDir + "/" }
       
-   const orphanCount = (folder) => {
-      const orphans = orphanFiles(folder)
-      return orphans.length ? orphans.length : ""
-   }
-
-   const handleOrphans = (folder) => {
-      const orphans = orphanFiles(folder)
-   }
+   const handleOrphans = (folder) => { orphanFolder.value = folder }
    
-   const orphanFiles = (folder) => {
-      const orphans = new Set(folder.files)
+   const getOrphanFiles = (files, user = null) => {
+      const orphans = new Set(files)
       
-      if (folder.user) {
-         const items = itemStore.getUserItems(folder.user.id) 
+      if (user) {
+         const items = itemStore.getUserItems(user.id) 
          for (const item of items) {
             if (item.primaryImage) { removeOrphans(item.primaryImage, orphans) }
             if (item.otherImages) { 
@@ -82,12 +101,12 @@
                }
             }
          }
-         if (folder.user.images) { 
-            for (const image of folder.user.images) {
+         if (user.images) { 
+            for (const image of user.images) {
                removeOrphans(image, orphans) 
             }
          }
-         const profiles = profileStore.userIdToProfiles.get(folder.user.id)
+         const profiles = profileStore.userIdToProfiles.get(user.id)
          if (profiles) {
             for (const profile of profiles) {
                for (const image of profile.images) {
@@ -105,7 +124,6 @@
                }
             }
          }
-
       }
 
       return [...orphans]      
@@ -124,7 +142,6 @@
             console.error("Error listing folders:", error)
             return []
          })
-
       const dirs = []
       result.prefixes.forEach((prefixRef) => {
          dirs.push(prefixRef.name)
@@ -132,18 +149,20 @@
       return dirs
    }
 
-   async function getFiles(dir) {
-      const listRef = storageRef(storage, dir)
-      const result = await listAll(listRef)
-         .catch((error) => {
-            console.error("Error listing files:", error)
-            return []
-         })
-      const files = []
-      result.items.forEach((itemRef) => {
-         files.push(dir + itemRef.name)
+   async function getDirFiles(dirs) {
+      const promises = dirs.map(async (dir) => {
+         const dirRef = storageRef(storage, dir)
+         try {
+            const result = await listAll(dirRef)
+            const files = result.items.map((item) => item.fullPath)
+            return { dir: dir, files }
+         } 
+         catch (error) {
+            console.error(`Error listing files for ${dir}:`, error)
+            return { dir: dir, files: [] }
+         }
       })
-      return files
+      return await Promise.all(promises) // await all dirs 
    }
 </script>
 

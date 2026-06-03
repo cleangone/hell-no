@@ -5,6 +5,7 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.29.0", "6/2/26"],  // Admin can delete orphaned files
    ["v2.28.0", "5/31/26"], // Add/integrate item.otherArtists 
    ["v2.27.2", "5/29/26"], // Add AdminFiles - initial handling of orphan files
    ["v2.27.1", "5/27/26"], // Add RecentViewedView, cacheStore
