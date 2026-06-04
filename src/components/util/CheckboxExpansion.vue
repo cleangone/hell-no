@@ -6,7 +6,8 @@
       </v-expansion-panel-title>
       <v-expansion-panel-text>
          <v-row class="mb-2">
-            <CheckboxCol v-for="checkboxCol in checkboxCols" :key="checkboxCol" :objCol="checkboxCol" class="mx-3"/>
+            <CheckboxCol v-for="chkboxCol in chkboxCols" :key="chkboxCol" :chkboxCol="chkboxCol" 
+               @toggle="toggle" class="mx-3"/>
          </v-row>
       </v-expansion-panel-text>
    </v-expansion-panel>
@@ -15,10 +16,12 @@
 <script setup>
    import { computed } from 'vue'
    import CheckboxCol from './CheckboxCol.vue'
+   import { Emit } from '@/utils/constants'
    
    const props = defineProps({ type: String, checkboxes: Array, cols: Number })
+   const emit = defineEmits([Emit.TOGGLE])
    
-   const checkboxCols = computed(() => {
+   const chkboxCols = computed(() => {
       const cols = []
       const numCols = props.cols ? props.cols : 3
       for (var i=0; i<numCols; i++) { 
@@ -43,4 +46,6 @@
       }
       return names.join(", ")
    })
+
+   const toggle = (id) => { emit(Emit.TOGGLE, id) }
 </script>

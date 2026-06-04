@@ -11,6 +11,7 @@ import { ImageType, State } from '@/utils/constants'
    Gallery
       id
       name
+      sortName - optional
       tag - unique across all galleries
       userId
       contributorIds[]

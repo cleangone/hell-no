@@ -57,6 +57,7 @@ export const Emit = {
    SWIPE_RIGHT: 'swipeRight',
    SWIPE_UP:    'swipeUp',
    SWIPE_DOWN:  'swipeDown',
+   TOGGLE:      'toggle',
 }
 
 export const FeedAction = {

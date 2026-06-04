@@ -15,7 +15,7 @@
             {{ item.orphanFiles.length ? item.orphanFiles.length : " "}}
          </template>
          <template v-slot:item.actions="{ item }">
-            <TextButton v-if="item.files.length" text="handle orphans" @click="handleOrphans(item)"/>
+            <TextButton v-if="item.files.length && item.orphanFiles.length" text="handle orphans" @click="handleOrphans(item)"/>
          </template>
       </v-data-table>
    </div>

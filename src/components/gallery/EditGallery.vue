@@ -3,7 +3,8 @@
       <div class="pa-md-4">
          <div v-if="parentGalleryName">Parent Gallery: {{ parentGalleryName  }}</div>
          <v-row>
-            <v-col cols="8"><v-text-field v-model="galleryName" label="Gallery Name" :rules="requiredRule"/></v-col> 
+            <v-col cols="5"><v-text-field v-model="galleryName" label="Gallery Name" :rules="requiredRule"/></v-col> 
+            <v-col cols="4"><v-text-field v-model="gallerySortName" label="Sort Name"/></v-col>
             <v-col><v-text-field v-model="galleryTag" label="Tag" :rules="tagRule"/></v-col>
          </v-row>
          <v-row class="mt-n4">
@@ -64,9 +65,10 @@
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
    const profileStore = useProfileStore()
-   const galleryName  = ref('')
-   const galleryTag   = ref('')
-   const galleryState = ref('')
+   const galleryName      = ref('')
+   const gallerySortName  = ref('')
+   const galleryTag       = ref('')
+   const galleryState     = ref('')
    const galleryDescContainer = ref({ content: "" })
    const galleryProfileId = ref(null)
    const galleryContributorIds = ref(null)
@@ -81,10 +83,11 @@
    const dataValid = ref(true)
    
    onMounted(() => {
-      galleryName.value  = props.gallery.name
-      galleryTag.value   = props.gallery.tag ?? ""
-      galleryState.value = props.gallery.state
-      galleryProfileId.value       = props.gallery.profileId      ?? null // consistent null instead of undefined
+      galleryName.value       = props.gallery.name
+      gallerySortName.value   = props.gallery.sortName ?? null
+      galleryTag.value        = props.gallery.tag ?? ""
+      galleryState.value      = props.gallery.state
+      galleryProfileId.value  = props.gallery.profileId        ?? null // consistent null instead of undefined
       galleryContributorIds.value  = props.gallery.contributorIds ?? null
       galleryDescContainer.value.content = props.gallery.desc ?? ""
       descInHeader.value      = props.gallery.descInHeader     ?? false
@@ -179,9 +182,10 @@
 
       galleryStore.updateGallery({
          id: props.gallery.id,
-         name:  galleryName.value,
-         tag:   galleryTag.value,
-         state: galleryState.value,
+         name:      galleryName.value,
+         sortName:  gallerySortName.value,
+         tag:       galleryTag.value,
+         state:     galleryState.value,
          profileId: galleryProfileId.value,
          contributorIds: galleryContributorIds.value,
          desc: galleryDescContainer.value.content,
