@@ -44,8 +44,8 @@
 
       // add top level checkboxes to cols
       for (let i=0; i<checkboxFamilies.value.length; i++) {
-         const colIndex = Math.floor(i * cols.length / chkboxFamilies.value.length)
-         cols[colIndex].push(chkboxFamilies.value[i])
+         const colIndex = Math.floor(i * cols.length / checkboxFamilies.value.length)
+         cols[colIndex].push(checkboxFamilies.value[i])
       }
       return cols
    })
