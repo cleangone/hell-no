@@ -12,8 +12,8 @@
          </template>
          <template v-slot:item.actions="{ item }">
             <div v-if="userCreatedArtist(item)">
-               <EditButton   @click="editArtist(item)"   :disabled="disableEdit(item)"/>
-               <DeleteButton @click="deleteArtist(item)" :disabled="disableDelete(item)"/> 
+               <EditButton   @click="editArtist(item)"   :disabled="disableEdit(item)" class="admin-link"/>
+               <DeleteButton @click="deleteArtist(item)" :disabled="disableDelete(item)" class="admin-link"/> 
             </div>
          </template>
       </v-data-table>

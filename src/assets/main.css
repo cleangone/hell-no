@@ -14,6 +14,8 @@ a, .blue, .icon-btn {
   transition: 0.4s;
 }
 
+.admin-link { color: var(--c-link); }
+
 .nav-text { color: var(--color-link); }
 
 .menu-icon { color: var(--color-link-dark); }

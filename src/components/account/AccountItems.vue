@@ -57,8 +57,8 @@
                </span>
             </template>
             <template v-slot:item.actions="{ item }">
-               <EditButton @click="editItem(item)"/>
-               <DeleteButton @click="deleteItem(item)" :disabled="isChildItem(item.id)"/>
+               <EditButton @click="editItem(item)" class="admin-link"/>
+               <DeleteButton @click="deleteItem(item)" :disabled="isChildItem(item.id)" class="admin-link"/>
             </template>
          </v-data-table>
       </div>

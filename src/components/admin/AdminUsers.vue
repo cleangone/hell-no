@@ -14,8 +14,8 @@
             {{ item.items ? item.items : "" }}
          </template>
          <template v-slot:item.actions="{ item }">
-            <IconButton icon="mdi-account-arrow-right" @click="swapUser(item.id)" size="med"/>
-            <DeleteButton @click="deleteUser(item)" :disabled="disableDelete(item)"></DeleteButton>
+            <IconButton icon="mdi-account-arrow-right" @click="swapUser(item.id)" size="med" class="admin-link"/>
+            <DeleteButton @click="deleteUser(item)" :disabled="disableDelete(item)" class="admin-link"></DeleteButton>
          </template>
       </v-data-table>
    </div>

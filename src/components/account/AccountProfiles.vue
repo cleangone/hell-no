@@ -9,8 +9,8 @@
             <img v-if="item.activeImage" :src="item.activeImage.thumbUrl" height="50" class="image-circle"/>
          </template>
          <template v-slot:item.actions="{ item }">
-            <EditButton   @click="editProfile(item)"/>
-            <DeleteButton @click="deleteProfile(item)" :disabled="profileUsed(item)"/>
+            <EditButton   @click="editProfile(item)" class="admin-link"/>
+            <DeleteButton @click="deleteProfile(item)" :disabled="profileUsed(item)" class="admin-link"/>
          </template>
       </v-data-table>
    </div>

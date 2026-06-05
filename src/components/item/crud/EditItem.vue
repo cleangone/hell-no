@@ -69,8 +69,7 @@
       </div>
       <div v-else-if="isMyItem" class="expansion">
          <v-expansion-panels multiple>
-            <CheckboxExpansion type="Galleries" :checkboxes="galleryCheckboxes"  
-               @toggle="toggleGalleryCheckboxExpand" class="mx-3"/>
+            <CheckboxExpansion type="Galleries" :checkboxes="galleryCheckboxes" class="mx-3"/>
          </v-expansion-panels>
       </div>
    </v-form>
@@ -161,11 +160,9 @@
             id: gallery.id, 
             name: gallery.name, 
             sort: gallery.sortName?.length ? gallery.sortName :gallery.name,
-            selected: isSelected,
+            isSelected: isSelected,
             isParent: gallery.childGalleryIds?.length > 0, 
             parentId: gallery.parentGalleryId, 
-            isExpanded: false, 
-            isVisible: isSelected || !gallery.parentGalleryId //selected or not a child
          })
       }
       galleryCheckboxes.sort(function(a, b){return a.sort.localeCompare(b.sort)}) 
@@ -175,8 +172,9 @@
          const isSelected = item.galleryIds?.includes(gallery.id)
          if (isSelected) { currItemGalleries.value.push(gallery) }
          galleryCheckboxes.push({ 
-            id: gallery.id, name:gallery.name + "(Contributor)", selected: isSelected,
-            isVisible: true // all contributing are visible
+            id: gallery.id, 
+            name: gallery.name + "(Contributor)", 
+            isSelected: isSelected,
          })
       }
       currItemGalleryCheckboxes.value = galleryCheckboxes
@@ -206,13 +204,13 @@
    const selectedCheckboxIds = (checkboxes) => { 
       const ids = []
       for (const checkbox of checkboxes) {
-         if (checkbox.selected) { ids.push(checkbox.id) }
+         if (checkbox.isSelected) { ids.push(checkbox.id) }
       }
       return ids 
    }
 
    // computed vars to drive changes to component
-   const galleryCheckboxes = computed(() => currItemGalleryCheckboxes.value.filter(checkbox => checkbox.isVisible)) 
+   const galleryCheckboxes = computed(() => currItemGalleryCheckboxes.value) 
    
    const isItemGroup = (item) => { return item.type == ItemType.GROUP }
    
@@ -222,20 +220,6 @@
       get() { return currItemGalleries.value },
       set(galleries) { currItemGalleries.value = sortByName(galleries) }
    })
-
-   const toggleGalleryCheckboxExpand = (id) => { 
-      // console.log("toggleGalleryCheckboxExpand", id)
-      const expandedCheckboxIds = []  
-      for (const checkbox of currItemGalleryCheckboxes.value) { 
-         if (checkbox.id == id) { checkbox.isExpanded = !checkbox.isExpanded }
-         if (checkbox.isExpanded) { expandedCheckboxIds.push(checkbox.id) }
-      }
-      for (const checkbox of currItemGalleryCheckboxes.value) { 
-         if (checkbox.parentId) { 
-            checkbox.isVisible = expandedCheckboxIds.includes(checkbox.parentId) || checkbox.selected
-         }
-      }
-   }
 
    const save = () => {
       const existingGalleryIds = currItem.value.galleryIds ? currItem.value.galleryIds : []

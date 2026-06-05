@@ -8,8 +8,8 @@
          <template v-slot:item.dateCreated="{ item }"> {{ defaultDateString(item.dateCreated) }}</template>
          <template v-slot:item.dateModified="{ item }">{{ defaultDateString(item.dateModified)}}</template>
          <template v-slot:item.actions="{ item }">
-            <EditButton   @click="editChat(item)"/>
-            <DeleteButton @click="deleteChat(item)"/>
+            <EditButton   @click="editChat(item)" class="admin-link"/>
+            <DeleteButton @click="deleteChat(item)" class="admin-link"/>
          </template>
       </v-data-table>
    </div>

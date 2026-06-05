@@ -7,8 +7,8 @@
             </span>
          </template>
          <template v-slot:item.actions="{ item }">
-            <EditButton @click="editItem(item)"></EditButton>
-            <DeleteButton @click="deleteWallItem(item)"></DeleteButton>
+            <EditButton @click="editItem(item)" class="admin-link"></EditButton>
+            <DeleteButton @click="deleteWallItem(item)" class="admin-link"></DeleteButton>
          </template>
       </v-data-table>
    </div>

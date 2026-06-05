@@ -5,7 +5,7 @@
       </div>
       <v-data-table :headers="headers" :items="feeds" :custom-key-sort="customKeySort" density="compact">
          <template v-slot:item.items="{ item }">
-            <a @click="showFeedItems(item)" class="hand">{{ item.items }}</a>
+            <a @click="showFeedItems(item)" class="hand admin-link">{{ item.items }}</a>
          </template>
          <template v-slot:item.dateCreated="{ item }"> {{ defaultDateString(item.dateCreated) }}</template>
          <template v-slot:item.dateModified="{ item }">{{ defaultDateString(item.dateModified)}}</template>

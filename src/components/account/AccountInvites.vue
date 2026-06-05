@@ -27,7 +27,7 @@
             </div>
          </template>
          <template v-slot:item.actions="{ item }">
-            <DeleteButton @click="deleteInvite(item)"></DeleteButton> 
+            <DeleteButton @click="deleteInvite(item)" class="admin-link"></DeleteButton> 
          </template>
          <template v-slot:expanded-row="{ columns, item }">
             <tr v-for="acceptance in item.acceptances">

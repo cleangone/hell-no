@@ -1,8 +1,8 @@
 <template>
    <div class="text-left">
       <div class="text-left text-h6">
-         <a @click="$emit(Emit.DONE)">{{ isMyGallery ? "Galleries": "My ContributingGalleries" }}</a> > {{ gallery.name }}
-         <EditButton v-if="isMyGallery" @click="showEditGalleryDialog=true"/>
+         <a @click="$emit(Emit.DONE)" class="admin-link">{{ isMyGallery ? "Galleries": "My ContributingGalleries" }}</a> > {{ gallery.name }}
+         <EditButton v-if="isMyGallery" @click="showEditGalleryDialog=true" class="admin-link"/>
          <TextButton v-if="!selectedItemIds.length" @click="showAddItemDialog=true" text="Add Item"/>
          <TextButton v-if="isMyGallery && !selectedItemIds.length" @click="showBulkUpload=true"     text="Bulk Upload"/>
          <TextButton v-if="isMyGallery && !selectedItemIds.length" @click="showManifestUpload=true" text="Manifest Upload"/>
@@ -40,8 +40,9 @@
             {{ item.dateModified ? item.dateModified.toDate().toLocaleDateString() : "" }}
          </template>
          <template v-slot:item.actions="{ item }">
-            <EditButton v-if="isMyGallery || item.isMyItem" @click="editItem(item)"/>
-            <IconButton v-if="isMyGallery || item.isMyItem" icon="mdi-folder-remove" @click="removeItemFromGallery(item)" :disabled="isChildItem(item.id)"/>
+            <EditButton v-if="isMyGallery || item.isMyItem" @click="editItem(item)" class="admin-link"/>
+            <IconButton v-if="isMyGallery || item.isMyItem" icon="mdi-folder-remove" @click="removeItemFromGallery(item)" 
+               :disabled="isChildItem(item.id)" class="admin-link"/>
          </template>
       </v-data-table>
 

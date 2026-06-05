@@ -12,8 +12,8 @@
             {{ item.items.length ? item.items.length : "" }}
          </template>
          <template v-slot:item.actions="{ item }">
-            <EditButton @click="editArtist(item)"></EditButton>
-            <DeleteButton @click="deleteArtist(item)" :disabled="disableDelete(item)"></DeleteButton>
+            <EditButton @click="editArtist(item)" class="admin-link"></EditButton>
+            <DeleteButton @click="deleteArtist(item)" :disabled="disableDelete(item)" class="admin-link"/>
          </template>
       </v-data-table>
    </div>

@@ -6,8 +6,7 @@
       </v-expansion-panel-title>
       <v-expansion-panel-text>
          <v-row class="mb-2">
-            <CheckboxCol v-for="chkboxCol in chkboxCols" :key="chkboxCol" :chkboxCol="chkboxCol" 
-               @toggle="toggle" class="mx-3"/>
+            <CheckboxCol v-for="chkboxCol in checkboxCols" :key="chkboxCol" :checkboxes="chkboxCol" class="mx-3"/>
          </v-row>
       </v-expansion-panel-text>
    </v-expansion-panel>
@@ -16,25 +15,37 @@
 <script setup>
    import { computed } from 'vue'
    import CheckboxCol from './CheckboxCol.vue'
-   import { Emit } from '@/utils/constants'
    
-   const props = defineProps({ type: String, checkboxes: Array, cols: Number })
-   const emit = defineEmits([Emit.TOGGLE])
+   const props = defineProps({ type:String, checkboxes:Array, cols:Number })
    
-   const chkboxCols = computed(() => {
+   const checkboxFamilies = computed(() => {
+      const families = []
+      const idToCheckbox = new Map()
+      
+      for (const checkbox of props.checkboxes) {
+         checkbox.children = []
+         idToCheckbox.set(checkbox.id, checkbox)
+         if (checkbox.parentId && idToCheckbox.has(checkbox.parentId)) {
+            const parent = idToCheckbox.get(checkbox.parentId)
+            parent.children.push(checkbox) 
+         }
+         else { families.push(checkbox) } 
+      }
+
+      return families
+   })
+   
+   const checkboxCols = computed(() => {
       const cols = []
       const numCols = props.cols ? props.cols : 3
       for (var i=0; i<numCols; i++) { 
          cols.push([])
       }
 
-      if (props.checkboxes) {
-         let index = 0
-         for (const checkbox of props.checkboxes) {
-            const col = Math.floor(index * cols.length / props.checkboxes.length)
-            cols[col].push(checkbox)
-            index++
-         }
+      // add top level checkboxes to cols
+      for (let i=0; i<checkboxFamilies.value.length; i++) {
+         const colIndex = Math.floor(i * cols.length / chkboxFamilies.value.length)
+         cols[colIndex].push(chkboxFamilies.value[i])
       }
       return cols
    })
@@ -42,10 +53,8 @@
    const selectedNames = computed(() => { 
       const names = []
       for (const checkbox of props.checkboxes) {
-         if (checkbox.selected) { names.push(checkbox.name) }
+         if (checkbox.isSelected) { names.push(checkbox.name) }
       }
       return names.join(", ")
    })
-
-   const toggle = (id) => { emit(Emit.TOGGLE, id) }
 </script>

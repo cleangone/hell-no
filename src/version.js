@@ -7,6 +7,7 @@
 export const versions = [    
    ["v2.30.0", "6/4/26"],  // EditItem can expand/collapse child gallery checkboxes
                            // Add gallery.sortName
+                           // Fix account/admin button color in dark mode
    ["v2.29.0", "6/2/26"],  // Admin can delete orphaned files
    ["v2.28.0", "5/31/26"], // Add/integrate item.otherArtists 
    ["v2.27.2", "5/29/26"], // Add AdminFiles - initial handling of orphan files

@@ -15,14 +15,14 @@
          <template v-slot:item.name="{ item }">
             <span v-if="item.generation==0">
                <span v-if="item.childGalleryIds.length">
-                  <IconButton v-if="expandedGalleryIds.includes(item.id)" icon="mdi-chevron-down" @click="contractGallery(item.id)" size="med"/>
-                  <IconButton v-else icon="mdi-chevron-right" @click="expandGallery(item.id)" size="med"/>
+                  <IconButton v-if="expandedGalleryIds.includes(item.id)" icon="mdi-chevron-down" @click="contractGallery(item.id)" size="med" class="admin-link"/>
+                  <IconButton v-else icon="mdi-chevron-right" @click="expandGallery(item.id)" size="med" class="admin-link"/>
                </span>
                <span v-else> &nbsp; &nbsp;&nbsp; </span>
             </span>
             <span v-else v-html="indent(item.generation)"></span>
 
-            <a @click="showGalleryItems(item)">{{ item.name }}</a>
+            <a @click="showGalleryItems(item)" class="admin-link">{{ item.name }}</a>
             <span v-if="item.childGalleryIds.length"> ({{ item.childGalleryIds.length }})</span>
          </template>
          <template v-slot:item.images="{ item }">
@@ -39,8 +39,8 @@
             {{ item.dateContentModified ? item.dateContentModified.toDate().toLocaleDateString() : "" }}
          </template>
          <template v-slot:item.actions="{ item }">
-            <EditButton   @click="editGallery(item)"/>
-            <DeleteButton @click="deleteGallery(item)"/>
+            <EditButton   @click="editGallery(item)" class="admin-link"/>
+            <DeleteButton @click="deleteGallery(item)" class="admin-link"/>
          </template>
       </v-data-table>
    </div>
