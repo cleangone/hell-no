@@ -42,7 +42,7 @@
          cols.push([])
       }
 
-      // add top level checkboxes to cols
+      // add top level checkboxes to cols - fill cols so links read vertically then to next col
       for (let i=0; i<checkboxFamilies.value.length; i++) {
          const colIndex = Math.floor(i * cols.length / checkboxFamilies.value.length)
          cols[colIndex].push(checkboxFamilies.value[i])

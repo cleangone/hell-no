@@ -34,15 +34,6 @@
             </div>
          </div>
       </div>
-
-      <!-- <div ref="fullscreenEle">
-         <div v-if="isFullscreen" class="text-center">
-            <IconButton v-if="multipleItems" icon="mdi-chevron-left" @click="prev()" size="med" class="color-full"/>
-            <span v-if="isFullscreen" class="mx-4 color-full">{{ currItem?.name }}</span>
-            <IconButton v-if="multipleItems" icon="mdi-chevron-right" @click="next()" size="med" class="color-full"/>
-         </div>
-         <v-img v-if="isFullscreen && currItem" :src="currItem.primaryImage.url" :aspect-ratio="aspectRatio" @click="$emit(Emit.DONE)"/>
-      </div> -->
    </v-card>
 </template>
 

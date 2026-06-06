@@ -286,7 +286,7 @@
       const galleries = []
       for (const galleryId of paramItem.value.galleryIds) {
          const gallery = galleryStore.getGallery(galleryId)
-         if (gallery.id != originGalleryId.value && viewMgr.galleryThumbVisibleToUser(gallery)) { galleries.push(gallery) }
+         if (gallery && gallery.id != originGalleryId.value && viewMgr.galleryThumbVisibleToUser(gallery)) { galleries.push(gallery) }
       }
       galleries.sort(function(a, b){return a.name.localeCompare(b.name)}) 
       return galleries
