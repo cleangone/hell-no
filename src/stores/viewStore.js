@@ -47,8 +47,7 @@ export const useViewStore = defineStore('view', () => {
    function setSearchItems(items) { searchItems.value = items }
 
    // save options in user settings and locally if not logged in
-   const defaultItemThumbOptions = [ 
-      ItemThumbOptions.TITLE, ItemThumbOptions.ARTIST, ItemThumbOptions.UPDATED, ItemThumbOptions.SORT_BY_NAME ]
+   const defaultItemThumbOptions = [ ItemThumbOptions.TITLE, ItemThumbOptions.ARTIST, ItemThumbOptions.UPDATED ]
    const currItemThumbOptions = ref([ ...defaultItemThumbOptions ] )
    const itemThumbOptions = computed(() => { 
       return userStore.userExists && userStore.mySettings.itemThumbOptions ?
@@ -62,7 +61,7 @@ export const useViewStore = defineStore('view', () => {
    function resetItemThumbOptions() { setItemThumbOptions(defaultItemThumbOptions) }
  
    // save options in user settings and locally if not logged in
-   const defaultGalleryThumbOptions = [ GalleryThumbOptions.SORT_BY_NAME, GalleryThumbOptions.UPDATED ]
+   const defaultGalleryThumbOptions = [ GalleryThumbOptions.UPDATED ]
    const currGalleryThumbOptions = ref([ ...defaultGalleryThumbOptions ])
    const galleryThumbOptions = computed(() => { 
       return userStore.userExists && userStore.mySettings.galleryThumbOptions ?

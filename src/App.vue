@@ -96,7 +96,7 @@
                </span>
                <span v-else-if="isRoute(Route.GALLERIES)"><GalleryThumbsConfig/></span>
                <span v-else-if="inRoutes(Route.GALLERY, Route.RECENT)"><ItemThumbConfig/></span>
-               <span v-else-if="inRoutes(Route.SEARCH, Route.FAVORITES)"><ItemThumbConfig showSort/></span>
+               <span v-else-if="inRoutes(Route.SEARCH, Route.FAVORITES)"><ItemThumbConfig/></span>
                <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD)">
                   <ToggleIcon icon="mdi-gesture-swipe" :state="viewStore.isMobileSwipe" @click="viewStore.toggleMobileSwipe()"/>
                </span>

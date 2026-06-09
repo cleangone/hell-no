@@ -6,13 +6,13 @@
                {{ currItem?.name }}
             </v-col>
             <v-col class="d-flex flex-grow-1 flex-shrink-0 justify-center">
-               <IconButton v-if="multipleItems" icon="mdi-chevron-left" @click="prev()" size="med"/>
+               <IconButton v-if="multipleItems" icon="mdi-chevron-left" @click="prev()" size="med" class="admin-link"/>
                <span v-if="isFullscreen" class="mx-4 text-blue">{{ currItem?.name }}</span>
-               <IconButton v-if="multipleItems" icon="mdi-chevron-right" @click="next()" size="med"/>
+               <IconButton v-if="multipleItems" icon="mdi-chevron-right" @click="next()" size="med" class="admin-link"/>
             </v-col>
             <v-col cols="5" class="flex-grow-0 flex-shrink-0 nav-right" >
-               <IconButton icon="mdi-arrow-expand" @click="fullscreenToggle"/>
-               <IconButton icon="mdi-close" @click="$emit(Emit.DONE)"/>
+               <IconButton icon="mdi-arrow-expand" @click="fullscreenToggle" class="admin-link"/>
+               <IconButton icon="mdi-close" @click="$emit(Emit.DONE)" class="admin-link"/>
             </v-col>
          </v-row>
       </v-card-title>

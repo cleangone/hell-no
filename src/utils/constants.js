@@ -72,8 +72,6 @@ export const GalleryThumbOptions = {
    SHOW_PRIVATE: 'Show My Private Galleries',
    USER:         'User',
    UPDATED:      'Date Updated',
-   SORT_BY_NAME: 'Sort by Name',
-   SORT_BY_DATE: 'Sort by Date',
 }
 
 export const ParentFeedType = {
@@ -148,8 +146,6 @@ export const ItemThumbOptions = {
    ARTIST:   'Artist',
    UPDATED:  'Date Updated',
    USER:     'User',
-   SORT_BY_NAME: 'Sort by Name',
-   SORT_BY_DATE: 'Sort by Date',
 } 
 
 export const LogEntryType = {

@@ -23,36 +23,19 @@
    import IconButton       from '@/components/util/IconButton.vue'
    import { ItemThumbOptions as ThumbOptions } from '@/utils/constants'
 
-   const props = defineProps({ showSort: Boolean })
    const viewStore = useViewStore()
    const viewMgr    = useViewMgr()
    
    const defaultOptions = [ ThumbOptions.TITLE, ThumbOptions.ARTIST, ThumbOptions.USER, ThumbOptions.UPDATED ]  
    const allOptions = computed(() => {
-       const options = viewMgr.isXs ? [ ThumbOptions.SM_THUMB ] : [  ThumbOptions.LG_THUMB ]
-       options.push(...defaultOptions)
-       if (props.showSort) { options.push(ThumbOptions.SORT_BY_NAME, ThumbOptions.SORT_BY_DATE) }
-       return options
+      const options = viewMgr.isXs ? [ ThumbOptions.SM_THUMB ] : [  ThumbOptions.LG_THUMB ]
+      options.push(...defaultOptions)
+      return options
    })
 
    const selectedOptions = computed({ 
       get() { return viewStore.itemThumbOptions },
-      set(checkboxOptions) { 
-         // duplicates GalleryThumbConfig
-         const origSortOption = 
-            selectedOptions.value.includes(ThumbOptions.SORT_BY_NAME) ? ThumbOptions.SORT_BY_NAME : ThumbOptions.SORT_BY_DATE 
-         let updatedSortOption = null
-         
-         const options = []
-         for (const checkboxOption of checkboxOptions) {
-            if (checkboxOption == ThumbOptions.SORT_BY_NAME || checkboxOption == ThumbOptions.SORT_BY_DATE) {
-               if (checkboxOption != origSortOption) { updatedSortOption = checkboxOption } 
-            }
-            else { options.push(checkboxOption) }
-         }
-
-         options.push(updatedSortOption ? updatedSortOption : origSortOption) 
-         viewStore.setItemThumbOptions(options) } 
+      set(options) { viewStore.setItemThumbOptions(options) } 
    })
 </script>
 

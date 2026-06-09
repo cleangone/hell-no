@@ -11,7 +11,8 @@
             <div v-else-if="viewMgr.solo" class="text-subtitle-1 mt-n2 mb-2">Solo Mode</div>
          </v-col>      
          <v-col cols="1" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
-            <GalleryThumbsConfig/>
+            <SortButton :sortByDate="sortByDate" @click="sortByDate=!sortByDate"/>
+            &nbsp; <GalleryThumbsConfig/>
          </v-col>
       </v-row>
    </v-container>
@@ -36,6 +37,7 @@
    import { useViewMgr }      from '@/stores/viewMgr'
    import GalleryThumb        from '@/components/gallery/GalleryThumb.vue'
    import GalleryThumbsConfig from '@/components/gallery/GalleryThumbsConfig.vue'
+   import SortButton          from '@/components/util/SortButton.vue'
    import { handleError, isPrivate } from '@/utils/utils'
    import { Defaults, GalleryThumbOptions, Route } from '@/utils/constants'
   
@@ -46,6 +48,7 @@
    const profileStore = useProfileStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
+   const sortByDate   = ref(true)
    
    useSeoMeta({ title: "Hell-No Galleries" })
    onMounted(async() => {
@@ -65,8 +68,7 @@
   
    const showChildGalleries     = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SHOW_CHILD))
    const showMyPrivateGalleries = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SHOW_PRIVATE))
-   const sortByDate             = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SORT_BY_DATE))
-   
+
    const visibleGalleries = computed(() => { 
       if (route.params.id == Defaults.SITE_ID) {
          return viewMgr.solo ? galleryStore.myGalleries : galleryStore.publicGalleries 

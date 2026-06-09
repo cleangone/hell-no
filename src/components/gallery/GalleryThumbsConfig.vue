@@ -32,31 +32,14 @@
    const allOptions = computed(() => {
       const options = viewMgr.isXs ? [ ThumbOptions.SM_THUMB, ThumbOptions.SHOW_CHILD ] : [ ThumbOptions.SHOW_CHILD ]
       if (userStore.userExists) { options.push(ThumbOptions.SHOW_PRIVATE) }
-      options.push(...[ ThumbOptions.USER, ThumbOptions.UPDATED, ThumbOptions.SORT_BY_NAME, ThumbOptions.SORT_BY_DATE ])
-   
+      options.push(...[ ThumbOptions.USER, ThumbOptions.UPDATED ])
       return options
    })
    
    const selectedOptions = computed({ 
       get() { return viewStore.galleryThumbOptions },
-      set(checkboxOptions) { 
-         const origSortOption = 
-            selectedOptions.value.includes(ThumbOptions.SORT_BY_NAME) ? ThumbOptions.SORT_BY_NAME : ThumbOptions.SORT_BY_DATE 
-         let updatedSortOption = null
-          
-         const options = []
-         for (const checkboxOption of checkboxOptions) {
-            if (checkboxOption == ThumbOptions.SORT_BY_NAME || checkboxOption == ThumbOptions.SORT_BY_DATE) {
-               if (checkboxOption != origSortOption) { updatedSortOption = checkboxOption } 
-            }
-            else { options.push(checkboxOption) }
-         }
-
-         options.push(updatedSortOption ? updatedSortOption : origSortOption) 
-         viewStore.setGalleryThumbOptions(options) 
-      } 
+      set(options) { viewStore.setGalleryThumbOptions(options) } 
    })
-
 </script>
 
 <style>
