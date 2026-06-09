@@ -17,8 +17,8 @@
       </template>
       <template v-slot:item.image="{ item }"><img :src="item.thumbUrl" height="100"/></template>
       <template v-slot:item.actions="{ item }">
-         <IconButton v-if="gallery.parentGalleryId" icon="mdi-arrow-up-box" @click="elevateImage(item)" :disabled="parentHasImage(item)"/>
-         <DeleteButton @click="deleteImage(item)"/>
+         <IconButton v-if="gallery.parentGalleryId" icon="mdi-arrow-up-box" @click="elevateImage(item)" :disabled="parentHasImage(item)" class="admin-link"/>
+         <DeleteButton @click="deleteImage(item)" class="admin-link"/>
       </template>
    </v-data-table>
    <div v-else class="ma-4">

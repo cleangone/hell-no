@@ -6,7 +6,7 @@ import ArtistView    from '../views/ArtistView.vue'
 import SearchView    from '../views/SearchView.vue'
 import FeedView      from '../views/FeedView.vue'
 import RecentView    from '../views/RecentView.vue'
-import RecentViewedView from '../views/RecentViewedView.vue'
+import ViewedView    from '../views/ViewedView.vue'
 import ItemView      from '../views/item/ItemView.vue'
 import UserView      from '../views/UserView.vue'
 import FavoritesView from '../views/FavoritesView.vue'
@@ -37,7 +37,7 @@ const router = createRouter({
       createRoute(Route.ARTIST,    ArtistView,    ':id'),
       createRoute(Route.SEARCH,    SearchView),
       createRoute(Route.FEED,      FeedView),
-      createRoute(Route.VIEWED,    RecentViewedView),
+      createRoute(Route.VIEWED,    ViewedView),
       createRoute(Route.RECENT,    RecentView,    ':id'),
       createRoute(Route.ITEM,      ItemView,      ':origin/:nav/:id'),
       createRoute(Route.ITEM_CHILD,ItemView,      ':origin/:nav/:id/:child'),

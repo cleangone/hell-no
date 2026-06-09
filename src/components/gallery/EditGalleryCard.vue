@@ -2,14 +2,14 @@
    <v-card :title="title">
    <!-- <v-card :title="title" class="fill-height"> -->
       <template v-slot:append>
-         <IconButton icon="mdi-close" @click="$emit(Emit.DONE)"/>
+         <IconButton icon="mdi-close" @click="$emit(Emit.DONE)" class="admin-link"/>
       </template>
       <div v-if="editGallery">
-         <TextButton text="Edit Images" @click="editGallery=false" class="mx-3"/>
+         <TextButton text="Edit Images" @click="editGallery=false" class="mx-3 admin-link"/>
          <EditGallery :gallery="props.gallery" @done="$emit(Emit.DONE)"/>
       </div>
       <div v-else>
-         <TextButton text="Edit Gallery" @click="editGallery=true" class="mx-3"/>
+         <TextButton text="Edit Gallery" @click="editGallery=true" class="mx-3 admin-link"/>
          <EditGalleryImages :galleryId="props.gallery.id"/>
       </div>
    </v-card>

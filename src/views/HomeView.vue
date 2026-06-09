@@ -48,7 +48,8 @@
                <UserThumb v-for="user in displayUsers" :key="user.id" :user="user"/>
             </v-row>
          </v-col> -->
-         <v-col v-if="viewedItems.length" class="box-border box-border-color ma-4 px-4">
+
+          <v-col v-if="viewedItems.length" class="box-border box-border-color ma-4 px-4">
             <div class="mb-5">
                <span class="font-weight-bold">Recent Viewed</span> | 
                <RouterLink :to="Route.VIEWED.url">View all</RouterLink>
@@ -263,6 +264,7 @@
       return viewStore.setVisibleItems(ItemOrigin.FAVORITES, "My Favorites", Route.FAVORITES.url, visibleItems)
    })
 
+   // todo myRecentItems a workaround
    const allViewedItems = computed(() => {
       let items = viewMgr.solo ? [ ...itemMgr.myRecentItems ] : [ ...cacheStore.recentViewedPublicItems ]
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items

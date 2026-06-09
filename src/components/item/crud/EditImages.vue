@@ -59,8 +59,8 @@
                </div>
             </template>
             <template v-slot:item.actions="{ item }">
-               <EditButton   v-if="canEdit(item)" @click="editItemImage(item)"/>
-               <DeleteButton v-if="!isPrimaryImage(item)" @click="deleteImage(item)"/>
+               <EditButton   v-if="canEdit(item)" @click="editItemImage(item)" class="admin-link"/>
+               <DeleteButton v-if="!isPrimaryImage(item)" @click="deleteImage(item)" class="admin-link"/>
             </template>
          </v-data-table>
       </div>

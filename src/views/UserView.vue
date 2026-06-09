@@ -3,7 +3,7 @@
       <v-row no-gutters class="d-flex align-center flex-nowrap">
          <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
-            <div class="title">{{ username }} </div>
+            <div class="title">{{ displayName }} </div>
          </v-col>
          <v-col cols="2" class="mr-n2 d-flex flex-grow-0 flex-shrink-0 justify-end">
             <IconButton v-if="userExists" icon="mdi-email" @click="sendEmail()"/>
@@ -96,8 +96,8 @@
    const profileId = computed(() => rawProfile.value ? rawProfile.value.id : null )
    const userExists = computed(() => user.value ? true : false )
    const userId = computed(() => user.value ? user.value.id : null )
-   const username = computed(() => {
-      if (rawUser.value) { return rawUser.value.username }
+   const displayName = computed(() => {
+      if (rawUser.value) { return rawUser.value.displayName ? rawUser.value.displayName : rawUser.value.username }
       return rawProfile.value ? rawProfile.value.username : "User" 
    })
 

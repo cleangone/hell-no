@@ -24,10 +24,11 @@
                </v-col>
             </v-row>
             <v-row class="mt-n5">
-               <v-col>
-                  <v-text-field v-model="username" label="Username" :rules="requiredRule"/>
-                  <v-text-field v-model="phone"    label="Phone"/>
-               </v-col>
+               <v-col><v-text-field v-model="username" label="Username" :rules="requiredRule"/></v-col>
+               <v-col><v-text-field v-model="displayName" label="Display Name"/></v-col>
+            </v-row>
+            <v-row class="mt-n5">
+               <v-col><v-text-field v-model="phone" label="Phone"/></v-col>
                <v-col/>
             </v-row>
             <v-row class="mt-n7">
@@ -83,14 +84,15 @@
    import { NotificationOptions } from '@/utils/constants'
    
    const DEFAULT_SETTINGS =  { "notifyViaEmail": NotificationOptions.NEVER, "notifyViaMessage": NotificationOptions.NEVER }
-   const userStore  = useUserStore()
-   const userMgr    = useUserMgr()
-   const viewMgr    = useViewMgr()   
-   const firstName = ref(userStore.user.firstName)
-   const lastName  = ref(userStore.user.lastName)
-   const username  = ref(userStore.user.username)
-   const phone     = ref(userStore.user.phone)
-   const settings  = ref(userStore.user.settings ? { ...userStore.user.settings } : { ...DEFAULT_SETTINGS })
+   const userStore = useUserStore()
+   const userMgr   = useUserMgr()
+   const viewMgr   = useViewMgr()   
+   const firstName   = ref(userStore.user.firstName)
+   const lastName    = ref(userStore.user.lastName)
+   const username    = ref(userStore.user.username)
+   const displayName = ref(userStore.user.displayName)
+   const phone       = ref(userStore.user.phone)
+   const settings    = ref(userStore.user.settings ? { ...userStore.user.settings } : { ...DEFAULT_SETTINGS })
    const showImages       = ref(false)
    const showEditEmail    = ref(false)
    const showEditPassword = ref(false)
@@ -99,11 +101,12 @@
    const user = computed(() => userStore.user ? userStore.user : {} )
    
    const resetUser = () => {
-      firstName.value = user.value.firstName
-      lastName.value  = user.value.lastName
-      username.value  = user.value.username
-      phone.value     = user.value.phone
-      settings.value  = user.value.settings ? { ...user.value.settings } : { ...DEFAULT_SETTINGS }
+      firstName.value   = user.value.firstName
+      lastName.value    = user.value.lastName
+      username.value    = user.value.username
+      displayName.value = user.value.displayName
+      phone.value       = user.value.phone
+      settings.value    = user.value.settings ? { ...user.value.settings } : { ...DEFAULT_SETTINGS }
    }
 
    const soloMode = computed({ 
@@ -122,10 +125,11 @@
    })
    
    const dataUpdated = computed(() => 
-      firstName.value != user.value.firstName ||
-      lastName.value  != user.value.lastName  ||
-      username.value != user.value.username   ||
-      phone.value    != user.value.phone      ||
+      firstName.value   != user.value.firstName ||
+      lastName.value    != user.value.lastName  ||
+      username.value    != user.value.username  ||
+      displayName.value != user.value.displayName ||
+      phone.value       != user.value.phone     ||
       settings.value.soloMode         != user.value.settings?.soloMode ||
       settings.value.notifyViaEmail   != user.value.settings?.notifyViaEmail  ||
       settings.value.notifyViaMessage != user.value.settings?.notifyViaMessage)
@@ -134,9 +138,10 @@
       userStore.updateUser({
          id: user.value.id, 
          firstName: firstName.value,
-         lastName: lastName.value, 
+         lastName: lastName.value ? lastName.value : null,
          username: username.value, 
-         phone: phone.value, 
+         displayName: displayName.value ? displayName.value : null,
+         phone: phone.value ? phone.value : null,
          settings: settings.value }) 
    }
 </script>

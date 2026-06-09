@@ -5,6 +5,8 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.31.0", "6/4/26"],  // Add firestore persistentLocalCache
+                           // Rename RecentViewedView to ViewedView and add dateViewed sort
    ["v2.30.0", "6/4/26"],  // EditItem can expand/collapse child gallery checkboxes
                            // Add gallery.sortName
                            // Fix account/admin button color in dark mode

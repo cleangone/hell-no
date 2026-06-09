@@ -3,16 +3,17 @@
       <v-row no-gutters class="d-flex align-center flex-nowrap">
          <v-col v-if="viewMgr.isDeskTop" cols="2" class="flex-grow-0 flex-shrink-0"></v-col>
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
-            <div v-if="viewMgr.isDeskTop" class="title">Recent Viewed</div>
+            <div v-if="viewMgr.isDeskTop" class="title">{{ title }}</div>
          </v-col>
          <v-col v-if="viewMgr.isDeskTop" cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
+            <IconButton :icon="sortRecent?'mdi-arrow-down':'mdi-arrow-up'" @click="toggleSort()" size="med"/>
             <ItemThumbConfig/>
          </v-col>
       </v-row>
    </v-container>
    <v-container style="width: 100%">
       <v-row justify="space-around">
-         <ItemThumb v-for="item in recentViewedItems" :key="item.id" :item="item" :origin="ItemOrigin.VIEWED" 
+         <ItemThumb v-for="item in displayItems" :key="item.id" :item="item" :origin="ItemOrigin.VIEWED" 
             showDateViewed :tight="viewMgr.isMobile"/>
       </v-row>
    </v-container>
@@ -20,24 +21,31 @@
 
 <script setup>
    import { computed, ref } from 'vue'
-   import { useRoute } from 'vue-router'
    import { useItemMgr }   from '@/stores/itemMgr'
    import { useViewStore } from '@/stores/viewStore'
    import { useViewMgr }   from '@/stores/viewMgr'
    import ItemThumb        from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig  from '@/components/item/thumb/ItemThumbConfig.vue'
-   import { Defaults, ItemOrigin, Route } from '@/utils/constants'
+   import IconButton       from '@/components/util/IconButton.vue'
+   import { ItemOrigin, Route } from '@/utils/constants'
    
-   const route = useRoute()
    const itemMgr   = useItemMgr()
    const viewStore = useViewStore()
    const viewMgr   = useViewMgr()
+   const sortRecent = ref(true)
+   
+   const title        = computed(() => sortRecent.value ? "Recent Viewed" : "Oldest Viewed")
+   const displayItems = computed(() => sortRecent.value ? recentViewedItems.value : oldestViewedItems.value)
    
    const recentViewedItems = computed(() => {
       const items = itemMgr.recentViewedPublicItems
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
       return viewStore.setVisibleItems(ItemOrigin.VIEWED, "Recent Viewed", Route.VIEWED.url, ungroupedItems)
    })
+
+   const oldestViewedItems = computed(() => recentViewedItems.value.toSorted(function(a, b) {return a.dateViewed - b.dateViewed}))
+   
+   const toggleSort = () => { sortRecent.value = !sortRecent.value } 
 </script>
 
 <style>

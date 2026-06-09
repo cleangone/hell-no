@@ -58,6 +58,13 @@ export const useViewMgr = defineStore('viewMgr', () => {
          // logStore.jsonInfo("deviceInfo",
             // { standalone: isStandalone.value, iosDevice: iosDevice, isMobile: mobile })
          return mobile
+
+         // ipad no longer works - 
+         // if (navigator.userAgent.match(/Mac/) && navigator.maxTouchPoints){
+         //    // if the device is an iPad
+         //    return true
+         // }
+
    })
    const isDeskTop = computed(() => !isMobile.value)
    const solo      = computed(() => localStore.soloMode)

@@ -1,7 +1,7 @@
 <template>
    <v-card v-if="edit==Edit.ITEM" :title="isMyItem ? 'Edit Item' : 'Edit Contributed Item'" class="edit-item-dialog">
       <template v-slot:append>
-         <IconButton icon="mdi-close" @click="$emit(Emit.DONE)"/>
+         <IconButton icon="mdi-close" @click="$emit(Emit.DONE)" class="admin-link"/>
       </template>
       <div v-if="isMyItem && isSingleItem"><TextButton text="Edit Images" @click="edit=Edit.IMAGE" class="mx-3"/></div>
       <div v-if="isMyItem && isGroupItem"><TextButton text="Edit Grouped Items" @click="edit=Edit.GROUPED_ITEMS" class="mx-3"/></div>

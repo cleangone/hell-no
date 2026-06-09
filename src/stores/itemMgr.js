@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { useWindowSize } from '@vueuse/core'
 import { useItemStore }  from '@/stores/itemStore'
 import { useHitStore }   from '@/stores/hitStore'
-import { dateUuid, isPublic, objAspectRatio, randomizeArray } from '@/utils/utils'
+import { dateUuid, objAspectRatio, randomizeArray } from '@/utils/utils'
 import { ImageType, ItemNavAction, ItemType, Route } from '@/utils/constants'
    
 export const useItemMgr = defineStore('itemMgr', () => {   
@@ -88,14 +88,14 @@ export const useItemMgr = defineStore('itemMgr', () => {
    }
 
    const recentViewedPublicItems = computed(() => { 
-      const items = []
-      for (const hit of hitStore.hits) {
-         const item = itemStore.getItem(hit.id)
-         if (isPublic(item)) { items.push( { ...item, dateViewed:hit.dateModified })}
-         if (items.length > 30) { break }
-      }
+      const itemIdToDateViewed = new Map(hitStore.hits.map(hit => [ hit.id, hit.dateModified ]))
 
-      return items
+      const items = itemStore.publicItems.map(item => ({
+          ...item, 
+          dateViewed: itemIdToDateViewed.get(item.id) ?? item.dateModified 
+      }))
+
+      return items.toSorted(function(a, b) {return b.dateViewed - a.dateViewed}) // most recent first
    })
 
    function getRandomItems() { 
