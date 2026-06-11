@@ -43,7 +43,8 @@
    import { Emit, GroupUserState } from '@/utils/constants'
    
    const props = defineProps(['groupId'])
-   const emit = defineEmits([Emit.DONE]);
+   const emit = defineEmits([Emit.DONE])
+   
    const groupStore = useGroupStore()
    const userStore  = useUserStore()
    const showInviteDialog = ref(false)

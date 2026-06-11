@@ -18,6 +18,17 @@ export const ActionType = {
    SEND_EMAIL:    'SendEmail', 
 }
 
+export const ArtistRole = {
+   ALL:     'All',
+   PENCILS: 'Pencils',
+   INKS:     'Inks',
+   LAYOUT:   'Layouts',
+   FINISH:   'Finishes',
+}
+
+export const ArtistRoles = [ 
+   ArtistRole.ALL, ArtistRole.PENCILS, ArtistRole.INKS, ArtistRole.LAYOUT, ArtistRole.FINISH ]
+
 export const ArtistState = {
    PRIMARY:  'Primary',
    AKA:      'AKA',

@@ -18,7 +18,7 @@
    onMounted(() => {
       if (props.item)  { allItems.value.push(props.item) }
       if (props.items) { allItems.value.push(...props.items) }
-  })
+   })
 
    const deleteType = computed(() => { return allItems.value.length == 1 ? "Item" : "Items" })
    const deleteName = computed(() => { return allItems.value.length == 1 ? allItems.value[0].name : allItems.value.length + " Items" })

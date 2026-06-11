@@ -94,7 +94,7 @@
                <span v-if="inRoutes(Route.HOME, Route.USER)">
                   <Icon icon="mdi-dice-multiple" @click="toRoute(Route.RANDOM)"/>
                </span>
-               <span v-else-if="isRoute(Route.GALLERIES)"><GalleryThumbsConfig/></span>
+               <span v-else-if="isRoute(Route.GALLERIES)"><GalleryThumbConfig/></span>
                <span v-else-if="inRoutes(Route.GALLERY, Route.RECENT)"><ItemThumbConfig/></span>
                <span v-else-if="inRoutes(Route.SEARCH, Route.FAVORITES)"><ItemThumbConfig/></span>
                <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD)">
@@ -192,7 +192,7 @@
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { useLocalStore }   from '@/stores/localStore'
-   import GalleryThumbsConfig from '@/components/gallery/GalleryThumbsConfig.vue'
+   import GalleryThumbConfig  from '@/components/gallery/GalleryThumbConfig.vue'
    import ItemThumbConfig     from '@/components/item/thumb/ItemThumbConfig.vue'
    import MessageSetup        from '@/components/notification/MessageSetup.vue'
    import LinkOrText          from '@/components/util/LinkOrText.vue'

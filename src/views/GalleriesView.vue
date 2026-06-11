@@ -12,7 +12,7 @@
          </v-col>      
          <v-col cols="1" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
             <SortButton :sortByDate="sortByDate" @click="sortByDate=!sortByDate"/>
-            &nbsp; <GalleryThumbsConfig/>
+            &nbsp; <GalleryThumbConfig/>
          </v-col>
       </v-row>
    </v-container>
@@ -36,7 +36,7 @@
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import GalleryThumb        from '@/components/gallery/GalleryThumb.vue'
-   import GalleryThumbsConfig from '@/components/gallery/GalleryThumbsConfig.vue'
+   import GalleryThumbConfig  from '@/components/gallery/GalleryThumbConfig.vue'
    import SortButton          from '@/components/util/SortButton.vue'
    import { handleError, isPrivate } from '@/utils/utils'
    import { Defaults, GalleryThumbOptions, Route } from '@/utils/constants'

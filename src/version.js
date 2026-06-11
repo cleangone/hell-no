@@ -5,6 +5,7 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.32.1", "6/11/26"], // Add artistRole
    ["v2.31.1", "6/9/26"],  // Refactor gallery/item sort into SortButton
    ["v2.31.0", "6/4/26"],  // Add firestore persistentLocalCache
                            // Rename RecentViewedView to ViewedView and add dateViewed sort

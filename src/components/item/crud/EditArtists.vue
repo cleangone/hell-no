@@ -1,57 +1,40 @@
 <template>
-   <v-expansion-panel class="mb-3">
-      <v-expansion-panel-title>
-         <span style="font-size: medium; font-weight: bold" class="pe-2">{{ title }}</span>     
-         {{ artistNames }}
-      </v-expansion-panel-title>
-      <v-expansion-panel-text>
-         <div class="mt-3"></div>
-         <v-hover v-for="(artist, index) in artists" :key="artist.id" v-slot:default="{ isHovering, props }">
-            <v-row justify="space-between" class="ml-1 mb-2 pa-2" v-bind="props" 
-                  :class="isHovering ? 'bg-grey-lighten-3' : 'bg-grey-lighten-4'">
-               <div>{{ artist.fullName }}</div> 
-               <v-icon v-if="isHovering" icon="mdi-close-circle" @click="deleteArtist(index)" size="small" color="grey-darken-1" class="bg-grey-lighten-3 mr-2 mt-1"/>
-            </v-row>
-         </v-hover>
-         <v-row class="ml-1">
-            <v-combobox v-model="newArtistOption" label="Artist" ref="newArtistCombobox" :items="artistOptions"        
-               @update:modelValue="addArtist()" compact class=""/>      
-         </v-row >
-      </v-expansion-panel-text>
-   </v-expansion-panel>
+   <v-expansion-panels v-model="openedPanels" @update:modelValue="onPanelChange()">
+      <v-expansion-panel class="mb-3">
+         <v-expansion-panel-title v-slot="{ expanded }">
+            <span style="font-size: medium; font-weight: bold" class="pe-2">{{ title }}</span>     
+            {{ artistNames }}
+            <v-spacer/>
+            <TextButton v-if="expanded" @click="addArtist()" text="Add Artist" @click.stop/>
+         </v-expansion-panel-title>
+         <v-expansion-panel-text>
+            <div class="mt-3"></div>
+            <div v-for="(container, index) in props.editArtistContainers" class="ml-1 mb-2">
+               <EditArtist :editArtistContainer="container" showDelete @delete="deleteArtist(index)"/>
+            </div>
+         </v-expansion-panel-text>
+      </v-expansion-panel>
+   </v-expansion-panels>
 </template>
 
 <script setup>
    import { computed, ref } from 'vue'
-   import { useArtistMgr } from '@/stores/artistMgr'
+   import EditArtist from './EditArtist.vue'
+   import TextButton from '@/components/util/TextButton.vue'   
    
-   const props = defineProps({ title: String, artists: Array })
-   
-   const artistMgr = useArtistMgr()
-   const newArtistOption   = ref(null)
-   const newArtistCombobox = ref(null)
+   const props = defineProps({ title: String, editArtistContainers: Array })
+   const openedPanels = ref([])
 
-   const artistOptions = computed(() => artistMgr.artistOptions)
-
-   const resetArtistOption = () => {
-      newArtistOption.value = null
-      if (newArtistCombobox.value) { newArtistCombobox.value.blur() }
-   }
-
-   const addArtist = () => { 
-      if (newArtistOption.value) { props.artists.push(newArtistOption.value.value) }
-      resetArtistOption()
-   }
-
-    const deleteArtist = (index) => { 
-      props.artists.splice(index, 1)
-      resetArtistOption()
-   }
+   const onPanelChange = () => { if (!props.editArtistContainers.length) { addArtist() } }
+   const addArtist = () => { props.editArtistContainers.push({ artistOption: null, role: null}) }
+   const deleteArtist = (index) => { props.editArtistContainers.splice(index, 1) }
 
    const artistNames = computed(() => { 
       const names = []
-      for (const artist of props.artists) {
-         names.push(artist.fullName) 
+      for (const container of props.editArtistContainers) {
+         if (container.artistOption) { 
+            names.push(container.artistOption.title + (container.role ? " - " + container.role : "")) 
+         }
       }
       return names.join(", ")
    })

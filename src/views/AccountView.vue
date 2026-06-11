@@ -1,16 +1,18 @@
 <template>
    <v-card class="mt-2 mx-0">
-      <v-tabs v-model="tab" bg-color="primary">
-         <v-tab v-if="viewMgr.isDeskTop" :value="tabs.items">Items</v-tab>
-         <v-tab v-if="viewMgr.isDeskTop" :value="tabs.galleries">Galleries</v-tab>
-         <v-tab v-if="viewMgr.isDeskTop" :value="tabs.profiles">Profiles</v-tab>
-         <!-- <v-tab v-if="viewMgr.isDeskTop && !viewMgr.solo" :value="tabs.group">Groups</v-tab> -->
-         <v-tab v-if="!viewMgr.solo"     :value="tabs.invites">Invites</v-tab>
-         <v-tab v-if="viewMgr.isDeskTop" :value="tabs.wall">Wall</v-tab>
-         <v-tab v-if="viewMgr.isDeskTop" :value="tabs.artists">Artists</v-tab>
-         <v-tab v-if="viewMgr.isDeskTop"     :value="tabs.account"  class="align-self-center ml-auto" style="float:right">Account</v-tab>
-         <v-tab v-else-if="viewMgr.isMobile" :value="tabs.account">Account</v-tab>
-         <v-btn v-if="viewMgr.isMobile" @click="logout()" size="small" 
+      <v-tabs v-if="viewMgr.isDeskTop" v-model="tab" bg-color="primary">
+         <v-tab :value="tabs.items">Items</v-tab>
+         <v-tab :value="tabs.galleries">Galleries</v-tab>
+         <v-tab :value="tabs.profiles">Profiles</v-tab>
+         <!-- <v-tab :value="tabs.group">Groups</v-tab> -->
+         <v-tab :value="tabs.invites">Invites</v-tab>
+         <v-tab :value="tabs.wall">Wall</v-tab>
+         <v-tab :value="tabs.artists">Artists</v-tab>
+         <v-tab :value="tabs.account" class="align-self-center ml-auto" style="float:right">Account</v-tab>
+      </v-tabs>
+      <v-tabs v-else-if="viewMgr.isMobile" v-model="tab" bg-color="primary">
+         <v-tab :value="tabs.account">Account</v-tab>
+         <v-btn @click="logout()" size="small" 
             class="text-blue align-self-center ml-auto mr-3" style="float:right">Logout</v-btn>
       </v-tabs>
 

@@ -16,20 +16,23 @@
       </div>
       <div v-else>
          <v-row>
-            <v-col>
-               <v-text-field v-model="currItemName"     label="Name/Title" :rules="requiredRule" class="ms-2"/>
-               <v-text-field v-model="currAltName"      label="Alternate Name" class="ms-2"/>
-               <v-text-field v-model="currItemSubtitle" label="Subtitle" class="ms-2"/>
-               <v-row>        
+            <v-col cols="8">
+               <v-row no-gutters>      
+                  <v-col><v-text-field v-model="currItemName" label="Name/Title" :rules="requiredRule" class="ms-2"/></v-col> 
+                  <v-col><v-text-field v-model="currItemSubtitle" label="Subtitle" class="ms-2"/></v-col> 
+               </v-row>  
+               <v-row no-gutters>      
+                  <v-col cols="8"><v-text-field v-model="currAltName" label="Alternate Name" class="ms-2"/></v-col> 
+                  <v-col><v-text-field v-model="currYearCreated" label="Year Created" class="ms-2"/></v-col>
+               </v-row>  
+              <v-row no-gutters>        
                   <v-col><v-select v-model="currItemState" label="Item State" :items="ItemStates" class="ms-2"/></v-col>
                   <v-col v-if="isMyItem && profiles.length">
-                     <v-select v-model="currProfileId" label="Owned by Profile" :items="profiles" item-title="username" item-value="id" clearable/>
+                     <v-select v-model="currProfileId" label="Owned by Profile" :items="profiles" item-title="username" item-value="id" clearable class="ms-2"/>
                   </v-col>
                </v-row>
-               <v-row class="mt-n5">        
-                  <v-col cols="8"><v-combobox v-model="artistOption" label="Artist" :items="artistOptions" clearable compact class="ms-2"/></v-col>
-                  <!-- <v-col><v-text-field v-model="currYearCreated" label="Year Created" :rules="optionalYearRule"/></v-col> -->
-                  <v-col><v-text-field v-model="currYearCreated" label="Year Created"/></v-col>
+               <v-row class="mt-n3">        
+                  <v-col cols="12"><EditArtist :editArtistContainer="currPrimaryArtistEditContainer" class="ms-2"/></v-col>
                </v-row>
             </v-col>
             <v-col>
@@ -41,12 +44,10 @@
                <v-checkbox v-model="currItemWall" label="Display on Art Wall" class="tight-checkbox"/> 
             </v-col>
          </v-row>
-         <v-row class="mt-n6 mr-1">
+         <v-row class="mt-n3 mr-1">
             <v-col cols="12">
                <div class="expansion">
-                  <v-expansion-panels multiple>
-                     <EditArtists title="Other Artists" :artists="currItemOtherArtists"/>
-                  </v-expansion-panels>
+                  <EditArtists title="Other Artists" :editArtistContainers="currOtherArtistsEditContainers"/>
                </div>
             </v-col>
          </v-row>
@@ -88,10 +89,11 @@
    import { useItemStore }    from '@/stores/itemStore'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
-   import { useArtistStore }  from '@/stores/artistStore'
+   import { useArtistMgr }    from '@/stores/artistMgr'
    import { useProfileStore } from '@/stores/profileStore'
    import { useWallStore }    from '@/stores/wallStore'
    import { useWallMgr }      from '@/stores/wallMgr'
+   import EditArtist          from './EditArtist.vue'
    import EditArtists         from './EditArtists.vue'
    import EditHtml            from '@/components/util/EditHtml.vue'
    import CheckboxExpansion   from '@/components/util/CheckboxExpansion.vue'
@@ -107,7 +109,7 @@
    const itemStore    = useItemStore()
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
-   const artistStore  = useArtistStore()
+   const artistMgr    = useArtistMgr()
    const profileStore = useProfileStore()
    const wallStore    = useWallStore()
    const wallMgr      = useWallMgr()
@@ -120,10 +122,10 @@
    const currYearCreated   = ref(null)
    const currItemDescContainer = ref({ content: "" })
    const currItemWall = ref(false)  
-   const currItemOtherArtists = ref([]) 
+   const currPrimaryArtistEditContainer = ref(artistMgr.defaultEditArtistContainer) 
+   const currOtherArtistsEditContainers = ref([]) 
    const currItemGalleries = ref([])       
    const currItemGalleryCheckboxes = ref([])
-   const artistOption  = ref(null)
    const nextItems = ref([])
    const dataValid = ref(true)
 
@@ -147,7 +149,8 @@
       currProfileId.value = item.profileId ? item.profileId : null
       currYearCreated.value = item.yearCreated
       currItemDescContainer.value.content = item.desc ? item.desc : ""
-      currItemOtherArtists.value = item.otherArtists ? item.otherArtists : []
+      currPrimaryArtistEditContainer.value = artistMgr.getEditArtistContainer(item.primaryArtist)
+      currOtherArtistsEditContainers.value = artistMgr.getEditArtistContainers(item.otherArtists)
       currItemWall.value = wallStore.myWallIncludesItem(item.id)
       
       const galleryCheckboxes = []
@@ -187,16 +190,6 @@
       props.item && (currItem.value.id == props.item.id) ? props.item.primaryImage : currItem.value.primaryImage)
    const childItems = computed(() => 
       props.item && (currItem.value.id == props.item.id) ? props.item.childItems : currItem.value.childItems)
-
-   const artistOptions = computed(() => { 
-      const options = []
-      for (const artist of artistStore.artists) {
-         const option = { title: artist.fullName, value: artist }
-         options.push(option)
-         if (currItem.value.primaryArtist?.id == option.value.id) { artistOption.value = option }
-      }
-      return options
-   })
 
    const profiles = computed(() =>  [ ...profileStore.myProfiles ])
 
@@ -243,19 +236,13 @@
          subtitle: currItemSubtitle.value,
          desc: currItemDescContainer.value.content,
          galleryIds: updatedGalleryIds,
-         otherArtists: currItemOtherArtists.value,
+         primaryArtist: artistMgr.getArtistFromEditContainer(currPrimaryArtistEditContainer.value),
+         otherArtists: artistMgr.getArtistsFromEditContainers(currOtherArtistsEditContainers.value),
          onUserWall: currItemWall.value
       }
 
       if (currItemState.value   != currItem.value.state)       { itemToUpdate.state = currItemState.value }
       if (currYearCreated.value != currItem.value.yearCreated) { itemToUpdate.yearCreated = currYearCreated.value }
-      
-      const artist = artistOption.value
-      const primaryArtist = artist ? 
-         { id: artist.value.id, name: artist.value.name, fullName: artist.value.fullName, allNames: artist.value.allNames } : null  
-      if (primaryArtist && (!currItem.value.primaryArtist || currItem.value.primaryArtist.id != primaryArtist.id)) { 
-         itemToUpdate.primaryArtist = primaryArtist }
-      else if (!primaryArtist && currItem.value.primaryArtist) { itemToUpdate.primaryArtist = null }
       
       if (addItemToGalleries.length || deleteItemFromGalleries.length) {
          const contributingGalleryOwnerIds = []
