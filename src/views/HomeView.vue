@@ -23,6 +23,8 @@
       </div>
    </v-container>
 
+
+
    <!-- galleries, favorites -->
    <div v-if="recentGalleries.length || favoriteItems?.length" class="my-3">
       <v-row>

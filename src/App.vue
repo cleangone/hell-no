@@ -5,7 +5,10 @@
       <meta property="og:title" content="OG Title"/>
       <meta property="og:description" content="OG description of the page."/>
    </Head> -->
-   <div class="app">     
+   <div class="app">  
+
+         <!-- <YouTubeAudio/> -->
+      
       <v-row no-gutters class="flex-nowrap">
          <v-col :cols="sideCols" class="flex-grow-0 flex-shrink-0 nav-left" style="white-space:nowrap">
             <!-- top left icon for mobile -->
@@ -199,6 +202,7 @@
    import Icon                from '@/components/util/Icon.vue'
    import SearchBox           from '@/components/util/SearchBox.vue'
    import ToggleIcon          from '@/components/util/ToggleIcon.vue'
+   import YouTubeAudio        from '@/components/util/YouTubeAudio.vue'
    import { handleError } from '@/utils/utils'
    import { Defaults, Route } from '@/utils/constants'
    import { versions }   from '@/version'

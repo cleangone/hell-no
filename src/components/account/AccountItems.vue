@@ -40,7 +40,7 @@
             :custom-key-sort="customKeySort" :search="search" item-key="id" density="compact" 
             show-select items-per-page="25">
             <template v-slot:item.artist="{ item }">
-               {{ item.primaryArtist.fullName }}
+               {{ item.displayArtist.fullName }}
             </template>
             <template v-slot:item.dateCreated="{ item }">
                {{ item.dateCreated ? item.dateCreated.toDate().toLocaleDateString() : "" }}
@@ -159,7 +159,7 @@
       NAME:       {        title:'Name',        key:'name',          value: 'name' },
       HITS:       { col:0, title:'Hits',        key:'hits',          value: 'hits',         align:'center' },
       IMAGES:     { col:1, title:'Images',      key:'images',                               align:'center' },
-      ARTIST:     { col:2, title:'Artist',      key:'artist',        value: 'primaryArtist.sortName' },
+      ARTIST:     { col:2, title:'Artist',      key:'artist',        value: 'displayArtist' },
       CREATED:    { col:3, title:'Created',     key:'dateCreated',   value: 'dateCreated',  align: 'center' },
       MODIFIED:   { col:4, title:'Modified',    key:'dateModified',  value: 'dateModified', align: 'center' },
       CONTENT_MOD:{ col:5, title:'Content Modified', key:'dateContentModified',value: 'dateContentModified', align: 'center' },
@@ -175,7 +175,7 @@
    const customKeySort = {
       hits:          (a, b) => { return b - a }, 
       name:          (a, b) => { return a.localeCompare(b) }, 
-      artist:        (a, b) => { return a.localeCompare(b) }, 
+      artist:        (a, b) => { return a.sortName.localeCompare(b.sortName) }, 
       dateCreated:   (a, b) => { return b - a }, 
       dateModified:  (a, b) => { return b - a }, 
       dateContentModified: (a, b) => { return b - a }, 
@@ -189,9 +189,11 @@
       return -1
     }
 
-   const headerOptions = [ Headers.HITS, Headers.IMAGES, Headers.ARTIST, Headers.CREATED, Headers.MODIFIED, Headers.CONTENT_MOD, 
-                           Headers.YEAR, Headers.TYPE, Headers.VISIBILITY, Headers.GROUPS, Headers.GALLERIES, Headers.PROFILE ]
-   const selectedHeaders = ref([ Headers.HITS, Headers.IMAGES, Headers.ARTIST, Headers.VISIBILITY, Headers.GROUPS, Headers.GALLERIES ])
+   const headerOptions = [ 
+      Headers.HITS, Headers.IMAGES, Headers.ARTIST, Headers.CREATED, Headers.MODIFIED, Headers.CONTENT_MOD, 
+      Headers.YEAR, Headers.TYPE, Headers.VISIBILITY, Headers.GROUPS, Headers.GALLERIES, Headers.PROFILE ]
+   const selectedHeaders = ref([ 
+      Headers.HITS, Headers.IMAGES, Headers.ARTIST, Headers.VISIBILITY, Headers.GROUPS, Headers.GALLERIES ])
    
    onMounted(async() => {
       if (userStore.mySettings.itemHeaders) { selectedHeaders.value = [...userStore.mySettings.itemHeaders] }
@@ -200,8 +202,7 @@
    const computedHeaders = computed({ 
       get() { return selectedHeaders.value },
       set(updatedHeaders) {
-         const headers = [ ...updatedHeaders ]
-         headers.sort(function(a, b) {return a.col - b.col})   
+         const headers = updatedHeaders.toSorted(function(a, b) {return a.col - b.col})
          userMgr.setItemHeaders(headers)
          selectedHeaders.value = [ ...headers ]
       }
@@ -260,10 +261,10 @@
                displayItem.hits = hit ? hit.views : ""
 
                // need to search and sort on same value
-               displayItem.primaryArtist = item.primaryArtist ? 
-                  { ...item.primaryArtist, sortName: item.primaryArtist.name + " " + item.primaryArtist.fullName} :
+               displayItem.displayArtist = item.primaryArtist ? 
+                  { fullName: item.primaryArtist.fullName, sortName: item.primaryArtist.name + " " + item.primaryArtist.fullName} :
                   { fullName: "", sortName: "" }
-               
+
                displayItem.imageCount = (item.primaryImage ? 1 : 0) + item.otherImages.length
 
                if (item.groupIds) { 
@@ -292,6 +293,7 @@
          }
       }
 
+      
       displayItems.sort(function(a, b) {return b.dateModified - a.dateModified}) // most recent modified first
       return viewStore.setVisibleItems(ItemOrigin.ADMIN, "Admin", Route.USER.url, displayItems)
    })

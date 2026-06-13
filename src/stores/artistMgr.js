@@ -49,31 +49,30 @@ export const useArtistMgr = defineStore('artistMgr', () => {
       return options
    }
 
-   const defaultEditArtistContainer = computed(() => { return { artistOption: null, role: null }})
-   function getEditArtistContainer(artist) {
-      return artist ? { artistOption: getArtistOption(artist), role: artist.role } : defaultEditArtistContainer.value
+   const defaultArtistContainer = computed(() => { return { artistOption: null, role: null }})
+   function getArtistContainer(artist) {
+      return artist ? { artistOption: getArtistOption(artist), role: artist.role } : defaultArtistContainer.value
    }
 
-   function getEditArtistContainers(artists) {
-      return artists ? artists.map(artist => getEditArtistContainer(artist)) : []
+   function getArtistContainers(artists) {
+      return artists ? artists.map(artist => getArtistContainer(artist)) : []
    }
 
-   function getArtistFromEditContainer(container) {
+   function getArtistFromContainer(container) {
       const artist = container.artistOption ? container.artistOption.value : null
       if (artist && container.role) { artist.role = container.role }
       return artist
    }
 
-   function getArtistsFromEditContainers(containers) {
+   function getArtistsFromContainers(containers) {
       const artists = []
       for (const container of containers) {
-         const artist = getArtistFromEditContainer(container)
+         const artist = getArtistFromContainer(container)
          if (artist) { artists.push(artist) }
       }
       return artists
    }
 
-   getArtistsFromEditContainers
    function getMatchingArtist(artistFirstLast) {
       const names = artistFirstLast.split(" ")
       for (const artist of artistStore.primaryArtists) {
@@ -129,8 +128,8 @@ export const useArtistMgr = defineStore('artistMgr', () => {
    return { 
       getArtistIdToArtist, hasAKAs, getPrimaryArtistsForAKA, getFullName, 
       getItemArtist, getArtistOption, artistOptions, getArtistOptions, 
-      defaultEditArtistContainer, getEditArtistContainer, getEditArtistContainers, 
-      getArtistFromEditContainer, getArtistsFromEditContainers,
+      defaultArtistContainer, getArtistContainer, getArtistContainers, 
+      getArtistFromContainer, getArtistsFromContainers,
       getMatchingArtist, addArtistFirstLast,
    }
 })

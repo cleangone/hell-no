@@ -4,11 +4,11 @@
          also <span class="text-h5">{{ alternateName }}</span>
       </div>
       <div v-if="primaryArtist" class="text-h6 mt-n2">
-         <RouterLink :to="Route.ARTIST.url + primaryArtist.id">{{ primaryArtist.fullName }}</RouterLink> 
+         <RouterLink :to="Route.ARTIST.url + primaryArtist.id">{{ artistText(primaryArtist) }}</RouterLink> 
       </div>
-      <div v-if="otherArtists" v-for="artist in otherArtists" :key="artist.id" class="text-h6 mt-n1">
+      <div v-if="otherArtists" v-for="artist in otherArtists" :key="artist.id" class="text-subtitle-1 mt-n1">
          <RouterLink :to="Route.ARTIST.url + artist.id">
-            {{ artist.fullName }}
+            {{ artistText(artist) }}
          </RouterLink> 
       </div>
       <div v-if="paramItem.yearCreated" class="text-h6 mt-n2">{{ paramItem.yearCreated }}</div>
@@ -323,8 +323,9 @@
    const galleryUrl = (galleryId) => { return Route.GALLERY.url + galleryId }
    
    const imageWidth = computed(() => { return paramItem.value?.primaryImage?.dimensions ? paramItem.value.primaryImage.dimensions.width : 500 })
-
    const imageClass = computed(() => "pointer" )
+   
+   const artistText = (artist) => { return artist.fullName + (artist.role ? " - " + artist.role : "") }
    
    const navItems = computed(() => { 
       for (let i=0; i<viewStoreItems.value.length; i++) {

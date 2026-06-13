@@ -5,6 +5,8 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.33.0", "6/13/26"], // Add artistRole to ItemView, BulkEdit
+                           // Initial YouTubeAudio experiment
    ["v2.32.1", "6/11/26"], // Add artistRole
    ["v2.31.1", "6/9/26"],  // Refactor gallery/item sort into SortButton
    ["v2.31.0", "6/4/26"],  // Add firestore persistentLocalCache

@@ -16,6 +16,7 @@
     "algoliasearch": "^4.24.0",
     "bootstrap": "^5.3.2",
     "bootstrap-vue": "^2.23.1",
+    "dequal": "^2.0.3",
     "draggable-resizable-vue3": "^1.0.94-beta",
     "firebase": "^10.7.0",
     "from": "^0.1.7",

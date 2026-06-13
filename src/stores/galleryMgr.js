@@ -127,8 +127,39 @@ export const useGalleryMgr = defineStore('galleryMgr', () => {
       return 0
    }
 
+   function getCheckboxes(selectedGalleryIds) { 
+      const checkboxContainer = { checkboxes: [], selectedGalleries: [] }
+      
+      for (const gallery of [...galleryStore.myGalleries] ) {
+         const isSelected = selectedGalleryIds.includes(gallery.id)
+         if (isSelected) { checkboxContainer.selectedGalleries.push(gallery) }
+         checkboxContainer.checkboxes.push({ 
+            id: gallery.id, 
+            name: gallery.name, 
+            sort: gallery.sortName?.length ? gallery.sortName : gallery.name,
+            isSelected: isSelected,
+            isParent: gallery.childGalleryIds?.length > 0, 
+            parentId: gallery.parentGalleryId, 
+         })
+      }
+      checkboxContainer.checkboxes.sort(function(a, b){return a.sort.localeCompare(b.sort)}) 
+      
+      // contributing galleries at the end
+      for (const gallery of galleryStore.myContributingGalleries ) {
+         const isSelected = selectedGalleryIds.includes(gallery.id)
+         if (isSelected) { checkboxContainer.selectedGalleries.push(gallery) }
+         checkboxContainer.checkboxes.push({ 
+            id: gallery.id, 
+            name: gallery.name + "(Contributor)", 
+            isSelected: isSelected,
+         })
+      }
+
+      return checkboxContainer
+   }
+
    return { getUserGalleries, deleteGallery, uniqueItems, galleryImage, hasGalleryThumbImage, 
-      myGalleryOptions, getGalleryOptions, getProfileCount, removeItemId 
+      myGalleryOptions, getGalleryOptions, removeItemId, getProfileCount, getCheckboxes 
    } 
 })
 

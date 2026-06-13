@@ -32,7 +32,7 @@
                   </v-col>
                </v-row>
                <v-row class="mt-n3">        
-                  <v-col cols="12"><EditArtist :editArtistContainer="currPrimaryArtistEditContainer" class="ms-2"/></v-col>
+                  <v-col cols="12"><EditArtist :artistContainer="currPrimaryArtistContainer" class="ms-2"/></v-col>
                </v-row>
             </v-col>
             <v-col>
@@ -47,7 +47,7 @@
          <v-row class="mt-n3 mr-1">
             <v-col cols="12">
                <div class="expansion">
-                  <EditArtists title="Other Artists" :editArtistContainers="currOtherArtistsEditContainers"/>
+                  <EditArtists title="Other Artists" :artistContainers="currOtherArtistsContainers"/>
                </div>
             </v-col>
          </v-row>
@@ -122,8 +122,8 @@
    const currYearCreated   = ref(null)
    const currItemDescContainer = ref({ content: "" })
    const currItemWall = ref(false)  
-   const currPrimaryArtistEditContainer = ref(artistMgr.defaultEditArtistContainer) 
-   const currOtherArtistsEditContainers = ref([]) 
+   const currPrimaryArtistContainer = ref(artistMgr.defaultArtistContainer) 
+   const currOtherArtistsContainers = ref([]) 
    const currItemGalleries = ref([])       
    const currItemGalleryCheckboxes = ref([])
    const nextItems = ref([])
@@ -149,38 +149,13 @@
       currProfileId.value = item.profileId ? item.profileId : null
       currYearCreated.value = item.yearCreated
       currItemDescContainer.value.content = item.desc ? item.desc : ""
-      currPrimaryArtistEditContainer.value = artistMgr.getEditArtistContainer(item.primaryArtist)
-      currOtherArtistsEditContainers.value = artistMgr.getEditArtistContainers(item.otherArtists)
+      currPrimaryArtistContainer.value = artistMgr.getArtistContainer(item.primaryArtist)
+      currOtherArtistsContainers.value = artistMgr.getArtistContainers(item.otherArtists)
       currItemWall.value = wallStore.myWallIncludesItem(item.id)
       
-      const galleryCheckboxes = []
-      currItemGalleries.value = []  
-      
-      for (const gallery of [...galleryStore.myGalleries] ) {
-         const isSelected = item.galleryIds?.includes(gallery.id)
-         if (isSelected) { currItemGalleries.value.push(gallery) }
-         galleryCheckboxes.push({ 
-            id: gallery.id, 
-            name: gallery.name, 
-            sort: gallery.sortName?.length ? gallery.sortName :gallery.name,
-            isSelected: isSelected,
-            isParent: gallery.childGalleryIds?.length > 0, 
-            parentId: gallery.parentGalleryId, 
-         })
-      }
-      galleryCheckboxes.sort(function(a, b){return a.sort.localeCompare(b.sort)}) 
-      
-      // contributing galleries at the end
-      for (const gallery of galleryStore.myContributingGalleries ) {
-         const isSelected = item.galleryIds?.includes(gallery.id)
-         if (isSelected) { currItemGalleries.value.push(gallery) }
-         galleryCheckboxes.push({ 
-            id: gallery.id, 
-            name: gallery.name + "(Contributor)", 
-            isSelected: isSelected,
-         })
-      }
-      currItemGalleryCheckboxes.value = galleryCheckboxes
+      const galleryCheckboxContainer = galleryMgr.getCheckboxes(item.galleryIds ?? [])
+      currItemGalleryCheckboxes.value = galleryCheckboxContainer.checkboxes
+      currItemGalleries.value         = galleryCheckboxContainer.selectedGalleries
    }
 
    const isMyItem = computed(() => currItem.value && currItem.value.userId == userStore.userId)
@@ -236,8 +211,8 @@
          subtitle: currItemSubtitle.value,
          desc: currItemDescContainer.value.content,
          galleryIds: updatedGalleryIds,
-         primaryArtist: artistMgr.getArtistFromEditContainer(currPrimaryArtistEditContainer.value),
-         otherArtists: artistMgr.getArtistsFromEditContainers(currOtherArtistsEditContainers.value),
+         primaryArtist: artistMgr.getArtistFromContainer(currPrimaryArtistContainer.value),
+         otherArtists: artistMgr.getArtistsFromContainers(currOtherArtistsContainers.value),
          onUserWall: currItemWall.value
       }
 
