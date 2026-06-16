@@ -2,11 +2,11 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useUserStore } from '@/stores/userStore'
 import { useUserMgr }   from '@/stores/userMgr'
-import { Defaults, GalleryThumbOptions, ItemThumbOptions } from '@/utils/constants'
+import { Defaults, GalleryThumbOptions, ItemThumbOptions, ThumbSize } from '@/utils/constants'
 
 export const useViewStore = defineStore('view', () => {
    const userStore = useUserStore()
-   const userMgr   = useUserMgr()
+   const userMgr   = useUserMgr()   
    
    const isInitialized = ref(false)
    function init() { 
@@ -20,6 +20,7 @@ export const useViewStore = defineStore('view', () => {
       // console.log("viewStore.resetView")
       resetGalleryThumbOptions()
       resetItemThumbOptions()
+      resetThumbSize()
       resetVisiblity() 
    }
 
@@ -60,7 +61,15 @@ export const useViewStore = defineStore('view', () => {
    }
    function resetItemThumbOptions() { setItemThumbOptions(defaultItemThumbOptions) }
  
-   // save options in user settings and locally if not logged in
+   const DEFAULT_THUMB_SIZE = { size: ThumbSize.MED, xsSize: ThumbSize.MED }
+   const currThumbSize = ref({ ...DEFAULT_THUMB_SIZE })
+   const thumbSize = computed(() => userStore.mySettings?.thumbSize ?? currThumbSize.value )
+   function setThumbSize(thumbSize) { 
+      currThumbSize.value = thumbSize 
+      if (userStore.userExists) { userMgr.setThumbSize(thumbSize) }
+   }
+   function resetThumbSize() { currThumbSize.value = { ...DEFAULT_THUMB_SIZE }}
+ 
    const defaultGalleryThumbOptions = [ GalleryThumbOptions.UPDATED ]
    const currGalleryThumbOptions = ref([ ...defaultGalleryThumbOptions ])
    const galleryThumbOptions = computed(() => { 
@@ -186,11 +195,12 @@ export const useViewStore = defineStore('view', () => {
       getVisibleItems, setVisibleItems, updateVisibleItems, 
       searchItems, setSearchItems,
       itemThumbOptions, setItemThumbOptions,      
+      thumbSize, setThumbSize,      
       galleryThumbOptions, setGalleryThumbOptions, 
       xsThumbFieldsColors, xsThumbFieldsIndex, incrementXsThumbFieldsIndex, 
       processedFeedItemIds, addProcessedFeedItemId,
       pageName, setPageName, 
-      editInPlace, // toggleEditInPlace, 
+      editInPlace, 
       isMobileSwipe, toggleMobileSwipe,
       accountGalleryId, setAccountGalleryId, 
       adminSelectedUserId, setAdminSelectedUserId,
@@ -199,7 +209,6 @@ export const useViewStore = defineStore('view', () => {
       getVisiblity, getIdVisiblity, setVisiblity, resetVisiblity,
       addItemDefaults, setAddItemDefaults,
       showSavedFeedItems, setShowSavedFeedItems,
-      // previousWallOrder, setPreviousWallOrder, 
       getMsgColor,
       selectedChatId, setSelectedChatId,
       searchQuery, setSearchQuery,

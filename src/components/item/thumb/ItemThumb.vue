@@ -9,22 +9,18 @@
 
 <script setup>
    import { computed } from 'vue'
-   import { useItemMgr } from '@/stores/itemMgr'
-   import { useViewStore } from '@/stores/viewStore'
-   import { useViewMgr }   from '@/stores/viewMgr'
-   import { ItemThumbOptions as ThumbOptions } from '@/utils/constants'
+   import { useItemMgr }  from '@/stores/itemMgr'
+   import { useViewMgr }  from '@/stores/viewMgr'
    import ItemThumbSingle from './ItemThumbSingle.vue'
    import ItemThumbGroup  from './ItemThumbGroup.vue'
    
    const props = defineProps({ 
       item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean, showDateViewed:Boolean })
    
-   const itemMgr   = useItemMgr()
-   const viewStore = useViewStore()
-   const viewMgr   = useViewMgr()
+   const itemMgr = useItemMgr()
+   const viewMgr = useViewMgr()
 
-   const smallThumb  = computed(() => viewMgr.isXs && viewStore.itemThumbOptions.includes(ThumbOptions.SM_THUMB))
-   const paddingX    = computed(() => smallThumb.value ?  "px-1" : "px-4")
+   const paddingX    = computed(() => viewMgr.isXs ? "px-0" : "px-4")
    const isItemGroup = computed(() => itemMgr.isItemGroup(props.item))
 </script>
 

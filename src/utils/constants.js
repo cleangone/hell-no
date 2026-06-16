@@ -43,8 +43,8 @@ export const Defaults = {
    DELETED_USER_ID: "0",
    MAX_WALL_ITEMS:  20,
    SITE_ID:         "0",
-   THUMB_HEIGHT:    200,
    SM_THUMB_HEIGHT: 150,
+   THUMB_HEIGHT:    200,
    LG_THUMB_HEIGHT: 250,
    MAX_THUMB_SIDE:  300, // thumb was resized to a 300x300 box
 }
@@ -158,6 +158,13 @@ export const ItemThumbOptions = {
    UPDATED:  'Date Updated',
    USER:     'User',
 } 
+
+export const ThumbHeights = { sizes:[150, 200, 250], xsSizes:[125, 150, 200] }
+export const ThumbSize = { 
+   SM:  'Small',
+   MED: 'Med',
+   LG:  'Large',
+}   
 
 export const LogEntryType = {
    ERROR:   'Error',

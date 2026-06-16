@@ -11,7 +11,7 @@ import { useHitStore }   from '@/stores/hitStore'
 import { useViewStore }  from '@/stores/viewStore'
 import { useLocalStore } from '@/stores/localStore'
 import { dateUuid, isHidden, isInvisible, isOwned, isPublic } from '@/utils/utils'  
-import { Defaults, ItemThumbOptions, Route } from '@/utils/constants'
+import { Route, ThumbHeights, ThumbSize } from '@/utils/constants'
    
 export const useViewMgr = defineStore('viewMgr', () => {   
    const router = useRouter()
@@ -107,10 +107,13 @@ export const useViewMgr = defineStore('viewMgr', () => {
    }
 
    const targetThumbHeight = computed(() => {
-      if (isXs.value  && viewStore.itemThumbOptions.includes(ItemThumbOptions.SM_THUMB)) { return Defaults.SM_THUMB_HEIGHT }
-      if (!isXs.value && viewStore.itemThumbOptions.includes(ItemThumbOptions.LG_THUMB)) { return Defaults.LG_THUMB_HEIGHT }
-      return Defaults.THUMB_HEIGHT
-   })    
+      const size    = isXs.value ? viewStore.thumbSize.xsSize : viewStore.thumbSize.size
+      const heights = isXs.value ? ThumbHeights.xsSizes : ThumbHeights.sizes 
+
+      if (size == ThumbSize.SM) { return heights[0] }
+      else if (size == ThumbSize.MED) { return heights[1] }
+      else { return heights[2] }
+    })    
       
    return { init, logout, isMobile, isXs, isDeskTop, solo, addHit, itemIsVisibleToUser, itemThumbVisibleToUser, 
       galleryIsVisibleToUser, galleryThumbVisibleToUser, galleryItemCount, targetThumbHeight }

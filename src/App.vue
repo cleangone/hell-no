@@ -6,9 +6,7 @@
       <meta property="og:description" content="OG description of the page."/>
    </Head> -->
    <div class="app">  
-
-         <!-- <YouTubeAudio/> -->
-      
+      <!-- <YouTubeAudio/> -->
       <v-row no-gutters class="flex-nowrap">
          <v-col :cols="sideCols" class="flex-grow-0 flex-shrink-0 nav-left" style="white-space:nowrap">
             <!-- top left icon for mobile -->
@@ -98,8 +96,9 @@
                   <Icon icon="mdi-dice-multiple" @click="toRoute(Route.RANDOM)"/>
                </span>
                <span v-else-if="isRoute(Route.GALLERIES)"><GalleryThumbConfig/></span>
-               <span v-else-if="inRoutes(Route.GALLERY, Route.RECENT)"><ItemThumbConfig/></span>
-               <span v-else-if="inRoutes(Route.SEARCH, Route.FAVORITES)"><ItemThumbConfig/></span>
+               <span v-else-if="inRoutes(Route.GALLERY, Route.RECENT, Route.SEARCH, Route.FAVORITES)" class="text-no-wrap"> 
+                  <SizeButton/> <ItemThumbConfig/>
+               </span>
                <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD)">
                   <ToggleIcon icon="mdi-gesture-swipe" :state="viewStore.isMobileSwipe" @click="viewStore.toggleMobileSwipe()"/>
                </span>
@@ -201,6 +200,7 @@
    import LinkOrText          from '@/components/util/LinkOrText.vue'
    import Icon                from '@/components/util/Icon.vue'
    import SearchBox           from '@/components/util/SearchBox.vue'
+   import SizeButton          from '@/components/util/SizeButton.vue'
    import ToggleIcon          from '@/components/util/ToggleIcon.vue'
    import YouTubeAudio        from '@/components/util/YouTubeAudio.vue'
    import { handleError } from '@/utils/utils'

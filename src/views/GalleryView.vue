@@ -20,45 +20,46 @@
    </div>
    <div v-else> 
       <div class="content-wrapper mt-1" :style="contentStyle">
-      <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
-      <div class="content">
-      <div style="clear:both"></div>
-      <!-- title -->
-      <v-container class="pa-0 width-100">
-         <v-row no-gutters class="d-flex align-center flex-nowrap">
-            <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
-            <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
-               <span class="title">{{ gallery.name }} Gallery</span>
-            </v-col>
-            <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
-               <ExpandItems :items="galleryItems" buttonClass="mr-n2"/>
-               <CopyLink :route="Route.GALLERY.name" :id="galleryId"/>
-               <ItemThumbConfig/>
-               <EditButton v-if="canEdit" @click="showEditGalleryDialog=true" class="mx-n2"/>
-            </v-col>
-         </v-row>
-         <GalleryParentLink :gallery="gallery" style="text-align:center"/>
-      </v-container>
-      <!-- header and content below or beside -->
-      <div v-if="headerImage" :class="verticalHeader?'horizontal-container':''">
-         <div class="bg-white mb-20">
-            <RouterLink :to="itemMgr.itemURL(headerImage.itemId, ItemOrigin.GALLERY)">
-               <!-- no description in vertical headers  -->
-               <v-img v-if="verticalHeader" :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" width="400"/>
-               <v-img v-else :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" cover max-height="300">
-                  <div v-if="descExists && descInHeader" class="pa-1 d-flex fill-height align-end justify-end">
-                     <div v-html="gallery.desc" class="text-left desc-header-div" :style="headerDescStyle"></div>   
-                  </div>
-               </v-img>
-            </RouterLink>
-         </div> 
-         <div><ReuseTemplate/></div>
-      </div>
-      <!-- content w/o header -->
-      <div v-else>
-         <ReuseTemplate/>
-      </div>
-      </div>
+         <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
+         <div class="content">
+            <div style="clear:both"></div>
+            <!-- title -->
+            <v-container class="pa-0 width-100">
+                  <v-row no-gutters class="d-flex align-center flex-nowrap">
+                  <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
+                  <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
+                     <span class="title">{{ gallery.name }} Gallery</span>
+                  </v-col>
+                  <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
+                     <SizeButton/>
+                     <ExpandItems :items="galleryItems" buttonClass="mr-n2"/>
+                     <CopyLink :route="Route.GALLERY.name" :id="galleryId"/>
+                     <ItemThumbConfig/>
+                     <EditButton v-if="canEdit" @click="showEditGalleryDialog=true" class="mx-n2"/>
+                  </v-col>
+               </v-row>
+               <GalleryParentLink :gallery="gallery" style="text-align:center"/>
+            </v-container>
+            <!-- header and content below or beside -->
+            <div v-if="headerImage" :class="verticalHeader?'horizontal-container':''">
+               <div class="bg-white mb-20">
+                  <RouterLink :to="itemMgr.itemURL(headerImage.itemId, ItemOrigin.GALLERY)">
+                     <!-- no description in vertical headers  -->
+                     <v-img v-if="verticalHeader" :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" width="400"/>
+                     <v-img v-else :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" cover max-height="300">
+                        <div v-if="descExists && descInHeader" class="pa-1 d-flex fill-height align-end justify-end">
+                           <div v-html="gallery.desc" class="text-left desc-header-div" :style="headerDescStyle"></div>   
+                        </div>
+                     </v-img>
+                  </RouterLink>
+               </div> 
+               <div><ReuseTemplate/></div>
+            </div>
+            <!-- content w/o header -->
+            <div v-else>
+               <ReuseTemplate/>
+            </div>
+         </div>
       </div>
    </div>
 
@@ -93,6 +94,7 @@
    import ExpandItems         from '@/components/item/ExpandItems.vue'
    import EditButton          from '@/components/util/EditButton.vue'
    import CopyLink            from '@/components/util/CopyLink.vue'
+   import SizeButton          from '@/components/util/SizeButton.vue'
    import { objAspectRatio } from '@/utils/utils'
    import { ImageType, ItemOrigin, Route } from '@/utils/constants'
   

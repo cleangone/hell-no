@@ -4,11 +4,13 @@
          also <span class="text-h5">{{ alternateName }}</span>
       </div>
       <div v-if="primaryArtist" class="text-h6 mt-n2">
-         <RouterLink :to="Route.ARTIST.url + primaryArtist.id">{{ artistText(primaryArtist) }}</RouterLink> 
+         <RouterLink :to="Route.ARTIST.url + primaryArtist.id">
+            {{ artistName(primaryArtist) }}<span class="text-subtitle-1">{{ artistRole(primaryArtist) }}</span>
+         </RouterLink> 
       </div>
-      <div v-if="otherArtists" v-for="artist in otherArtists" :key="artist.id" class="text-subtitle-1 mt-n1">
+      <div v-if="otherArtists" v-for="artist in otherArtists" :key="artist.id" class="text-h6 mt-n1">
          <RouterLink :to="Route.ARTIST.url + artist.id">
-            {{ artistText(artist) }}
+            {{ artistName(artist) }}<span class="text-subtitle-1">{{ artistRole(artist) }}</span>
          </RouterLink> 
       </div>
       <div v-if="paramItem.yearCreated" class="text-h6 mt-n2">{{ paramItem.yearCreated }}</div>
@@ -325,8 +327,10 @@
    const imageWidth = computed(() => { return paramItem.value?.primaryImage?.dimensions ? paramItem.value.primaryImage.dimensions.width : 500 })
    const imageClass = computed(() => "pointer" )
    
-   const artistText = (artist) => { return artist.fullName + (artist.role ? " - " + artist.role : "") }
+   const artistName = (artist) => { return artist.fullName }
+   const artistRole = (artist) => { return (artist.role ? " - " + artist.role : "") }
    
+   artistName
    const navItems = computed(() => { 
       for (let i=0; i<viewStoreItems.value.length; i++) {
          const viewStoreItem = viewStoreItems.value[i]
