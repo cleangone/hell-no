@@ -43,9 +43,6 @@ export const Defaults = {
    DELETED_USER_ID: "0",
    MAX_WALL_ITEMS:  20,
    SITE_ID:         "0",
-   SM_THUMB_HEIGHT: 150,
-   THUMB_HEIGHT:    200,
-   LG_THUMB_HEIGHT: 250,
    MAX_THUMB_SIDE:  300, // thumb was resized to a 300x300 box
 }
 export const DefaultWall = { wallRows:0, wallItems:[] }    

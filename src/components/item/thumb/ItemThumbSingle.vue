@@ -13,18 +13,20 @@
 
 <script setup>
    import { computed, onErrorCaptured, ref } from 'vue'
-   import { useItemMgr } from '@/stores/itemMgr'
-   import { useViewMgr } from '@/stores/viewMgr'
+   import { useItemMgr }   from '@/stores/itemMgr'
+   import { useViewStore } from '@/stores/viewStore'
+   import { useViewMgr }   from '@/stores/viewMgr'
    import ItemPopup     from '@/components/item/ItemPopup.vue'
    import ItemThumbText from './ItemThumbText.vue'
    import { handleError } from '@/utils/utils'
-   import { Defaults } from '@/utils/constants'
+   import { Defaults, ThumbSize } from '@/utils/constants'
    
    const props = defineProps({ 
       item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean, showDateViewed:Boolean })
 
-   const itemMgr = useItemMgr()
-   const viewMgr = useViewMgr()
+   const itemMgr   = useItemMgr()
+   const viewStore = useViewStore()
+   const viewMgr   = useViewMgr()
    const cardRef = ref(null)
    const popup = ref(null)
    const mouseleaveTime = ref(Date.now())
@@ -42,8 +44,27 @@
    const aspectRatio = computed(() => itemMgr.itemAspectRatio(item.value))
    const cardWidth = computed(() => { 
       const targetHeight = viewMgr.targetThumbHeight
-      const targetWidth = Math.round(targetHeight * aspectRatio.value)
-      return targetWidth > Defaults.MAX_THUMB_SIDE ? Defaults.MAX_THUMB_SIDE : targetWidth
+
+      // console.log("aspectRatio", props.item.name, aspectRatio.value)
+
+      let targetWidth = Math.round(targetHeight * aspectRatio.value)
+      console.log("targetWidth", targetWidth)
+      if (targetWidth > Defaults.MAX_THUMB_SIDE) { targetWidth = Defaults.MAX_THUMB_SIDE}
+      
+      // return targetWidth > Defaults.MAX_THUMB_SIDE ? Defaults.MAX_THUMB_SIDE : targetWidth
+      if (aspectRatio.value > 2 && targetWidth == Defaults.MAX_THUMB_SIDE) {
+         const thumbSize = viewStore.thumbSize
+         if (viewMgr.isXs) {
+            if (thumbSize.xsSize == ThumbSize.SM) { targetWidth = 125 } 
+            else if (thumbSize.xsSize == ThumbSize.MED) { targetWidth = 175 } 
+         }
+         else {
+            if (thumbSize.size == ThumbSize.SM) { targetWidth = 200 } 
+            else if (thumbSize.size == ThumbSize.MED) { targetWidth = 250 } 
+         }
+
+      }
+      return targetWidth
    })
 
    const mouseover = () => {

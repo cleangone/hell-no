@@ -1,9 +1,8 @@
 <template>
    <div v-if="showTitle || showArtist" class="text-body-2"> 
-      <div v-if="showTitle" showTitle class="font-weight-bold">{{ itemName }}</div>
+      <div v-if="showTitle" showTitle :class="isXsSmThumb?'':'font-weight-bold'">{{ itemName }}</div>
       <ItemArtistYear v-if="showArtist" :item="item"/>
    </div>
-   <!-- <UserDateText :user="fromUser" :date="showDateModified ? item.dateContentModified : null" class="text-body-2"/> -->
    <UserDateText :user="fromUser" :date="date" class="text-body-2"/>
 </template>
 
@@ -12,10 +11,11 @@
    import { useUserStore }    from '@/stores/userStore'
    import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
-   import ItemArtistYear   from '../ItemArtistYear.vue'
-   import UserDateText     from '@/components/util/UserDateText.vue'
-   import { handleError }  from '@/utils/utils'
-   import { ItemThumbOptions as ThumbOptions } from '@/utils/constants'
+   import { useViewMgr }      from '@/stores/viewMgr'
+   import ItemArtistYear      from '../ItemArtistYear.vue'
+   import UserDateText        from '@/components/util/UserDateText.vue'
+   import { handleError }     from '@/utils/utils'
+   import { ItemThumbOptions as ThumbOptions, ThumbSize } from '@/utils/constants'
    
    onErrorCaptured((err) => { return handleError(err, "ItemThumbText") })
 
@@ -25,6 +25,7 @@
    const userStore    = useUserStore()
    const profileStore = useProfileStore()
    const viewStore    = useViewStore()
+   const viewMgr      = useViewMgr()
    
    // const item = computed(() => props.item)
    const selectedFields = computed(() => {
@@ -41,6 +42,8 @@
       return props.useLocalName ? props.item.localName : name
    })
 
+   const isXsSmThumb = computed(() => viewMgr.isXs && viewStore.thumbSize.xsSize == ThumbSize.SM)
+   
    const fromUser = computed(() => { 
       if (showUser.value) {
          if (props.item.profileId) { return { id: props.item.profileId, name: profileStore.getUsername(props.item.profileId) }}
