@@ -16,14 +16,18 @@
    import { useItemMgr }   from '@/stores/itemMgr'
    import { useViewStore } from '@/stores/viewStore'
    import { useViewMgr }   from '@/stores/viewMgr'
-   import ItemPopup     from '@/components/item/ItemPopup.vue'
-   import ItemThumbText from './ItemThumbText.vue'
+   import ItemPopup        from '@/components/item/ItemPopup.vue'
+   import ItemThumbText    from './ItemThumbText.vue'
    import { handleError } from '@/utils/utils'
    import { Defaults, ThumbSize } from '@/utils/constants'
    
    const props = defineProps({ 
       item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean, showDateViewed:Boolean })
 
+   const MaxLandscapeWidths = { 
+      sizes:   new Map([ [ThumbSize.SM, 200], [ThumbSize.MED, 250], [ThumbSize.LG, Defaults.MAX_THUMB_SIDE] ]),
+      xsSizes: new Map([ [ThumbSize.SM, 125], [ThumbSize.MED, 175], [ThumbSize.LG, Defaults.MAX_THUMB_SIDE] ]) }
+      
    const itemMgr   = useItemMgr()
    const viewStore = useViewStore()
    const viewMgr   = useViewMgr()
@@ -44,25 +48,14 @@
    const aspectRatio = computed(() => itemMgr.itemAspectRatio(item.value))
    const cardWidth = computed(() => { 
       const targetHeight = viewMgr.targetThumbHeight
-
-      // console.log("aspectRatio", props.item.name, aspectRatio.value)
-
       let targetWidth = Math.round(targetHeight * aspectRatio.value)
-      console.log("targetWidth", targetWidth)
       if (targetWidth > Defaults.MAX_THUMB_SIDE) { targetWidth = Defaults.MAX_THUMB_SIDE}
       
-      // return targetWidth > Defaults.MAX_THUMB_SIDE ? Defaults.MAX_THUMB_SIDE : targetWidth
       if (aspectRatio.value > 2 && targetWidth == Defaults.MAX_THUMB_SIDE) {
          const thumbSize = viewStore.thumbSize
-         if (viewMgr.isXs) {
-            if (thumbSize.xsSize == ThumbSize.SM) { targetWidth = 125 } 
-            else if (thumbSize.xsSize == ThumbSize.MED) { targetWidth = 175 } 
-         }
-         else {
-            if (thumbSize.size == ThumbSize.SM) { targetWidth = 200 } 
-            else if (thumbSize.size == ThumbSize.MED) { targetWidth = 250 } 
-         }
-
+         targetWidth = viewMgr.isXs ? 
+            MaxLandscapeWidths.xsSizes.get(thumbSize.xsSize) :
+            MaxLandscapeWidths.sizes.get(thumbSize.size)
       }
       return targetWidth
    })

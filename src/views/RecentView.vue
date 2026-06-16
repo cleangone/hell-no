@@ -7,7 +7,7 @@
             <RouterLink v-if="username" :to="Route.USER.url + route.params.id">{{ username }}</RouterLink>
          </v-col>
          <v-col v-if="viewMgr.isDeskTop" cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
-            <ExpandItems :items="recentItems" buttonClass="mb-1"/>
+            <SizeButton/>
             <ItemThumbConfig/>
          </v-col>
       </v-row>
@@ -28,9 +28,11 @@
    import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
-   import ExpandItems     from '@/components/item/ExpandItems.vue'
-   import ItemThumb       from '@/components/item/thumb/ItemThumb.vue'
-   import ItemThumbConfig from '@/components/item/thumb/ItemThumbConfig.vue'
+   import ExpandItems         from '@/components/item/ExpandItems.vue'
+   import ItemThumb           from '@/components/item/thumb/ItemThumb.vue'
+   import ItemThumbConfig     from '@/components/item/thumb/ItemThumbConfig.vue'
+   import SizeButton          from '@/components/util/SizeButton.vue'
+   
    import { Defaults, ItemOrigin, Route } from '@/utils/constants'
    
    const route = useRoute()

@@ -148,8 +148,6 @@ export const ItemType = {
 }
 
 export const ItemThumbOptions = { 
-   SM_THUMB: 'Small Thumbnails',
-   LG_THUMB: 'Large Thumbnails',
    TITLE:    'Title',
    ARTIST:   'Artist',
    UPDATED:  'Date Updated',

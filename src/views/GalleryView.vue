@@ -32,7 +32,7 @@
                   </v-col>
                   <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
                      <SizeButton/>
-                     <ExpandItems :items="galleryItems" buttonClass="mr-n2"/>
+                     <!-- <ExpandItems :items="galleryItems" buttonClass="mr-n2"/> -->
                      <CopyLink :route="Route.GALLERY.name" :id="galleryId"/>
                      <ItemThumbConfig/>
                      <EditButton v-if="canEdit" @click="showEditGalleryDialog=true" class="mx-n2"/>

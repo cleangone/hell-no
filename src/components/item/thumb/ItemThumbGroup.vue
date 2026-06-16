@@ -5,7 +5,7 @@
          <v-img v-for="(childItem, index) in childItems" :key="childItem.id" 
             :src="childItem.primaryImage.thumbUrl" :width="thumbWidth(childItem)"
             @mouseover="mouseover(childItem)" @mouseleave="mouseleave()" 
-            :class="index==0 ? 'first-image' : 'next-image'"></v-img>
+            :class="index?'next-image':'first-image'"/>
       </RouterLink>
       <ItemThumbText :item="item" :origin="origin" :useAltName="useAltName" :useLocalName="useLocalName" 
          :bypassShowUser="bypassShowUser" :showDateViewed="showDateViewed"/>
@@ -20,7 +20,6 @@
    import { useViewMgr } from '@/stores/viewMgr'
    import ItemPopup     from '@/components/item/ItemPopup.vue'
    import ItemThumbText from './ItemThumbText.vue'
-   import { backgroundColorStyle } from '@/utils/utils'
    
    const props = defineProps({ 
       item:Object, origin:String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean, showDateViewed:Boolean })
@@ -40,9 +39,11 @@
          totalWidth += childItem.primaryImage.dimensions.width
          totalHeight += childItem.primaryImage.dimensions.height
       }
-      const avghHeight = totalHeight/props.item.childItems.length
+
+      // does not address landscape images becasue they are not grouped
+      const avgHeight = totalHeight/props.item.childItems.length
       const targetHeight = viewMgr.targetThumbHeight
-      const aspectRatio = totalWidth / avghHeight
+      const aspectRatio = totalWidth / avgHeight
       const targetWidth = Math.round(targetHeight * aspectRatio)
       return { totalWidth: totalWidth, targetWidth: targetWidth, cardWidth: targetWidth.toString()}
    })
