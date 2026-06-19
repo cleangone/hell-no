@@ -22,9 +22,7 @@
          </div> 
       </div>
    </v-container>
-
-
-
+   
    <!-- galleries, favorites -->
    <div v-if="recentGalleries.length || favoriteItems?.length" class="my-3">
       <v-row>
@@ -92,7 +90,7 @@
    import { useCacheStore }   from '@/stores/cacheStore'
    import { useLocalStore }   from '@/stores/localStore'
    import ItemThumb    from '@/components/item/thumb/ItemThumb.vue'
-   import GalleryThumb from '@/components/gallery/GalleryThumb.vue'
+   import GalleryThumb from '@/components/gallery/thumb/GalleryThumb.vue'
    import UserThumb    from '@/components/user/UserThumb.vue'
    import SwipeWall    from '@/components/wall/SwipeWall.vue'
    import DarkButton   from '@/components/util/DarkButton.vue'

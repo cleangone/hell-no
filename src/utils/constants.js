@@ -75,7 +75,6 @@ export const FeedAction = {
 
 export const GalleryThumbWidth = 250
 export const GalleryThumbOptions = {
-   SM_THUMB:     'Small Thumbnails',
    SHOW_CHILD:   'Show Child Galleries',
    SHOW_PRIVATE: 'Show My Private Galleries',
    USER:         'User',

@@ -11,8 +11,9 @@
             <div v-else-if="viewMgr.solo" class="text-subtitle-1 mt-n2 mb-2">Solo Mode</div>
          </v-col>      
          <v-col cols="1" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
-            <SortButton :sortByDate="sortByDate" @click="sortByDate=!sortByDate"/>
-            &nbsp; <GalleryThumbConfig/>
+            <ThumbSizeButton/>
+            <SortButton :sortByDate="sortByDate" @click="sortByDate=!sortByDate" class="mx-2"/>
+            <GalleryThumbConfig/>
          </v-col>
       </v-row>
    </v-container>
@@ -35,9 +36,10 @@
    import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
-   import GalleryThumb        from '@/components/gallery/GalleryThumb.vue'
-   import GalleryThumbConfig  from '@/components/gallery/GalleryThumbConfig.vue'
+   import GalleryThumb        from '@/components/gallery/thumb/GalleryThumb.vue'
+   import GalleryThumbConfig  from '@/components/gallery/thumb/GalleryThumbConfig.vue'
    import SortButton          from '@/components/util/SortButton.vue'
+   import ThumbSizeButton     from '@/components/util/ThumbSizeButton.vue'
    import { handleError, isPrivate } from '@/utils/utils'
    import { Defaults, GalleryThumbOptions, Route } from '@/utils/constants'
   

@@ -5,6 +5,7 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [    
+   ["v2.34.1", "6/19/26"], // Add GalleryThumbSize to toggle gallery thumb size
    ["v2.34.0", "6/15/26"], // Add SizeButton to click through thumb sizing
    ["v2.33.0", "6/13/26"], // Add artistRole to ItemView, BulkEdit
                            // Initial YouTubeAudio experiment

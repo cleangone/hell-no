@@ -6,7 +6,7 @@
             <div v-if="viewMgr.isDeskTop" class="title">{{ title }}</div>
          </v-col>
          <v-col v-if="viewMgr.isDeskTop" cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
-            <IconButton :icon="sortRecent?'mdi-arrow-down':'mdi-arrow-up'" @click="toggleSort()" size="med"/>
+            <IconButton :icon="sortIcon" @click="toggleSort()" size="med" class="mr-2"/>
             <ItemThumbConfig/>
          </v-col>
       </v-row>
@@ -34,7 +34,8 @@
    const viewMgr   = useViewMgr()
    const sortRecent = ref(true)
    
-   const title        = computed(() => sortRecent.value ? "Recent Viewed" : "Oldest Viewed")
+   const title        = computed(() => sortRecent.value ? "Recent Viewed" : "Least Recent Viewed")
+   const sortIcon     = computed(() => sortRecent.value ? "mdi-sort-calendar-ascending" : "mdi-sort-calendar-descending")
    const displayItems = computed(() => sortRecent.value ? recentViewedItems.value : oldestViewedItems.value)
    
    const recentViewedItems = computed(() => {

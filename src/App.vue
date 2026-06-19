@@ -95,9 +95,13 @@
                <span v-if="inRoutes(Route.HOME, Route.USER)">
                   <Icon icon="mdi-dice-multiple" @click="toRoute(Route.RANDOM)"/>
                </span>
-               <span v-else-if="isRoute(Route.GALLERIES)"><GalleryThumbConfig/></span>
+               <span v-else-if="isRoute(Route.GALLERIES)" class="text-no-wrap">
+                   <ThumbSizeButton/>
+                   <GalleryThumbConfig/>
+               </span>
                <span v-else-if="inRoutes(Route.GALLERY, Route.RECENT, Route.SEARCH, Route.FAVORITES)" class="text-no-wrap"> 
-                  <SizeButton/> <ItemThumbConfig/>
+                  <ThumbSizeButton/>
+                  <ItemThumbConfig/>
                </span>
                <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD)">
                   <ToggleIcon icon="mdi-gesture-swipe" :state="viewStore.isMobileSwipe" @click="viewStore.toggleMobileSwipe()"/>
@@ -194,13 +198,13 @@
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { useLocalStore }   from '@/stores/localStore'
-   import GalleryThumbConfig  from '@/components/gallery/GalleryThumbConfig.vue'
+   import GalleryThumbConfig  from '@/components/gallery/thumb/GalleryThumbConfig.vue'
    import ItemThumbConfig     from '@/components/item/thumb/ItemThumbConfig.vue'
    import MessageSetup        from '@/components/notification/MessageSetup.vue'
    import LinkOrText          from '@/components/util/LinkOrText.vue'
    import Icon                from '@/components/util/Icon.vue'
    import SearchBox           from '@/components/util/SearchBox.vue'
-   import SizeButton          from '@/components/util/SizeButton.vue'
+   import ThumbSizeButton     from '@/components/util/ThumbSizeButton.vue'
    import ToggleIcon          from '@/components/util/ToggleIcon.vue'
    import YouTubeAudio        from '@/components/util/YouTubeAudio.vue'
    import { handleError } from '@/utils/utils'

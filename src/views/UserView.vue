@@ -58,7 +58,7 @@
    import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
-   import GalleryThumb from '@/components/gallery/GalleryThumb.vue'
+   import GalleryThumb from '@/components/gallery/thumb/GalleryThumb.vue'
    import ItemThumb    from '@/components/item/thumb/ItemThumb.vue'
    import SwipeWall    from '@/components/wall/SwipeWall.vue'
    import IconButton   from '@/components/util/IconButton.vue'

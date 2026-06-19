@@ -31,7 +31,7 @@
                      <span class="title">{{ gallery.name }} Gallery</span>
                   </v-col>
                   <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
-                     <SizeButton/>
+                     <ThumbSizeButton class="mx-n1"/>
                      <!-- <ExpandItems :items="galleryItems" buttonClass="mr-n2"/> -->
                      <CopyLink :route="Route.GALLERY.name" :id="galleryId"/>
                      <ItemThumbConfig/>
@@ -85,16 +85,16 @@
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import GalleryParentLink   from '@/components/gallery/GalleryParentLink.vue'
-   import GalleryThumb        from '@/components/gallery/GalleryThumb.vue'
+   import GalleryThumb        from '@/components/gallery/thumb/GalleryThumb.vue'
    import EditGalleryCard     from '@/components/gallery/EditGalleryCard.vue'
+   import ItemPopup           from '@/components/item/ItemPopup.vue'
+   import ExpandItems         from '@/components/item/ExpandItems.vue'
    import AddItemDialog       from '@/components/item/crud/AddItemDialog.vue'
    import ItemThumb           from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig     from '@/components/item/thumb/ItemThumbConfig.vue'
-   import ItemPopup           from '@/components/item/ItemPopup.vue'
-   import ExpandItems         from '@/components/item/ExpandItems.vue'
    import EditButton          from '@/components/util/EditButton.vue'
    import CopyLink            from '@/components/util/CopyLink.vue'
-   import SizeButton          from '@/components/util/SizeButton.vue'
+   import ThumbSizeButton     from '@/components/util/ThumbSizeButton.vue'
    import { objAspectRatio } from '@/utils/utils'
    import { ImageType, ItemOrigin, Route } from '@/utils/constants'
   

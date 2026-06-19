@@ -45,11 +45,16 @@
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { handleError, objAspectRatio, thumbBackgroundColorStyle } from '@/utils/utils'
-   import { GalleryThumbOptions, GalleryThumbWidth, ImageType, Route } from '@/utils/constants'
+   import { GalleryThumbOptions, GalleryThumbWidth, ImageType, Route, ThumbSize } from '@/utils/constants'
    
+   // xs is % of width - 4/3/2 thumbs/row
+   const MaxWidths = { 
+      sizes:   new Map([ [ThumbSize.SM, 150], [ThumbSize.MED, 200], [ThumbSize.LG, GalleryThumbWidth] ]),
+      xsSizes: new Map([ [ThumbSize.SM, .22], [ThumbSize.MED, .3], [ThumbSize.LG, .45] ]) }
    const XsGalleryThumbWidth = 125
-   const props = defineProps({ gallery: Object, showChildImages:Boolean, bypassShowUser:Boolean, dense:Boolean })
    
+   const props = defineProps({ gallery: Object, showChildImages:Boolean, bypassShowUser:Boolean, dense:Boolean })
+
    const { width: windowWidth } = useWindowSize()
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
@@ -66,18 +71,17 @@
    onErrorCaptured((err) => { return handleError(err, "GalleryThumb") })
 
    const galleryUrl = computed(() => Route.GALLERY.url + (props.gallery?.tag?.length ? props.gallery.tag : props.gallery.id))
-   const smallThumb = computed(() => viewMgr.isXs && viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SM_THUMB))
    const cardWidth = computed(() =>  {
-      if (viewMgr.isXs) { 
-         // .4 is 2 thumbs/row, .28 is 3 thumbs
-         const galleryWidthPct = smallThumb.value ? .28 : .4
-         return props.dense ? XsGalleryThumbWidth : windowWidth.value * galleryWidthPct
-      } 
-      return GalleryThumbWidth
+      const thumbSize = viewStore.thumbSize
+      let width = viewMgr.isXs ? 
+         windowWidth.value * MaxWidths.xsSizes.get(thumbSize.xsSize) :
+         MaxWidths.sizes.get(thumbSize.size)
+      if (!width) { width = XsGalleryThumbWidth } // failsafe 
+      return width
    })
    
-   const cardMargin  = computed(() => smallThumb.value ? "mb-2" : "mb-5")
-   const textMargin  = computed(() => props.dense || smallThumb.value ? "my-1" : "my-3")
+   const cardMargin  = computed(() => viewMgr.isXs ? "mb-2" : "mb-5")
+   const textMargin  = computed(() => props.dense || viewMgr.isXs ? "my-1" : "my-3")
 
    const carouselHeight   = computed(() => cardWidth * 9 / 16)
    const carouselInterval = computed(() => 4000 + Math.floor(Math.random() * 4000)) // random bet 4-8 secs 

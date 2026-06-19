@@ -6,7 +6,7 @@
    import { computed, ref } from 'vue'
    import { useViewStore } from '@/stores/viewStore'
    import { useViewMgr }   from '@/stores/viewMgr'
-   import IconButton       from './IconButton.vue'
+   import IconButton       from '@/components/util/IconButton.vue'
    import { ThumbSize }    from '@/utils/constants'
    
    const viewStore = useViewStore()
