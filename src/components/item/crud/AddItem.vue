@@ -29,27 +29,23 @@
    import { ref as storageRef } from 'firebase/storage'
    import { uploadBytesResumable, getDownloadURL } from 'firebase/storage'
    import { useUserStore }    from '@/stores/userStore'
-   import { useItemStore }    from '@/stores/itemStore'
    import { useGroupStore }   from '@/stores/groupStore'
    import { useGroupMgr }     from '@/stores/groupMgr'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useArtistStore }  from '@/stores/artistStore'
-   import { useActionStore }  from '@/stores/actionStore'
    import { useImageMgr }     from '@/stores/image/imageMgr'
    import { useViewStore }    from '@/stores/viewStore'
    import { useAddItemImageHandler } from '@/stores/image/addItemImageHandler'
-   import { dateUuid, isPublicOrGroup, requiredRule } from '@/utils/utils'
-   import { ActionStatus, Emit, ItemStates, ImageType, ItemType, State }  from '@/utils/constants'
+   import { dateUuid, requiredRule } from '@/utils/utils'
+   import { Emit, ItemStates, ImageType, ItemType, State }  from '@/utils/constants'
 
    const props = defineProps({ gallery: Object, userId: String })
    const emit  = defineEmits([ Emit.DONE ])
    const userStore    = useUserStore()
-   const itemStore    = useItemStore()
    const groupStore   = useGroupStore()
    const galleryStore = useGalleryStore()
    const groupMgr     = useGroupMgr()
    const artistStore  = useArtistStore()
-   const actionStore  = useActionStore()
    const imageMgr     = useImageMgr()
    const viewStore    = useViewStore()
    const imageHandler = useAddItemImageHandler()
@@ -95,6 +91,7 @@
       }
       return options
    })
+   
    const artist = computed({ 
       get() { return artistOption.value },
       set(option) {
@@ -169,14 +166,7 @@
                   primaryArtist: primaryArtist,
                   primaryImage: imageSet,
                }
-               // console.log("Adding item", item)
-               const addedItem = itemStore.setItem(item)
                
-               // add chained actions to populated thumb images and publish to feed
-               // const chainedActionId = isPublicOrGroup(addedItem) && addedItem.groupIds.length ?
-               //    actionStore.addChainedFeedAction({ ...addedItem }) : null
-               // actionStore.addImageAction(item.id, userId.value, itemImage, chainedActionId)
-
                if (props.gallery) {
                   // add new item at front of gallery
                   const itemIds = [ item.id ]

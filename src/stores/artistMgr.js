@@ -32,11 +32,12 @@ export const useArtistMgr = defineStore('artistMgr', () => {
    }
 
    function getItemArtist(artist) {
-      return { id: artist.id, name: artist.name, fullName: artist.fullName, allNames: artist.allNames } 
+      return { id:artist.id, name:artist.name, fullName:artist.fullName, allNames:artist.allNames,
+         shortName: artist.shortName ?? artist.name } 
    }
 
    function getArtistOption(artist) { 
-      return artist ? { title: artist.fullName, value: getItemArtist(artist) } : null 
+      return artist ? { title:artist.fullName, value:getItemArtist(artist) } : null 
    } 
 
    const artistOptions = computed(() => getArtistOptions(artistStore.artists))

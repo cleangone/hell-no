@@ -49,6 +49,7 @@
    
    const headers = [
       { title: 'Artist',     key: 'name',        value: 'name' },
+      { title: 'Short Name',                     value: 'shortName', sortable: false },
       { title: 'AKA for',    key: 'akaFullName', value: 'akaFullName'},
       { title: 'Items',      key: 'items',         align: 'center' },
       { title: '',           key: "actions",       sortable: false },

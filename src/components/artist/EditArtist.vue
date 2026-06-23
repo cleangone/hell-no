@@ -5,11 +5,12 @@
             <v-row>
                <v-col class="pl-4">
                   <v-text-field v-model="firstName" label="First name" />
-                  <v-text-field v-model="name" label="Last name/name" :rules="requiredRule"/>
+                  <v-text-field v-model="middleName" label="Middle name/initial"/>
                   <v-combobox v-model="akaFor" label="AKA" :items="primaryArtists" clearable compact />
                 </v-col>
                <v-col class="pr-4">
-                  <v-text-field v-model="middleName" label="Middle name/initial"/>
+                  <v-text-field v-model="name" label="Last name/name" :rules="requiredRule"/>
+                  <v-text-field v-model="shortName" label="Short name" :rules="requiredRule"/>
                   <v-text-field v-model="sortName" label="Sort name" :rules="requiredRule"/>
                </v-col>
             </v-row>
@@ -37,6 +38,7 @@
    const firstName  = ref('')
    const middleName = ref('')
    const name       = ref('')
+   const shortName  = ref('')
    const sortName   = ref('')
    const akaFor = ref()
    const dataValid = ref(true)
@@ -45,6 +47,7 @@
       firstName.value  = props.artist.firstName
       middleName.value = props.artist.middleName
       name.value       = props.artist.name
+      shortName.value  = props.artist.shortName
       sortName.value   = props.artist.sortName
 
       if (props.artist.akaForId) {
@@ -65,6 +68,7 @@
          middleName: middleName.value,
          name: name.value,
          fullName: fullName,
+         shortName: shortName.value,
          sortName: sortName.value,
          state: akaPrimaryId ? ArtistState.AKA : ArtistState.PRIMARY,
          akaForId: akaPrimaryId ? akaPrimaryId : "",

@@ -4,7 +4,6 @@
          <IconButton icon="mdi-close" @click="$emit(Emit.DONE)" class="admin-link"/>
       </template>
       <div v-if="isMyItem && isSingleItem"><TextButton text="Edit Images" @click="edit=Edit.IMAGE" class="mx-3"/></div>
-      <div v-if="isMyItem && isGroupItem"><TextButton text="Edit Grouped Items" @click="edit=Edit.GROUPED_ITEMS" class="mx-3"/></div>
       <EditItem :item="item" :items="props.items" @done="$emit(Emit.DONE)"/>
    </v-card>
    <EditImages     v-else-if="edit==Edit.IMAGE"         :item="item" @done="edit=Edit.ITEM" class="edit-item-dialog"/>
@@ -36,7 +35,6 @@
 
    const edit = ref(Edit.ITEM)
    const isSingleItem = computed(() => props.item && props.item.type == ItemType.SINGLE)
-   const isGroupItem  = computed(() => props.item && props.item.type == ItemType.GROUP)
 </script>
 
 <style>

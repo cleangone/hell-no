@@ -44,6 +44,7 @@ import { ItemType, State } from '@/utils/constants'
          id
          name
          fullName
+         shortName
       otherArtists []
       parentItemIds[] - itemGroups this item is part of
       childItems[] - items this itemGroup holds
@@ -156,10 +157,10 @@ export const useItemStore = defineStore('item', () => {
       return map
    }
 
-   const myGroupMemberItemsQuery = computed(() => 
-      groupStore.myGroupIds?.length && 
-      query(itemCollection, where('state', '==', State.GROUP), where('groupIds', 'array-contains-any', groupStore.myGroupIds)))
-   const myGroupMemberItems = useFirestore(myGroupMemberItemsQuery, [])
+   // const myGroupMemberItemsQuery = computed(() => 
+   //    groupStore.myGroupIds?.length && 
+   //    query(itemCollection, where('state', '==', State.GROUP), where('groupIds', 'array-contains-any', groupStore.myGroupIds)))
+   // const myGroupMemberItems = useFirestore(myGroupMemberItemsQuery, [])
 
    function getUserItems(userId)      { return getObjsFromMap(userId, userIdToItems.value) }
    function getUserPubicItems(userId) { return getObjsFromMap(userId, userIdToPublicItems.value) }
@@ -178,11 +179,11 @@ export const useItemStore = defineStore('item', () => {
       return itemToSet
    }
 
-   function updateItem(item)                   { return updateItemDoc(item.id, item) }
-   function addOtherImage(itemId, image)       { updateItemDoc(itemId, { otherImages: arrayUnion(image) },  false) }
-   function removeOtherImage(itemId, image)    { updateItemDoc(itemId, { otherImages: arrayRemove(image) }, false) }
-   function removeGalleryId(itemId, galleryId) { updateItemDoc(itemId, { galleryIds: arrayRemove(galleryId) }) }
-   function updatePrimaryImage(itemId, image)  { updateItemDoc(itemId, { primaryImage: image },  false) }
+   function updateItem(item, contentModified = true) { return updateItemDoc(item.id, item, contentModified) }
+   function addOtherImage(itemId, image)       { silentUpdate(itemId, { otherImages: arrayUnion(image) }) }
+   function removeOtherImage(itemId, image)    { silentUpdate(itemId, { otherImages: arrayRemove(image) }) }
+   function removeGalleryId(itemId, galleryId) { silentUpdate(itemId, { galleryIds: arrayRemove(galleryId) }) }
+   function updatePrimaryImage(itemId, image)  { updateItemDoc(itemId, { primaryImage: image }), true }
    function updateOtherImage(itemId, updatedImage) {
       const images = []
       const item = myItemIdToItem.value.get(itemId)
@@ -190,7 +191,7 @@ export const useItemStore = defineStore('item', () => {
          for (const image of item.otherImages) {
             images.push(image.id == updatedImage.id ? updatedImage : image)
          }
-         updateItemDoc(itemId, { otherImages: images }, false)
+         silentUpdate(itemId, { otherImages: images })
       }
       else { console.log("updateOtherImage cannot find item", itemId)}
    }
@@ -201,16 +202,21 @@ export const useItemStore = defineStore('item', () => {
       else { deleteDoc(doc(itemCollection, id)) }
    }
 
-   function updateItemDoc(itemId, item, updateContentModified = true) {
+   function silentUpdate(itemId, item) { updateItemDoc(itemId, item, false) }
+   function updateItemDoc(itemId, item, contentModified = true) {
       const itemToUpdate = { ...item, versionTag: randomPlate(), dateModified: serverTimestamp() }
-      if (updateContentModified && (item.primaryImage || item.otherImages || item.primaryArtist || item.childItems)) { 
+      if (contentModified && (item.primaryImage || item.primaryArtist || item.childItems)) { 
          itemToUpdate.dateContentModified = serverTimestamp() }
+
+
+      console.log("itemToUpdate", itemToUpdate)
+
       updateDoc(itemDoc(itemId), itemToUpdate)
       return itemToUpdate
    }
 
    return { items, publicItems, childItemIds, itemIdToItem, 
-            myItems, myItemIdToItem, myChildItemIds, myGroupMemberItems,
+            myItems, myItemIdToItem, myChildItemIds,
             getGalleryItems, getArtistItems, getArtistPublicItems, getItem, getUserItems, getUserPubicItems,
             setItem, updateItem, 
             addOtherImage, updatePrimaryImage, updateOtherImage, removeOtherImage, 

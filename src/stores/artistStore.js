@@ -13,6 +13,7 @@ import { ArtistState } from '@/utils/constants'
       firstName
       middleName
       fullName: first middle last
+      shortName
       sortName
       userId: user that created artist 
       visibility: unused, was SITE, USER

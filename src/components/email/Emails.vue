@@ -173,7 +173,7 @@
       selectedEmail.value = email
       showDeleteEmail.value = true
    }
- </script>
+</script>
 
 <style>
 </style>

@@ -199,7 +199,6 @@ export const Route = {
 
 export const State = {
    PUBLIC:    'Public',
-   GROUP:     'Group', // todo - deprecated
    PRIVATE:   'Private',
    HIDDEN:    'Hidden',  
    INVISIBLE: 'Invisible',  

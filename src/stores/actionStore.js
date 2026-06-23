@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { db } from '@/firebase'
 import { collection, doc, setDoc, serverTimestamp, writeBatch } from "firebase/firestore"
 import { useFirestore } from '@vueuse/firebase/useFirestore'
-import { dateUuid, isPublicOrGroup } from '@/utils/utils' 
+import { dateUuid } from '@/utils/utils' 
 import { ActionStatus, ActionType } from '@/utils/constants'
 
 /*
@@ -45,51 +45,51 @@ export const useActionStore = defineStore('action', () => {
       return actionToSet.id
    }
 
-   function addChainedFeedAction(newItem) { return addFeedAction(newItem, null, ActionStatus.CHAINED) }
-   function addFeedAction(newItem, oldItem = null, actionStatus = null) {
-      const actionDetails = { publishToGroupIds: [], retractFromGroupIds: [] }
-      if (isPublicOrGroup(newItem)) {
-         const sameContent = (
-               oldItem &&
-               (newItem.name == oldItem.name) &&
-               ((!newItem.primaryArtist && !oldItem.primaryArtist) || // both null
-                (newItem?.primaryArtist?.id == oldItem?.primaryArtist?.id))) ? true : false
-         if (sameContent) {  
-             // publish item to the new groups
-            for (const groupId of newItem.groupIds) { 
-               if (!oldItem.groupIds.includes(groupId)) { actionDetails.publishToGroupIds.push(groupId) }
-            }
-         }
-         else { 
-            // publish updated item to all groups
-            actionDetails.publishToGroupIds.push( ...newItem.groupIds) 
-         }
+   // function addChainedFeedAction(newItem) { return addFeedAction(newItem, null, ActionStatus.CHAINED) }
+   // function addFeedAction(newItem, oldItem = null, actionStatus = null) {
+   //    const actionDetails = { publishToGroupIds: [], retractFromGroupIds: [] }
+   //    if (isPublicOrGroup(newItem)) {
+   //       const sameContent = (
+   //             oldItem &&
+   //             (newItem.name == oldItem.name) &&
+   //             ((!newItem.primaryArtist && !oldItem.primaryArtist) || // both null
+   //              (newItem?.primaryArtist?.id == oldItem?.primaryArtist?.id))) ? true : false
+   //       if (sameContent) {  
+   //           // publish item to the new groups
+   //          for (const groupId of newItem.groupIds) { 
+   //             if (!oldItem.groupIds.includes(groupId)) { actionDetails.publishToGroupIds.push(groupId) }
+   //          }
+   //       }
+   //       else { 
+   //          // publish updated item to all groups
+   //          actionDetails.publishToGroupIds.push( ...newItem.groupIds) 
+   //       }
          
-         // retract from any old groups that were removed
-         if (oldItem) {
-            for (const groupId of oldItem.groupIds) { 
-               if (!newItem.groupIds.includes(groupId)) { actionDetails.retractFromGroupIds.push(groupId) }
-            }
-         }
-      } 
-      else if (oldItem) {
-         // retract from old groups
-         actionDetails.retractFromGroupIds.push( ...oldItem.groupIds )
-      }
+   //       // retract from any old groups that were removed
+   //       if (oldItem) {
+   //          for (const groupId of oldItem.groupIds) { 
+   //             if (!newItem.groupIds.includes(groupId)) { actionDetails.retractFromGroupIds.push(groupId) }
+   //          }
+   //       }
+   //    } 
+   //    else if (oldItem) {
+   //       // retract from old groups
+   //       actionDetails.retractFromGroupIds.push( ...oldItem.groupIds )
+   //    }
       
-      if (actionDetails.publishToGroupIds.length || actionDetails.retractFromGroupIds.length ) {
-         const feedAction = { 
-            actionType: ActionType.FEED_UPDATE, 
-            actionDetails: actionDetails, 
-            userId: newItem.userId, 
-            item: newItem
-         }
-         if (actionStatus) { feedAction.actionStatus = actionStatus }
-         return addAction(feedAction)
-      }
-      else { console.log("addFeedAction - feed update not needed") }
-      return null
-   }
+   //    if (actionDetails.publishToGroupIds.length || actionDetails.retractFromGroupIds.length ) {
+   //       const feedAction = { 
+   //          actionType: ActionType.FEED_UPDATE, 
+   //          actionDetails: actionDetails, 
+   //          userId: newItem.userId, 
+   //          item: newItem
+   //       }
+   //       if (actionStatus) { feedAction.actionStatus = actionStatus }
+   //       return addAction(feedAction)
+   //    }
+   //    else { console.log("addFeedAction - feed update not needed") }
+   //    return null
+   // }
 
    function addImageAction(itemId, userId, itemImage, chainedActionId = null) {
       console.log("addImageAction", itemId)
@@ -117,5 +117,5 @@ export const useActionStore = defineStore('action', () => {
       batch.commit()
    }
 
-   return { actions, addAction, addFeedAction, addChainedFeedAction, addImageAction, deleteAction, deleteActions }
+   return { actions, addAction, addImageAction, deleteAction, deleteActions }
 })

@@ -35,7 +35,6 @@ export function thumbBackgroundColorStyle(obj) { return isPrivate(obj) || isInvi
 export function backgroundColorStyle(state) { return "background-color: " + backgroundColorCode(state) }
 export function backgroundColorCode(state) {
    if (state == State.PUBLIC)         { return BackgroundColors.GREEN.code }
-   else if (state == State.GROUP)     { return BackgroundColors.YELLOW.code }
    else if (state == State.PRIVATE)   { return BackgroundColors.RED.code }
    else if (state == State.INVISIBLE) { return BackgroundColors.GREY.code }
    
@@ -56,11 +55,9 @@ export const IdSet = class {
 }
 
 export function isPublic(obj)    { return obj && obj.state == State.PUBLIC  }
-export function isGroup(obj)     { return obj && obj.state == State.GROUP   }
 export function isPrivate(obj)   { return obj && obj.state == State.PRIVATE }
 export function isHidden(obj)    { return obj && obj.state == State.HIDDEN  }
 export function isInvisible(obj) { return obj && obj.state == State.INVISIBLE  }
-export function isPublicOrGroup(obj) { return isPublic(obj) || isGroup(obj) }
 export function isOwned(obj, userId) { return obj && userId && obj.userId == userId }   
 
 export function objAspectRatio(object) { return object.width / object.height }

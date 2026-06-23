@@ -3,15 +3,39 @@
       <v-form v-model="dataValid">
          <v-container>
             <v-row>
-               <v-col class="pl-4">
-                  <v-text-field v-model="firstName" label="First name" />
-                  <v-text-field v-model="name" label="Last name/name (Smith, BWS)" :rules="requiredRule"/>
-                  <v-combobox v-model="akaFor" label="AKA" :items="primaryArtists" compact />
-                </v-col>
-               <v-col class="pr-4">
-                  <v-text-field v-model="middleName" label="Middle name/initial"/>
-                  <v-text-field v-model="sortName" label="Sort name (if diff than name)"/>
-                  <div>(Barry Windsor-Smith and BWS are both AKAs for Barry Smith)</div>
+               <v-col><v-text-field v-model="firstName" label="First name"/></v-col>
+               <v-col class="ml-n3">
+                   <v-tooltip text="Last name or moniker (ie. BWS)" location="end">
+                     <template v-slot:activator="{ props }">
+                        <v-text-field v-bind="props" v-model="name" label="Last name/name" :rules="requiredRule"/>
+                     </template>
+                  </v-tooltip>
+               </v-col>
+            </v-row>
+            <v-row class="mt-n8"> 
+               <v-col><v-text-field v-model="middleName" label="Middle name/initial"/></v-col>
+               <v-col class="ml-n3">
+                  <v-tooltip text="Used for small thumbnails. Defaults to name" location="end">
+                     <template v-slot:activator="{ props }">
+                        <v-text-field v-bind="props" v-model="shortName" label="Short name"/>
+                     </template>
+                  </v-tooltip>
+               </v-col>
+            </v-row>
+            <v-row class="mt-n8"> 
+               <v-col>
+                  <v-tooltip text="Ex. Barry Windsor-Smith and BWS are both AKAs for Barry Smith" location="end">
+                     <template v-slot:activator="{ props }">
+                        <v-combobox v-bind="props" v-model="akaFor" label="AKA" :items="primaryArtists" compact/>                 
+                     </template>
+                  </v-tooltip>
+               </v-col>
+               <v-col class="ml-n3">
+                   <v-tooltip text="Defaults to name" location="end">
+                     <template v-slot:activator="{ props }">
+                        <v-text-field v-bind="props" v-model="sortName" label="Sort name"/>
+                     </template>
+                  </v-tooltip>
                </v-col>
             </v-row>
          </v-container>
@@ -36,26 +60,25 @@
    const userStore = useUserStore()
    const artistStore = useArtistStore()
    const artistMgr = useArtistMgr()
-   const firstName = ref('')
+   const firstName  = ref('')
    const middleName = ref('')
-   const name = ref(null)
-   const sortName = ref('')
-   const akaFor = ref()
-   const dataValid = ref(true)
+   const name       = ref(null)
+   const shortName  = ref('')
+   const sortName   = ref('')
+   const akaFor     = ref()
+   const dataValid  = ref(true)
    
    const primaryArtists = computed(() => artistMgr.getPrimaryArtistsForAKA())
 
    const save = () => {
-      // console.log("akaFor", akaFor.value ?  akaFor.value : "")
-      // console.log("state", akaFor.value ? ArtistState.AKA  : ArtistState.PRIMARY)
       const fullName = artistMgr.getFullName(firstName.value, middleName.value, name.value)
       const akaPrimaryId = akaFor.value ? akaFor.value.value.id : null
-
       artistStore.addArtist({ 
          firstName: firstName.value, 
          middleName: middleName.value, 
          name: name.value, 
          fullName: fullName,
+         shortName: shortName.value.length ? shortName.value : name.value,
          sortName: sortName.value.length ? sortName.value : name.value,
          state: akaPrimaryId ? ArtistState.AKA  : ArtistState.PRIMARY,
          akaForId: akaPrimaryId ? akaPrimaryId : "",

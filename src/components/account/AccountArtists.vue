@@ -4,7 +4,7 @@
          Artists <TextButton @click="showAddDialog=true" text="Add Artist"/>
       </div>
       <v-data-table :headers="headers" :items="artists"  :items-per-page="50" density="compact">
-         <template v-slot:item.name="{ item }">
+         <template v-slot:item.fullName="{ item }">
             {{ item.fullName }}
          </template>
          <template v-slot:item.items="{ item }">
@@ -51,10 +51,11 @@
    const selectedArtist = ref({})
    
    const headers = [
-      { title: 'Artist',    key: 'name',        value: 'name' },
+      { title: 'Artist',    key: 'fullName',    value: 'name' }, // value for sorting
+      { title: 'Short Name',                    value: 'shortName', sortable: false },
       { title: 'AKA for',   key: 'akaFullName', value: 'akaFullName' },
-      { title: 'Items',     key: 'items',         align: 'center' },
-      { title: '',          key: "actions",       sortable: false },
+      { title: 'Items',     key: 'items',       align: 'center' },
+      { title: '',          key: "actions",     sortable: false },
    ]
 
    const artists = computed(() => { 

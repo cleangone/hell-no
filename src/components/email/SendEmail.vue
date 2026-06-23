@@ -53,7 +53,10 @@
    const replyContext = ref(null)
    
    onMounted(() => {
-      if (props.emailContext.toContact) { toContact.value = props.emailContext.toContact }
+      if (props.emailContext.toContact) { 
+         toContact.value = { title:props.emailContext.toContact.username, value:props.emailContext.toContact }
+         console.log("toContact", toContact.value)
+      }
       if (props.emailContext.item) {
          subject.value     = props.emailContext.item.name
          emailItemId.value = props.emailContext.item.id

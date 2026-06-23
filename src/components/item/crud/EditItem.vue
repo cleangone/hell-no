@@ -227,7 +227,9 @@
          itemToUpdate.contributingGalleryOwnerIds = contributingGalleryOwnerIds
       }
 
-      itemStore.updateItem(itemToUpdate)
+      const contentModified = currItem.value.primaryArtist?.id != itemToUpdate.primaryArtist?.id
+      console.log("contentModified", contentModified)
+      itemStore.updateItem(itemToUpdate, contentModified)
       
       for (const galleryId of addItemToGalleries) { 
          const { id, primaryImage, otherImages } = currItem.value
