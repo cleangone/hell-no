@@ -5,8 +5,11 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [  
+                           // Add item.allArtistNames for otherArtists search
+                           // Update small ItemThumbSingle to display artist shortName
                            // Fix SendEmail when sending to profile
-   ["v2.35.0", "6/20/26"], // Imitial add of artist.shortName for small thumb
+   ["v2.35.1", "6/23/26"], // Add item.allArtistNames for otherArtists search
+   ["v2.35.0", "6/20/26"], // Initial add of artist.shortName for small thumb
    ["v2.34.1", "6/19/26"], // Integrate gallery thumb size with ThumbSizeButton
    ["v2.34.0", "6/15/26"], // Add SizeButton to click through thumb sizing
    ["v2.33.0", "6/13/26"], // Add artistRole to ItemView, BulkEdit

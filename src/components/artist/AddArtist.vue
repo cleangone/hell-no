@@ -5,37 +5,29 @@
             <v-row>
                <v-col><v-text-field v-model="firstName" label="First name"/></v-col>
                <v-col class="ml-n3">
-                   <v-tooltip text="Last name or moniker (ie. BWS)" location="end">
-                     <template v-slot:activator="{ props }">
-                        <v-text-field v-bind="props" v-model="name" label="Last name/name" :rules="requiredRule"/>
-                     </template>
-                  </v-tooltip>
+                  <ToolTipHover text="Last name or moniker (ie. BWS)" v-slot="{ props }">
+                     <v-text-field v-bind="props" v-model="name" label="Last name/name" :rules="requiredRule"/>
+                  </ToolTipHover>
                </v-col>
             </v-row>
             <v-row class="mt-n8"> 
                <v-col><v-text-field v-model="middleName" label="Middle name/initial"/></v-col>
                <v-col class="ml-n3">
-                  <v-tooltip text="Used for small thumbnails. Defaults to name" location="end">
-                     <template v-slot:activator="{ props }">
-                        <v-text-field v-bind="props" v-model="shortName" label="Short name"/>
-                     </template>
-                  </v-tooltip>
+                   <ToolTipHover text="Used for small thumbnails. Defaults to name" v-slot="{ props }">
+                     <v-text-field v-bind="props" v-model="shortName" label="Short name"/>
+                  </ToolTipHover>
                </v-col>
             </v-row>
             <v-row class="mt-n8"> 
                <v-col>
-                  <v-tooltip text="Ex. Barry Windsor-Smith and BWS are both AKAs for Barry Smith" location="end">
-                     <template v-slot:activator="{ props }">
-                        <v-combobox v-bind="props" v-model="akaFor" label="AKA" :items="primaryArtists" compact/>                 
-                     </template>
-                  </v-tooltip>
+                  <ToolTipHover text="Ex. Barry Windsor-Smith and BWS are both AKAs for Barry Smith" v-slot="{ props }">
+                     <v-combobox v-bind="props" v-model="akaFor" label="AKA" :items="primaryArtists" compact/>                 
+                  </ToolTipHover>
                </v-col>
                <v-col class="ml-n3">
-                   <v-tooltip text="Defaults to name" location="end">
-                     <template v-slot:activator="{ props }">
-                        <v-text-field v-bind="props" v-model="sortName" label="Sort name"/>
-                     </template>
-                  </v-tooltip>
+                  <ToolTipHover text="Defaults to name" v-slot="{ props }">
+                     <v-text-field v-bind="props" v-model="sortName" label="Sort name"/>
+                  </ToolTipHover>
                </v-col>
             </v-row>
          </v-container>
@@ -52,6 +44,7 @@
    import { useUserStore }   from '@/stores/userStore'
    import { useArtistStore } from '@/stores/artistStore'
    import { useArtistMgr }   from '@/stores/artistMgr'
+   import ToolTipHover       from '@/components/util/ToolTipHover.vue'
    import { requiredRule } from '@/utils/utils'
    import { ActionType, ArtistState, Emit } from '@/utils/constants'
    

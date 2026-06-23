@@ -40,6 +40,7 @@ import { ItemType, State } from '@/utils/constants'
          ...primaryImage
          name
          showWithItem: boolean - image is shown as one of item's images
+      allArtistNames - populated by backend
       primaryArtist
          id
          name
