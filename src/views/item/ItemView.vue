@@ -18,7 +18,7 @@
       <div v-if="paramItem.size" class="mt-n2">{{ paramItem.size }}</div>
       <div v-if="itemUser" class="mt-n1">
          From <RouterLink :to="Route.USER.url + fromUser.id">{{ fromUser.username }}</RouterLink> 
-         <IconButton v-if="!isOwnedByUser" icon="mdi-email" @click="sendEmail()"/>
+         <EmailButton v-if="!isOwnedByUser || itemProfile" :user="itemUser" :profile="itemProfile" :item="paramItem"/>
       </div>
       <div v-if="isOwnedByUser && !isPublic(paramItem)">{{ paramItem.state }}</div> 
       <div v-html="paramItem.desc" class="mt-3 mb-1"></div>
@@ -167,10 +167,11 @@
    import ExpandItems         from '@/components/item/ExpandItems.vue'
    import ShowItemImages      from '@/components/item/ShowItemImages.vue'
    import ShowItemGroupImages from '@/components/item/ShowItemGroupImages.vue'
-   import EditItemDialog   from '@/components/item/crud/EditItemDialog.vue'
-   import EditButton       from '@/components/util/EditButton.vue'
-   import IconButton       from '@/components/util/IconButton.vue'
-   import CopyLink         from '@/components/util/CopyLink.vue'
+   import EditItemDialog      from '@/components/item/crud/EditItemDialog.vue'
+   import EmailButton         from '@/components/email/EmailButton.vue'
+   import EditButton          from '@/components/util/EditButton.vue'
+   import IconButton          from '@/components/util/IconButton.vue'
+   import CopyLink            from '@/components/util/CopyLink.vue'
    import { isOwned, isPublic, populated } from '@/utils/utils'
    import { ImageType, ItemNavAction, ItemOrigin, Route } from '@/utils/constants'
 
@@ -269,8 +270,9 @@
       return null
    })
 
-   const fromUser = computed(() => paramItem.value.profileId ?
-      { id: paramItem.value.profileId, username: profileStore.getUsername(paramItem.value.profileId) } :
+   const itemProfile = computed(() => paramItem.value.profileId ?
+      { id: paramItem.value.profileId, username: profileStore.getUsername(paramItem.value.profileId) } : null)
+   const fromUser = computed(() => itemProfile.value ?? 
       { id: paramItem.value.userId,    username: itemUser.value ? itemUser.value.username : null })
 
    const originGalleryId = computed(() => originGallery.value ? originGallery.value.id : null)
@@ -382,11 +384,6 @@
       const childTargetWidth =  
          Math.round(totalTargetWidth * paramItem.value.childItems[index].primaryImage.dimensions.width / childItemsTotalWidth.value)
       return childTargetWidth
-   }
-   
-   const sendEmail = () => {
-      viewStore.setEmailContext(itemUser.value, paramItem.value)
-      router.push(Route.MESSAGE.url)
    }
 
    // --- onKeyStroke, also active in fullscreen mode --------------------------

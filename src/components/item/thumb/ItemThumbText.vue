@@ -1,9 +1,9 @@
 <template>
-   <div v-if="showTitle || showArtist" class="text-body-2"> 
-      <div v-if="showTitle" showTitle :class="isXsSmThumb?'':'font-weight-bold'">{{ itemName }}</div>
-      <ItemArtistYear v-if="showArtist" :item="item"/>
+   <div v-if="showTitle||showArtist||showYear||fromUser||date" class="text-body-2"> 
+      <div v-if="showTitle" :class="isXsSmThumb?'':'font-weight-bold'" >{{ itemName }}</div>
+      <ItemArtistYear :item="item" :showArtist="showArtist" :showYear="showYear" :isXsSmThumb="isXsSmThumb"/>
+      <UserDateText :user="fromUser" :date="date"/>
    </div>
-   <UserDateText :user="fromUser" :date="date" class="text-body-2"/>
 </template>
 
 <script setup>
@@ -34,6 +34,7 @@
    })
    const showTitle        = computed(() => selectedFields.value.includes(ThumbOptions.TITLE))
    const showArtist       = computed(() => selectedFields.value.includes(ThumbOptions.ARTIST))
+   const showYear         = computed(() => selectedFields.value.includes(ThumbOptions.YEAR))
    const showUser         = computed(() => !props.bypassShowUser && selectedFields.value.includes(ThumbOptions.USER))
    const showDateModified = computed(() => selectedFields.value.includes(ThumbOptions.UPDATED))
    

@@ -149,6 +149,7 @@ export const ItemType = {
 export const ItemThumbOptions = { 
    TITLE:    'Title',
    ARTIST:   'Artist',
+   YEAR:     'Year',
    UPDATED:  'Date Updated',
    USER:     'User',
 } 

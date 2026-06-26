@@ -6,7 +6,7 @@
             <div class="title">{{ displayName }} </div>
          </v-col>
          <v-col cols="2" class="mr-n2 d-flex flex-grow-0 flex-shrink-0 justify-end">
-            <IconButton v-if="userExists" icon="mdi-email" @click="sendEmail()"/>
+            <EmailButton v-if="userExists" :user="user" :profile="rawProfile"/>
          </v-col>
       </v-row>
    </v-container>
@@ -48,7 +48,7 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useSeoMeta } from '@unhead/vue'
-   import { useRoute, useRouter } from 'vue-router'
+   import { useRoute }   from 'vue-router'
    import { useElementSize } from '@vueuse/core'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
@@ -61,13 +61,12 @@
    import GalleryThumb from '@/components/gallery/thumb/GalleryThumb.vue'
    import ItemThumb    from '@/components/item/thumb/ItemThumb.vue'
    import SwipeWall    from '@/components/wall/SwipeWall.vue'
-   import IconButton   from '@/components/util/IconButton.vue'
+   import EmailButton  from '@/components/email/EmailButton.vue'
    import { ThumbRow } from '@/utils/utilClasses'
    import { randomizeArray } from '@/utils/utils'
    import { DefaultWall, GalleryThumbWidth, ItemOrigin, Route, WallRowHeight } from '@/utils/constants'
    
    const route  = useRoute()
-   const router = useRouter()
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
    const itemMgr      = useItemMgr()
@@ -161,11 +160,6 @@
       const urls = itemMgr.getPublicGalleryThumbUrls(userId.value, profileId.value)
       return urls.length ? randomizeArray(urls)[0] : wallMgr.randomWallImage
    })
-
-   const sendEmail = () => {
-      viewStore.setEmailContext(user.value)
-      router.push(Route.MESSAGE.url)
-   }
 </script>
 
 <style>

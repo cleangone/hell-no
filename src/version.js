@@ -4,10 +4,9 @@
       - lazy loading in router - chunk retrieval errors with Admin, others
       - requiredRule does not invalidate "   "
 */
-export const versions = [  
-                           // Add item.allArtistNames for otherArtists search
-                           // Update small ItemThumbSingle to display artist shortName
-                           // Fix SendEmail when sending to profile
+export const versions = [                 
+   ["v2.35.2", "6/24/26"], // Update small thumb artist name display
+                           // Update SendEmail To: when sending to profile
    ["v2.35.1", "6/23/26"], // Add item.allArtistNames for otherArtists search
    ["v2.35.0", "6/20/26"], // Initial add of artist.shortName for small thumb
    ["v2.34.1", "6/19/26"], // Integrate gallery thumb size with ThumbSizeButton

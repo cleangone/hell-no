@@ -23,7 +23,7 @@
    import { ItemThumbOptions as ThumbOptions } from '@/utils/constants'
 
    const viewStore = useViewStore()
-   const options = [ ThumbOptions.TITLE, ThumbOptions.ARTIST, ThumbOptions.USER, ThumbOptions.UPDATED ]
+   const options = [ ThumbOptions.TITLE, ThumbOptions.ARTIST, ThumbOptions.YEAR, ThumbOptions.USER, ThumbOptions.UPDATED ]
 
    const selectedOptions = computed({ 
       get() { return viewStore.itemThumbOptions },
