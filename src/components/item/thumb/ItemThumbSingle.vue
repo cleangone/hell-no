@@ -1,10 +1,10 @@
 <template>
-   <v-card :width="cardWidth" ref="cardRef"  style="z-index: 1"
-         class="mb-5 d-flex flex-column text-center thumb-container thumb-link">
+   <v-card :width="cardWidth" ref="cardRef" style="z-index: 1" :class="cardMargin"
+         class="d-flex flex-column text-center thumb-container thumb-link">
       <RouterLink :to="itemURL">
          <v-img :src="thumbUrl" @mouseover="mouseover()" @mouseleave="mouseleave()"></v-img>
       </RouterLink>
-      <ItemThumbText :item="item" :origin="origin" :useAltName="useAltName" :useLocalName="useLocalName" 
+      <ItemThumbText v-if="showText" :item="item" :origin="origin" :useAltName="useAltName" :useLocalName="useLocalName" 
          :bypassShowUser="bypassShowUser" :showDateViewed="showDateViewed"/>
    </v-card>
    
@@ -25,8 +25,8 @@
       item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean, showDateViewed:Boolean })
 
    const MaxLandscapeWidths = { 
-      sizes:   new Map([ [ThumbSize.SM, 200], [ThumbSize.MED, 250], [ThumbSize.LG, Defaults.MAX_THUMB_SIDE] ]),
-      xsSizes: new Map([ [ThumbSize.SM, 125], [ThumbSize.MED, 175], [ThumbSize.LG, Defaults.MAX_THUMB_SIDE] ]) }
+      sizes:   new Map([ [ThumbSize.IMG, 200], [ThumbSize.SM, 200], [ThumbSize.MED, 250], [ThumbSize.LG, Defaults.MAX_THUMB_SIDE] ]),
+      xsSizes: new Map([ [ThumbSize.IMG, 125], [ThumbSize.SM, 125], [ThumbSize.MED, 175], [ThumbSize.LG, Defaults.MAX_THUMB_SIDE] ]) }
       
    const itemMgr   = useItemMgr()
    const viewStore = useViewStore()
@@ -42,20 +42,21 @@
       const id = props.item.linkId ? props.item.linkId : props.item.id
       return itemMgr.itemURL(id, props.origin, props.item.childNum)
    })
-   const thumbUrl = computed(() => item.value.primaryImage.thumbUrl)
-   const artist   = computed(() => item.value.primaryArtist ? item.value.primaryArtist.fullName : null)
-   
+   const thumbUrl    = computed(() => item.value.primaryImage.thumbUrl)
+   const artist      = computed(() => item.value.primaryArtist ? item.value.primaryArtist.fullName : null)
+   const thumbSize   = computed(() => viewMgr.isXs ? viewStore.thumbSize.xsSize : viewStore.thumbSize.size)
+   const showText    = computed(() => thumbSize.value != ThumbSize.IMG)
    const aspectRatio = computed(() => itemMgr.itemAspectRatio(item.value))
-   const cardWidth = computed(() => { 
+   const cardMargin  = computed(() => showText.value ? "mb-5" : "mb-2")
+   const cardWidth   = computed(() => { 
       const targetHeight = viewMgr.targetThumbHeight
       let targetWidth = Math.round(targetHeight * aspectRatio.value)
       if (targetWidth > Defaults.MAX_THUMB_SIDE) { targetWidth = Defaults.MAX_THUMB_SIDE}
       
       if (aspectRatio.value > 2 && targetWidth == Defaults.MAX_THUMB_SIDE) {
-         const thumbSize = viewStore.thumbSize
          targetWidth = viewMgr.isXs ? 
-            MaxLandscapeWidths.xsSizes.get(thumbSize.xsSize) :
-            MaxLandscapeWidths.sizes.get(thumbSize.size)
+            MaxLandscapeWidths.xsSizes.get(thumbSize.value) :
+            MaxLandscapeWidths.sizes.get(thumbSize.value)
       }
       return targetWidth
    })

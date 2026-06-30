@@ -59,7 +59,9 @@ export const useViewStore = defineStore('view', () => {
    }
    function resetItemThumbOptions() { setItemThumbOptions(defaultItemThumbOptions) }
  
-   const DEFAULT_THUMB_SIZE = { size: ThumbSize.MED, xsSize: ThumbSize.MED }
+   const DEFAULT_THUMB_SIZE = { 
+      size: ThumbSize.MED,        xsSize: ThumbSize.MED, 
+      gallerySize: ThumbSize.MED, galleryXsSize: ThumbSize.MED }
    const currThumbSize = ref({ ...DEFAULT_THUMB_SIZE })
    const thumbSize = computed(() => userStore.mySettings?.thumbSize ?? currThumbSize.value )
    function setThumbSize(thumbSize) { 

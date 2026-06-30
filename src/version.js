@@ -5,6 +5,8 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [                 
+   ["v2.36.0", "6/29/26"], // Add IMG thumbSize for small image with no text, separate galleryThumb sizes
+   ["v2.35.3", "6/28/26"], // EditArtist updates items associated with artist
    ["v2.35.2", "6/24/26"], // Update small thumb artist name display
                            // Update SendEmail To: when sending to profile
    ["v2.35.1", "6/23/26"], // Add item.allArtistNames for otherArtists search

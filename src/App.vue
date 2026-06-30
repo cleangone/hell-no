@@ -96,7 +96,7 @@
                   <Icon icon="mdi-dice-multiple" @click="toRoute(Route.RANDOM)"/>
                </span>
                <span v-else-if="isRoute(Route.GALLERIES)" class="text-no-wrap">
-                   <ThumbSizeButton/>
+                   <ThumbSizeButton :thumbType="ThumbType.GALLERY"/>
                    <GalleryThumbConfig/>
                </span>
                <span v-else-if="inRoutes(Route.GALLERY, Route.RECENT, Route.SEARCH, Route.FAVORITES)" class="text-no-wrap"> 
@@ -208,7 +208,7 @@
    import ToggleIcon          from '@/components/util/ToggleIcon.vue'
    import YouTubeAudio        from '@/components/util/YouTubeAudio.vue'
    import { handleError } from '@/utils/utils'
-   import { Defaults, Route } from '@/utils/constants'
+   import { Defaults, Route, ThumbType } from '@/utils/constants'
    import { versions }   from '@/version'
 
    const route = useRoute()

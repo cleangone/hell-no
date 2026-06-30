@@ -106,15 +106,12 @@ export const useItemStore = defineStore('item', () => {
       return galleryItems
    }
 
-   function getArtistItems(artistId) {
-      const artistItems = artistIdToItems.value.get(artistId)
-      return artistItems ? artistItems : []
-   }
+   function getArtistItems(artistId) { return artistIdToItems.value.get(artistId) ?? [] }
 
    function getArtistPublicItems(artistIds) {
       const artistsItems = []
       for (const artistId of artistIds) {
-         const artistItems = artistIdToPublicItems.value ? artistIdToPublicItems.value.get(artistId) : []
+         const artistItems = artistIdToPublicItems.value.get(artistId) 
          if (artistItems) { artistsItems.push(...artistItems) }
       }
       return artistsItems

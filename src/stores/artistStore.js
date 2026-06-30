@@ -19,7 +19,7 @@ import { ArtistState } from '@/utils/constants'
       visibility: unused, was SITE, USER
       state: ArtistState: PRIMARY, AKA
       akaForId
-      allNames: concatintaed string of all names & AKAs, ie "Barry Smith Windsor-Smith BWS"
+      allNames: concatintaed string of all names & AKAs, ie "Barry Smith Windsor-Smith BWS", populated by backend
       dateCreated
       dateModified
 */

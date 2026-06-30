@@ -152,14 +152,7 @@ export const ItemThumbOptions = {
    YEAR:     'Year',
    UPDATED:  'Date Updated',
    USER:     'User',
-} 
-
-export const ThumbHeights = { sizes:[150, 200, 250], xsSizes:[125, 150, 200] }
-export const ThumbSize = { 
-   SM:  'Small',
-   MED: 'Med',
-   LG:  'Large',
-}   
+}  
 
 export const LogEntryType = {
    ERROR:   'Error',
@@ -208,10 +201,19 @@ export const ItemStates    = [ State.PUBLIC, State.PRIVATE, State.INVISIBLE, Sta
 export const GalleryStates = [ State.PUBLIC, State.PRIVATE, State.INVISIBLE ]
 export const GroupStates   = [ State.PUBLIC, State.GROUP, State.PRIVATE ]
 
+export const ThumbHeights = { sizes:[150, 150, 200, 250], xsSizes:[125, 125, 150, 200] }
+export const ThumbSize = { 
+   IMG: 'Image', // small image only
+   SM:  'Small',
+   MED: 'Med',
+   LG:  'Large',
+}  
+
 export const ThumbType = {
-   GALLERY:   'Gallery',
-   RECENT:    'Recent',
-   FEED:      'Feed',
+   ITEM:       'Item',
+   GALLERY:    'Gallery',
+   RECENT:     'Recent',
+   FEED:       'Feed',
 }
 
 export const TodoType = {

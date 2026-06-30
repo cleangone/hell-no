@@ -12,15 +12,12 @@
          </v-carousel>
          <v-img v-else :src="galleryImage.thumbUrl" @mouseover="mouseover()" @mouseleave="mouseleave()"></v-img>
       </RouterLink>
-      <div :class="textMargin">
+      <div v-if="showText" :class="textMargin">
          <div class="text-body-2">
             <span class="font-weight-bold">{{ gallery.name }}</span>
             <span v-if="visibleItemCount" class="ml-1">({{ visibleItemCount }})</span>
          </div>
          <UserDateText :user="fromUser" :date="showDateModified ? gallery.dateContentModified : null" class="text-body-2"/>
-      </div>
-      <div v-if="editInPlace" class="mt-auto text-right">
-         <EditButton @click="showEditDialog=true" ></EditButton>
       </div>
    </v-card>
    
@@ -36,7 +33,6 @@
    import { useWindowSize } from '@vueuse/core'
    import ItemPopup    from '@/components/item/ItemPopup.vue'
    import EditGallery  from '@/components/gallery/EditGallery.vue'
-   import EditButton   from '@/components/util/EditButton.vue'
    import UserDateText from '@/components/util/UserDateText.vue'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
@@ -49,9 +45,8 @@
    
    // xs is % of width - 4/3/2 thumbs/row
    const MaxWidths = { 
-      sizes:   new Map([ [ThumbSize.SM, 150], [ThumbSize.MED, 200], [ThumbSize.LG, GalleryThumbWidth] ]),
-      xsSizes: new Map([ [ThumbSize.SM, .22], [ThumbSize.MED, .3], [ThumbSize.LG, .45] ]) }
-   const XsGalleryThumbWidth = 125
+      sizes:   new Map([ [ThumbSize.IMG, 150], [ThumbSize.SM, 150], [ThumbSize.MED, 200], [ThumbSize.LG, GalleryThumbWidth] ]),
+      xsSizes: new Map([ [ThumbSize.IMG, .22],  [ThumbSize.SM, .22], [ThumbSize.MED, .3], [ThumbSize.LG, .45] ]) }
    
    const props = defineProps({ gallery: Object, showChildImages:Boolean, bypassShowUser:Boolean, dense:Boolean })
 
@@ -71,14 +66,12 @@
    onErrorCaptured((err) => { return handleError(err, "GalleryThumb") })
 
    const galleryUrl = computed(() => Route.GALLERY.url + (props.gallery?.tag?.length ? props.gallery.tag : props.gallery.id))
-   const cardWidth = computed(() =>  {
-      const thumbSize = viewStore.thumbSize
-      let width = viewMgr.isXs ? 
-         windowWidth.value * MaxWidths.xsSizes.get(thumbSize.xsSize) :
-         MaxWidths.sizes.get(thumbSize.size)
-      if (!width) { width = XsGalleryThumbWidth } // failsafe 
-      return width
-   })
+   const thumbSize  = computed(() => viewMgr.isXs ? viewStore.thumbSize.galleryXsSize : viewStore.thumbSize.gallerySize)
+   const showText   = computed(() => thumbSize.value != ThumbSize.IMG)
+   const cardWidth = computed(() => viewMgr.isXs ? 
+      windowWidth.value * MaxWidths.xsSizes.get(thumbSize.value) :
+      MaxWidths.sizes.get(thumbSize.value)
+   )
    
    const cardMargin  = computed(() => viewMgr.isXs ? "mb-2" : "mb-5")
    const textMargin  = computed(() => props.dense || viewMgr.isXs ? "my-1" : "my-3")
@@ -125,7 +118,6 @@
       return galleryImages.value[galleryImageIndex.value]
    })
 
-   const editInPlace = computed(() => viewStore.editInPlace && (userStore.userId == props.gallery.userId) )
    const backgroundStyle = computed(() => thumbBackgroundColorStyle(props.gallery))
 
    const mouseover = () => {

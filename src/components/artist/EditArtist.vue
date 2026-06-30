@@ -27,6 +27,7 @@
    import { computed, onMounted, ref } from 'vue'
    import { useArtistStore } from '@/stores/artistStore'
    import { useArtistMgr }   from '@/stores/artistMgr'
+   import { useItemStore }   from '@/stores/itemStore'
    import { requiredRule } from '@/utils/utils'
    import { ActionType, ArtistState, Emit } from '@/utils/constants'
    
@@ -35,6 +36,7 @@
 
    const artistStore = useArtistStore()
    const artistMgr   = useArtistMgr()
+   const itemStore   = useItemStore()   
    const firstName  = ref('')
    const middleName = ref('')
    const name       = ref('')
@@ -75,6 +77,24 @@
          allNames: fullName,
          action: akaPrimaryId || artistMgr.hasAKAs(props.artist.id) ? ActionType.PROCESS : "" 
       })
+
+      // users can edit artists they created if they own all the items linked to the artist 
+      // admin can update any
+
+      // ugly workaround - backend updates allNames of this artist and any related by aka 
+      // item update eventually done by backend and incorporate otherArtists
+      if (props.artist.fullName != fullName || props.artist.shortName != shortName.value) {
+         setTimeout(() => { 
+            const updatedArtist = artistStore.getArtist(props.artist.id) 
+            const itemArtist = artistMgr.getItemArtist(updatedArtist)
+            for (const item of itemStore.getArtistItems(props.artist.id) ) {
+               if (item.primaryArtist.id == itemArtist.id) {
+                  console.log("Updating artist for " + item.name)
+                  itemStore.updateItem({ id: item.id, primaryArtist: itemArtist}, false)
+               }
+            }
+         }, 30000) // 20 seconds - allows backend to update allNames
+      }
    
       emit(Emit.DONE)
    }

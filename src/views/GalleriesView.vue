@@ -11,7 +11,7 @@
             <div v-else-if="viewMgr.solo" class="text-subtitle-1 mt-n2 mb-2">Solo Mode</div>
          </v-col>      
          <v-col cols="1" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
-            <ThumbSizeButton/>
+            <ThumbSizeButton :thumbType="ThumbType.GALLERY"/>
             <SortButton :sortByDate="sortByDate" @click="sortByDate=!sortByDate" class="mx-2"/>
             <GalleryThumbConfig/>
          </v-col>
@@ -41,7 +41,7 @@
    import SortButton          from '@/components/util/SortButton.vue'
    import ThumbSizeButton     from '@/components/util/ThumbSizeButton.vue'
    import { handleError, isPrivate } from '@/utils/utils'
-   import { Defaults, GalleryThumbOptions, Route } from '@/utils/constants'
+   import { Defaults, GalleryThumbOptions, Route, ThumbType } from '@/utils/constants'
   
    const route = useRoute()
    const userStore    = useUserStore()
