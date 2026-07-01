@@ -73,6 +73,7 @@
                <span v-else-if="isRoute(Route.SEARCH)">{{ Route.SEARCH.display }}</span>
                <span v-else-if="isRoute(Route.FAVORITES)">{{ Route.FAVORITES.display }}</span>
                <span v-else-if="isRoute(Route.RECENT)">{{ Route.RECENT.display }}</span>
+               <span v-else-if="isRoute(Route.VIEWED)">{{ (viewStore.sortRecentViewed ? "" : "Least ") + "Recent Viewed" }}</span>
                <span v-else-if="isRoute(Route.ABOUT)">{{ Route.ABOUT.display }}</span>
                <span v-else-if="isRoute(Route.USER)">{{ username }}</span>
                <span v-else-if="isRoute(Route.MESSAGE)">{{ Route.MESSAGE.display }}</span>
@@ -102,6 +103,10 @@
                <span v-else-if="inRoutes(Route.GALLERY, Route.RECENT, Route.SEARCH, Route.FAVORITES)" class="text-no-wrap"> 
                   <ThumbSizeButton/>
                   <ItemThumbConfig/>
+               </span>
+               <span v-else-if="inRoutes(Route.VIEWED)" class="text-no-wrap"> 
+                  <ViewedSortButton class="mr-2"/>
+                   <ThumbSizeButton/>
                </span>
                <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD)">
                   <ToggleIcon icon="mdi-gesture-swipe" :state="viewStore.isMobileSwipe" @click="viewStore.toggleMobileSwipe()"/>
@@ -207,6 +212,7 @@
    import ThumbSizeButton     from '@/components/util/ThumbSizeButton.vue'
    import ToggleIcon          from '@/components/util/ToggleIcon.vue'
    import YouTubeAudio        from '@/components/util/YouTubeAudio.vue'
+   import ViewedSortButton    from '@/views/viewed/ViewedSortButton.vue'
    import { handleError } from '@/utils/utils'
    import { Defaults, Route, ThumbType } from '@/utils/constants'
    import { versions }   from '@/version'

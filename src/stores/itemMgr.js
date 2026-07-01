@@ -187,15 +187,16 @@ export const useItemMgr = defineStore('itemMgr', () => {
       }
       
       const extractedItem = { ...item.childItems[childNum - 1] }
-      extractedItem.id          = "ex-" + item.id + "-" + extractedItem.id
-      extractedItem.linkId      = item.id
-      extractedItem.userId      = item.userId
-      extractedItem.childNum    = item.childNum
-      extractedItem.state       = item.state
-      extractedItem.yearCreated = item.yearCreated
-      extractedItem.groupIds    = item.groupIds
-      extractedItem.galleryIds  = item.galleryIds
-      extractedItem.onUserWall  = item.onUserWall
+      extractedItem.id            = "ex-" + item.id + "-" + extractedItem.id
+      extractedItem.linkId        = item.id
+      extractedItem.userId        = item.userId
+      extractedItem.childNum      = item.childNum
+      extractedItem.state         = item.state
+      extractedItem.primaryArtist = item.primaryArtist
+      extractedItem.yearCreated   = item.yearCreated
+      extractedItem.groupIds      = item.groupIds
+      extractedItem.galleryIds    = item.galleryIds
+      extractedItem.onUserWall    = item.onUserWall
       extractedItem.dateContentModified = item.dateContentModified
       if (item.isFeedItem) {
          extractedItem.isFeedItem = item.isFeedItem

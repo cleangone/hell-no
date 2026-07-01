@@ -9,7 +9,6 @@
    import IconButton       from '@/components/util/IconButton.vue'
    import { ThumbSize, ThumbType } from '@/utils/constants'
    
-
    const props = defineProps({
       thumbType: { type: String, default: ThumbType.ITEM },
    })
@@ -23,9 +22,7 @@
       else if (props.thumbType == ThumbType.ITEM) { thumbSize.size = getNextSize(thumbSize.size) }
       else if (viewMgr.isXs) { thumbSize.galleryXsSize = getNextSize(thumbSize.galleryXsSize) }
       else { thumbSize.gallerySize = getNextSize(thumbSize.gallerySize) }
-      
       viewStore.setThumbSize(thumbSize) 
-      console.log("thumbSize", props.thumbType, thumbSize)
    }
 
    const getNextSize = (size) => { 

@@ -6,7 +6,8 @@
             <div v-if="viewMgr.isDeskTop" class="title">{{ title }}</div>
          </v-col>
          <v-col v-if="viewMgr.isDeskTop" cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
-            <IconButton :icon="sortIcon" @click="toggleSort()" size="med" class="mr-2"/>
+            <ViewedSortButton class="mr-2"/>
+            <ThumbSizeButton class="mr-2"/>
             <ItemThumbConfig/>
          </v-col>
       </v-row>
@@ -26,17 +27,16 @@
    import { useViewMgr }   from '@/stores/viewMgr'
    import ItemThumb        from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig  from '@/components/item/thumb/ItemThumbConfig.vue'
-   import IconButton       from '@/components/util/IconButton.vue'
+   import ThumbSizeButton  from '@/components/util/ThumbSizeButton.vue'  
+   import ViewedSortButton from './ViewedSortButton.vue'  
    import { ItemOrigin, Route } from '@/utils/constants'
    
    const itemMgr   = useItemMgr()
    const viewStore = useViewStore()
    const viewMgr   = useViewMgr()
-   const sortRecent = ref(true)
    
-   const title        = computed(() => sortRecent.value ? "Recent Viewed" : "Least Recent Viewed")
-   const sortIcon     = computed(() => sortRecent.value ? "mdi-sort-calendar-ascending" : "mdi-sort-calendar-descending")
-   const displayItems = computed(() => sortRecent.value ? recentViewedItems.value : oldestViewedItems.value)
+   const title        = computed(() => viewStore.sortRecentViewed ? "Recent Viewed" : "Least Recent Viewed")
+   const displayItems = computed(() => viewStore.sortRecentViewed ? recentViewedItems.value : oldestViewedItems.value)
    
    const recentViewedItems = computed(() => {
       const items = itemMgr.recentViewedPublicItems
@@ -45,8 +45,6 @@
    })
 
    const oldestViewedItems = computed(() => recentViewedItems.value.toSorted(function(a, b) {return a.dateViewed - b.dateViewed}))
-   
-   const toggleSort = () => { sortRecent.value = !sortRecent.value } 
 </script>
 
 <style>

@@ -7,7 +7,7 @@
             @mouseover="mouseover(childItem)" @mouseleave="mouseleave()" 
             :class="index?'next-image':'first-image'"/>
       </RouterLink>
-      <ItemThumbText :item="item" :origin="origin" :useAltName="useAltName" :useLocalName="useLocalName" 
+      <ItemThumbText v-if="showText" :item="item" :origin="origin" :useAltName="useAltName" :useLocalName="useLocalName" 
          :bypassShowUser="bypassShowUser" :showDateViewed="showDateViewed"/>
    </v-card>
 
@@ -16,21 +16,26 @@
 
 <script setup>
    import { computed, ref } from 'vue'
-   import { useItemMgr } from '@/stores/itemMgr'
-   import { useViewMgr } from '@/stores/viewMgr'
+   import { useItemMgr }   from '@/stores/itemMgr'
+   import { useViewStore } from '@/stores/viewStore'
+   import { useViewMgr }   from '@/stores/viewMgr'
    import ItemPopup     from '@/components/item/ItemPopup.vue'
    import ItemThumbText from './ItemThumbText.vue'
+   import { ThumbSize } from '@/utils/constants'
    
    const props = defineProps({ 
       item:Object, origin:String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean, showDateViewed:Boolean })
 
-   const itemMgr = useItemMgr()
-   const viewMgr = useViewMgr()
+   const itemMgr   = useItemMgr()
+   const viewStore = useViewStore()
+   const viewMgr   = useViewMgr()
    const cardRef = ref(null)
    const popup = ref(null)
    const mouseleaveTime = ref(Date.now())
    
-   const childItems = computed(() => { return props.item.childItems })
+   const childItems = computed(() => props.item.childItems)
+   const thumbSize  = computed(() => viewMgr.isXs ? viewStore.thumbSize.xsSize : viewStore.thumbSize.size)
+   const showText   = computed(() => thumbSize.value != ThumbSize.IMG)
 
    const groupWidth = computed(() => { 
       let totalWidth = 0
