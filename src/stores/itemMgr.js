@@ -126,6 +126,11 @@ export const useItemMgr = defineStore('itemMgr', () => {
       return urls
    }
 
+   function mobileImageUrl(image) { 
+      return image.mobileUrl && (image.dimensions?.height > 1500 || image.dimensions?.width > 1500) ? 
+         image.mobileUrl : image.url 
+   }
+
    function isItemGroup(item) { return item.type == ItemType.GROUP }
    function itemAspectRatio(item) { 
       // console.log("itemAspectRatio", item)
@@ -238,6 +243,6 @@ export const useItemMgr = defineStore('itemMgr', () => {
       getItems, getRandomItems, getProfileCount, getPublicGalleryThumbs, getPublicGalleryThumbUrls,
       recentPublicItems, recentGroupMemberItems, myRecentItems, getRecentItems, getRecentPublicItems, 
       recentViewedPublicItems,
-      isItemGroup, ungroupItems, ungroupItem, ungroupAndExtractItems, extractFromItemGroup,
+      mobileImageUrl, isItemGroup, ungroupItems, ungroupItem, ungroupAndExtractItems, extractFromItemGroup,
       itemAspectRatio, itemNavURL, itemURL, getPopupImage }
 })

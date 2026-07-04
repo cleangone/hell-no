@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { storage } from '@/firebase'
 import { ref as storageRef, getDownloadURL, deleteObject } from 'firebase/storage'
 import { dateUuid } from '@/utils/utils'
-import { ImageType } from '@/utils/constants'
+import { FileSuffix, ImageType } from '@/utils/constants'
    
 export const useImageMgr = defineStore('imageMgr', () => {   
    const MAX_RETRIES  = 10
@@ -10,16 +10,15 @@ export const useImageMgr = defineStore('imageMgr', () => {
 
    function createImageSet(imageType, subDir = null) {
       const id = dateUuid()
-      // const dir = "  images/" + (subDir ? subDir + "/" : "")
       const dir = "images/" + (subDir ? subDir + "/" : "")
       const filePath = dir + id 
-
       return { 
          id: id, 
          imageType: imageType,
          filePath:           filePath,
-         thumbFilePath:      filePath + "_300x300",
-         largeThumbFilePath: filePath + "_600x600"
+         mobileFilePath:     filePath + FileSuffix.MOBILE_SUFFIX,
+         thumbFilePath:      filePath + FileSuffix.THUMB_SUFFIX,
+         largeThumbFilePath: filePath + FileSuffix.LARGE_THUMB_SUFFIX
       }
    }
 
@@ -48,6 +47,9 @@ export const useImageMgr = defineStore('imageMgr', () => {
 
    async function fetchThumbUrls(imageSet, uploadHandler, uploadContext) {
       console.log("Checking image thumbs")
+      const mobileImageRef = storageRef(storage, imageSet.mobileFilePath)
+      imageSet.mobileUrl = await getDownloadURL(mobileImageRef)
+      
       const thumbImageRef = storageRef(storage, imageSet.thumbFilePath)
       imageSet.thumbUrl = await getDownloadURL(thumbImageRef)
       

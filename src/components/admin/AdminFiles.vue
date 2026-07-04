@@ -131,6 +131,7 @@
 
    const removeOrphans = (imageSet, orphans) => {
       orphans.delete(imageSet.filePath)
+      orphans.delete(imageSet.mobileFilePath)
       orphans.delete(imageSet.thumbFilePath)
       orphans.delete(imageSet.largeThumbFilePath)
    }

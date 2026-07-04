@@ -5,6 +5,7 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [                 
+   ["v2.36.2", "7/3/26"],  // Add image.mobileFilePath/url; refactor/shorten dateUUid 
    ["v2.36.1", "6/29/26"], // Implement ViewedView mobile title, icons
    ["v2.36.0", "6/29/26"], // Add IMG thumbSize for small image with no text, separate galleryThumb sizes
    ["v2.35.3", "6/28/26"], // EditArtist updates items associated with artist

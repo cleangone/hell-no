@@ -33,9 +33,11 @@ import { ItemType, State } from '@/utils/constants'
          filePath
          thumbFilePath (cut down to fit in a 300x300 box)
          largeThumbFilePath (600x600)
+         mobileFilePath (1500x1500)
          url
          thumbUrl
          largeThumbUrl
+         mobileUrl
       otherImages[]
          ...primaryImage
          name

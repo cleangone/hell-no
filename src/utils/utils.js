@@ -1,5 +1,6 @@
 import { useNow, useDateFormat } from '@vueuse/core'
-import { v4 as uuid } from 'uuid'
+// import { v4 as uuid } from 'uuid'
+import { nanoid } from 'nanoid';
 import { BackgroundColors, State } from './constants'
    
 export const requiredRule = [ v => !!v || 'Required' ]
@@ -13,8 +14,14 @@ const isOptionalYear = (v) => {
 }
 
 export function dateUuid() {
-   const datePrefix = useDateFormat(useNow(), 'MM-DD-YY-')
-   return datePrefix.value + uuid()
+   const datePrefix = useDateFormat(useNow(), 'YYMMDD-')
+   let id = nanoid()
+   id = id.replaceAll("_", "")
+   if (id.endsWith("-")) { id = id.slice(0, -1) }
+   return datePrefix.value + id
+
+   // const datePrefix = useDateFormat(useNow(), 'MM-DD-YY-')
+   // return datePrefix.value + uuid()
 }
          
 export function logError(viewName, err, instance) { 

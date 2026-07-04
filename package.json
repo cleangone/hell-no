@@ -24,6 +24,7 @@
     "instantsearch.css": "^8.1.0",
     "interact": "^0.0.3",
     "interactjs": "^1.10.26",
+    "nanoid": "^5.1.16",
     "pinia": "^2.1.7",
     "primevue": "^3.50.0",
     "register-service-worker": "^1.7.2",

@@ -90,6 +90,12 @@ export const FeedType = {
    GROUP:   'Group',
 }
 
+export const FileSuffix = {
+   MOBILE_SUFFIX:      '_1500x1500',
+   THUMB_SUFFIX:       '_300x300',
+   LARGE_THUMB_SUFFIX: '_600x600'
+}
+
 export const GroupUserState = {
    OWNER:      'Owner',
    MODERATOR:  'Moderator',

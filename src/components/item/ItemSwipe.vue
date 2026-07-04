@@ -17,7 +17,8 @@
    import { computed, onUnmounted, onMounted, ref } from 'vue'
    import {useWindowSize } from '@vueuse/core'
    import interact from "interactjs"
-   import Icon     from '@/components/util/Icon.vue'
+   import { useItemMgr } from '@/stores/itemMgr'
+   import Icon           from '@/components/util/Icon.vue'
    import { populated } from '@/utils/utils'
    import { Emit } from '@/utils/constants'
   
@@ -29,7 +30,9 @@
  
    const props = defineProps({ item:Object, isFavorite:Boolean, canSwipeLeft:Boolean, canSwipeRight:Boolean, canSwipeUp:Boolean, canSwipeDown:Boolean })
    const emit  = defineEmits([ Emit.SWIPE_LEFT, Emit.SWIPE_RIGHT, Emit.SWIPE_UP, Emit.SWIPE_DOWN, Emit.DONE ])
+   
    const { height: windowHeight } = useWindowSize()
+   const itemMgr = useItemMgr()
    const swipeEle = ref(null)
    const showImage = ref(false)
    const showText  = ref(false)
@@ -94,7 +97,7 @@
       unsetInteractElement()
    })
    
-   const imageUrl = computed(() => props.item.primaryImage.url)
+   const imageUrl = computed(() => itemMgr.mobileImageUrl(props.item.primaryImage))
    const artist   = computed(() => props.item.primaryArtist ? props.item.primaryArtist.fullName : null)
    
    const transform = computed(() => {

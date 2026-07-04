@@ -38,7 +38,7 @@
          </div>
       </div>
       <div v-else> <!-- infinite scroll -->
-         <v-img :src="props.item.primaryImage.url" contain class="no-pointer-events" />
+         <v-img :src="imageUrl(props.item.primaryImage)" contain class="no-pointer-events" />
          <div class="text-left mt-2">
             <ItemArtistYear :item="props.item" />
          </div>
@@ -53,7 +53,7 @@
                      </span>
                   </div>
                </div>
-               <v-img :src="item.primaryImage.url" contain class="no-pointer-events"/>
+               <v-img :src="imageUrl(item.primaryImage)" contain class="no-pointer-events"/>
                <div class="text-left mt-2">
                   <ItemArtistYear :item="item"/>
                </div>
@@ -147,10 +147,9 @@
    
    const prevItemUrl = computed(() => itemMgr.itemNavURL(linkId(navItems.value.prev), props.origin, ItemNavAction.PREV, navItems.value.prev.childNum))
    const nextItemUrl = computed(() => itemMgr.itemNavURL(linkId(navItems.value.next), props.origin, ItemNavAction.NEXT, navItems.value.next.childNum))
-   const linkId     = (item)      => { return item.linkId ? item.linkId : item.id }
-   const galleryUrl = (galleryId) => { return Route.GALLERY.url + galleryId }
-   
-   const imageWidth = computed(() => { return props.item.primaryImage?.dimensions ? props.item.primaryImage.dimensions.width : 500 })
+   const linkId      = (item)      => { return item.linkId ? item.linkId : item.id }
+   const galleryUrl  = (galleryId) => { return Route.GALLERY.url + galleryId }
+   const imageUrl    = (image)     => { return itemMgr.mobileImageUrl(image) }
 
    const navItems = computed(() => { 
       for (let i=0; i<viewStoreItems.value.length; i++) {
@@ -230,6 +229,7 @@
       return swipeBot ? [ swipeBot, swipeTop ] : [ swipeTop ]
    })
 
+   const imageWidth = computed(() => { return props.item.primaryImage?.dimensions ? props.item.primaryImage.dimensions.width : 500 })
    const itemSwipeWidth = computed(() => Math.min(windowWidth.value, imageWidth.value))
    const itemSwipeWidthStyle = computed(() => "width:" + itemSwipeWidth.value +  "px")
    const onSwipeLeftStarted  = (itemName) => { swipeBotItem.value = navItems.value.next }
