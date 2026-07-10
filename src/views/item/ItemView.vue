@@ -8,10 +8,15 @@
             {{ artistName(primaryArtist) }}<span class="text-subtitle-1">{{ artistRole(primaryArtist) }}</span>
          </RouterLink> 
       </div>
-      <div v-if="otherArtists" v-for="artist in otherArtists" :key="artist.id" class="text-h6 mt-n1">
-         <RouterLink :to="Route.ARTIST.url + artist.id">
-            {{ artistName(artist) }}<span class="text-subtitle-1">{{ artistRole(artist) }}</span>
-         </RouterLink> 
+      <div v-if="otherArtists" class="text-h6">
+         <v-row no-gutters>
+            <span v-for="(artist, index) in otherArtists" :key="artist.id" class="mt-n2"> 
+               <RouterLink :to="Route.ARTIST.url + artist.id">
+                  {{ artistName(artist) }}<span class="text-subtitle-1">{{ artistRole(artist) }}</span>
+               </RouterLink>
+               <template v-if="index!=otherArtists.length-1">, </template>
+            </span>
+         </v-row>
       </div>
       <div v-if="paramItem.yearCreated" class="text-h6 mt-n2">{{ paramItem.yearCreated }}</div>
       <div v-if="populated(paramItem.subtitle)" class="font-weight-medium mb-1">{{ paramItem.subtitle }}</div>

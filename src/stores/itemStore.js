@@ -197,7 +197,7 @@ export const useItemStore = defineStore('item', () => {
    }
 
    function deleteItem(id) {
-      console.log("deleteItem", id) 
+      // console.log("deleteItem", id) 
       if (myChildItemIds.value.has(id)) { console.log("Cannot delete child item " + id) }
       else { deleteDoc(doc(itemCollection, id)) }
    }
@@ -207,10 +207,7 @@ export const useItemStore = defineStore('item', () => {
       const itemToUpdate = { ...item, versionTag: randomPlate(), dateModified: serverTimestamp() }
       if (contentModified && (item.primaryImage || item.primaryArtist || item.childItems)) { 
          itemToUpdate.dateContentModified = serverTimestamp() }
-
-
-      console.log("itemToUpdate", itemToUpdate)
-
+      // console.log("itemToUpdate", itemToUpdate)
       updateDoc(itemDoc(itemId), itemToUpdate)
       return itemToUpdate
    }

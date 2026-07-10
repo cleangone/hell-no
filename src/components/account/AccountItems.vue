@@ -10,10 +10,8 @@
                <TextButton @click="deleteItems()"   text="Delete Selected"/>
             </span>
             <span v-else>
-               <TextButton @click="showAddDialog=true"               text="Add Item"/>
-               <TextButton @click="showBulkUpload=true"              text="Bulk Upload"/>
-               <TextButton v-if="showTable" @click="showTable=false" text="View Thumbnails"/>
-               <TextButton v-else @click="showTable=true"            text="View Table"/>
+               <TextButton @click="showAddDialog=true"  text="Add Item"/>
+               <TextButton @click="showBulkUpload=true" text="Bulk Upload"/>
             </span>
          </v-col> 
       </v-row>
@@ -25,48 +23,41 @@
             <v-select v-model="selectedGalleryId" label="Gallery" :items="galleryOptions" clearable density="compact"></v-select>
          </v-col>   
       </v-row>
-      <div v-if="showTable">
-         <v-card flat>
-            <v-card-title class="d-flex">
-               <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" label="Search"
-                 flat hide-details variant="solo-filled" density="compact"
-                 class="flex-grow-1 flex-shrink-0"></v-text-field>
-               <v-select v-model="computedHeaders" :items="headerOptions" label="Columns" 
-                  item-title="title" return-object multiple 
-                  class="ms-5 flex-grow-0 flex-shrink-1 select-min text-subtitle-2"></v-select>
-            </v-card-title>
-         </v-card>
-         <v-data-table v-model="selectedItemIds" :headers="displayHeaders" :items="userItems" 
+      <v-card flat>
+         <v-card-title class="d-flex">
+            <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" label="Search"
+               flat hide-details variant="solo-filled" density="compact"
+               class="flex-grow-1 flex-shrink-0"></v-text-field>
+            <v-select v-model="computedHeaders" :items="headerOptions" label="Columns" 
+               item-title="title" return-object multiple 
+               class="ms-5 flex-grow-0 flex-shrink-1 select-min text-subtitle-2"></v-select>
+         </v-card-title>
+      </v-card>
+      <v-data-table v-model="selectedItemIds" :headers="displayHeaders" :items="userItems" 
             :custom-key-sort="customKeySort" :search="search" item-key="id" density="compact" 
             show-select items-per-page="25">
-            <template v-slot:item.artist="{ item }">
-               {{ item.displayArtist.fullName }}
-            </template>
-            <template v-slot:item.dateCreated="{ item }">
-               {{ item.dateCreated ? item.dateCreated.toDate().toLocaleDateString() : "" }}
-            </template>
-            <template v-slot:item.dateModified="{ item }">
-               {{ item.dateModified ? item.dateModified.toDate().toLocaleDateString() : "" }}
-            </template>
-            <template v-slot:item.dateContentModified="{ item }">
-               {{ item.dateContentModified ? item.dateContentModified.toDate().toLocaleDateString() : "" }}
-            </template>
-            <template v-slot:item.images="{ item }">
-               <span style="min-width:90px" class="d-flex justify-center align-center">
-                  <TableThumb :item="item" @select="thumbClicked" imageCount pointer/>
-               </span>
-            </template>
-            <template v-slot:item.actions="{ item }">
-               <EditButton @click="editItem(item)" class="admin-link"/>
-               <DeleteButton @click="deleteItem(item)" :disabled="isChildItem(item.id)" class="admin-link"/>
-            </template>
-         </v-data-table>
-      </div>
-      <v-container v-else>
-         <v-row justify="space-around" class="" >
-            <ItemThumb v-for="item in userItems" :key="item.id" :item="item" :origin="ItemOrigin.ADMIN" :admin="true" /> 
-         </v-row>
-      </v-container>
+         <template v-slot:item.artist="{ item }">
+            {{ item.displayArtist.fullName }}
+         </template>
+         <template v-slot:item.dateCreated="{ item }">
+            {{ item.dateCreated ? item.dateCreated.toDate().toLocaleDateString() : "" }}
+         </template>
+         <template v-slot:item.dateModified="{ item }">
+            {{ item.dateModified ? item.dateModified.toDate().toLocaleDateString() : "" }}
+         </template>
+         <template v-slot:item.dateContentModified="{ item }">
+            {{ item.dateContentModified ? item.dateContentModified.toDate().toLocaleDateString() : "" }}
+         </template>
+         <template v-slot:item.images="{ item }">
+            <span style="min-width:90px" class="d-flex justify-center align-center">
+               <TableThumb :item="item" @select="thumbClicked" imageCount pointer/>
+            </span>
+         </template>
+         <template v-slot:item.actions="{ item }">
+            <EditButton @click="editItem(item)" class="admin-link"/>
+            <DeleteButton @click="deleteItem(item)" :disabled="isChildItem(item.id)" class="admin-link"/>
+         </template>
+      </v-data-table>
    </div>
    
    <v-dialog v-model="showAddDialog" width="auto">
@@ -122,7 +113,6 @@
    import EditGroupItems from '@/components/item/crud/EditGroupItems.vue'
    import BulkEditItems  from '@/components/item/crud/BulkEditItems.vue'
    import DeleteItem     from '@/components/item/crud/DeleteItem.vue'
-   import ItemThumb      from '@/components/item/thumb/ItemThumb.vue'
    import EditButton     from '@/components/util/EditButton.vue'
    import DeleteButton   from '@/components/util/DeleteButton.vue'
    import TextButton     from '@/components/util/TextButton.vue'
@@ -139,7 +129,6 @@
    const hitStore     = useHitStore()
    const profileStore = useProfileStore()
    const viewStore    = useViewStore()
-   const showTable = ref(true)
    const showAddDialog       = ref(false)
    const showBulkUpload      = ref(false)
    const showEditDialog      = ref(false)
@@ -347,19 +336,11 @@
 .select-min {
   min-width: 35%;
 }
-
-.red {
-   background-color: red;
-}
-.green {
-   background-color: greenyellow;
-}
-
-.main {
+/* .main {
   display: flex;
   flex-wrap: wrap;
-}
-.card {
+} */
+/* .card {
    display: inline-block;
-}
+} */
 </style>

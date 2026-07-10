@@ -228,7 +228,7 @@
       }
 
       const contentModified = currItem.value.primaryArtist?.id != itemToUpdate.primaryArtist?.id
-      console.log("contentModified", contentModified)
+      // console.log("contentModified", contentModified)
       itemStore.updateItem(itemToUpdate, contentModified)
       
       for (const galleryId of addItemToGalleries) { 

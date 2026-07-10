@@ -4,8 +4,9 @@
       <span v-if="primaryArtist && year"> &bull; </span>
       <span v-if="year">{{ year }}</span>
    </div>
-   <div v-for="artist in otherArtists" :key="artist.id">
-      <RouterLink :to="Route.ARTIST.url + artist.id">{{ artistName(artist) }}</RouterLink>
+   <div v-if="otherArtist">
+      <RouterLink :to="Route.ARTIST.url + otherArtist.id">{{ artistName(otherArtist) }}</RouterLink>
+      <template v-if="otherArtists.length>1">...</template> <!-- template does not add white space -->
    </div>
 </template>
 
@@ -22,6 +23,7 @@
 
    const primaryArtist = computed(() => props.showArtist && props.item.primaryArtist ? props.item.primaryArtist : null)
    const year          = computed(() => props.showYear   && props.item.yearCreated   ? props.item.yearCreated : null)
+   const otherArtist   = computed(() => otherArtists.value.length ? otherArtists.value[0] : null)
    const otherArtists  = computed(() => 
       props.showArtist && !props.isXsSmThumb && props.item.otherArtists ? props.item.otherArtists : [])
    

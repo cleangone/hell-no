@@ -9,9 +9,14 @@
          </v-expansion-panel-title>
          <v-expansion-panel-text>
             <div class="mt-3"></div>
-            <div v-for="(container, index) in props.artistContainers" class="ml-1 mb-2">
-               <EditArtist :artistContainer="container" showDelete @delete="deleteArtist(index)"/>
-            </div>
+            <draggable v-model="artistContainers" item-key="id">
+               <template #item="{element}">
+                  <HorizontalDiv style="width:100%" class="mb-2 flex align-center">
+                     <v-icon icon="mdi-drag-vertical" color="blue-darken-2" class="pointer"/>
+                     <EditArtist :artistContainer="element" showDelete @delete="deleteArtist(element)"/>
+                  </HorizontalDiv>
+               </template>
+            </draggable>
          </v-expansion-panel-text>
       </v-expansion-panel>
    </v-expansion-panels>
@@ -19,16 +24,17 @@
 
 <script setup>
    import { computed, ref } from 'vue'
-   import EditArtist from './EditArtist.vue'
-   import TextButton from '@/components/util/TextButton.vue'   
+   import draggable     from 'vuedraggable'
+   import EditArtist    from './EditArtist.vue'
+   import HorizontalDiv from '@/components/util/HorizontalDiv.vue'
+   import TextButton    from '@/components/util/TextButton.vue'   
    
    const props = defineProps({ title: String, artistContainers: Array })
    const openedPanels = ref([])
 
    const onPanelChange = () => { if (!props.artistContainers.length) { addArtist() } }
    const addArtist = () => { props.artistContainers.push({ artistOption: null, role: null}) }
-   const deleteArtist = (index) => { props.artistContainers.splice(index, 1) }
-
+   
    const artistNames = computed(() => { 
       const names = []
       for (const container of props.artistContainers) {
@@ -38,4 +44,15 @@
       }
       return names.join(", ")
    })
+
+   const artistContainers = computed({ 
+      get() { return props.artistContainers },
+      set(reorderedContainers) { 
+         props.artistContainers.splice(0, props.artistContainers.length, ...reorderedContainers) }
+   })
+
+   const deleteArtist = (container) => { 
+      const index = props.artistContainers.indexOf(container)
+      props.artistContainers.splice(index, 1) 
+   }
 </script>

@@ -1,33 +1,26 @@
 <template>
-   <div class="text-left">
-      <div class="text-left text-h6">
-         <a @click="$emit(Emit.DONE)" class="admin-link">{{ isMyGallery ? "Galleries": "My ContributingGalleries" }}</a> > {{ gallery.name }}
-         <EditButton v-if="isMyGallery" @click="showEditGalleryDialog=true" class="admin-link"/>
-         <TextButton v-if="!selectedItemIds.length" @click="showAddItemDialog=true" text="Add Item"/>
-         <TextButton v-if="isMyGallery && !selectedItemIds.length" @click="showBulkUpload=true"     text="Bulk Upload"/>
-         <TextButton v-if="isMyGallery && !selectedItemIds.length" @click="showManifestUpload=true" text="Manifest Upload"/>
-         <TextButton v-if="selectedItemIds.length"  @click="editItems()"     text="Edit Selected"/>
-         <TextButton v-if="selectedItemIds.length"  @click="bulkEditItems()" text="Bulk Edit"/>
-         <TextButton v-if="selectedItemIds.length"  @click="groupItems()"    text="Group Items"/>
-         <TextButton v-if="viewTable" @click="viewTable=false" text="View Thumbnails"/>
-         <TextButton v-else           @click="viewTable=true"  text="View Table"/>
-      </div>
+   <div>
+      <v-row no-gutters class="d-flex align-left flex-nowrap">
+         <v-col class="text-h6 flex-grow-1 flex-shrink-0">
+            <a @click="$emit(Emit.DONE)" class="admin-link">{{ isMyGallery ? "Galleries": "My ContributingGalleries" }}</a> > {{ gallery.name }}
+            <EditButton v-if="isMyGallery" @click="showEditGalleryDialog=true" class="admin-link"/>
+            <TextButton v-if="!selectedItemIds.length" @click="showAddItemDialog=true" text="Add Item"/>
+            <TextButton v-if="isMyGallery && !selectedItemIds.length" @click="showBulkUpload=true"     text="Bulk Upload"/>
+            <TextButton v-if="isMyGallery && !selectedItemIds.length" @click="showManifestUpload=true" text="Manifest Upload"/>
+            <TextButton v-if="selectedItemIds.length" @click="editItems()"     text="Edit Selected"/>
+            <TextButton v-if="selectedItemIds.length" @click="bulkEditItems()" text="Bulk Edit"/>
+            <TextButton v-if="selectedItemIds.length" @click="groupItems()"    text="Group Items"/>
+            <TextButton v-if="viewTable" @click="viewTable=false" text="View Thumbnails"/>
+            <TextButton v-else           @click="viewTable=true"  text="View Table"/>
+         </v-col>
+         <v-col cols="1" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
+            <IconButton v-if="!viewTable" icon="mdi-image-size-select-large" @click="isSmallThumb=!isSmallThumb" size="med"/> 
+         </v-col>
+      </v-row>
 
       <v-data-table v-if="viewTable" v-model="selectedItemIds" :headers="itemHeaders" 
             :items="galleryDisplayItems" item-key="id" :custom-key-sort="customKeySort" 
-            :show-select="isMyGallery" :item-selectable="item => item.isMyItem"
-            @update:currentItems="handleTableUpdate">
-         <template v-slot:header.position="{ column, getSortIcon }">
-            <div class="d-inline-flex align-center text-no-wrap">
-               <div v-if="canReorder" class="d-flex justify-center align-center">
-                  <ToolTipFull>
-                     <template #tip>Save new Item order</template>
-                     <Icon icon="mdi-database" @click.stop="reorderItems()"/>
-                  </ToolTipFull>
-               </div>
-               <v-icon class="v-data-table-header__sort-icon" :icon="getSortIcon(column)" />
-            </div>
-         </template>
+            :show-select="isMyGallery" :item-selectable="item => item.isMyItem">
          <template v-slot:item.position="{ item }">
             <div v-if="!isHidden(item)">{{ item.position }}</div>
          </template>
@@ -45,22 +38,19 @@
                :disabled="isChildItem(item.id)" class="admin-link"/>
          </template>
       </v-data-table>
-
       <div v-else class="ma-4">
-         <draggable v-model="galleryThumbItems" item-key="id" class=" main">
+         <draggable v-model="galleryThumbItems" item-key="id" class="main">
             <template #item="{element}">
-               <v-card :width="thumbWidth(element)" class="ma-4 card">
+               <v-card :width="thumbWidth(element)" class="mx-2 my-1 mcard bg-grey-lighten-4">
                   <v-card-text class="text-center my-0 py-0">
                     <v-icon icon="mdi-drag" color="blue-darken-2" class="justify-center"></v-icon>
                   </v-card-text>
-
-                  <v-row v-if="isItemGroup(element)" class="d-flex justify-center">
+                  <v-row v-if="isItemGroup(element)" no-gutters class="d-flex justify-center">
                      <img v-for="childItem in element.childItems" :key="childItem.id" 
-                        :src="childItem.primaryImage.thumbUrl" height="200"/>
+                        :src="childItem.primaryImage.thumbUrl" :height="thumbHeight"/>
                   </v-row>
-                  <v-img v-else :src="element.primaryImage.thumbUrl"></v-img>
-
-                  <v-card-text class="text-center font-weight-bold">{{ element.name }}</v-card-text>
+                  <v-img v-else :src="element.primaryImage.thumbUrl" class="pa-1"></v-img>
+                  <v-card-text :class="textClass" class="pa-0 text-center">{{ element.name }}</v-card-text>
                </v-card>
             </template>
          </draggable>
@@ -114,14 +104,13 @@
    import BulkEditItems   from '@/components/item/crud/BulkEditItems.vue'
    import GroupItems      from '@/components/item/crud/GroupItems.vue'
    import EditButton      from '@/components/util/EditButton.vue'
-   import Icon            from '@/components/util/Icon.vue'
    import IconButton      from '@/components/util/IconButton.vue'
    import TextButton      from '@/components/util/TextButton.vue'
-   import ToolTipFull     from '@/components/util/ToolTipFull.vue'
    import { isHidden } from '@/utils/utils'
    import { Defaults, Emit, ItemOrigin, Route } from '@/utils/constants'
    
-   const THUMB_HEIGHT = 200
+   const THUMB_HEIGHT    = 200
+   const THUMB_HEIGHT_SM = 125
 
    const props = defineProps(['galleryId'])
    const emit = defineEmits([Emit.DONE])
@@ -140,6 +129,7 @@
    const showBulkEditDialog    = ref(false)
    const showRemoveItemDialog  = ref(false)
    const viewTable = ref(true)
+   const isSmallThumb = ref(false)
    const selectedItem = ref({})
    const selectedItemIds = ref([])
    const selectedItems = ref([])
@@ -165,7 +155,7 @@
       primaryArtist: (a, b) => { return a.name.localeCompare(b.name) } 
    } 
 
-   const gallery = computed(() => { return galleryStore.getGallery(props.galleryId) })
+   const gallery     = computed(() => galleryStore.getGallery(props.galleryId))
    const isMyGallery = computed(() => gallery.value && gallery.value.userId == userStore.userId)
    const galleryDisplayItems = computed(() => { 
       const galleryItemIds = gallery.value.itemIds ? gallery.value.itemIds : []
@@ -189,30 +179,7 @@
       return false
    })
 
-   // -- Reorder item position based on current table order 
-   const currTableRows = ref([])
-   const handleTableUpdate = (tableRows) => { currTableRows.value = tableRows }
-   const canReorder = computed(() => {
-      if (currTableRows.value.length != galleryDisplayItems.value.length) { return false }
-
-      let prevPosition = 0
-      for (const currRow of currTableRows.value) {
-         if (currRow.columns.position) {
-            if (currRow.columns.position < prevPosition) { return true }
-            prevPosition = currRow.columns.position
-         }
-      }
-      return false
-   })
-   const reorderItems = () => { 
-      const galleryItemIds = currTableRows.value.map(a => a.columns.id)
-      console.log("galleryItemIds", galleryItemIds)
-      galleryStore.updateGallery({
-         id: props.galleryId,
-         itemIds: galleryItemIds
-      })
-   }
-   
+   // thumb drag/drop reordering 
    const galleryThumbItems = computed({ 
       get() {
          groupedGalleryItemIds.value = []
@@ -235,13 +202,15 @@
       }
    })
 
-   const isItemGroup = (item) => { return itemMgr.isItemGroup(item)  }
+   const thumbHeight = computed(() => isSmallThumb.value ? THUMB_HEIGHT_SM : THUMB_HEIGHT)
+   const textClass   = computed(() => isSmallThumb.value ? "text-body-small" : "font-weight-bold")
    
-   const thumbWidth = (item) => { 
+   const isItemGroup = (item) => { return itemMgr.isItemGroup(item)  }
+   const thumbWidth  = (item) => { 
       if (isItemGroup(item)) { return groupWidth(item) }
 
       const aspectRatio = itemMgr.itemAspectRatio(item)
-      const targetWidth = Math.round(THUMB_HEIGHT * aspectRatio)
+      const targetWidth = Math.round(thumbHeight.value * aspectRatio)
       return targetWidth > Defaults.MAX_THUMB_SIDE ? Defaults.MAX_THUMB_SIDE : targetWidth
    }
 
@@ -254,7 +223,7 @@
       }
       const avgHeight = totalHeight/item.childItems.length
       const aspectRatio = totalWidth / avgHeight
-      const targetWidth = Math.round(THUMB_HEIGHT * aspectRatio)
+      const targetWidth = Math.round(thumbHeight.value * aspectRatio)
       return targetWidth.toString()
    }
 
