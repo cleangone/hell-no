@@ -5,8 +5,11 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [                 
+   ["v2.37.0", "8/3/26"],  // Solo mode work - displayed name, omit user fm item/gallery thumbs/config,
+                           // Add solo to Artist/SearchView 
+                           // Add Search to Account/AdminArtists
    ["v2.36.3", "7/9/26"],  // Handle multiple otherArtists
-   ["v2.36.2", "7/3/26"],  // Add image.mobileFilePath/url; refactor/shorten dateUUid 
+   ["v2.36.2", "7/3/26"],  // Add image.mobileFilePath/url; refactor/shortçßen dateUUid 
    ["v2.36.1", "6/29/26"], // Implement ViewedView mobile title, icons
    ["v2.36.0", "6/29/26"], // Add IMG thumbSize for small image with no text, separate galleryThumb sizes
    ["v2.35.3", "6/28/26"], // EditArtist updates items associated with artist

@@ -74,8 +74,10 @@ export const useViewMgr = defineStore('viewMgr', () => {
    function itemThumbVisibleToUser(item) { return isPublic(item) || item.onUserWall || (isOwned(item, userStore.userId) && !isHidden(item)) }
       
    // can nav directly to INVISIBLE gallery even though thumb/link not visible
-   function galleryIsVisibleToUser(gallery)    { return galleryThumbVisibleToUser(gallery) || isInvisible(gallery)}
-   function galleryThumbVisibleToUser(gallery) { return isPublic(gallery) || isOwned(gallery, userStore.userId) }
+   function galleryIsVisibleToUser(gallery) { 
+      return isOwned(gallery, userStore.userId) || !solo.value && (isPublic(gallery) || isInvisible(gallery)) }
+   function galleryThumbVisibleToUser(gallery) { 
+      return isOwned(gallery, userStore.userId) || !solo.value && isPublic(gallery) }
 
    const hitIds = ref([])
    function addHit(itemId) {

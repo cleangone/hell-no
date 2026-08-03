@@ -22,6 +22,7 @@
 
 <script setup>
    import { computed, ref } from 'vue'
+   import { useUserStore } from '@/stores/userStore'
    import { useItemMgr }   from '@/stores/itemMgr'
    import { useViewStore } from '@/stores/viewStore'
    import { useViewMgr }   from '@/stores/viewMgr'
@@ -29,8 +30,10 @@
    import ItemThumbConfig  from '@/components/item/thumb/ItemThumbConfig.vue'
    import ThumbSizeButton  from '@/components/util/ThumbSizeButton.vue'  
    import ViewedSortButton from './ViewedSortButton.vue'  
+   import { isOwned }      from '@/utils/utils'  
    import { ItemOrigin, Route } from '@/utils/constants'
    
+   const userStore = useUserStore()
    const itemMgr   = useItemMgr()
    const viewStore = useViewStore()
    const viewMgr   = useViewMgr()
@@ -39,7 +42,10 @@
    const displayItems = computed(() => viewStore.sortRecentViewed ? recentViewedItems.value : oldestViewedItems.value)
    
    const recentViewedItems = computed(() => {
-      const items = itemMgr.recentViewedPublicItems
+      const publicItems = itemMgr.recentViewedPublicItems
+      const items = viewMgr.solo ? 
+         publicItems.filter(item => isOwned(item, userStore.userId)) : publicItems
+
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
       return viewStore.setVisibleItems(ItemOrigin.VIEWED, "Recent Viewed", Route.VIEWED.url, ungroupedItems)
    })

@@ -29,7 +29,7 @@
             </v-row>
             <v-row class="mt-n5">
                <v-col><v-text-field v-model="phone" label="Phone"/></v-col>
-               <v-col/>
+               <v-col><v-text-field v-model="hostname" label="Hostname"/></v-col>
             </v-row>
             <v-row class="mt-n7">
                <v-checkbox v-model="soloMode" label="Solo Mode - only view/manage my collection" class="tight-checkbox ms-1"/>
@@ -92,6 +92,7 @@
    const username    = ref(userStore.user.username)
    const displayName = ref(userStore.user.displayName)
    const phone       = ref(userStore.user.phone)
+   const hostname    = ref(userStore.user.hostname)
    const settings    = ref(userStore.user.settings ? { ...userStore.user.settings } : { ...DEFAULT_SETTINGS })
    const showImages       = ref(false)
    const showEditEmail    = ref(false)
@@ -106,6 +107,7 @@
       username.value    = user.value.username
       displayName.value = user.value.displayName
       phone.value       = user.value.phone
+      hostname.value    = user.value.hostname
       settings.value    = user.value.settings ? { ...user.value.settings } : { ...DEFAULT_SETTINGS }
    }
 
@@ -130,6 +132,7 @@
       username.value    != user.value.username  ||
       displayName.value != user.value.displayName ||
       phone.value       != user.value.phone     ||
+      hostname.value    != user.value.hostname  ||
       settings.value.soloMode         != user.value.settings?.soloMode ||
       settings.value.notifyViaEmail   != user.value.settings?.notifyViaEmail  ||
       settings.value.notifyViaMessage != user.value.settings?.notifyViaMessage)
@@ -138,10 +141,11 @@
       userStore.updateUser({
          id: user.value.id, 
          firstName: firstName.value,
-         lastName: lastName.value ? lastName.value : null,
+         lastName: lastName.value ?? null,  // explicit null - firebase does not like undefined
          username: username.value, 
-         displayName: displayName.value ? displayName.value : null,
-         phone: phone.value ? phone.value : null,
+         displayName: displayName.value ?? null,
+         phone: phone.value ?? null,
+         hostname: hostname.value ?? null,
          settings: settings.value }) 
    }
 </script>

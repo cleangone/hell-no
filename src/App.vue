@@ -106,7 +106,7 @@
                </span>
                <span v-else-if="inRoutes(Route.VIEWED)" class="text-no-wrap"> 
                   <ViewedSortButton class="mr-2"/>
-                   <ThumbSizeButton/>
+                  <ThumbSizeButton/>
                </span>
                <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD)">
                   <ToggleIcon icon="mdi-gesture-swipe" :state="viewStore.isMobileSwipe" @click="viewStore.toggleMobileSwipe()"/>
@@ -118,7 +118,7 @@
             <!-- top right icon for desktop -->
             <div v-else-if="userExists">
                <SearchBox class="mr-2"/>
-               <RouterLink :to="isMyUserPage ? Route.ACCOUNT.url : Route.USER.url + userId">{{ firstName }}</RouterLink>
+               <RouterLink :to="isMyUserPage ? Route.ACCOUNT.url : Route.USER.url + userId">{{ displayName }}</RouterLink>
                <v-menu>
                   <template v-slot:activator="{ props }">
                      <v-btn v-bind="props" icon="mdi-account" size="medium" variant="text" class="icon-btn"/>
@@ -240,6 +240,8 @@
          viewStore.resetView()
       })
 
+      console.log("window.location.hostname", window.location.hostname)
+
       setWindowSize()
       window.addEventListener('resize', setWindowSize)
    })
@@ -268,7 +270,6 @@
 
    const user = computed(() => { 
       const currUser = userStore.userExists ? userStore.user : null 
-      // logStore.info("user update: " + (currUser ? currUser.firstName : "null"))
       const soloMode = currUser?.settings?.soloMode ? true : false
       if (localStore.soloMode != soloMode) { localStore.setSoloMode(soloMode) }
       return currUser
@@ -276,8 +277,11 @@
    const userExists  = computed(() => userStore.userExists )
    const userId      = computed(() => userStore.userId )
    const userIsAdmin = computed(() => adminStore.isAdmin )
-   const firstName   = computed(() => user.value ? user.value.firstName : "")
-   
+   const displayName = computed(() => {
+      const currUser = user.value // ugly - check user, which drives update of localStore.soloMode
+      return localStore.soloMode ? "Solo" : (currUser ? currUser.firstName : "")
+   })
+
    const version = computed(() => { return versions[0][0] })
    const userAgent = computed(() => navigator.userAgent)
    const isStandalone = computed(() => window.matchMedia('(display-mode: standalone)').matches)
@@ -309,7 +313,7 @@
       return owner ? owner.username : "User" 
    })
    
-   const toggleSoloMode = () => {      
+   const toggleSoloMode = () => {   
       const settings = { ...user.value.settings }
       settings.soloMode = settings.soloMode ? false : true 
       userStore.updateSettings(settings)

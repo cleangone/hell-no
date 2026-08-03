@@ -34,20 +34,21 @@ export const useUserMgr = defineStore('userMgr', () => {
 
    const myUserContacts = computed(() => getUserContacts(myKnownUserIds.value))
 
-   const myAvatar = computed(() => { 
-      if (userStore.user?.images) {
-         for (const imageSet of userStore.user.images) {
+   const myAvatar = computed(() => getAvatar(userStore.user))
+
+   function getAvatar(user) {
+      if (user?.images) {
+         for (const imageSet of user.images) {
             if (imageMgr.isActiveUserImage(imageSet)) { return imageSet }
          }
       }
       return null
-   })
-   
+   }
 
    // consolidate with myFullName
    function getFullName(user) {
       return user ? 
-         (user.firstName ? user.firstName : "") + (user.firstName && user.lastName ? " " : "") + (user.lastName ? user.lastName : "") :
+         (user.firstName ?? "") + (user.firstName && user.lastName ? " " : "") + (user.lastName ?? "") :
          ""
    }
 
@@ -152,6 +153,6 @@ export const useUserMgr = defineStore('userMgr', () => {
    return { 
       otherUsers, getFullName, getUserIdByEmail, getUserContactByEmail, 
       setItemHeaders, setGalleryThumbOptions, setItemThumbOptions, setThumbSize, setShowHiddenItems, 
-      myUserContacts, myAvatar, getUserContactsNotInGroup, 
+      myUserContacts, myAvatar, getAvatar, getUserContactsNotInGroup, 
       addFavoriteItem, removeFavoriteItem, addMessagingToken }
 })

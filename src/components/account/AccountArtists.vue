@@ -1,9 +1,13 @@
 <template>
    <div class="text-left">
-      <div class="text-h5">
+      <HorizontalDiv class="text-h5 align-center">
          Artists <TextButton @click="showAddDialog=true" text="Add Artist"/>
-      </div>
-      <v-data-table :headers="headers" :items="artists"  :items-per-page="50" density="compact">
+         <span class="flex-grow-1 flex-shrink-0"></span>
+         <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" 
+            flat hide-details variant="solo-filled" density="compact"
+            class="flex-grow-1 flex-shrink-0 search-width"/>
+      </HorizontalDiv>
+      <v-data-table :headers="headers" :items="artists" :search="search" :items-per-page="100" density="compact">
          <template v-slot:item.fullName="{ item }">
             {{ item.fullName }}
          </template>
@@ -35,12 +39,13 @@
    import { useUserStore }   from '@/stores/userStore'
    import { useArtistStore } from '@/stores/artistStore'
    import { useItemStore }   from '@/stores/itemStore'
-   import AddArtist    from '@/components/artist/AddArtist.vue'
-   import EditArtist   from '@/components/artist/EditArtist.vue'
-   import DeleteArtist from '@/components/artist/DeleteArtist.vue'
-   import EditButton   from '@/components/util/EditButton.vue'
-   import DeleteButton from '@/components/util/DeleteButton.vue'
-   import TextButton   from '@/components/util/TextButton.vue'
+   import AddArtist     from '@/components/artist/AddArtist.vue'
+   import EditArtist    from '@/components/artist/EditArtist.vue'
+   import DeleteArtist  from '@/components/artist/DeleteArtist.vue'
+   import EditButton    from '@/components/util/EditButton.vue'
+   import DeleteButton  from '@/components/util/DeleteButton.vue'
+   import TextButton    from '@/components/util/TextButton.vue'
+   import HorizontalDiv from '@/components/util/HorizontalDiv.vue'
    
    const userStore   = useUserStore()
    const artistStore = useArtistStore()
@@ -49,6 +54,7 @@
    const showEditDialog = ref(false)
    const showDeleteDialog = ref(false)
    const selectedArtist = ref({})
+   const search = ref("")
    
    const headers = [
       { title: 'Artist',    key: 'fullName',    value: 'name' }, // value for sorting
@@ -99,4 +105,8 @@
 </script>
 
 <style>
+
+.search-width {
+  max-width: 40%;
+}
 </style>

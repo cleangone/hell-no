@@ -1,10 +1,15 @@
 <template>
    <div class="text-left">
-      <div class="text-h5">
-         Artists
-         <TextButton @click="showAddDialog=true" text="Add Artist"></TextButton>
-      </div>
-      <v-data-table :headers="headers" :items="artists" items-per-page="50" density="compact">
+      <HorizontalDiv class="text-h5 align-center">
+         Artists 
+         <TextButton @click="showAddDialog=true" text="Add Artist"/>
+         <span class="flex-grow-1 flex-shrink-0"></span>
+         <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" label="Search"
+            flat hide-details variant="solo-filled" density="compact"
+            class="flex-grow-1 flex-shrink-0 search-width"/>
+      </HorizontalDiv>
+
+      <v-data-table :headers="headers" :items="artists" :search="search" items-per-page="100" density="compact">
           <template v-slot:item.name="{ item }">
             {{ item.fullName }}
          </template>
@@ -33,12 +38,13 @@
    import { computed, ref } from 'vue'
    import { useArtistStore } from '@/stores/artistStore'
    import { useItemStore }   from '@/stores/itemStore'
-   import AddArtist    from '@/components/artist/AddArtist.vue'
-   import EditArtist   from '@/components/artist/EditArtist.vue'
-   import DeleteArtist from '@/components/artist/DeleteArtist.vue'
-   import EditButton   from '@/components/util/EditButton.vue'
-   import DeleteButton from '@/components/util/DeleteButton.vue'
-   import TextButton   from '@/components/util/TextButton.vue'
+   import AddArtist     from '@/components/artist/AddArtist.vue'
+   import EditArtist    from '@/components/artist/EditArtist.vue'
+   import DeleteArtist  from '@/components/artist/DeleteArtist.vue'
+   import EditButton    from '@/components/util/EditButton.vue'
+   import DeleteButton  from '@/components/util/DeleteButton.vue'
+   import TextButton    from '@/components/util/TextButton.vue'
+   import HorizontalDiv from '@/components/util/HorizontalDiv.vue'
    
    const artistStore = useArtistStore()
    const itemStore   = useItemStore()
@@ -46,6 +52,7 @@
    const showEditDialog   = ref(false)
    const showDeleteDialog = ref(false)
    const selectedArtist = ref({})
+   const search = ref("")
    
    const headers = [
       { title: 'Artist',     key: 'name',        value: 'name' },

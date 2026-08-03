@@ -1,6 +1,7 @@
 <template>
    <span>
       <RouterLink v-if="gallery.parentGalleryId" :to="Route.GALLERY.url + gallery.parentGalleryId">{{ parentGalleryName }} Gallery</RouterLink>
+      <RouterLink v-else-if="viewMgr.solo" :to="Route.GALLERIES.url + Defaults.SITE_ID">Galleries</RouterLink>
       <RouterLink v-else :to="Route.GALLERIES.url + galleriesLinkId">{{ usernamePossessive }} Galleries</RouterLink>
    </span>
 </template>
@@ -10,11 +11,13 @@
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useProfileStore } from '@/stores/profileStore'
-   import { Route } from '@/utils/constants'
+   import { useViewMgr }      from '@/stores/viewMgr'
+   import { Defaults, Route } from '@/utils/constants'
    
    const props = defineProps({ gallery: Object })
    
    const userStore    = useUserStore()
+   const viewMgr      = useViewMgr()
    const galleryStore = useGalleryStore()
    const profileStore = useProfileStore()
    

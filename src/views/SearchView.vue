@@ -24,6 +24,7 @@
  
 <script setup>
    import { computed, ref } from 'vue'
+   import { useUserStore } from '@/stores/userStore'
    import { useSearchMgr } from '@/stores/searchMgr'
    import { useItemMgr }   from '@/stores/itemMgr'
    import { useViewStore } from '@/stores/viewStore'
@@ -32,8 +33,10 @@
    import ItemThumbConfig  from '@/components/item/thumb/ItemThumbConfig.vue'
    import BlueBtn          from '@/components/util/BlueBtn.vue'
    import SortButton       from '@/components/util/SortButton.vue'
+   import { isOwned }      from '@/utils/utils'  
    import { ItemOrigin, Route } from '@/utils/constants'
    
+   const userStore = useUserStore()
    const searchMgr = useSearchMgr()
    const itemMgr   = useItemMgr()
    const viewStore = useViewStore()
@@ -50,7 +53,10 @@
    const search = () => { if (validQuery.value) { searchMgr.search(searchQuery.value) }}
 
    const sortedItems = computed(() => {
-      const items = [ ...viewStore.searchItems ]    
+      const searchItems = [ ...viewStore.searchItems ]    
+      const items = viewMgr.solo ? 
+         searchItems.filter(item => isOwned(item, userStore.userId)) : searchItems
+
       if (items.length) {
          if (sortByDate.value) { items.sort((a, b) => b.dateModified - a.dateModified) }
          else                  { items.sort((a, b) => a.name.localeCompare(b.name)) }

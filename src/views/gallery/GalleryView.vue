@@ -84,7 +84,7 @@
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
-   import GalleryParentLink   from '@/components/gallery/GalleryParentLink.vue'
+   import GalleryParentLink   from './GalleryParentLink.vue'
    import GalleryThumb        from '@/components/gallery/thumb/GalleryThumb.vue'
    import EditGalleryCard     from '@/components/gallery/EditGalleryCard.vue'
    import ItemPopup           from '@/components/item/ItemPopup.vue'

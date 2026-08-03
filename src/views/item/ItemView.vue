@@ -258,7 +258,7 @@
    })
 
    const alternateName = computed(() => paramItem.value.alternateName?.length ? paramItem.value.alternateName : null)
-   const itemUser      = computed(() => userStore.getUser(paramItem.value.userId)) 
+   const itemUser      = computed(() => viewMgr.solo ? null : userStore.getUser(paramItem.value.userId)) 
    const descBeside    = computed(() => viewStore.itemDescBesideImage)
    const primaryArtist = computed(() => paramItem.value.primaryArtist) 
    const otherArtists  = computed(() => paramItem.value.otherArtists) 

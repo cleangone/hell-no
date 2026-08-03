@@ -6,7 +6,7 @@
 
       <v-list v-model:selected="selectedOptions" select-strategy="leaf">
          <v-list-item-title class="ma-2 font-weight-bold">Gallery Thumbnails</v-list-item-title>     
-         <v-list-item v-for="option in allOptions" :key="option" :title="option" :value="option">
+         <v-list-item v-for="option in options" :key="option" :title="option" :value="option">
             <template v-slot:prepend="{ isSelected }">
                <v-list-item-action start>
                   <v-checkbox-btn :model-value="isSelected"></v-checkbox-btn>
@@ -21,17 +21,20 @@
    import { computed } from 'vue'
    import { useUserStore } from '@/stores/userStore'
    import { useViewStore } from '@/stores/viewStore'
+   import { useViewMgr }   from '@/stores/viewMgr'
    import IconButton       from '@/components/util/IconButton.vue'
    import { GalleryThumbOptions as ThumbOptions } from '@/utils/constants'
 
    const userStore = useUserStore()
    const viewStore = useViewStore()
+   const viewMgr   = useViewMgr()
    
-   const allOptions = computed(() => {
-      const options = [ ThumbOptions.SHOW_CHILD ]
-      if (userStore.userExists) { options.push(ThumbOptions.SHOW_PRIVATE) }
-      options.push(...[ ThumbOptions.USER, ThumbOptions.UPDATED ])
-      return options
+   const options = computed(() => {
+      const opts = [ ThumbOptions.SHOW_CHILD ]
+      if (userStore.userExists) { opts.push(ThumbOptions.SHOW_PRIVATE) }
+      if (!viewMgr.solo) { opts.push(ThumbOptions.USER) }
+      opts.push(ThumbOptions.UPDATED)
+      return opts
    })
    
    const selectedOptions = computed({ 

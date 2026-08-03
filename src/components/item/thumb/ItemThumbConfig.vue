@@ -19,11 +19,17 @@
 <script setup>
    import { computed } from 'vue'
    import { useViewStore } from '@/stores/viewStore'
+   import { useViewMgr }   from '@/stores/viewMgr'
    import IconButton       from '@/components/util/IconButton.vue'
    import { ItemThumbOptions as ThumbOptions } from '@/utils/constants'
 
    const viewStore = useViewStore()
-   const options = [ ThumbOptions.TITLE, ThumbOptions.ARTIST, ThumbOptions.YEAR, ThumbOptions.USER, ThumbOptions.UPDATED ]
+   const viewMgr   = useViewMgr()
+   
+   const allOptions  = [ ThumbOptions.TITLE, ThumbOptions.ARTIST, ThumbOptions.YEAR, ThumbOptions.USER, ThumbOptions.UPDATED ]
+   const soloOptions = [ ThumbOptions.TITLE, ThumbOptions.ARTIST, ThumbOptions.YEAR, ThumbOptions.UPDATED ]
+
+   const options = computed(() => viewMgr.solo ? soloOptions : allOptions)
 
    const selectedOptions = computed({ 
       get() { return viewStore.itemThumbOptions },

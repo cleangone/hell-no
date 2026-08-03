@@ -21,6 +21,7 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useRoute } from 'vue-router'
+   import { useUserStore }   from '@/stores/userStore'
    import { useArtistStore } from '@/stores/artistStore'
    import { useItemStore }   from '@/stores/itemStore'
    import { useItemMgr }     from '@/stores/itemMgr'
@@ -29,9 +30,11 @@
    import ExpandItems     from '@/components/item/ExpandItems.vue'
    import ItemThumb       from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig from '@/components/item/thumb/ItemThumbConfig.vue'
+   import { isOwned }     from '@/utils/utils'  
    import { ItemOrigin, Route } from '@/utils/constants'
    
    const route = useRoute()
+   const userStore   = useUserStore()
    const artistStore = useArtistStore()
    const itemStore   = useItemStore()
    const itemMgr     = useItemMgr()
@@ -48,9 +51,12 @@
       // needed to drive the viewStore for mobile (not reactive in onMounted?)
       artistFullName.value 
 
-      // todo - add my private and invisible items
+      // todo - add my invisible items
       const allArtistIds = artistStore.getAllArtistIds(route.params.id) // all artists related by aka
-      const items =  [ ...itemStore.getArtistPublicItems(allArtistIds) ]
+
+      const publicItems = [ ...itemStore.getArtistPublicItems(allArtistIds) ]
+      const items = viewMgr.solo ? 
+         publicItems.filter(item => isOwned(item, userStore.userId)) : publicItems
 
       console.log("itemMgr", itemMgr) // todo - seems like this is needed to force itemMgr instantiation
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items

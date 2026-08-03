@@ -8,7 +8,7 @@
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
             <div class="title">Galleries</div>
             <RouterLink v-if="username" :to="Route.USER.url + route.params.id" class="mt-n4">{{ username }}</RouterLink>
-            <div v-else-if="viewMgr.solo" class="text-subtitle-1 mt-n2 mb-2">Solo Mode</div>
+            <!-- <div v-else-if="viewMgr.solo" class="text-subtitle-1 mt-n2 mb-2">Solo Mode</div> -->
          </v-col>      
          <v-col cols="1" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
             <ThumbSizeButton :thumbType="ThumbType.GALLERY"/>

@@ -19,15 +19,16 @@ export const ActionType = {
 }
 
 export const ArtistRole = {
-   ALL:     'All',
-   PENCILS: 'Pencils',
+   ALL:      'All',
+   PENCILS:  'Pencils',
    INKS:     'Inks',
    LAYOUT:   'Layouts',
    FINISH:   'Finishes',
+   AFTER:    'After/Homage',
 }
 
 export const ArtistRoles = [ 
-   ArtistRole.ALL, ArtistRole.PENCILS, ArtistRole.INKS, ArtistRole.LAYOUT, ArtistRole.FINISH ]
+   ArtistRole.ALL, ArtistRole.PENCILS, ArtistRole.INKS, ArtistRole.LAYOUT, ArtistRole.FINISH, ArtistRole.AFTER ]
 
 export const ArtistState = {
    PRIMARY:  'Primary',
@@ -45,6 +46,7 @@ export const Defaults = {
    SITE_ID:         "0",
    MAX_THUMB_SIDE:  300, // thumb was resized to a 300x300 box
 }
+
 export const DefaultWall = { wallRows:0, wallItems:[] }    
 
 export const EmailSourceState = {
@@ -170,6 +172,8 @@ export const NotificationOptions = {
    DAILY:     'Daily', 
    NEVER:     'Never', 
 }
+
+export const DefaultUserSettings = { "notifyViaEmail": NotificationOptions.NEVER, "notifyViaMessage": NotificationOptions.NEVER }
 
 export const Route = {
    HOME:      { name: 'home',      url: '/',          display: 'Home' },
