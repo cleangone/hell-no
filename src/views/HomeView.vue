@@ -172,9 +172,11 @@
    const displayWall = computed(() => {
       const wall = viewMgr.solo ? myDisplayWall.value : siteDisplayWall.value
 
+      // todo - move this to mgr - logic duplicated in UserView
       // handle corner case of moving to/from mobile view
-      if (viewMgr.isMobile && wall.wallRows) { wall.wallRows = 1 }
-      else if (!viewMgr.isMobile) { wall.wallRows = wall.origWallRows}
+      // check xs instead of mobile - tablets not limited to 1 row
+      if (viewMgr.isXs && wall.wallRows) { wall.wallRows = 1 }
+      else if (!viewMgr.isXs) { wall.wallRows = wall.origWallRows}
 
       return wall
    })

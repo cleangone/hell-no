@@ -144,8 +144,8 @@
       const wall = profileId.value ? { ...DefaultWall } : { ...wallStore.getUserWall(userId.value) }
       if (profileId.value) { wall.wallRows = allRecentItems.value.length < 8 ? 1 : 2 }   
       wall.origWallRows = wall.wallRows // hack 
-      if (viewMgr.isMobile && wall.wallRows) { wall.wallRows = 1 }
-      else if (!viewMgr.isMobile) { wall.wallRows = wall.origWallRows}
+      if (viewMgr.isXs && wall.wallRows) { wall.wallRows = 1 }
+      else if (!viewMgr.isXs) { wall.wallRows = wall.origWallRows}
       return wallMgr.fillWall(wall, allRecentItems.value)
    })
 

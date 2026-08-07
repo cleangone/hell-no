@@ -5,7 +5,8 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [                 
-   ["v2.38.0", "8/6/26"],  // Update ViewMgr.isMobile to handle ipads
+   ["v2.38.1", "8/7/26"],  // Do not limit wall to 1 row for tablets
+   ["v2.38.0", "8/6/26"],  // Update ViewMgr.isMobile to handle ipad
    ["v2.37.0", "8/3/26"],  // Solo mode work - displayed name, omit user fm item/gallery thumbs/config,
                            // Add solo to Artist/SearchView 
                            // Add Search to Account/AdminArtists

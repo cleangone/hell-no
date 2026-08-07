@@ -3,7 +3,7 @@
    <div class="my-5 login text-left">
       <v-form v-model="dataValid">  
          <v-text-field v-model="email" label="Email" :rules="emailRule"></v-text-field>
-         <v-text-field v-model="password" label="Password":type="showPassword?'text':'password'" 
+         <v-text-field v-model="password" label="Password" :type="showPassword?'text':'password'" 
             :append-inner-icon="showPassword?'mdi-eye-off':'mdi-eye'" @click:append-inner="showPassword=!showPassword"/>
       </v-form>
       <v-row justify="space-between">
