@@ -53,18 +53,13 @@ export const useViewMgr = defineStore('viewMgr', () => {
    const isStandalone = computed(() => window.matchMedia('(display-mode: standalone)').matches)
    const isXs         = computed(() => xs.value)
    const isMobile     = computed(() => {
-         const iosDevice = navigator.userAgent.match(/iPhone|iPad|iPod/) // ipad no longer matches
-         const mobile = xs.value || (isStandalone.value && iosDevice != null)
-         // logStore.jsonInfo("deviceInfo",
-            // { standalone: isStandalone.value, iosDevice: iosDevice, isMobile: mobile })
-         return mobile
+         const iosDevice = navigator.userAgent.match(/iPhone|iPod/) // ipad no longer matches
+         if (xs.value || (isStandalone.value && iosDevice != null)) { return true }
+         
+         // ipad check
+         if (navigator.userAgent.match(/Mac/) && navigator.maxTouchPoints){ return true }
 
-         // ipad no longer works - 
-         // if (navigator.userAgent.match(/Mac/) && navigator.maxTouchPoints){
-         //    // if the device is an iPad
-         //    return true
-         // }
-
+         return false
    })
    const isDeskTop = computed(() => !isMobile.value)
    const solo      = computed(() => localStore.soloMode)

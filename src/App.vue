@@ -153,7 +153,8 @@
       </div>
       <div v-else-if="isRoute(Route.ABOUT)" class="small">
          <div>{{ version }} ({{ windowSize.width }} x {{ windowSize.height }})</div>
-         <div>{{ userAgent }}</div>
+         <div>User Agent: {{ userAgent }}</div>
+         <div>Max Touch Points: {{ maxTouchPoints }}</div>
          <div v-if="isStandalone">Standalone</div>
       </div>
 
@@ -284,6 +285,7 @@
 
    const version = computed(() => { return versions[0][0] })
    const userAgent = computed(() => navigator.userAgent)
+   const maxTouchPoints = computed(() => navigator.maxTouchPoints)  
    const isStandalone = computed(() => window.matchMedia('(display-mode: standalone)').matches)
    const appEnv = computed(() => { 
       // logStore.jsonInfo("navigator", 
