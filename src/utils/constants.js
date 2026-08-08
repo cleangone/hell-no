@@ -191,6 +191,7 @@ export const Route = {
    FAVORITES: { name: 'favorites', url: '/favorites', display: 'My Favorites' },
    RANDOM:    { name: 'random',    url: '/random'     },
    LOGIN:     { name: 'login',     url: '/login',     display: 'Login' },
+   FORGOT:    { name: 'forgot',    url: '/forgot',    display: 'Forgot Password' },
    REGISTER:  { name: 'register',  url: '/register/'  },
    MESSAGE:   { name: 'message',   url: '/message',   display: 'Message' },
    BROADCAST: { name: 'broadcast', url: '/broadcast'  },

@@ -8,7 +8,7 @@
       </v-form>
       <v-row justify="space-between">
          <v-btn @click="login()" :disabled="!dataValid || !password" class="ml-3">Login</v-btn>
-         <TextButton @click="forgotPassword()" text="Forgot Password" :disabled="!dataValid" class="mt-1"/>
+         <RouterLink :to="Route.FORGOT.url" class="mt-1 mr-3">Forgot Password</RouterLink>
       </v-row>
    </div>
    <div class="login-info  pt-4">{{ infoMsg }}</div>
@@ -18,9 +18,8 @@
 <script setup>
    import { ref } from 'vue'
    import { useRouter } from 'vue-router'
-   import { getAuth, sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth"
+   import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
    import { useViewMgr } from '@/stores/viewMgr'
-   import TextButton from '@/components/util/TextButton.vue'
    import { emailRule } from '@/utils/utils'
    import { Route } from '@/utils/constants'
    
@@ -50,20 +49,6 @@
             else { errMsg.value = "Email/password incorrect" }
          })
    }
-
-   const forgotPassword = () => {
-      infoMsg.value = ""
-      errMsg.value = ""
-      sendPasswordResetEmail(getAuth(), email.value).then(() => {
-         infoMsg.value = "Reset email sent"
-      })
-      .catch((error) => {
-         console.error("sendPasswordResetEmail error", error.code, error.message)
-         if (error.code == "auth/user-not-found") { errMsg.value = "Email not found" }
-         else { errMsg.value = error.message }
-      })
-   }
-
 </script>
 
 <style>

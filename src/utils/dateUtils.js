@@ -39,15 +39,19 @@ export function chatDate(date) {
 export function emailThreadDate(date) { return formatDate(date, HH_MM, DDD_HH_MM, MM_DD, MM_DD_YY) }
 export function emailDate(date) { 
    return formatDate(date, DDD_MMM_DD_HH_MM, DDD_MMM_DD_HH_MM, MM_DD_HH_MM, MM_DD_YY_HH_MM) }
-   
-function sameYear(date1, date2)  { return date1.getYear() == date2.getYear() }
-function daysSince(date1, date2) { return (dateUTC(date1) - dateUTC(date2)) / DAY_IN_MILLIS }
-function dateUTC(date)   { return Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) }
+export function daysOld(timestamp) { return timestamp ? getDaysOld(timestamp.toDate()) : 0 }
 
+function getDaysOld(date) { 
+   if (!date) { return 0 }   
+   const now = new Date()
+   const diffInMs = Math.abs(now - date)
+   return Math.round(diffInMs / (1000 * 60 * 60 * 24))
+}
+
+function sameYear(date1, date2)  { return date1.getYear() == date2.getYear() }
 function formatDate(date, todayOptions, recentDayOptions, thisYearOptions, lastYearOptions) { 
    if (!date) { return "" }
-   const now = new Date()
-   const days = daysSince(now, date)
+   const days = getDaysOld(date)
    let options = days ? recentDayOptions : todayOptions
    if (days > 2) { options = sameYear(date, now) ? thisYearOptions : lastYearOptions }
    

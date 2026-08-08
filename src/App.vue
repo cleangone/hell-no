@@ -214,7 +214,8 @@
    import ToggleIcon          from '@/components/util/ToggleIcon.vue'
    import YouTubeAudio        from '@/components/util/YouTubeAudio.vue'
    import ViewedSortButton    from '@/views/viewed/ViewedSortButton.vue'
-   import { handleError } from '@/utils/utils'
+   import { handleError }     from '@/utils/utils'
+   import { daysOld }         from '@/utils/dateUtils'
    import { Defaults, Route, ThumbType } from '@/utils/constants'
    import { versions }   from '@/version'
 
@@ -229,15 +230,23 @@
    const windowSize = ref({})
 
    onMounted(async() => {
-      // logStore.info("App.onMounted")
+      // console.log("App.onMounted")
       const auth = getAuth()
-      onAuthStateChanged(auth, (user) => {      
+      onAuthStateChanged(auth, (user) => {     
+         // console.log("onAuthStateChanged") 
          if (user) { userStore.userId = user.uid } 
          else { 
             userStore.userId = "" 
             localStore.setSoloMode(false) // in case user had solo set
          }
-         // console.log("onAuthStateChanged", userStore.userId)
+
+         if (userStore.userId) {
+            setTimeout(() => {
+               if (userStore.user && (!userStore.user.dateVisited || daysOld(userStore.user.dateVisited))) {
+                  userStore.updateDateVisited(userStore.userId)
+               }
+            }, 2000)
+         }
          viewStore.resetView()
       })
 

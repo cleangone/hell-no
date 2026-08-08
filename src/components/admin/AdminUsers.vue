@@ -15,6 +15,7 @@
          <template v-slot:item.items="{ item }">
             {{ item.items ? item.items : "" }}
          </template>
+         <template v-slot:item.dateVisited="{ item }">{{ defaultDisplayDate(item.dateVisited) }}</template>
          <template v-slot:item.dateCreated="{ item }">{{ defaultDisplayDate(item.dateCreated) }}</template>
          <template v-slot:item.actions="{ item }">
             <IconButton icon="mdi-account-arrow-right" @click="swapUser(item.id)" 
@@ -61,6 +62,7 @@
       { title: 'Name',     key: 'fullName',   value: 'fullName' },
       { title: 'Email',    key: 'email',      value: 'email' },
       { title: 'Items',    key: 'items',      value: 'items',       align: 'center' },
+      { title: 'Visited',  key:'dateVisited', value: 'dateVisited', align: 'center' },
       { title: 'Created',  key:'dateCreated', value: 'dateCreated', align: 'center' },
       { title: 'Admin',    key: 'admin',      value: 'admin' },
       { title: '',         key: "actions" },
@@ -71,6 +73,7 @@
       username:    (a, b) => { return a.localeCompare(b) }, 
       fullName:   (a, b) => { return a.localeCompare(b) }, 
       items:       (a, b) => { return b - a }, 
+      dateVisited: (a, b) => { return b - a }, 
       dateCreated: (a, b) => { return b - a }, 
       admin:       (a, b) => { return a.localeCompare(b) }, 
    } 

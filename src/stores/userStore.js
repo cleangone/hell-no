@@ -25,6 +25,7 @@ import { useFirestore } from '@vueuse/firebase/useFirestore'
       messagingTokens[]
          device
          token
+      dateVisited
       dateCreated
       dateModified
 */
@@ -52,6 +53,10 @@ export const useUserStore = defineStore('user', () => {
       setDoc(userDoc(userToSet.id), userToSet)
    }
 
+   function updateDateVisited(userId) { 
+      console.log("updateDateVisited", userId) 
+      updateUser({ id:userId, dateVisited:serverTimestamp() }) }
+   
    function updateUser(updatedUser) {
       console.log("updateUser", updatedUser) 
       const userToUpdate = { ...updatedUser, dateModified: serverTimestamp() }
@@ -102,7 +107,8 @@ export const useUserStore = defineStore('user', () => {
    }
 
    return { 
-      userId, user, users, userIdToUser, userExists, getUser, getUsername, setUser, updateUser, deleteUser,
+      userId, user, users, userIdToUser, userExists, getUser, getUsername, 
+      setUser, updateDateVisited, updateUser, deleteUser,
       myFullName, mySettings, soloMode, updateSettings, addImage, removeImage, updateImage, updateImages
    }
 })
