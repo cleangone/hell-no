@@ -19,8 +19,17 @@
       </v-row>
 
       <v-data-table v-if="viewTable" v-model="selectedItemIds" :headers="itemHeaders" 
-            :items="galleryDisplayItems" item-key="id" :custom-key-sort="customKeySort" 
+            :items="galleryDisplayItems" item-key="id" items-per-page="100" 
+            :custom-key-sort="customKeySort" @update:currentItems="setSortedItems"
             :show-select="isMyGallery" :item-selectable="item => item.isMyItem">
+         <template v-slot:header.position="{ column, getSortIcon, toggleSort }">
+            <div class="d-flex align-center">
+               <v-icon :icon="getSortIcon(column)" class="v-data-table-header__sort-icon ml-1" />
+               <ToolTipHover v-if="itemsSorted" text="Save the new sort order" v-slot="{ props }">
+                  <IconButton v-bind="props" icon="mdi-database" @click="saveSortOrder()" @click.stop class="admin-link"/>
+               </ToolTipHover>
+            </div>
+         </template>
          <template v-slot:item.position="{ item }">
             <div v-if="!isHidden(item)">{{ item.position }}</div>
          </template>
@@ -106,6 +115,7 @@
    import EditButton      from '@/components/util/EditButton.vue'
    import IconButton      from '@/components/util/IconButton.vue'
    import TextButton      from '@/components/util/TextButton.vue'
+   import ToolTipHover    from '@/components/util/ToolTipHover.vue'
    import { isHidden } from '@/utils/utils'
    import { Defaults, Emit, ItemOrigin, Route } from '@/utils/constants'
    
@@ -130,6 +140,7 @@
    const showRemoveItemDialog  = ref(false)
    const viewTable = ref(true)
    const isSmallThumb = ref(false)
+   const sortedItems = ref(null)
    const selectedItem = ref({})
    const selectedItemIds = ref([])
    const selectedItems = ref([])
@@ -179,6 +190,21 @@
       return false
    })
 
+   const setSortedItems = (items) => { sortedItems.value = items }
+   const itemsSorted = computed(() => { 
+      if (!sortedItems.value ||
+          sortedItems.value.length != galleryDisplayItems.value.length) { return false } 
+
+      const equalById = sortedItems.value.every((obj, index) => 
+         obj.key === galleryDisplayItems.value[index]?.id)
+      return !equalById
+   })
+
+   const saveSortOrder = () => { 
+      const itemIds = sortedItems.value.map(obj => obj.key)
+      galleryStore.updateGallery({ id: props.galleryId, itemIds: itemIds }) 
+    }
+
    // thumb drag/drop reordering 
    const galleryThumbItems = computed({ 
       get() {
@@ -199,6 +225,8 @@
             id: props.galleryId,
             itemIds: galleryItemIds
          })
+
+         sortedItems.value = null // reset so table does not show saveSortOrder icon
       }
    })
 

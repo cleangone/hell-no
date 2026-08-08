@@ -3,7 +3,7 @@
       <div class="text-h5">
          {{ showMyGalleries ?  "Galleries" : "My Contributing Galleries"  }}
          <TextButton v-if="showMyGalleries" @click="showAddGalleryDialog=true" text="Add Gallery"/>
-         <TextButton v-if="showMyGalleries" @click="showManifestUpload=true"   text="Manifest Upload"/>      
+         <TextButton v-if="showMyGalleries" @click="showManifestUpload=true"   text="Gallery/Manifest Upload"/>      
          <TextButton v-if="showMyGalleries && galleryStore.myContributingGalleriesExist" @click="showMyGalleries=false" text="View My Contributing Galleries"/>
          <TextButton v-if="!showMyGalleries" @click="showMyGalleries=true" text="View My Galleries"/>
       </div>
@@ -11,7 +11,7 @@
          <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" label="Search"
             flat hide-details variant="solo-filled" density="compact" class="search-box"/>
       </div>
-      <v-data-table :headers="galleryHeaders" :items="userGalleries" :search="search" items-per-page="25" density="compact">
+      <v-data-table :headers="galleryHeaders" :items="userGalleries" :search="search" items-per-page="50" density="compact">
          <template v-slot:item.name="{ item }">
             <span v-if="item.generation==0">
                <span v-if="item.childGalleryIds.length">
