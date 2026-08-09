@@ -25,10 +25,12 @@ export const ArtistRole = {
    LAYOUT:   'Layouts',
    FINISH:   'Finishes',
    AFTER:    'After/Homage',
+   WRITER:   'Writer',
 }
 
 export const ArtistRoles = [ 
-   ArtistRole.ALL, ArtistRole.PENCILS, ArtistRole.INKS, ArtistRole.LAYOUT, ArtistRole.FINISH, ArtistRole.AFTER ]
+   ArtistRole.ALL, ArtistRole.PENCILS, ArtistRole.INKS, ArtistRole.LAYOUT, 
+   ArtistRole.FINISH, ArtistRole.AFTER, ArtistRole.WRITER ]
 
 export const ArtistState = {
    PRIMARY:  'Primary',

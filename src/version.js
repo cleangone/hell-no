@@ -5,6 +5,7 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [                 
+   ["v2.40.1", "8/8/26"],  // Add Writer to artist type
    ["v2.40.0", "8/8/26"],  // Add ability to save table sort order to AccountGalleryItems 
    ["v2.39.0", "8/7/26"],  // Add user.dateVisited, updated at login
                            // Add ForgotView
