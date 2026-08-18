@@ -25,7 +25,7 @@
    import { useWallStore }  from '@/stores/wallStore'
    import { useWallMgr }    from '@/stores/wallMgr'
    import EditButton from '@/components/util/EditButton.vue'
-   import EditWall   from '@/components/wall/EditWall.vue'
+   import EditWall   from '@/components/wall/crud/EditWall.vue'
    
    const wallStore  = useWallStore()
    const wallMgr    = useWallMgr()

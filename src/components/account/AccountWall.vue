@@ -13,7 +13,7 @@
    import { computed, ref } from 'vue'
    import { useUserStore } from '@/stores/userStore'
    import { useWallStore }  from '@/stores/wallStore'
-   import EditWall   from '@/components/wall/EditWall.vue'
+   import EditWall   from '@/components/wall/crud/EditWall.vue'
    import ManageWall from '@/components/wall/ManageWall.vue'
    import TextButton from '@/components/util/TextButton.vue'
    

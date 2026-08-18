@@ -18,7 +18,7 @@
       <div class="walldiv" :style="wallDivStyle">
          <v-img :src="wallImage" cover :style="wallBackgroundStyle" class="wall-background"></v-img>
          <div class="wall-content">
-            <SwipeWall v-if="showWall" :wall="displayWall" :rowHeight="slideRowHeight"/>
+            <SplitWall v-if="showWall" :wall="displayWall" :rowHeight="slideRowHeight"/>
          </div> 
       </div>
    </v-container>
@@ -92,7 +92,7 @@
    import ItemThumb    from '@/components/item/thumb/ItemThumb.vue'
    import GalleryThumb from '@/components/gallery/thumb/GalleryThumb.vue'
    import UserThumb    from '@/components/user/UserThumb.vue'
-   import SwipeWall    from '@/components/wall/SwipeWall.vue'
+   import SplitWall    from '@/components/wall/SplitWall.vue'
    import DarkButton   from '@/components/util/DarkButton.vue'
    import ShowNotifications from '@/components/notification/ShowNotifications.vue'
    import { timestampsEqual } from '@/utils/dateUtils'

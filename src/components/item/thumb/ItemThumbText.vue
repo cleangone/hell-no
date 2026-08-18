@@ -1,7 +1,7 @@
 <template>
    <div v-if="showTitle||showArtist||showYear||fromUser||date" class="text-body-2"> 
       <div v-if="showTitle" :class="isXsSmThumb?'':'font-weight-bold'" >{{ itemName }}</div>
-      <ItemArtistYear :item="item" :showArtist="showArtist" :showYear="showYear" :isXsSmThumb="isXsSmThumb"/>
+      <ItemArtistYear :item="item" :showArtist="showArtist" :showYear="showYear" :isSmThumb="isSmThumb"/>
       <UserDateText :user="fromUser" :date="date"/>
    </div>
 </template>
@@ -43,8 +43,11 @@
       return props.useLocalName ? props.item.localName : name
    })
 
-   const isXsSmThumb = computed(() => viewMgr.isXs && viewStore.thumbSize.xsSize == ThumbSize.SM)
-   
+   const isXsSmThumb = computed(() => viewMgr.isXs && isSm(viewStore.thumbSize.xsSize))
+   const isSmThumb   = computed(() => isSm(thumbSize.value))
+   const thumbSize   = computed(() => viewMgr.isXs ? viewStore.thumbSize.xsSize : viewStore.thumbSize.size)
+   const isSm = (size) => { return size == ThumbSize.SM }
+
    const fromUser = computed(() => { 
       if (showUser.value) {
          if (props.item.profileId) { return { id: props.item.profileId, name: profileStore.getUsername(props.item.profileId) }}

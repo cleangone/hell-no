@@ -18,7 +18,7 @@
    <div v-if="wallItemsExist" class="walldiv" :style="wallDivStyle">
       <v-img :src="wallImage" cover :style="wallBackgroundStyle" class="wall-background"></v-img>
       <div class="wall-content">
-         <SwipeWall :wall="displayWall" :rowHeight="slideRowHeight"/>
+         <SplitWall :wall="displayWall" :rowHeight="slideRowHeight"/>
       </div> 
    </div>
    <!-- galleries -->
@@ -60,7 +60,7 @@
    import { useViewMgr }      from '@/stores/viewMgr'
    import GalleryThumb from '@/components/gallery/thumb/GalleryThumb.vue'
    import ItemThumb    from '@/components/item/thumb/ItemThumb.vue'
-   import SwipeWall    from '@/components/wall/SwipeWall.vue'
+   import SplitWall    from '@/components/wall/SplitWall.vue'
    import EmailButton  from '@/components/email/EmailButton.vue'
    import { ThumbRow } from '@/utils/utilClasses'
    import { randomizeArray } from '@/utils/utils'

@@ -112,6 +112,7 @@ export const useWallStore = defineStore('wall', () => {
          profileId: item.profileId ? item.profileId : null,
          thumbImageId:    image.id, 
          thumbUrl:        image.thumbUrl, 
+         largeThumbUrl:   image.largeThumbUrl, 
          thumbDimensions: { ...image.dimensions }, 
          thumbWidth:      aspectRatio < 1 ? 150 : Math.min(Math.floor(150 * aspectRatio), 300), 
          popupUrl:        item.primaryImage.largeThumbUrl, 

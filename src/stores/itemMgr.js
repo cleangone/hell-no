@@ -217,15 +217,15 @@ export const useItemMgr = defineStore('itemMgr', () => {
       return Route.ITEM.url + origin + '/' + navAction + '/' + itemId + (childNum ? '/' + childNum : '') }
    function itemURL(itemId, origin, childNum) { return itemNavURL(itemId, origin, ItemNavAction.EXTERNAL, childNum) }
    
-   function getPopupImage(imageName, artistName, url, boundingRect, aspectRatio, settings = {}) { // settings are optional
+   function getPopupImage(imageName, artistName, url, boundingRect, aspectRatio, settings = {}) {
       const offset = 25
       const name = imageName + (artistName ? " - " + artistName : "")
-      
+
       let popupWidth = aspectRatio < 1 ? 350 : 550 
       if (settings.smallThumb) { popupWidth = aspectRatio < 1 ? 250 : 350 }
       const popupHeight = Math.round(popupWidth / aspectRatio) + (name.length ? 35 : 0)  
       const popup = { name: name, url: url, width: popupWidth, height: popupHeight}
-      
+   
       if (settings.overlayThumb) { return { ...popup, x: boundingRect.left, y: boundingRect.top } }
      
       const x = boundingRect.left < windowWidth.value / 2 ? 

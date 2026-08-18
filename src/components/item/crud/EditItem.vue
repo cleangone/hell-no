@@ -17,17 +17,19 @@
       <div v-else>
          <v-row>
             <v-col cols="8">
-               <v-row no-gutters>      
+               <v-row>      
                   <v-col><v-text-field v-model="currItemName" label="Name/Title" :rules="requiredRule" class="ms-2"/></v-col> 
-                  <v-col><v-text-field v-model="currItemSubtitle" label="Subtitle" class="ms-2"/></v-col> 
+               </v-row> 
+               <v-row no-gutters> 
+                  <v-col cols="8"><v-text-field v-model="currItemSubtitle" label="Subtitle" class="ms-2"/></v-col> 
+                  <v-col><v-select v-model="currItemState" label="Item State" :items="ItemStates" class="ms-2"/></v-col>
                </v-row>  
                <v-row no-gutters>      
                   <v-col cols="8"><v-text-field v-model="currAltName" label="Alternate Name" class="ms-2"/></v-col> 
                   <v-col><v-text-field v-model="currYearCreated" label="Year Created" class="ms-2"/></v-col>
                </v-row>  
-              <v-row no-gutters>        
-                  <v-col><v-select v-model="currItemState" label="Item State" :items="ItemStates" class="ms-2"/></v-col>
-                  <v-col v-if="isMyItem && profiles.length">
+               <v-row no-gutters>        
+                   <v-col v-if="isMyItem && profiles.length">
                      <v-select v-model="currProfileId" label="Owned by Profile" :items="profiles" item-title="username" item-value="id" clearable class="ms-2"/>
                   </v-col>
                </v-row>
@@ -249,7 +251,7 @@
             name: currItemName.value,
             profileId: currProfileId.value,
             primaryImage: currItem.value.primaryImage, 
-            primaryArtist: primaryArtist
+            primaryArtist: itemToUpdate.primaryArtist
          }
          // wallStore.addMyWallItem(itemForWall, currItem.value.primaryImage) 
          console.log("Adding wall item with primary image", itemForWall)

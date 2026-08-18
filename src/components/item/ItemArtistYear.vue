@@ -16,17 +16,17 @@
    
    const props = defineProps({
       item: Object,
-      showArtist:  { type: Boolean, default: true },
-      showYear:    { type: Boolean, default: true },
-      isXsSmThumb: { type: Boolean },
+      showArtist: { type: Boolean, default: true },
+      showYear:   { type: Boolean, default: true },
+      isSmThumb:  { type: Boolean },
    })
 
    const primaryArtist = computed(() => props.showArtist && props.item.primaryArtist ? props.item.primaryArtist : null)
    const year          = computed(() => props.showYear   && props.item.yearCreated   ? props.item.yearCreated : null)
    const otherArtist   = computed(() => otherArtists.value.length ? otherArtists.value[0] : null)
    const otherArtists  = computed(() => 
-      props.showArtist && !props.isXsSmThumb && props.item.otherArtists ? props.item.otherArtists : [])
+      props.showArtist && !props.isSmThumb && props.item.otherArtists ? props.item.otherArtists : [])
    
-   const artistName = (artist) => { return props.isXsSmThumb && artist.shortName ? artist.shortName : artist.fullName }
+   const artistName = (artist) => { return props.isSmThumb && artist.shortName ? artist.shortName : artist.fullName }
 </script>
 

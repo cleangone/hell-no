@@ -5,6 +5,9 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [                 
+   ["v2.42.0", "8/17/26"], // Update Wall to show large images on top and smaller on bottom
+   ["v2.41.0", "8/12/26"], // Handle wall with no rows
+                           // Display artist shortName on all small thumbs
    ["v2.40.1", "8/8/26"],  // Add Writer to artist type
    ["v2.40.0", "8/8/26"],  // Add ability to save table sort order to AccountGalleryItems 
    ["v2.39.0", "8/7/26"],  // Add user.dateVisited, updated at login

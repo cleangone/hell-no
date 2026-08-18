@@ -51,7 +51,8 @@
                   </v-col>
                </v-row>
             </div>
-            <div> <!-- origin page and galleries -->
+            <div> 
+               <!-- origin page and galleries -->
                <span style="text-align:center">
                   <div v-if="showNav"> <!-- origin page and gallery if there is only one -->
                      <RouterLink v-if="viewStoreVisibleItems" :to="viewStoreVisibleItems.linkUrl" :class="singleOtherGallery ? 'font-weight-bold' : ''">
@@ -69,6 +70,7 @@
                   </div>
                </span>
             </div>
+            <!-- nav row -->
             <v-row v-if="showNav" class="smThumbRow align-center justify-center flex-nowrap my-5" >
                <v-col cols="1" class="d-flex flex-shrink-0"/>
                <v-col cols="5" class="d-flex flex-grow-1 flex-shrink-0 justify-end align-center">

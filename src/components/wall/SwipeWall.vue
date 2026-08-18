@@ -54,28 +54,22 @@
 
    const wallItems = computed(() => {
       const maxWallItems = props.wall.maxWallItems ? props.wall.maxWallItems : Defaults.MAX_WALL_ITEMS
-      const wallItems = []
+      const allWallItems = []
+
+      // partially fill wall with user's wall items if displayuing site wall 
       if (props.wall.id == Defaults.SITE_ID && props.wall.userWallItems) {
          const maxUserWallItems = Math.floor(maxWallItems/2)
          const randomUserWallItems = randomizeArray(props.wall.userWallItems)
-         wallItems.push(...randomUserWallItems.slice(0, maxUserWallItems))
+         allWallItems.push(...randomUserWallItems.slice(0, maxUserWallItems))
       }
 
-      const wallItemIds = wallItems.map((obj) => obj.itemId) 
+      const wallItemIds = allWallItems.map((obj) => obj.itemId) 
       for (const wallItem of props.wall.wallItems) { 
          if (wallItems.length >= maxWallItems) { break }
-         else if (!wallItemIds.includes(wallItem.itemId)) { wallItems.push(wallItem) }
+         else if (!wallItemIds.includes(wallItem.itemId)) { allWallItems.push(wallItem) }
       }
 
-      const displayWallItems = []
-      if (props.wall.id == Defaults.SITE_ID) { displayWallItems.push( ...wallItems) }
-      else {
-         for (const wallItem of wallItems) {
-            displayWallItems.push(wallItem) 
-         }
-      }
-
-      const sizedWallItems  = sizeWallItems(displayWallItems)   
+      const sizedWallItems  = sizeWallItems(allWallItems)   
       const randomWallItems = randomizeArray(sizedWallItems)
       let rowIndex = 1
       for (const wallItem of randomWallItems) {   
@@ -109,9 +103,10 @@
 
    const slideRows = computed(() => { 
       const rows = getRowContainter()
+      if (!rows.length) { return rows }
       const navItems = []
 
-      for (const wallItem of wallItems.value) {    
+      for (const wallItem of wallItems.value) {
          if (wallItem.wallRow) {  
             const index = wallItem.wallRow - 1
             rows[index].items.push(wallItem)
