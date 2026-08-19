@@ -69,7 +69,6 @@
       return images
    }) 
 
-   // todo - this includes profile items
    const itemCount = computed(() => props.user ? itemStore.getUserPubicItems(props.user.id).length : 0)
    const backgroundStyle = computed(() => thumbBackgroundColorStyle(props.gallery))
 
@@ -78,7 +77,7 @@
       const items = []
       if (props.user) {
          for (const item of itemMgr.getRecentPublicItems(props.user.id) ) {
-            if (!item.profileId) { items.push(item) }
+            items.push(item)
          }
       }
       return items

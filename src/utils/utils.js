@@ -86,6 +86,7 @@ export function randomizeArray(array) {
 export function getMapObjsById(id, map) { return map && map.has(id) ? map.get(id) : [] }
 
 export function populated(str) { return str && str.length }
+export function possessive(str) { return populated(str) ? str + (str.endsWith("s") ? "'" : "'s") : ""}
 
 const KNOWN_ERRORS = [ " is null", ".value is undefined" ]
 export function handleError(err, component) { 

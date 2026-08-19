@@ -26,18 +26,15 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useWallStore }    from '@/stores/wallStore'
-   import { useProfileStore } from '@/stores/profileStore'
    import TableThumb     from '@/components/account/TableThumb.vue'
    import EditWall       from './crud/EditWall.vue'
    import EditWallItem   from './crud/EditWallItem.vue'
    import DeleteWallItem from './crud/DeleteWallItem.vue'
    import EditButton     from '@/components/util/EditButton.vue'
-   import DeleteButton   from '@/components/util/DeleteButton.vue'
-   // import { Defaults } from '@/utils/constants'  
+   import DeleteButton   from '@/components/util/DeleteButton.vue' 
    
    const props = defineProps({ wallId: String })
    const wallStore    = useWallStore()
-   const profileStore = useProfileStore()
    const showEditWallDialog = ref(false)
    const showEditWallItemDialog = ref(false)
    const showDeleteWallItemDialog = ref(false)
@@ -54,15 +51,7 @@
 
    const wall = computed(() => wallStore.getWall(props.wallId) )
    const wallItems = computed(() => {
-      const items = []
-      if (wall.value) {
-         for (const wallItem of wall.value.wallItems) {
-            const displayItem = { ...wallItem }
-            if (displayItem.profileId) { displayItem.profile = profileStore.getUsername(displayItem.profileId) }
-            items.push(displayItem) 
-         }
-      }
-
+      const items = wall.value ? [ ...wall.value.wallItems ] : []
       items.sort((a, b) => a.title.localeCompare(b.title))
       return items
    })

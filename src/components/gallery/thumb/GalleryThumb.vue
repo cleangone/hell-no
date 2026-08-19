@@ -37,7 +37,6 @@
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useItemMgr }      from '@/stores/itemMgr'
-   import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { handleError, objAspectRatio, thumbBackgroundColorStyle } from '@/utils/utils'
@@ -54,7 +53,6 @@
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
    const itemMgr      = useItemMgr()
-   const profileStore = useProfileStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
    const cardRef = ref(null)
@@ -83,11 +81,7 @@
    const showDateModified = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.UPDATED))
    
    const fromUser = computed(() => { 
-      if (showUser.value) {
-         if (props.gallery.profileId) { return { id: props.gallery.profileId, name: profileStore.getUsername(props.gallery.profileId) }}
-         else { return { id: props.gallery.userId, name: userStore.getUsername(props.gallery.userId) }}
-      }
-      return null 
+      return showUser.value ? { id: props.gallery.userId, name: userStore.getUsername(props.gallery.userId) } : null
    }) 
 
    // todo - this only goes down one level

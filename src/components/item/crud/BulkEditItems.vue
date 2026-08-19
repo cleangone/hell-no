@@ -13,7 +13,7 @@
             <v-col cols="12"><EditArtist :artistContainer="primaryArtistContainer" class="mx-3"/></v-col>
          </v-row>
          <v-row no-gutters class="mt-2">
-            <v-col><v-select v-model="profileId" label="Owned by Profile" :items="profiles" item-title="username" item-value="id" clearable class="ml-3"/></v-col>
+            <v-col></v-col>
             <v-col><v-text-field v-model="yearCreated" label="Year Created" :rules="optionalYearRule" class="mx-3"/></v-col>
          </v-row>
          <div class="expansion">
@@ -37,7 +37,6 @@
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
    import { useArtistMgr }    from '@/stores/artistMgr'
-   import { useProfileStore } from '@/stores/profileStore'
    import EditArtist          from './EditArtist.vue'
    import EditArtists         from './EditArtists.vue'
    import CheckboxExpansion from '@/components/util/CheckboxExpansion.vue'
@@ -52,17 +51,14 @@
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
    const artistMgr    = useArtistMgr()
-   const profileStore = useProfileStore()
-   const namePrefix  = ref(null)
-   const nameFind    = ref('')
-   const nameReplace = ref('')
-   const itemState   = ref('')
-   const yearCreated = ref(null)
+   const namePrefix   = ref(null)
+   const nameFind     = ref('')
+   const nameReplace  = ref('')
+   const itemState    = ref(null)
+   const yearCreated  = ref(null)
    const primaryArtistContainer = ref(artistMgr.defaultArtistContainer) 
    const otherArtistsContainers = ref([]) 
-   const profileId   = ref(null)
-   const initialItemState   = ref('')
-   const initialProfileId   = ref(null)
+   const initialItemState     = ref(null)
    const initialPrimaryArtist = ref(null) 
    const initialOtherArtists  = ref(null) 
    const initialYearCreated   = ref(null)
@@ -71,7 +67,6 @@
    
    onMounted(() => {
       const stateValues = []
-      const profileIdValues = []
       const yearCreatedValues = new Set()
       let commonGalleryIds = null
       for (const item of props.items) {
@@ -87,9 +82,6 @@
             initialOtherArtists.value = [ ...item.otherArtists ]
             otherArtistsContainers.value = artistMgr.getArtistContainers(item.otherArtists) 
          }
-
-         const profileId = item.profileId ? item.profileId : ""
-         if (!profileIdValues.includes(profileId)) { profileIdValues.push(profileId) }
 
          const itemGalleryIds = item.galleryIds ?? []
          if (commonGalleryIds && commonGalleryIds.size) {
@@ -114,22 +106,10 @@
             yearCreated.value = commonValue 
          }
       }
-
-      if (profileIdValues.length == 1 && profileIdValues[0].length) { 
-         initialProfileId.value = profileIdValues[0] 
-      }
       
       const galleryCheckboxContainer = galleryMgr.getCheckboxes([ ...commonGalleryIds ])
       itemGalleryCheckboxes.value = galleryCheckboxContainer.checkboxes
       initialSelectedGalleryIds.value = galleryCheckboxContainer.selectedGalleries.map(gallery => gallery.id)
-   })
-
-   const profiles = computed(() => { 
-      const profiles = [ ...profileStore.myProfiles ]
-      for (const profile of profiles) {
-         if (initialProfileId.value == profile.id) { profileId.value = profile.id }
-      }
-      return profiles
    })
 
    const selectedCheckboxIds = (checkboxes) => { 
@@ -183,10 +163,6 @@
          if (nameFind.value.length) {
             if (!itemToUpdate.name) { itemToUpdate.name = item.name }
             itemToUpdate.name = itemToUpdate.name.replace(nameFind.value, nameReplace.value)
-         }
-
-         if (!dequal(profileId.value, initialProfileId.value)) { 
-            itemToUpdate.profileId = profileId.value 
          }
 
          const primaryArtist = artistMgr.getArtistFromContainer(primaryArtistContainer.value)

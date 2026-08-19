@@ -14,7 +14,6 @@ import { ItemType, State } from '@/utils/constants'
       name
       alternateName
       userId
-      profileId
       type: ItemType: SINGLE, GROUP
       state: State: PUBLIC, GROUP, PRIVATE, HIDDEN 
       yearCreated: optional user visible text field

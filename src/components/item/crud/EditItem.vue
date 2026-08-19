@@ -28,11 +28,6 @@
                   <v-col cols="8"><v-text-field v-model="currAltName" label="Alternate Name" class="ms-2"/></v-col> 
                   <v-col><v-text-field v-model="currYearCreated" label="Year Created" class="ms-2"/></v-col>
                </v-row>  
-               <v-row no-gutters>        
-                   <v-col v-if="isMyItem && profiles.length">
-                     <v-select v-model="currProfileId" label="Owned by Profile" :items="profiles" item-title="username" item-value="id" clearable class="ms-2"/>
-                  </v-col>
-               </v-row>
                <v-row class="mt-n3">        
                   <v-col cols="12"><EditArtist :artistContainer="currPrimaryArtistContainer" class="ms-2"/></v-col>
                </v-row>
@@ -92,7 +87,6 @@
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
    import { useArtistMgr }    from '@/stores/artistMgr'
-   import { useProfileStore } from '@/stores/profileStore'
    import { useWallStore }    from '@/stores/wallStore'
    import { useWallMgr }      from '@/stores/wallMgr'
    import EditArtist          from './EditArtist.vue'
@@ -112,16 +106,14 @@
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
    const artistMgr    = useArtistMgr()
-   const profileStore = useProfileStore()
    const wallStore    = useWallStore()
    const wallMgr      = useWallMgr()
    const currItem = ref({})
-   const currItemName      = ref('')
-   const currAltName       = ref('')
-   const currItemSubtitle  = ref('')
-   const currItemState     = ref('')
-   const currProfileId     = ref(null)
-   const currYearCreated   = ref(null)
+   const currItemName     = ref('')
+   const currAltName      = ref('')
+   const currItemSubtitle = ref('')
+   const currItemState    = ref('')
+   const currYearCreated  = ref(null)
    const currItemDescContainer = ref({ content: "" })
    const currItemWall = ref(false)  
    const currPrimaryArtistContainer = ref(artistMgr.defaultArtistContainer) 
@@ -148,7 +140,6 @@
       currAltName.value = item.alternateName ? item.alternateName : ""
       currItemSubtitle.value = item.subtitle ? item.subtitle : ""
       currItemState.value = item.state
-      currProfileId.value = item.profileId ? item.profileId : null
       currYearCreated.value = item.yearCreated
       currItemDescContainer.value.content = item.desc ? item.desc : ""
       currPrimaryArtistContainer.value = artistMgr.getArtistContainer(item.primaryArtist)
@@ -167,8 +158,6 @@
       props.item && (currItem.value.id == props.item.id) ? props.item.primaryImage : currItem.value.primaryImage)
    const childItems = computed(() => 
       props.item && (currItem.value.id == props.item.id) ? props.item.childItems : currItem.value.childItems)
-
-   const profiles = computed(() =>  [ ...profileStore.myProfiles ])
 
    const selectedGalleryIds = computed(() => selectedCheckboxIds(currItemGalleryCheckboxes.value))
    const selectedCheckboxIds = (checkboxes) => { 
@@ -208,7 +197,6 @@
       const itemToUpdate = {
          id: currItem.value.id,
          name: currItemName.value,
-         profileId: currProfileId.value,
          alternateName: currAltName.value,
          subtitle: currItemSubtitle.value,
          desc: currItemDescContainer.value.content,
@@ -249,7 +237,6 @@
          const itemForWall = { 
             id: currItem.value.id,
             name: currItemName.value,
-            profileId: currProfileId.value,
             primaryImage: currItem.value.primaryImage, 
             primaryArtist: itemToUpdate.primaryArtist
          }
@@ -259,19 +246,6 @@
       }
       else if (!currItemWall.value && wallIncludesItem) { 
          removeWallItem(currItem.value.id, currItem.value.userId)
-      }
-
-      // update wallItem.profileId if profile updated and item was already on wall
-      if ((currProfileId.value != currItem.value.profileId) && wallIncludesItem && currItemWall.value) {
-         console.log("Checking wallItem profileId")
-         const wall = wallStore.myWall
-         const updatedWallItems = []
-         for (const wallItem of wall.wallItems) { 
-            const wallItemToUpdate = { ...wallItem }
-            if (wallItemToUpdate.itemId == currItem.value.id) { wallItemToUpdate.profileId = currProfileId.value }
-            updatedWallItems.push(wallItemToUpdate)
-         }
-         wallStore.updateWall({ id: wall.id, wallItems: updatedWallItems })  
       }
 
       if (nextItems.value.length) { setCurrItem(nextItems.value.shift()) }

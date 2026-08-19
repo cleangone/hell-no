@@ -33,7 +33,6 @@
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
-   import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import GalleryThumb        from '@/components/gallery/thumb/GalleryThumb.vue'
@@ -47,7 +46,6 @@
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
-   const profileStore = useProfileStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
    const sortByDate   = ref(true)
@@ -59,14 +57,8 @@
 
    onErrorCaptured((err) => { return handleError(err, "GalleriesView") })
 
-   // id param can be a userId, profileId or the default siteId
-   const rawUser    = computed(() => userStore.getUser(route.params.id) )
-   const rawProfile = computed(() => profileStore.getProfile(route.params.id)) 
-   const username = computed(() => { 
-      if (rawUser.value) { return rawUser.value.username }
-      else if (rawProfile.value) { return rawProfile.value.username }
-      return null
-   })
+   const user     = computed(() => route.params.id == Defaults.SITE_ID ? null : userStore.getUser(route.params.id) )
+   const username = computed(() => user.value ? user.value.username : null)
   
    const showChildGalleries     = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SHOW_CHILD))
    const showMyPrivateGalleries = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SHOW_PRIVATE))
@@ -77,15 +69,11 @@
       }
 
       const galleries = []
-      if (rawUser.value) { 
-         const allGalleries = rawUser.value.id == userStore.userId ? 
-            galleryStore.myGalleries : galleryStore.getPublicGalleries(rawUser.value.id)
-         galleries.push( ...allGalleries.filter(gallery => !gallery.profileId) )
-      }
-      else if (rawProfile.value) { 
-         const allGalleries = galleryStore.getPublicGalleries(rawProfile.value.userId)
-         galleries.push( ...allGalleries.filter(gallery => gallery.profileId == rawProfile.value.id) )
-      }
+      if (user.value) { 
+         const allGalleries = user.value.id == userStore.userId ? 
+            galleryStore.myGalleries : galleryStore.getPublicGalleries(user.value.id)
+         galleries.push(...allGalleries)
+      }      
 
      return galleries.filter(gallery => viewMgr.galleryThumbVisibleToUser(gallery))
    })

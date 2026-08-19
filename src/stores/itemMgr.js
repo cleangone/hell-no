@@ -82,28 +82,20 @@ export const useItemMgr = defineStore('itemMgr', () => {
       return random.slice(0, 50)
    }
 
-   function getPublicGalleryThumbs(userId, profileId) {
+   function getPublicGalleryThumbUrls(userId) { return getPublicGalleryThumbs(userId).map(thumb => thumb.url) }
+   function getPublicGalleryThumbs(userId) {
       const thumbs = []
       for (const item of itemStore.getUserPubicItems(userId)) {
-         if (!profileId || item.profileId == profileId) {
-            const images = item.primaryImage ? [ item.primaryImage ] :  []
-            if (item.otherImages?.length) { images.push(...item.otherImages) }
-            for (const image of images) {
-               if (image.imageType == ImageType.GALLERY) { thumbs.push(image) }
-            }   
-         }
+         const images = item.primaryImage ? [ item.primaryImage ] :  []
+         if (item.otherImages?.length) { images.push(...item.otherImages) }
+         for (const image of images) {
+            if (image.imageType == ImageType.GALLERY) { thumbs.push(image) }
+         }   
+
       }
       return thumbs
    }
-
-   function getPublicGalleryThumbUrls(userId, profileId) {
-      const urls = []
-      for (const image of getPublicGalleryThumbs(userId, profileId)) {
-         urls.push(image.url) 
-      }
-      return urls
-   }
-
+  
    function mobileImageUrl(image) { 
       return image.mobileUrl && (image.dimensions?.height > 1500 || image.dimensions?.width > 1500) ? 
          image.mobileUrl : image.url 

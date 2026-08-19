@@ -10,28 +10,21 @@
    import { computed, ref } from 'vue'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
-   import { useProfileStore } from '@/stores/profileStore'
    import { useViewMgr }      from '@/stores/viewMgr'
+   import { possessive } from '@/utils/utils'
    import { Defaults, Route } from '@/utils/constants'
    
    const props = defineProps({ gallery: Object })
    
    const userStore    = useUserStore()
-   const viewMgr      = useViewMgr()
    const galleryStore = useGalleryStore()
-   const profileStore = useProfileStore()
+   const viewMgr      = useViewMgr()
    
-   const galleriesLinkId = computed(() => {
-      if (!props.gallery) { return "0" } // default if gallery not yet populated
-      return props.gallery.profileId ? props.gallery.profileId : props.gallery.userId
-   })
-
+   const galleriesLinkId    = computed(() => props.gallery ? props.gallery.userId : "0")
    const parentGallery      = computed(() => galleryStore.getGallery(props.gallery.parentGalleryId))
    const parentGalleryName  = computed(() => parentGallery.value ? parentGallery.value.name : "")
-   const galleryUsername    = computed(() => props.gallery.profileId ? 
-               profileStore.getUsername(props.gallery.profileId) : userStore.getUsername(props.gallery.userId))
-   const usernamePossessive = computed(() => galleryUsername.value?.length ? 
-               galleryUsername.value + (galleryUsername.value.endsWith("s") ? "'" : "'s") : "")
+   const galleryUsername    = computed(() => userStore.getUsername(props.gallery.userId))
+   const usernamePossessive = computed(() => possessive(galleryUsername.value))
 </script>
 
 <style>

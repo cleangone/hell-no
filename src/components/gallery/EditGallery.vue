@@ -3,20 +3,19 @@
       <div class="pa-md-4">
          <div v-if="parentGalleryName">Parent Gallery: {{ parentGalleryName  }}</div>
          <v-row>
-            <v-col cols="5"><v-text-field v-model="galleryName" label="Gallery Name" :rules="requiredRule"/></v-col> 
-            <v-col cols="4"><v-text-field v-model="gallerySortName" label="Sort Name"/></v-col>
-            <v-col><v-text-field v-model="galleryTag" label="Tag" :rules="tagRule"/></v-col>
+            <v-col><v-text-field v-model="galleryName" label="Gallery Name" :rules="requiredRule"/></v-col> 
+            <v-col><v-text-field v-model="gallerySortName" label="Sort Name"/></v-col>
          </v-row>
          <v-row class="mt-n4">
-            <v-col><v-select v-model="galleryState" label="Gallery State" :items="GalleryStates"/></v-col> 
-            <v-col><v-select v-model="galleryProfileId" label="Owned by Profile" :items="profiles" item-title="username" item-value="id" clearable/></v-col>
-         </v-row>
-         <v-row class="mt-n4 text-subtitle-2">
-            <v-col :cols="childGalleryCols">
+            <v-col><v-text-field v-model="galleryTag" label="Tag" :rules="tagRule"/></v-col>
+            <v-col :cols="9">
                <v-select v-model="childGalleries" label="Child Galleries" :items="childGalleryOptions" 
                   item-title="name" return-object multiple v-on:update:modelValue="sortChildGalleries" class="select-min text-subtitle-2"/>
-            </v-col>
-            <v-col>
+            </v-col> 
+         </v-row>
+         <v-row class="mt-n4 text-subtitle-2">
+            <v-col><v-select v-model="galleryState" label="Gallery State" :items="GalleryStates"/></v-col> 
+            <v-col cols="9">
                <v-select v-model="galleryContributorIds" label="Contributors" :items="otherUsers"
                   item-title="username" item-value="id" multiple class="select-min text-subtitle-2"/>
             </v-col>
@@ -53,7 +52,6 @@
    import { useUserMgr }      from '@/stores/userMgr'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
-   import { useProfileStore } from '@/stores/profileStore'
    import EditHtml from '@/components/util/EditHtml.vue'
    import { requiredRule } from '@/utils/utils'
    import { Emit, GalleryStates } from '@/utils/constants'
@@ -64,13 +62,11 @@
    const userMgr = useUserMgr()
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
-   const profileStore = useProfileStore()
    const galleryName      = ref('')
    const gallerySortName  = ref('')
    const galleryTag       = ref('')
    const galleryState     = ref('')
    const galleryDescContainer = ref({ content: "" })
-   const galleryProfileId = ref(null)
    const galleryContributorIds = ref(null)
    const descInHeader  = ref(false)
    const descHeaderPct = ref(60)
@@ -87,7 +83,6 @@
       gallerySortName.value   = props.gallery.sortName ?? null
       galleryTag.value        = props.gallery.tag ?? ""
       galleryState.value      = props.gallery.state
-      galleryProfileId.value  = props.gallery.profileId        ?? null // consistent null instead of undefined
       galleryContributorIds.value  = props.gallery.contributorIds ?? null
       galleryDescContainer.value.content = props.gallery.desc ?? ""
       descInHeader.value      = props.gallery.descInHeader     ?? false
@@ -114,14 +109,13 @@
 
    const parentGalleryName = computed(() => galleryStore.getMyGallery(props.gallery.parentGalleryId)?.name )
    
-   const profiles   = computed(() => [ ...profileStore.myProfiles ])
    const otherUsers = computed(() => [ ...userMgr.otherUsers ])
    
    const sortChildGalleries = () => { childGalleries.value.sort((a, b) => a.name.localeCompare(b.name)) }
    const childGalleryOptions = computed(() => { 
       const galleries = [] 
 
-      // why was this changed?  editing profile gallery?  contributor?
+      // why was this changed?  editing contributor gallery?
       // for (const gallery of galleryStore.myGalleries) {
       for (const gallery of galleryMgr.getUserGalleries(props.gallery.userId) ) {
          if (isChildGalleryOption(gallery)) { galleries.push(gallery) }
@@ -134,13 +128,6 @@
              (props.gallery.parentGalleryId == null || props.gallery.parentGalleryId != gallery.id) && // cannot be your parent 
              (gallery.parentGalleryId == null || gallery.parentGalleryId == props.gallery.id) // cannot have a diff parent 
    }
-   const childGalleryCols = computed(() => { 
-      if (!childGalleries.value?.length && !galleryContributorIds.value?.length ||
-          childGalleries.value?.length && galleryContributorIds.value?.length) { return 6 } // 50/50 split
-      else if (childGalleries.value?.length ) { return 9 } // 75% of row
-      else if (galleryContributorIds.value?.length ) { return 3 } // 25% 
-      return 6
-   })
    
    const save = () => {
       const childGalleryIds = childGalleries.value.map(function (obj) { return obj.id })
@@ -186,7 +173,6 @@
          sortName:  gallerySortName.value,
          tag:       galleryTag.value,
          state:     galleryState.value,
-         profileId: galleryProfileId.value,
          contributorIds: galleryContributorIds.value,
          desc: galleryDescContainer.value.content,
          descInHeader:     descInHeader.value,

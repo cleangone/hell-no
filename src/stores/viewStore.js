@@ -180,9 +180,8 @@ export const useViewStore = defineStore('view', () => {
    }
   
    const emailContext = ref(null)
-   function setEmailContext(user, profile, item = null) { 
-      emailContext.value = { toContact: 
-         { userId: user.id, username: profile ? profile.username : user.username, email: user.email } }
+   function setEmailContext(user, item = null) { 
+      emailContext.value = { toContact: { userId: user.id, username: user.username, email: user.email } }
       if (item) { emailContext.value.item = { id: item.id, name: item.name } }
    }
    function resetEmailContext() { emailContext.value = null } 

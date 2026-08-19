@@ -106,7 +106,6 @@
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
    import { useHitStore }     from '@/stores/hitStore'
-   import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
    import AccountItemsTransfer from '@/components/account/AccountItemsTransfer.vue'
    import TableThumb     from '@/components/account/TableThumb.vue'
@@ -132,7 +131,6 @@
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
    const hitStore     = useHitStore()
-   const profileStore = useProfileStore()
    const viewStore    = useViewStore()
    const showItems           = ref(true)
    const showAddDialog       = ref(false)
@@ -163,7 +161,6 @@
       VISIBILITY: { col:8, title:'Visibility',  key:'state',         value: 'state',        align: 'center' },
       GROUPS:     { col:9, title:'Groups',                           value: 'groups' },
       GALLERIES:  { col:10,title:'Galleries',                        value: 'galleries' },
-      PROFILE:    { col:11,title:'Profile',                          value: 'profile' },
       ACTIONS:    {        title:'',            key:'actions' },
    }
 
@@ -186,7 +183,7 @@
 
    const headerOptions = [ 
       Headers.HITS, Headers.IMAGES, Headers.ARTIST, Headers.CREATED, Headers.MODIFIED, Headers.CONTENT_MOD, 
-      Headers.YEAR, Headers.TYPE, Headers.VISIBILITY, Headers.GROUPS, Headers.GALLERIES, Headers.PROFILE ]
+      Headers.YEAR, Headers.TYPE, Headers.VISIBILITY, Headers.GROUPS, Headers.GALLERIES ]
    const selectedHeaders = ref([ 
       Headers.HITS, Headers.IMAGES, Headers.ARTIST, Headers.VISIBILITY, Headers.GROUPS, Headers.GALLERIES ])
    
@@ -280,9 +277,6 @@
                   }
                }
                displayItem.galleries = galleryNames.join(', ')
-
-               if (item.profileId) { displayItem.profile = profileStore.getUsername(item.profileId) }
-
                displayItems.push(displayItem)
             }
          }

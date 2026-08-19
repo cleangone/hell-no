@@ -23,7 +23,7 @@
       <div v-if="paramItem.size" class="mt-n2">{{ paramItem.size }}</div>
       <div v-if="itemUser" class="mt-n1">
          From <RouterLink :to="Route.USER.url + fromUser.id">{{ fromUser.username }}</RouterLink> 
-         <EmailButton v-if="!isOwnedByUser || itemProfile" :user="itemUser" :profile="itemProfile" :item="paramItem"/>
+         <EmailButton v-if="!isOwnedByUser" :user="itemUser" :item="paramItem"/>
       </div>
       <div v-if="isOwnedByUser && !isPublic(paramItem)">{{ paramItem.state }}</div> 
       <div v-html="paramItem.desc" class="mt-3 mb-1"></div>
@@ -165,7 +165,6 @@
    import { useItemStore }    from '@/stores/itemStore'
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useGalleryStore } from '@/stores/galleryStore'
-   import { useProfileStore } from '@/stores/profileStore'
    import { useWallStore }    from '@/stores/wallStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
@@ -192,7 +191,6 @@
    const itemStore    = useItemStore()
    const itemMgr      = useItemMgr()
    const galleryStore = useGalleryStore()
-   const profileStore = useProfileStore()
    const wallStore    = useWallStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
@@ -277,10 +275,10 @@
       return null
    })
 
-   const itemProfile = computed(() => paramItem.value.profileId ?
-      { id: paramItem.value.profileId, username: profileStore.getUsername(paramItem.value.profileId) } : null)
-   const fromUser = computed(() => itemProfile.value ?? 
-      { id: paramItem.value.userId,    username: itemUser.value ? itemUser.value.username : null })
+   const fromUser = computed(() => {
+      const from = { id: paramItem.value.userId, username: (itemUser.value ? itemUser.value.username : null) }
+      return from
+   })
 
    const originGalleryId = computed(() => originGallery.value ? originGallery.value.id : null)
    const originGallery = computed(() => {  

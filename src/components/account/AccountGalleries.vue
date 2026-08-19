@@ -66,7 +66,6 @@
    import { computed, ref } from 'vue'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
-   import { useProfileStore } from '@/stores/profileStore'
    import AccountGalleryItems from '@/components/account/AccountGalleryItems.vue'
    import AddGallery          from '@/components/gallery/AddGallery.vue'
    import EditGalleryCard     from '@/components/gallery/EditGalleryCard.vue'
@@ -81,7 +80,6 @@
    
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
-   const profileStore = useProfileStore()
    const showMyGalleries = ref(true)
    const showAddGalleryDialog = ref(false)
    const showManifestUpload   = ref(false)
@@ -103,7 +101,6 @@
          { title: 'Modified',        value: 'dateModified',        align: 'center' },
          { title: 'Visibility',      value: 'state',               align: 'center' },
       ])
-      if (fieldsExist.value.profileId)      { headers.push({ title: 'Profile',      value: 'profile',          align: 'center' })}
       if (fieldsExist.value.contributorIds) { headers.push({ title: 'Contributors', value: 'contributorCount', align: 'center' })}
       if (showMyGalleries.value)            { headers.push({ title: '', key: "actions" }) }
       return headers
@@ -114,7 +111,6 @@
       for (const gallery of showMyGalleries.value ? galleryStore.myGalleries :  galleryStore.myContributingGalleries) {
          const displayGallery = { ...gallery, 
             itemsDesc: gallery.itemIds && gallery.itemIds.length ? gallery.itemIds.length : "None" }
-         if (gallery.profileId) { displayGallery.profile = profileStore.getUsername(gallery.profileId) }
          if (gallery.contributorIds?.length) { displayGallery.contributorCount = gallery.contributorIds?.length }
          galleries.push(displayGallery)
       }
@@ -150,10 +146,9 @@
    })
 
    const fieldsExist = computed(() => { 
-      const fields = { tag: false, profileId: false, contributorIds: false  }
+      const fields = { tag: false, contributorIds: false  }
       for (const gallery of userGalleries.value) {
          if (gallery.tag?.length) { fields.tag = true }
-         if (gallery.profileId)   { fields.profileId = true }
          if (gallery.contributorIds?.length) { fields.contributorIds = true }
       }
       return fields

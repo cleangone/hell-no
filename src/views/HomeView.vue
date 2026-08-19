@@ -84,7 +84,6 @@
    import { useInviteStore }  from '@/stores/inviteStore'
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useWallMgr }      from '@/stores/wallMgr'
-   import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { useCacheStore }   from '@/stores/cacheStore'
@@ -105,7 +104,6 @@
    const inviteStore  = useInviteStore()
    const itemMgr      = useItemMgr()
    const wallMgr      = useWallMgr()
-   const profileStore = useProfileStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
    const cacheStore   = useCacheStore()
@@ -163,7 +161,7 @@
 
    const wallImage = computed(() => {
       if (viewMgr.solo && userStore.userId) {
-         const urls = itemMgr.getPublicGalleryThumbUrls(userStore.userId, null)
+         const urls = itemMgr.getPublicGalleryThumbUrls(userStore.userId)
          if (urls.length) { return randomizeArray(urls)[0] }
       }
       return  wallMgr.randomWallImage
@@ -289,14 +287,11 @@
    }
 
    const displayUsers = computed(() => {
-      const allUsers = []
+      const users = []
       for (const user of userStore.users) {
-         if (user.images?.length) { allUsers.push(user) }
+         if (user.images?.length) { users.push(user) }
       }
-      for (const profile of profileStore.profiles) {
-         if (profile.images?.length) { allUsers.push(profile) }
-      }
-      return allUsers
+      return users
    })
 
 </script>

@@ -6,7 +6,7 @@
             <div class="title">{{ displayName }} </div>
          </v-col>
          <v-col cols="2" class="mr-n2 d-flex flex-grow-0 flex-shrink-0 justify-end">
-            <EmailButton v-if="userExists" :user="user" :profile="rawProfile"/>
+            <EmailButton v-if="userExists" :user="user"/>
          </v-col>
       </v-row>
    </v-container>
@@ -55,7 +55,6 @@
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useWallStore }    from '@/stores/wallStore'
    import { useWallMgr }      from '@/stores/wallMgr'
-   import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import GalleryThumb from '@/components/gallery/thumb/GalleryThumb.vue'
@@ -64,7 +63,7 @@
    import EmailButton  from '@/components/email/EmailButton.vue'
    import { ThumbRow } from '@/utils/utilClasses'
    import { randomizeArray } from '@/utils/utils'
-   import { DefaultWall, GalleryThumbWidth, ItemOrigin, Route, WallRowHeight } from '@/utils/constants'
+   import { GalleryThumbWidth, ItemOrigin, Route, WallRowHeight } from '@/utils/constants'
    
    const route  = useRoute()
    const userStore    = useUserStore()
@@ -72,7 +71,6 @@
    const itemMgr      = useItemMgr()
    const wallStore    = useWallStore()
    const wallMgr      = useWallMgr()
-   const profileStore = useProfileStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
    const galleryRef = ref(null)
@@ -84,30 +82,17 @@
       title: "Hell-No User"
    })
 
-   // id param can be a userId or a profileId
-   const rawUser    = computed(() => userStore.getUser(route.params.id) )
-   const rawProfile = computed(() => profileStore.getProfile(route.params.id)) 
-   const user = computed(() => {
-      if (rawUser.value) { return rawUser.value } 
-      return rawProfile.value ? userStore.getUser(rawProfile.value.userId) : null 
-   })
-
-   const profileId = computed(() => rawProfile.value ? rawProfile.value.id : null )
+   const user = computed(() => userStore.getUser(route.params.id))
    const userExists = computed(() => user.value ? true : false )
    const userId = computed(() => user.value ? user.value.id : null )
-   const displayName = computed(() => {
-      if (rawUser.value) { return rawUser.value.displayName ? rawUser.value.displayName : rawUser.value.username }
-      return rawProfile.value ? rawProfile.value.username : "User" 
-   })
+   const displayName = computed(() => user.value ? (user.value.displayName ?? user.value.username) : "")
 
    const contentExists = computed(() => wallItemsExist.value || thumbGalleries.value.length || recentItems.value.length) 
    
    const visibleGalleries = computed(() => { 
       const galleries = []     
-      for (const gallery of galleryStore.getPublicGalleries(user.value.id) ) {
-         if (rawUser.value && !gallery.profileId || rawProfile.value && gallery.profileId == rawProfile.value.id) {
-            if (gallery.images.length && !gallery.parentGalleryId && viewMgr.galleryIsVisibleToUser(gallery)) { galleries.push(gallery) }
-         }
+      for (const gallery of galleryStore.getPublicGalleries(userId.value) ) {
+         if (gallery.images.length && !gallery.parentGalleryId && viewMgr.galleryIsVisibleToUser(gallery)) { galleries.push(gallery) }
       }    
 
       galleries.sort(function(a, b){return b.dateModified - a.dateModified}) 
@@ -122,10 +107,7 @@
    })
 
    const allRecentItems = computed(() => {
-      const visibleItems = []
-      for (const item of itemMgr.getRecentPublicItems(userId.value)) {
-         if (rawUser.value && !item.profileId || rawProfile.value && item.profileId == rawProfile.value.id) { visibleItems.push(item) }
-      } 
+      const visibleItems = [ ...itemMgr.getRecentPublicItems(userId.value) ]
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupItems(visibleItems) : visibleItems
       return viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates",  Route.RECENT.url + route.params.id, ungroupedItems)
    })
@@ -141,8 +123,7 @@
    })
 
    const displayWall = computed(() => {
-      const wall = profileId.value ? { ...DefaultWall } : { ...wallStore.getUserWall(userId.value) }
-      if (profileId.value) { wall.wallRows = allRecentItems.value.length < 8 ? 1 : 2 }   
+      const wall = { ...wallStore.getUserWall(userId.value) }
       wall.origWallRows = wall.wallRows // hack 
       if (viewMgr.isXs && wall.wallRows) { wall.wallRows = 1 }
       else if (!viewMgr.isXs) { wall.wallRows = wall.origWallRows}
@@ -157,7 +138,7 @@
    const wallBackgroundStyle = computed(() => wallDivStyle.value + " opacity:" + wallBackgroundOpacity.value + ";")
 
    const wallImage = computed(() => {
-      const urls = itemMgr.getPublicGalleryThumbUrls(userId.value, profileId.value)
+      const urls = itemMgr.getPublicGalleryThumbUrls(userId.value)
       return urls.length ? randomizeArray(urls)[0] : wallMgr.randomWallImage
    })
 </script>

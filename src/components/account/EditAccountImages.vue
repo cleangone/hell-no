@@ -66,11 +66,9 @@
       const images = [ ...userImages.value ]
       const currImageIds = images.map(image => image.id)
       for (const item of itemStore.myItems) {
-          if (!item.profileId) {
-            for (const imageSet of item.otherImages) {
-               if (imageSet.imageType == ImageType.USER && !currImageIds.includes(imageSet.id))  {
-                  images.push({ ...imageSet, originItemId: item.id })
-               }
+         for (const imageSet of item.otherImages) {
+            if (imageSet.imageType == ImageType.USER && !currImageIds.includes(imageSet.id))  {
+               images.push({ ...imageSet, originItemId: item.id })
             }
          }
       }

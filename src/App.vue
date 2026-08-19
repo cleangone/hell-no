@@ -133,15 +133,9 @@
                      <v-list-item v-if="userIsAdmin" @click="toRoute(Route.ADMIN)">
                         <v-list-item-title>Admin</v-list-item-title>
                      </v-list-item>
-
-
                      <v-list-item v-for="profile in myProfiles" @click="swapToUser(profile.id)">
                         <v-list-item-title>Swap to profile {{ profile.username }}</v-list-item-title>
                      </v-list-item>
-
-
-
-
                      <v-list-item v-if="userOwnerId" @click="swapBack">
                         <v-list-item-title>Swap Back from Profile</v-list-item-title>
                      </v-list-item>
@@ -212,7 +206,6 @@
    import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
    import { useUserStore }    from '@/stores/userStore'
    import { useUserMgr }      from '@/stores/userMgr'
-   import { useProfileStore } from '@/stores/profileStore'
    import { useAdminStore }   from '@/stores/adminStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
@@ -234,13 +227,12 @@
 
    const route  = useRoute()
    const router = useRouter()
-   const userStore    = useUserStore()
-   const userMgr      = useUserMgr()
-   const profileStore = useProfileStore()
-   const adminStore   = useAdminStore()
-   const viewStore    = useViewStore()
-   const viewMgr      = useViewMgr()
-   const localStore   = useLocalStore()
+   const userStore  = useUserStore()
+   const userMgr    = useUserMgr()
+   const adminStore = useAdminStore()
+   const viewStore  = useViewStore()
+   const viewMgr    = useViewMgr()
+   const localStore = useLocalStore()
    const windowSize = ref({})
 
    onMounted(async() => {
@@ -302,10 +294,7 @@
    const userId      = computed(() => userStore.userId)
    const userIsAdmin = computed(() => adminStore.isAdmin)
    const userOwnerId = computed(() => userStore.user.ownerId) 
-   const myProfiles  = computed(() => {
-      console.log("myProfiles", userMgr.myProfiles) 
-      return userMgr.myProfiles
-   }) 
+   const myProfiles  = computed(() => userMgr.myProfiles) 
 
    const displayName = computed(() => {
       const currUser = user.value // ugly - check user, which drives update of localStore.soloMode
@@ -340,7 +329,6 @@
 
    const username = computed(() => {
       let owner = userStore.getUser(route.params.id)
-      if (!owner) { owner = profileStore.getProfile(route.params.id) }
       return owner ? owner.username : "User" 
    })
    

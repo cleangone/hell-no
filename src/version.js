@@ -5,6 +5,7 @@
       - requiredRule does not invalidate "   "
 */
 export const versions = [                 
+   ["v2.43.1", "8/19/26"], // Remove profile logic from views, components, stores
    ["v2.43.0", "8/19/26"], // Update profile to be implemented as a user 
                            // Add transfer of item to/from profile
    ["v2.42.0", "8/17/26"], // Update Wall to show large images on top and smaller on bottom

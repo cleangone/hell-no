@@ -25,7 +25,6 @@
    import { useRoute } from 'vue-router'
    import { useUserStore }    from '@/stores/userStore'
    import { useItemMgr }      from '@/stores/itemMgr'
-   import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import ExpandItems         from '@/components/item/ExpandItems.vue'
@@ -36,34 +35,21 @@
    import { Defaults, ItemOrigin, Route } from '@/utils/constants'
    
    const route = useRoute()
-   const userStore    = useUserStore()
-   const itemMgr      = useItemMgr()
-   const profileStore = useProfileStore()
-   const viewStore    = useViewStore()
-   const viewMgr      = useViewMgr()
+   const userStore = useUserStore()
+   const itemMgr   = useItemMgr()
+   const viewStore = useViewStore()
+   const viewMgr   = useViewMgr()
    
-   // id param can be a userId, profileId or the siteId
-   const rawUser    = computed(() => userStore.getUser(route.params.id) )
-   const rawProfile = computed(() => profileStore.getProfile(route.params.id)) 
-   const username   = computed(() => { 
-      if (route.params.id == Defaults.SITE_ID) { return null } 
-      else if (rawUser.value) { return rawUser.value.username }
-      else if (rawProfile.value) { return rawProfile.value.username }
-      return null
-   })
+   const user     = computed(() => route.params.id == Defaults.SITE_ID ? null : userStore.getUser(route.params.id))
+   const username = computed(() => user.value ? user.value.username : null)
 
    const recentItems = computed(() => {
       const items = [] 
       if (viewMgr.solo) {  // param could be siteId but overridden by solo
-         for (const item of itemMgr.myRecentItems) {
-            if (!item.profileId) { items.push(item) }
-         }
+         items.push(...itemMgr.myRecentItems)
       }
       else if (username.value) { 
-         const userId = rawUser.value ? rawUser.value.id : rawProfile.value.userId
-         for (const item of itemMgr.getRecentItems(userId)) {
-            if (rawUser.value && !item.profileId || rawProfile.value && item.profileId == rawProfile.value.id) { items.push(item) }
-         }
+         items.push(...itemMgr.getRecentItems(user.value.id))
       }
       else { items.push(...itemMgr.recentPublicItems) }
 

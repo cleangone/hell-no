@@ -22,7 +22,6 @@ import { Defaults, DefaultWall, WallDisplayOrder, WallType } from '@/utils/const
          artist
             id
             fullName
-         profileId
          thumbImageId
          thumbUrl
          thumbDimensions 
@@ -110,7 +109,6 @@ export const useWallStore = defineStore('wall', () => {
          title:     item.name, 
          name:      item.name, 
          artist:    item.primaryArtist ? { id: item.primaryArtist.id, fullName: item.primaryArtist.fullName } : null,
-         profileId: item.profileId ? item.profileId : null,
          thumbImageId:    image.id, 
          thumbUrl:        image.thumbUrl, 
          largeThumbUrl:   image.largeThumbUrl, 

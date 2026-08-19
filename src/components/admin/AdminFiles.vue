@@ -26,16 +26,14 @@
    import { storage }       from '@/firebase'
    import { ref as storageRef, listAll } from "firebase/storage"
    import { computedAsync } from '@vueuse/core';
-   import { useUserStore }    from '@/stores/userStore'
-   import { useItemStore }    from '@/stores/itemStore'
-   import { useProfileStore } from '@/stores/profileStore'
-   import AdminFileOrphans from './AdminFileOrphans.vue'
-   import TextButton       from '@/components/util/TextButton.vue'
+   import { useUserStore }  from '@/stores/userStore'
+   import { useItemStore }  from '@/stores/itemStore'
+   import AdminFileOrphans  from './AdminFileOrphans.vue'
+   import TextButton        from '@/components/util/TextButton.vue'
    
    const BASE_DIR = 'images/'   
    const userStore    = useUserStore()
    const itemStore    = useItemStore()
-   const profileStore = useProfileStore()
    const orphanFolder = ref(null)
    const refresh      = ref(0) // force refresh of displayFolders - storage not reactive
    
@@ -104,14 +102,6 @@
          if (user.images) { 
             for (const image of user.images) {
                removeOrphans(image, orphans) 
-            }
-         }
-         const profiles = profileStore.userIdToProfiles.get(user.id)
-         if (profiles) {
-            for (const profile of profiles) {
-               for (const image of profile.images) {
-                  removeOrphans(image, orphans) 
-               }
             }
          }
       }

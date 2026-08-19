@@ -8,13 +8,12 @@
 
 <script setup>
    import { computed, onErrorCaptured, ref } from 'vue'
-   import { useUserStore }    from '@/stores/userStore'
-   import { useProfileStore } from '@/stores/profileStore'
-   import { useViewStore }    from '@/stores/viewStore'
-   import { useViewMgr }      from '@/stores/viewMgr'
-   import ItemArtistYear      from '../ItemArtistYear.vue'
-   import UserDateText        from '@/components/util/UserDateText.vue'
-   import { handleError }     from '@/utils/utils'
+   import { useUserStore } from '@/stores/userStore'
+   import { useViewStore } from '@/stores/viewStore'
+   import { useViewMgr }   from '@/stores/viewMgr'
+   import ItemArtistYear   from '../ItemArtistYear.vue'
+   import UserDateText     from '@/components/util/UserDateText.vue'
+   import { handleError } from '@/utils/utils'
    import { ItemThumbOptions as ThumbOptions, ThumbSize } from '@/utils/constants'
    
    onErrorCaptured((err) => { return handleError(err, "ItemThumbText") })
@@ -23,7 +22,6 @@
       item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean, showDateViewed:Boolean })
    
    const userStore    = useUserStore()
-   const profileStore = useProfileStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
    
@@ -48,14 +46,10 @@
    const thumbSize   = computed(() => viewMgr.isXs ? viewStore.thumbSize.xsSize : viewStore.thumbSize.size)
    const isSm = (size) => { return size == ThumbSize.SM }
 
-   const fromUser = computed(() => { 
-      if (showUser.value) {
-         if (props.item.profileId) { return { id: props.item.profileId, name: profileStore.getUsername(props.item.profileId) }}
-         else { return { id: props.item.userId, 
-            name: props.item.username ? props.item.username : userStore.getUsername(props.item.userId) }}
-      }
-      return null 
-   }) 
+   const fromUser = computed(() => showUser.value ? 
+      { id: props.item.userId, name: props.item.username ? props.item.username : userStore.getUsername(props.item.userId) }
+      : null 
+   ) 
 
    const date = computed(() => { 
          if (props.showDateViewed)        { return props.item.dateViewed }
