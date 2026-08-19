@@ -1,7 +1,7 @@
 <template>
    <div class="text-left">
       <div class="text-h5">Users</div>
-      <v-data-table :headers="headers" :items="displayUsers" :custom-key-sort="customKeySort" 
+      <v-data-table :headers="headers" :items="users" :custom-key-sort="customKeySort" 
             items-per-page="50" density="compact">
          <template v-slot:header.actions="{ }">
             <div class="d-flex justify-center align-center">
@@ -15,7 +15,7 @@
          <template v-slot:item.items="{ item }">
             {{ item.items ? item.items : "" }}
          </template>
-         <template v-slot:item.dateVisited="{ item }">{{ defaultDisplayDate(item.dateVisited) }}</template>
+         <template v-slot:item.dateVisited="{ item }">{{ item.dateVisited ? defaultDisplayDate(item.dateVisited) : "" }}</template>
          <template v-slot:item.dateCreated="{ item }">{{ defaultDisplayDate(item.dateCreated) }}</template>
          <template v-slot:item.actions="{ item }">
             <IconButton icon="mdi-account-arrow-right" @click="swapUser(item.id)" 
@@ -58,14 +58,14 @@
    const selectedUser = ref({})
    
    const headers = [
-      { title: 'Username', key: 'username',   value: 'username' },
-      { title: 'Name',     key: 'fullName',   value: 'fullName' },
-      { title: 'Email',    key: 'email',      value: 'email' },
-      { title: 'Items',    key: 'items',      value: 'items',       align: 'center' },
-      { title: 'Visited',  key:'dateVisited', value: 'dateVisited', align: 'center' },
-      { title: 'Created',  key:'dateCreated', value: 'dateCreated', align: 'center' },
-      { title: 'Admin',    key: 'admin',      value: 'admin' },
-      { title: '',         key: "actions" },
+      { title: 'Username',  key: 'username',    value: 'username' },
+      { title: 'Name',      key: 'fullName',    value: 'fullName' },
+      { title: 'Email',     key: 'email',       value: 'email' },
+      { title: 'Items',     key: 'items',       value: 'items',       align: 'center' },
+      { title: 'Last Login',key:'dateVisited',  value: 'dateVisited', align: 'center' },
+      { title: 'Created',   key:'dateCreated',  value: 'dateCreated', align: 'center' },
+      { title: 'Type',      key: 'accountType', value: 'accountType' },
+      { title: '',          key: "actions" },
    ]
 
    const customKeySort = {
@@ -75,21 +75,24 @@
       items:       (a, b) => { return b - a }, 
       dateVisited: (a, b) => { return b - a }, 
       dateCreated: (a, b) => { return b - a }, 
-      admin:       (a, b) => { return a.localeCompare(b) }, 
+      accountType: (a, b) => { return a.localeCompare(b) }, 
    } 
 
-   const displayUsers = computed(() => {
-      const users = []       
+   const users = computed(() => {
+      const displayUsers = []       
       for (const user of userStore.users) {
          const items = itemStore.getUserItems(user.id)
-         users.push({ 
+         const displayUser = { 
             ...user, 
             fullName: userMgr.getFullName(user),
             items: items.length ?? 0,
-            admin: adminIds.value.includes(user.id) ? "Admin" : ""
-         })
+            accountType: adminIds.value.includes(user.id) ? "Admin" : (user.ownerId ? "Profile" : "")
+         }
+         if (!displayUser.dateVisited) { displayUser.dateVisited = 0 }
+
+         displayUsers.push(displayUser)
       }
-      return users.toSorted(function(a, b) {return b.items - a.items})       
+      return displayUsers.toSorted(function(a, b) {return b.items - a.items})       
    })
 
    const adminIds = computed(() => adminStore.adminIds)
@@ -99,7 +102,8 @@
       router.push(Route.ACCOUNT.url)
    }
 
-   const disableDelete = (user) => { return user.id == userStore.userId || adminIds.value.includes(user.id) }
+   const disableDelete = (user) => { 
+      return user.id == userStore.userId || adminIds.value.includes(user.id) || user.items }
 
    const viewUser = (user) => {
       selectedUser.value = user

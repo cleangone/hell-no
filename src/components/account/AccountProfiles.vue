@@ -4,81 +4,79 @@
          My Profiles
          <TextButton @click="showAddDialog=true" text="Add Profile"/>
       </div>
-      <v-data-table :headers="headers" :items="profiles">
-         <template v-slot:item.image="{ item }">
-            <img v-if="item.activeImage" :src="item.activeImage.thumbUrl" height="50" class="image-circle"/>
+      <v-data-table :headers="headers" :items="displayProfiles">
+         <template v-slot:header.actions="{ }">
+            <ToolTip iconClass="ml-n2"><v-icon icon="mdi-account-arrow-right"/> Swap to Profile</ToolTip> 
          </template>
          <template v-slot:item.actions="{ item }">
-            <EditButton   @click="editProfile(item)" class="admin-link"/>
-            <DeleteButton @click="deleteProfile(item)" :disabled="profileUsed(item)" class="admin-link"/>
+            <IconButton icon="mdi-account-arrow-right" @click="swapUser(item.id)" 
+               :disabled="item.id==userStore.userId" size="med" class="admin-link"/>
+            <DeleteButton @click="deleteProfile(item)" :disabled="profileActive(item)" class="admin-link"/>
          </template>
       </v-data-table>
    </div>
 
    <v-dialog v-model="showAddDialog" width="auto">
-      <AddProfile :userId="userStore.userId" @done="showAddDialog=false"/>
-   </v-dialog>
-   <v-dialog v-model="showEditDialog" width="auto">
-      <EditProfileCard :profile="selectedProfile" @done="showEditDialog=false"/>
+      <AddProfileUser :userId="userStore.userId" @done="showAddDialog=false"/>
    </v-dialog>
    <v-dialog v-model="showDeleteDialog" width="auto">
-      <DeleteProfile :profile="selectedProfile" @done="showDeleteDialog=false"/>
+      <DeleteUser :user="selectedProfile" userType="Profile" @done="showDeleteDialog=false"/>
    </v-dialog>
 </template>
 
 <script setup>
    import { computed, ref } from 'vue'
+   import { useRouter }       from 'vue-router'
    import { useUserStore }    from '@/stores/userStore'
-   import { useProfileStore } from '@/stores/profileStore'
-   import { useGalleryMgr }   from '@/stores/galleryMgr'
-   import { useItemMgr }      from '@/stores/itemMgr'
-   import AddProfile      from '@/components/profile/AddProfile.vue'
-   import EditProfileCard from '@/components/profile/EditProfileCard.vue'
-   import DeleteProfile   from '@/components/profile/DeleteProfile.vue'
-   import EditButton      from '@/components/util/EditButton.vue'
-   import DeleteButton    from '@/components/util/DeleteButton.vue'
-   import TextButton      from '@/components/util/TextButton.vue'
+   import { useUserMgr }      from '@/stores/userMgr'
+   import { useItemStore }    from '@/stores/itemStore'
+   import { useGalleryStore } from '@/stores/galleryStore'
+   import AddProfileUser from '@/components/user/AddProfileUser.vue'
+   import DeleteUser     from '@/components/user/DeleteUser.vue'
+   import DeleteButton   from '@/components/util/DeleteButton.vue'
+   import IconButton     from '@/components/util/IconButton.vue'
+   import TextButton     from '@/components/util/TextButton.vue'
+   import ToolTip        from '@/components/util/ToolTip.vue'
+   import { Route } from '@/utils/constants'
    
+   const router       = useRouter()
    const userStore    = useUserStore()
-   const profileStore = useProfileStore()
-   const galleryMgr   = useGalleryMgr()
-   const itemMgr      = useItemMgr()
+   const userMgr      = useUserMgr()
+   const itemStore    = useItemStore()   
+   const galleryStore = useGalleryStore()
    const showAddDialog    = ref(false)
-   const showEditDialog   = ref(false)
    const showDeleteDialog = ref(false)
    const selectedProfile = ref({})
    
    const headers = [
       { title: 'Username',  value: 'username',     sortable: true },
-      { title: '',          key:   'image',        align:'center' },
+      { title: '',          key:   'image',        align:'center'},
       { title: 'Galleries', value: 'galleryCount', align:'center' },
       { title: 'Items',     value: 'itemCount',    align:'center' },
-      { title: '',          key:   "actions" },
+      { title: '',          key:   "actions", sortable: false },
    ]
 
-   const profiles = computed(() => { 
-      const displayProfiles = []
-      for (const profile of profileStore.myProfiles) {
+   const displayProfiles = computed(() => { 
+      const profiles = []
+      for (const profile of userMgr.myProfiles) {
          const displayProfile = { ...profile }
-         for (const image of profile.images) {
-            if (image.active) { displayProfile.activeImage = image }
-         }
-         const itemCount = itemMgr.getProfileCount(profile.id)
-         if (itemCount) { displayProfile.itemCount = itemCount }
 
-         const galleryCount = galleryMgr.getProfileCount(profile.id)
-         if (galleryCount) { displayProfile.galleryCount = galleryCount }
+         const items = itemStore.getUserItems(profile.id)
+         if (items.length) { displayProfile.itemCount = items.length }
 
-         displayProfiles.push(displayProfile)
+         const galleries = galleryStore.getUserGalleries(profile.id)
+         if (galleries.length) { displayProfile.galleryCount = galleries.length }
+
+         profiles.push(displayProfile)
       }
-      return displayProfiles
+      return profiles
    })
 
-   const profileUsed = (displayProfile) => { return displayProfile.galleryCount > 0 || displayProfile.itemCount > 0 }
+   const profileActive = (displayProfile) => { return displayProfile.galleryCount > 0 || displayProfile.itemCount > 0 }
    
-   const editProfile = (profile) => {
-      selectedProfile.value = profile
-      showEditDialog.value = true
+   const swapUser = (profileId) => {
+      userStore.userId = profileId
+      router.push(Route.HOME.url)
    }
 
    const deleteProfile = (profile) => {

@@ -124,6 +124,7 @@
 
    const props = defineProps(['galleryId'])
    const emit = defineEmits([Emit.DONE])
+   
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
    const itemStore    = useItemStore()

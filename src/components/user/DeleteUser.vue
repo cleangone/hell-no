@@ -1,5 +1,5 @@
 <template>
-   <DeleteConfirm type="User" :name="fullName" @delete="deleteUser()" @cancel="$emit(Emit.DONE)"/>
+   <DeleteConfirm :type="userType" :name="fullName" @delete="deleteUser()" @cancel="$emit(Emit.DONE)"/>
 </template>
 
 <script setup>
@@ -9,7 +9,7 @@
    import DeleteConfirm from '@/components/util/DeleteConfirm.vue'
    import { Emit } from '@/utils/constants'
    
-   const props = defineProps({ user: Object })
+   const props = defineProps({ user: Object, userType: { type: String, default: "User"} })
    const emit = defineEmits([Emit.DONE])
    const userStore = useUserStore()
    const userMgr   = useUserMgr()

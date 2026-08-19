@@ -1,5 +1,5 @@
 <template>
-   <div class="text-left">
+   <div v-if="showItems" class="text-left">
       <v-row class="ms-2 text-left text-h6 align-center">
          <v-col class="flex-grow-1 flex-shrink-0 align-center">
             Items
@@ -12,6 +12,7 @@
             <span v-else>
                <TextButton @click="showAddDialog=true"  text="Add Item"/>
                <TextButton @click="showBulkUpload=true" text="Bulk Upload"/>
+               <TextButton @click="showItems=false"     text="Transfer Items"/>
             </span>
          </v-col> 
       </v-row>
@@ -59,6 +60,9 @@
          </template>
       </v-data-table>
    </div>
+   <div v-else class="text-left">
+      <AccountItemsTransfer @done="showItems=true"/>
+   </div>
    
    <v-dialog v-model="showAddDialog" width="auto">
       <AddItemDialog :gallery="selectedGallery" @done="showAddDialog=false"/>
@@ -104,6 +108,7 @@
    import { useHitStore }     from '@/stores/hitStore'
    import { useProfileStore } from '@/stores/profileStore'
    import { useViewStore }    from '@/stores/viewStore'
+   import AccountItemsTransfer from '@/components/account/AccountItemsTransfer.vue'
    import TableThumb     from '@/components/account/TableThumb.vue'
    import AddItemDialog  from '@/components/item/crud/AddItemDialog.vue'
    import BulkUpload     from '@/components/item/crud/BulkUpload.vue'
@@ -129,6 +134,7 @@
    const hitStore     = useHitStore()
    const profileStore = useProfileStore()
    const viewStore    = useViewStore()
+   const showItems           = ref(true)
    const showAddDialog       = ref(false)
    const showBulkUpload      = ref(false)
    const showEditDialog      = ref(false)

@@ -5,7 +5,7 @@ import { collection, doc, query, where, setDoc, updateDoc, deleteDoc, arrayRemov
 import { useFirestore } from '@vueuse/firebase/useFirestore'   
 import { useUserStore }  from './userStore'
 import { useGroupStore } from '@/stores/groupStore'
-import { randomPlate } from '@/utils/utils'
+import { getMapObjsById, randomPlate } from '@/utils/utils'
 import { ItemType, State } from '@/utils/constants'
     
 /*
@@ -162,10 +162,8 @@ export const useItemStore = defineStore('item', () => {
    //    query(itemCollection, where('state', '==', State.GROUP), where('groupIds', 'array-contains-any', groupStore.myGroupIds)))
    // const myGroupMemberItems = useFirestore(myGroupMemberItemsQuery, [])
 
-   function getUserItems(userId)      { return getObjsFromMap(userId, userIdToItems.value) }
-   function getUserPubicItems(userId) { return getObjsFromMap(userId, userIdToPublicItems.value) }
-   function getObjsFromMap(id, map) { return map && map.has(id) ? map.get(id) : [] }
-
+   function getUserItems(userId)      { return getMapObjsById(userId, userIdToItems.value) }
+   function getUserPubicItems(userId) { return getMapObjsById(userId, userIdToPublicItems.value) }   
    function getItem(itemId) { return itemIdToItem.value ? itemIdToItem.value.get(itemId) : {} }
 
    function setItem(item) { 

@@ -150,7 +150,7 @@
    })
 
    const wallBackgroundOpacity = ref(.15) // todo - configurable?
-   const wallItemsExist = computed(() => displayWall.value?.wallItems.length ? true : false )
+   const wallItemsExist = computed(() => displayWall.value?.wallItems.length ? true : false)
    const slideRowHeight = computed(() => viewMgr.isMobile ? WallRowHeight.XS : WallRowHeight.DEFAULT)
    const wallRows       = computed(() => displayWall.value ? displayWall.value.wallRows : 2 )
    const wallDivStyle   = computed(() => "height:" + (((slideRowHeight.value + 10) * wallRows.value)) + "px;")

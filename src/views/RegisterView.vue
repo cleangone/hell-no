@@ -67,6 +67,10 @@
       return !registeredInvite.value && registerIdToActiveInvite?.value.size ? "Cannot find invitation" : null
    })
 
+
+   // TODO - check username conflicts.  Not required here because email is login, but clears up confusion
+
+
    const displayError = computed(() => inviteError.value ? inviteError.value : errMsg.value)
    const resetError = () => { errMsg.value = "" }
    
@@ -84,6 +88,7 @@
                email: email.value,
             })
 
+            // TODO - incorporate this into userMgr
             wallStore.addWall(userStore.userId, WallType.USER)
 
             // join group if one specified

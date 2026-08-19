@@ -37,6 +37,7 @@ export const useUserStore = defineStore('user', () => {
    
    const users = useFirestore(userCollection)   
    const userIdToUser = computed(() => { return users.value ? new Map(users.value.map((obj) => [obj.id, obj])) : new Map() })
+   const usernames    = computed(() => new Set(users.value.map(obj => obj.username)) )
    
    const userId = ref('')
    const userQuery = computed(() => userId.value && userDoc(userId.value))
@@ -51,6 +52,14 @@ export const useUserStore = defineStore('user', () => {
       userId.value = user.id
       const userToSet = { ...user, dateCreated: serverTimestamp(), dateModified: serverTimestamp() }
       setDoc(userDoc(userToSet.id), userToSet)
+   }
+
+   function addProfileUser(user) {
+      console.log("addProfileUser", user) 
+      const newUserRef = doc(userCollection) // generate a firebase id, which looks like other userIds
+      const newUser = { ...user, id: newUserRef.id, dateCreated: serverTimestamp(), dateModified: serverTimestamp() }
+      setDoc(newUserRef, newUser)
+      return newUser
    }
 
    function updateDateVisited(userId) { 
@@ -107,8 +116,8 @@ export const useUserStore = defineStore('user', () => {
    }
 
    return { 
-      userId, user, users, userIdToUser, userExists, getUser, getUsername, 
-      setUser, updateDateVisited, updateUser, deleteUser,
+      userId, user, users, userIdToUser, usernames, userExists, getUser, getUsername, 
+      setUser, addProfileUser, updateDateVisited, updateUser, deleteUser,
       myFullName, mySettings, soloMode, updateSettings, addImage, removeImage, updateImage, updateImages
    }
 })

@@ -66,6 +66,7 @@ export const useWallStore = defineStore('wall', () => {
    const userIdToWall = computed(() => { return userWalls.value ? new Map(userWalls.value.map((obj) => [obj.id, obj])) : new Map() })
    function getUserWall(userId) { return userIdToWall.value.has(userId) ? userIdToWall.value.get(userId) : DefaultWall } 
 
+   function addUserWall(id) { addWall(id, WallType.USER) }
    function addWall(id, type) {
       setDoc(wallDoc(id), {
          id: id,
@@ -148,7 +149,8 @@ export const useWallStore = defineStore('wall', () => {
    function updateWallDoc(id, wall) { updateDoc(wallDoc(id), { ...wall, dateModified: serverTimestamp() }) }
 
    return { 
-      walls, siteWall, userWallItems, myWall, myWallIncludesItem, myWallIncludesImage, addMyWallItem, addWallItem,
-      getWall, getUserWall, createWallItem, addWall, updateWall, removeWallsImageId, removeWallItem
+      walls, siteWall, userWallItems, myWall, myWallIncludesItem, myWallIncludesImage, 
+      addWall, addUserWall, addMyWallItem, addWallItem, 
+      getWall, getUserWall, createWallItem, updateWall, removeWallsImageId, removeWallItem
    }
 })

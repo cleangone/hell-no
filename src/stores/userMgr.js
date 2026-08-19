@@ -3,11 +3,13 @@ import { defineStore } from 'pinia'
 import { arrayUnion, arrayRemove } from "firebase/firestore"
 import { useUserStore }  from './userStore'
 import { useGroupStore } from './groupStore'
-import { useImageMgr }   from '@/stores/image/imageMgr'
+import { useWallStore }  from '@/stores/wallStore'
+import { useImageMgr }   from '@/stores/image/imageMgr'  
 
 export const useUserMgr = defineStore('userMgr', () => {
    const userStore  = useUserStore()
    const groupStore = useGroupStore()
+   const wallStore  = useWallStore()
    const imageMgr   = useImageMgr()
    
    const otherUsers = computed(() => { 
@@ -32,6 +34,19 @@ export const useUserMgr = defineStore('userMgr', () => {
       return Array.from(set)
    })
 
+   const myProfiles = computed(() => { 
+      const profiles = []
+      for (const user of userStore.users) {
+         if (user.ownerId == userStore.userId) { profiles.push(user) }      
+      }
+      return profiles
+   })
+
+   function addProfileUser(user) {
+      const newUser = userStore.addProfileUser(user)
+      wallStore.addUserWall(newUser.id)
+   }
+   
    const myUserContacts = computed(() => getUserContacts(myKnownUserIds.value))
 
    const myAvatar = computed(() => getAvatar(userStore.user))
@@ -153,6 +168,6 @@ export const useUserMgr = defineStore('userMgr', () => {
    return { 
       otherUsers, getFullName, getUserIdByEmail, getUserContactByEmail, 
       setItemHeaders, setGalleryThumbOptions, setItemThumbOptions, setThumbSize, setShowHiddenItems, 
-      myUserContacts, myAvatar, getAvatar, getUserContactsNotInGroup, 
-      addFavoriteItem, removeFavoriteItem, addMessagingToken }
+      myProfiles, myUserContacts, myAvatar, getAvatar, getUserContactsNotInGroup, 
+      addProfileUser, addFavoriteItem, removeFavoriteItem, addMessagingToken }
 })

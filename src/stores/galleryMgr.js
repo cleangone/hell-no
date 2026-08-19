@@ -105,28 +105,6 @@ export const useGalleryMgr = defineStore('galleryMgr', () => {
       galleryStore.removeItemId(galleryId, itemToDeleteId, dateContentModified) 
    }
 
-   const profileIdToGalleryIds = computed(() => { 
-      const profileIdToGalIds = new Map() 
-      if (galleryStore.galleries) {
-         for (const gallery of galleryStore.galleries) { 
-            if (gallery.profileId) {
-               const galleryIds = profileIdToGalIds.get(gallery.profileId)
-               if (galleryIds) { galleryIds.push(gallery.id) }
-               else { profileIdToGalIds.set(gallery.profileId, [ gallery.id ]) } 
-            }
-         }
-      }
-      return profileIdToGalIds
-   })
-
-   function getProfileCount(profileId) { 
-      if (profileIdToGalleryIds.value) {
-         const galleryIds = profileIdToGalleryIds.value.get(profileId)
-         if (galleryIds) { return galleryIds.length }
-      }
-      return 0
-   }
-
    function getCheckboxes(selectedGalleryIds) { 
       const checkboxContainer = { checkboxes: [], selectedGalleries: [] }
       
@@ -159,7 +137,7 @@ export const useGalleryMgr = defineStore('galleryMgr', () => {
    }
 
    return { getUserGalleries, deleteGallery, uniqueItems, galleryImage, hasGalleryThumbImage, 
-      myGalleryOptions, getGalleryOptions, removeItemId, getProfileCount, getCheckboxes 
+      myGalleryOptions, getGalleryOptions, removeItemId, getCheckboxes 
    } 
 })
 

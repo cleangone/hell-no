@@ -3,11 +3,11 @@
       <v-tabs v-if="viewMgr.isDeskTop" v-model="tab" bg-color="primary">
          <v-tab :value="tabs.items">Items</v-tab>
          <v-tab :value="tabs.galleries">Galleries</v-tab>
-         <v-tab :value="tabs.profiles">Profiles</v-tab>
+         <v-tab v-if="!isProfile" :value="tabs.profiles">Profiles</v-tab>
          <!-- <v-tab :value="tabs.group">Groups</v-tab> -->
-         <v-tab :value="tabs.invites">Invites</v-tab>
+         <v-tab v-if="!isProfile" :value="tabs.invites">Invites</v-tab>
          <v-tab :value="tabs.wall">Wall</v-tab>
-         <v-tab :value="tabs.artists">Artists</v-tab>
+         <v-tab v-if="!isProfile" :value="tabs.artists">Artists</v-tab>
          <v-tab :value="tabs.account" class="align-self-center ml-auto" style="float:right">Account</v-tab>
       </v-tabs>
       <v-tabs v-else-if="viewMgr.isMobile" v-model="tab" bg-color="primary">
@@ -32,9 +32,11 @@
 </template>
 
 <script setup>
-   import { onMounted, ref } from 'vue'
-   import { useSeoMeta } from '@unhead/vue'
-   import { useViewMgr } from '@/stores/viewMgr'
+   import { computed, onMounted, ref } from 'vue'
+   import { useSeoMeta }   from '@unhead/vue'
+   import { useUserStore } from '@/stores/userStore'
+   import { useViewStore } from '@/stores/viewStore'
+   import { useViewMgr }   from '@/stores/viewMgr'
    import Account          from '@/components/account/Account.vue'
    import AccountArtists   from '@/components/account/AccountArtists.vue'
    import AccountGalleries from '@/components/account/AccountGalleries.vue'
@@ -44,7 +46,9 @@
    import AccountProfiles  from '@/components/account/AccountProfiles.vue'
    import AccountWall      from '@/components/account/AccountWall.vue'
    
-   const viewMgr = useViewMgr()
+   const userStore = useUserStore()
+   const viewStore = useViewStore()
+   const viewMgr   = useViewMgr()
    const wasMobile = ref()
    const tabs = { 
        account: "account", artists: "artists", galleries: "galleries",  groups: "groups", invites: "invites",
@@ -58,6 +62,13 @@
       wasMobile.value = viewMgr.isMobile
       window.addEventListener('resize', onWWindowResize)
    })
+
+   const isProfile = computed(() => {
+      // setPageName here because var not set for onMounted 
+      const isOwned = userStore.user.ownerId != null
+      viewStore.setPageName(isOwned ? "My Profile Account" : "My Account")
+      return isOwned
+   }) 
 
    const onWWindowResize = () => { 
       if (viewMgr.isDeskTop) { 

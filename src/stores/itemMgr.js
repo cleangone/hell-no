@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { useWindowSize } from '@vueuse/core'
 import { useItemStore }  from '@/stores/itemStore'
 import { useHitStore }   from '@/stores/hitStore'
-import { dateUuid, objAspectRatio, randomizeArray } from '@/utils/utils'
+import { objAspectRatio, randomizeArray } from '@/utils/utils'
 import { ImageType, ItemNavAction, ItemType, Route } from '@/utils/constants'
    
 export const useItemMgr = defineStore('itemMgr', () => {   
@@ -28,28 +28,6 @@ export const useItemMgr = defineStore('itemMgr', () => {
       }
       return artistIdToItemIds
    })
-
-   const profileIdToItemIds = computed(() => { 
-      const profileIdToItmIds = new Map() 
-      if (itemStore.items) {
-         for (const item of itemStore.items) { 
-            if (item.profileId) {
-               const itemIds = profileIdToItmIds.get(item.profileId)
-               if (itemIds) { itemIds.push(item.id) }
-               else { profileIdToItmIds.set(item.profileId, [ item.id ]) } 
-            }
-         }
-      }
-      return profileIdToItmIds
-   })
-
-   function getProfileCount(profileId) { 
-      if (profileIdToItemIds.value) {
-         const itemIds = profileIdToItemIds.value.get(profileId)
-         if (itemIds) { return itemIds.length }
-      }
-      return 0
-   }
 
    const recentPublicItems      = computed(() => { return extractRecentItems(itemStore.publicItems) })
    const recentGroupMemberItems = computed(() => { return extractRecentItems(itemStore.myGroupMemberItems) })
@@ -240,7 +218,7 @@ export const useItemMgr = defineStore('itemMgr', () => {
 
    return { 
       myItemIdToItem, artistIdToMyItemIds, 
-      getItems, getRandomItems, getProfileCount, getPublicGalleryThumbs, getPublicGalleryThumbUrls,
+      getItems, getRandomItems, getPublicGalleryThumbs, getPublicGalleryThumbUrls,
       recentPublicItems, recentGroupMemberItems, myRecentItems, getRecentItems, getRecentPublicItems, 
       recentViewedPublicItems,
       mobileImageUrl, isItemGroup, ungroupItems, ungroupItem, ungroupAndExtractItems, extractFromItemGroup,

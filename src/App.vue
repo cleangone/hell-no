@@ -78,14 +78,14 @@
                <span v-else-if="isRoute(Route.USER)">{{ username }}</span>
                <span v-else-if="isRoute(Route.MESSAGE)">{{ Route.MESSAGE.display }}</span>
                <span v-else-if="isRoute(Route.LOGIN)">{{ Route.LOGIN.display }}</span>
-               <span v-else-if="isRoute(Route.ACCOUNT)" class="text-subtitle-1">{{ Route.ACCOUNT.display }}</span>
+               <span v-else-if="isRoute(Route.ACCOUNT)" class="text-subtitle-1">{{ pageName }}</span>
                <span v-else-if="isRoute(Route.ADMIN)"   class="text-subtitle-1">{{ Route.ADMIN.display }}</span>
                <span v-else-if="isRoute(Route.ADD_ITEM)">Add Item</span>
                <span v-else-if="isRoute(Route.EDIT_ITEM)">Edit Item</span>
             </div>
             <nav v-else>
                <!-- <span v-if="currentRoute == Route.MESSAGE.name" class="text-h6">Messages</span> -->
-               <span v-if="isRoute(Route.ACCOUNT)" class="title-sm">{{ Route.ACCOUNT.display }}</span>
+               <span v-if="isRoute(Route.ACCOUNT)" class="title-sm">{{ pageName }}</span>
                <span v-if="isRoute(Route.ADMIN)"   class="text-subtitle-1">{{ Route.ADMIN.display }}</span>
             </nav>
          </v-col>
@@ -133,7 +133,19 @@
                      <v-list-item v-if="userIsAdmin" @click="toRoute(Route.ADMIN)">
                         <v-list-item-title>Admin</v-list-item-title>
                      </v-list-item>
-                     <v-list-item @click="logout">
+
+
+                     <v-list-item v-for="profile in myProfiles" @click="swapToUser(profile.id)">
+                        <v-list-item-title>Swap to profile {{ profile.username }}</v-list-item-title>
+                     </v-list-item>
+
+
+
+
+                     <v-list-item v-if="userOwnerId" @click="swapBack">
+                        <v-list-item-title>Swap Back from Profile</v-list-item-title>
+                     </v-list-item>
+                     <v-list-item v-else @click="logout">
                         <v-list-item-title>Logout</v-list-item-title>
                      </v-list-item>
                   </v-list>
@@ -199,6 +211,7 @@
    import { useDark, useToggle } from '@vueuse/core'
    import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
    import { useUserStore }    from '@/stores/userStore'
+   import { useUserMgr }      from '@/stores/userMgr'
    import { useProfileStore } from '@/stores/profileStore'
    import { useAdminStore }   from '@/stores/adminStore'
    import { useViewStore }    from '@/stores/viewStore'
@@ -219,9 +232,10 @@
    import { Defaults, Route, ThumbType } from '@/utils/constants'
    import { versions }   from '@/version'
 
-   const route = useRoute()
+   const route  = useRoute()
    const router = useRouter()
    const userStore    = useUserStore()
+   const userMgr      = useUserMgr()
    const profileStore = useProfileStore()
    const adminStore   = useAdminStore()
    const viewStore    = useViewStore()
@@ -284,9 +298,15 @@
       if (localStore.soloMode != soloMode) { localStore.setSoloMode(soloMode) }
       return currUser
    })
-   const userExists  = computed(() => userStore.userExists )
-   const userId      = computed(() => userStore.userId )
-   const userIsAdmin = computed(() => adminStore.isAdmin )
+   const userExists  = computed(() => userStore.userExists)
+   const userId      = computed(() => userStore.userId)
+   const userIsAdmin = computed(() => adminStore.isAdmin)
+   const userOwnerId = computed(() => userStore.user.ownerId) 
+   const myProfiles  = computed(() => {
+      console.log("myProfiles", userMgr.myProfiles) 
+      return userMgr.myProfiles
+   }) 
+
    const displayName = computed(() => {
       const currUser = user.value // ugly - check user, which drives update of localStore.soloMode
       return localStore.soloMode ? "Solo" : (currUser ? currUser.firstName : "")
@@ -331,6 +351,11 @@
       toRoute(Route.HOME)
    }
 
+   const swapBack = () => { if (userOwnerId.value) { swapToUser(userOwnerId.value) } }
+   const swapToUser = (userId) => { 
+      userStore.userId = userId
+      router.push(Route.HOME.url)
+   }
    const logout = () => { viewMgr.logout() }
 </script>
 

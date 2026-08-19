@@ -83,6 +83,8 @@ export function randomizeArray(array) {
          .map(({ value }) => value)
 }
 
+export function getMapObjsById(id, map) { return map && map.has(id) ? map.get(id) : [] }
+
 export function populated(str) { return str && str.length }
 
 const KNOWN_ERRORS = [ " is null", ".value is undefined" ]

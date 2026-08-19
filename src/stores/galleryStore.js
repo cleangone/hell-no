@@ -4,7 +4,7 @@ import { db } from '@/firebase'
 import { collection, doc, query, where, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, serverTimestamp } from "firebase/firestore"
 import { useFirestore } from '@vueuse/firebase/useFirestore'
 import { useUserStore } from './userStore'
-import { dateUuid } from '@/utils/utils'
+import { dateUuid, getMapObjsById } from '@/utils/utils'
 import { ImageType, State } from '@/utils/constants'   
    
 /*
@@ -82,6 +82,8 @@ export const useGalleryStore = defineStore('gallery', () => {
       const userGalleries = userIdToPublicGalleries.value ? userIdToPublicGalleries.value.get(userId) : null
       return userGalleries ? userGalleries : []
    }
+   
+   function getUserGalleries(userId) { return getMapObjsById(userId, userIdToGalleries.value) }
    const userIdToGalleries = computed(() => {
       const galleryMap = new Map()
       for (const gallery of galleries.value) {
@@ -223,7 +225,7 @@ export const useGalleryStore = defineStore('gallery', () => {
 
    return { 
       galleries, myGalleries, myGalleriesExist, myContributingGalleriesExist, myContributingGalleries, myGalleryIdToGalleryMap,
-      getGallery, getGalleryByTag, getMyGallery,
+      getGallery, getGalleryByTag, getMyGallery, getUserGalleries,
       publicGalleries, getPublicGalleries, publicGalleryIdToChildGalleries, userIdToGalleries, 
       addGallery, updateGallery, deleteGallery,
       addItem, removeItemId, addChildGalleryId, removeChildGalleryId, 
