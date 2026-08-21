@@ -4,7 +4,8 @@
          :modules="modules" :style="rowStyle" style="--swiper-navigation-size:20px;">
       <swiper-slide v-for="slideItem in wallRow.items" :key="slideItem.itemId" :width="slideItem.width" 
             class="swipe-slide py-4" :style="slideStyle"> 
-         <SwipeWallSlide :wallItem="slideItem" :origin="ItemOrigin.WALL" :row=wallRow.index @popup="onPopup"/>
+         <SwipeWallSlide :wallItem="slideItem" :origin="ItemOrigin.WALL" :row=wallRow.index 
+            :showAvatar="showAvatars" @popup="onPopup"/>
       </swiper-slide>
    </swiper>
 </template>
@@ -21,7 +22,7 @@
    import 'swiper/css/navigation'
    import 'swiper/css/pagination'
 
-   const props = defineProps({ wallRow:Object, rowHeight:Number, linkUrl:String })
+   const props = defineProps({ wallRow:Object, rowHeight:Number, showAvatars:Boolean, linkUrl:String })
    const emit  = defineEmits([ Emit.POPUP ])
 
    const swipeStore = useSwipeStore()

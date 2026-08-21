@@ -1,5 +1,5 @@
 <template>
-   <v-card :width="cardWidth" ref="cardRef" style="z-index: 1" :class="cardMargin"
+   <v-card :width="cardWidth" ref="cardRef" style="z-index: 1" :class="cardStyle"
          class="d-flex flex-column text-center thumb-container thumb-link">
       <RouterLink :to="itemURL">
          <v-img :src="thumbUrl" @mouseover="mouseover()" @mouseleave="mouseleave()"></v-img>
@@ -22,7 +22,8 @@
    import { Defaults, ThumbSize } from '@/utils/constants'
    
    const props = defineProps({ 
-      item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean, showDateViewed:Boolean })
+      item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, 
+      bypassShowUser:Boolean, showDateViewed:Boolean })
 
    const MaxLandscapeWidths = { 
       sizes:   new Map([ [ThumbSize.IMG, 200], [ThumbSize.SM, 200], [ThumbSize.MED, 250], [ThumbSize.LG, Defaults.MAX_THUMB_SIDE] ]),
@@ -47,7 +48,8 @@
    const thumbSize   = computed(() => viewMgr.isXs ? viewStore.thumbSize.xsSize : viewStore.thumbSize.size)
    const showText    = computed(() => thumbSize.value != ThumbSize.IMG)
    const aspectRatio = computed(() => itemMgr.itemAspectRatio(item.value))
-   const cardMargin  = computed(() => showText.value ? "mb-5" : "mb-2")
+   const cardStyle   = computed(() => (showText.value ? "mb-5" : "mb-2") + (thumbSize.value == ThumbSize.IMG ? "" : " pa-1"))
+     
    const cardWidth   = computed(() => { 
       const targetHeight = viewMgr.targetThumbHeight
       let targetWidth = Math.round(targetHeight * aspectRatio.value)

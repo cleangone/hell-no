@@ -1,6 +1,6 @@
 <template>
    <div class="wall-container px-3">
-      <SwipeRow               :wallRow="topRow" :rowHeight="topHeight" @popup="onPopup"/>
+      <SwipeRow :wallRow="topRow" :rowHeight="topHeight" :showAvatars="showUserAvatars" @popup="onPopup"/>
       <SwipeRow v-if="botRow" :wallRow="botRow" :rowHeight="botHeight" @popup="onPopup"/>
    </div>
    <ItemPopup v-if="popupImage" :popupImage="popupImage"/>
@@ -52,8 +52,16 @@
 
       const maxTopRowItems = allWallItems.length < 10 ? 4 : 6
       let currTopRowItems = 0
-      for (const wallItem of allWallItems) {   
-         if (currTopRowItems < maxTopRowItems) {
+      const topRowUserIdToCount = new Map() // site wall has no more than two top row items/user
+      for (const wallItem of allWallItems) {  
+         let topRowAvailable = true
+         if (props.wall.id == Defaults.SITE_ID) {
+            let userTopRowItems = topRowUserIdToCount.get(wallItem.userId) ?? 0
+            if (userTopRowItems == 2) { topRowAvailable = false }
+            else { topRowUserIdToCount.set(wallItem.userId, userTopRowItems + 1) }
+         }
+         
+         if (currTopRowItems < maxTopRowItems && topRowAvailable) {
             wallItem.wallRow = 1
             currTopRowItems++
          }
@@ -116,19 +124,22 @@
       for (const wallItem of wallItems.value) {
          if (wallItem.wallRow) {  
             const index = wallItem.wallRow - 1
-            rows[index].items.push(wallItem)
-            rows[index].row = index
+            // console.log("index/rows", index, rows)
+            if (index < rows.length) { // guard against screen width mobile issues
+               rows[index].items.push(wallItem)
+               rows[index].row = index
 
-            navItems.push({ 
-               id:       wallItem.itemId, 
-               childNum: wallItem.childNum,
-               name:     wallItem.name, 
-               primaryImage: { 
-                  thumbUrl: wallItem.thumbUrl, 
-                  url: wallItem.popupUrl, 
-                  dimensions: wallItem.thumbDimensions ? wallItem.thumbDimensions : wallItem.dimensions // backward compatible
-               } 
-            })
+               navItems.push({ 
+                  id:       wallItem.itemId, 
+                  childNum: wallItem.childNum,
+                  name:     wallItem.name, 
+                  primaryImage: { 
+                     thumbUrl: wallItem.thumbUrl, 
+                     url: wallItem.popupUrl, 
+                     dimensions: wallItem.thumbDimensions ? wallItem.thumbDimensions : wallItem.dimensions // backward compatible
+                  } 
+               })
+            }
          }
       }
 
@@ -141,7 +152,9 @@
    const totalHeight = computed(() => props.wall.wallRows > 1 ? props.rowHeight * 2 : props.rowHeight)
    const topHeight   = computed(() => props.wall.wallRows > 1 ? totalHeight.value * .8 : totalHeight.value)
    const botHeight   = computed(() => props.wall.wallRows > 1 ? totalHeight.value * .2 : 0)
-
+   
+   const showUserAvatars = computed(() => props.wall.id == Defaults.SITE_ID)
+   
    const onPopup = (popup)  => { popupImage.value = popup }
 </script>
 

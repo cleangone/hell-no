@@ -9,7 +9,7 @@ import { Defaults, DefaultWall, WallDisplayOrder, WallType } from '@/utils/const
 
 /*
    Wall
-      id - user/groupId or 0 for home wall
+      id - user id or 0 for site wall
       wallRows
       type: WallType: SITE, USER
       displayOrder: WallDisplayOrder: USER_SET, RANDOM
@@ -58,7 +58,11 @@ export const useWallStore = defineStore('wall', () => {
    const userWalls = useFirestore(userWallsQuery, [])
    const userWallItems = computed(() => { 
       const wallItems = []
-      for (const userWall of userWalls.value) { wallItems.push(...userWall.wallItems) }
+      for (const userWall of userWalls.value) { 
+         const userWallItems = userWall.wallItems.map(
+            wallItem => ({ ...wallItem, userId: userWall.id }))
+         wallItems.push(...userWallItems) 
+      }
       return wallItems
    })
 
@@ -105,6 +109,7 @@ export const useWallStore = defineStore('wall', () => {
       return { 
          // wall shows the itemGroup child thumb but links to the parent
          itemId:    item.id, 
+         userId:    item.userId, 
          childNum:  item.childNum ? item.childNum : null, 
          title:     item.name, 
          name:      item.name, 

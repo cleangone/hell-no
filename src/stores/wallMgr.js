@@ -49,10 +49,9 @@ export const useWallMgr = defineStore('wallMgr', () => {
          
          // workaround - having issues with actual ungrouped item not having a primaryImage
          if (!wallItemIds.includes(ungroupedItem.id) && ungroupedItem.type == ItemType.SINGLE) {
-            const wallItem = { ...ungroupedItem }
+            const wallItem = { ...ungroupedItem, userId: ungroupedItem.userId }
             const imageItem = itemMgr.extractFromItemGroup(ungroupedItem)
             wallItem.name = imageItem.name
-            // console.log("Filling wall", wallItem)
             filledWall.wallItems.push(wallStore.createWallItem(wallItem, imageItem.primaryImage))
          }
       }

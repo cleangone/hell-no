@@ -3,8 +3,15 @@
       - Add all metadata to mobile ItemView 
       - lazy loading in router - chunk retrieval errors with Admin, others
       - requiredRule does not invalidate "   "
+
+      - watch a gallery, filter by watched
+      - combine recent updated and viewed with toggle
+      - filter by artist?
+
 */
-export const versions = [                 
+export const versions = [          
+   ["v2.44.0", "8/21/26"], // Show Avatars on Site Wall top row
+   ["v2.43.2", "8/19/26"], // Handle mobile wall sizing issue
    ["v2.43.1", "8/19/26"], // Remove profile logic from views, components, stores
    ["v2.43.0", "8/19/26"], // Update profile to be implemented as a user 
                            // Add transfer of item to/from profile
@@ -93,8 +100,7 @@ export const versions = [
    ["v2.5.3",  "4/20/26"], // Update views to handle param id possibly a profileId 
                            // UserView updated to show/not show galleries and items based on profiles
    ["v2.5.2",  "4/19/26"], // Integrate Profile with Galleries
-                           // Add user to G
-                           // alleryThumb
+                           // Add user to GalleryThumb
                            // Streamline user/dateModified in Item/GalleryThumb
    ["v2.5.1",  "4/18/26"], // Items with a profileId do not show on user's recentItems           
    ["v2.5.0",  "4/18/26"], // Add Profiles, integrate with Items
