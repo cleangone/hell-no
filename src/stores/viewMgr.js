@@ -107,9 +107,10 @@ export const useViewMgr = defineStore('viewMgr', () => {
       const size    = isXs.value ? viewStore.thumbSize.xsSize : viewStore.thumbSize.size
       const heights = isXs.value ? ThumbHeights.xsSizes : ThumbHeights.sizes 
 
-      if (size == ThumbSize.IMG) { return heights[0] }
-      else if (size == ThumbSize.SM) { return heights[1] }
+      if (size == ThumbSize.IMG)      { return heights[0] }
+      else if (size == ThumbSize.SM)  { return heights[1] }
       else if (size == ThumbSize.MED) { return heights[2] }
+      else if (size == ThumbSize.XL)  { return heights[4] }
       else { return heights[3] }
     })    
       

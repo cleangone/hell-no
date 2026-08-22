@@ -18,10 +18,14 @@
    
    const advanceThumbSize = () => { 
       const thumbSize = { ...viewStore.thumbSize }
-      if (props.thumbType == ThumbType.ITEM && viewMgr.isXs) { thumbSize.xsSize = getNextSize(thumbSize.xsSize) } 
-      else if (props.thumbType == ThumbType.ITEM) { thumbSize.size = getNextSize(thumbSize.size) }
-      else if (viewMgr.isXs) { thumbSize.galleryXsSize = getNextSize(thumbSize.galleryXsSize) }
-      else { thumbSize.gallerySize = getNextSize(thumbSize.gallerySize) }
+      if (props.thumbType == ThumbType.ITEM) {
+         if (viewMgr.isXs) { thumbSize.xsSize = getNextSize(thumbSize.xsSize) } 
+         else { thumbSize.size = getNextSize(thumbSize.size) }
+      }
+      else {
+         if (viewMgr.isXs) { thumbSize.galleryXsSize = getNextSize(thumbSize.galleryXsSize) }
+         else { thumbSize.gallerySize = getNextSize(thumbSize.gallerySize) }
+      }
       viewStore.setThumbSize(thumbSize) 
    }
 
@@ -29,6 +33,7 @@
       if (size == ThumbSize.IMG) { return ThumbSize.SM }
       else if (size == ThumbSize.SM) { return ThumbSize.MED }
       else if (size == ThumbSize.MED) { return ThumbSize.LG }
+      else if (size == ThumbSize.LG && props.thumbType == ThumbType.ITEM && !viewMgr.isXs) { return ThumbSize.XL }
       else { return ThumbSize.IMG }
    }
 </script>

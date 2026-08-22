@@ -10,6 +10,7 @@
 
 */
 export const versions = [          
+   ["v2.45.0", "8/21/26"], // Add ThumbSixe.XL for desktop images
    ["v2.44.0", "8/21/26"], // Show Avatars on Site Wall top row
    ["v2.43.2", "8/19/26"], // Handle mobile wall sizing issue
    ["v2.43.1", "8/19/26"], // Remove profile logic from views, components, stores

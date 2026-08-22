@@ -40,6 +40,7 @@
    import { useUserMgr }    from '@/stores/userMgr'
    import { useItemStore }  from '@/stores/itemStore'
    import { useAdminStore } from '@/stores/adminStore'
+   import { useWallStore }  from '@/stores/wallStore'
    import DeleteUser   from '@/components/user/DeleteUser.vue'
    import ViewUser     from '@/components/user/ViewUser.vue'
    import DeleteButton from '@/components/util/DeleteButton.vue'
@@ -53,6 +54,7 @@
    const userMgr    = useUserMgr()
    const itemStore  = useItemStore()
    const adminStore = useAdminStore()
+   const wallStore  = useWallStore()
    const showViewDialog   = ref(false)
    const showDeleteDialog = ref(false)
    const selectedUser = ref({})
@@ -62,6 +64,7 @@
       { title: 'Name',      key: 'fullName',    value: 'fullName' },
       { title: 'Email',     key: 'email',       value: 'email' },
       { title: 'Items',     key: 'items',       value: 'items',       align: 'center' },
+      { title: 'Wall',      key: 'wall',        value: 'wall',        align: 'center' },
       { title: 'Last Login',key:'dateVisited',  value: 'dateVisited', align: 'center' },
       { title: 'Created',   key:'dateCreated',  value: 'dateCreated', align: 'center' },
       { title: 'Type',      key: 'accountType', value: 'accountType' },
@@ -81,11 +84,13 @@
    const users = computed(() => {
       const displayUsers = []       
       for (const user of userStore.users) {
-         const items = itemStore.getUserItems(user.id)
+         const items     = itemStore.getUserItems(user.id)
+         const wallItems = wallStore.getUserWall(user.id).wallItems
          const displayUser = { 
             ...user, 
             fullName: userMgr.getFullName(user),
-            items: items.length ?? 0,
+            items: items.length ?? 0, // need a number for sort
+            wall: wallItems.length > 0 ? wallItems.length : "",
             accountType: adminIds.value.includes(user.id) ? "Admin" : (user.ownerId ? "Profile" : "")
          }
          if (!displayUser.dateVisited) { displayUser.dateVisited = 0 }
@@ -103,7 +108,7 @@
    }
 
    const disableDelete = (user) => { 
-      return user.id == userStore.userId || adminIds.value.includes(user.id) || user.items }
+      return user.id == userStore.userId || adminIds.value.includes(user.id) || user.items > 0 }
 
    const viewUser = (user) => {
       selectedUser.value = user

@@ -237,11 +237,10 @@
          const itemForWall = { 
             id: currItem.value.id,
             name: currItemName.value,
+            userId: currItem.value.userId,
             primaryImage: currItem.value.primaryImage, 
             primaryArtist: itemToUpdate.primaryArtist
          }
-         // wallStore.addMyWallItem(itemForWall, currItem.value.primaryImage) 
-         console.log("Adding wall item with primary image", itemForWall)
          wallStore.addWallItem(currItem.value.userId, itemForWall, currItem.value.primaryImage) 
       }
       else if (!currItemWall.value && wallIncludesItem) { 
