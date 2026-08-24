@@ -1,5 +1,5 @@
 <template>
-   <v-tooltip interactive >
+   <v-tooltip interactive :location="location">
       <template v-slot:activator="{ props: activatorProps }">
          <IconButton icon="mdi-information-outline" v-bind="activatorProps" :class="iconClass"/>
       </template>
@@ -13,7 +13,7 @@
    import { computed, ref } from 'vue'
    import IconButton from '@/components/util/IconButton.vue'
    
-   const props = defineProps({ iconClass: String })
+   const props = defineProps({ iconClass: String, location: String })
 </script>
 
 <style>

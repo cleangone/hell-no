@@ -12,6 +12,9 @@
          <template v-slot:item.username="{ item }">
             <a @click="viewUser(item)" class="pointer">{{ item.username }}</a>
          </template>
+          <template v-slot:item.images="{ item }">
+            <Avatar :user="item" :size="40"/>
+         </template>
          <template v-slot:item.items="{ item }">
             {{ item.items ? item.items : "" }}
          </template>
@@ -41,6 +44,7 @@
    import { useItemStore }  from '@/stores/itemStore'
    import { useAdminStore } from '@/stores/adminStore'
    import { useWallStore }  from '@/stores/wallStore'
+   import Avatar       from '@/components/user/Avatar.vue'
    import DeleteUser   from '@/components/user/DeleteUser.vue'
    import ViewUser     from '@/components/user/ViewUser.vue'
    import DeleteButton from '@/components/util/DeleteButton.vue'
@@ -61,8 +65,9 @@
    
    const headers = [
       { title: 'Username',  key: 'username',    value: 'username' },
+      { title: '',          key:'images',                             align:'center', sortable: false },
       { title: 'Name',      key: 'fullName',    value: 'fullName' },
-      { title: 'Email',     key: 'email',       value: 'email' },
+      { title: 'Email',     key: 'email',       value: 'email',       sortable: false },
       { title: 'Items',     key: 'items',       value: 'items',       align: 'center' },
       { title: 'Wall',      key: 'wall',        value: 'wall',        align: 'center' },
       { title: 'Last Login',key:'dateVisited',  value: 'dateVisited', align: 'center' },
@@ -72,9 +77,8 @@
    ]
 
    const customKeySort = {
-      email:       (a, b) => { return a.localeCompare(b) }, 
       username:    (a, b) => { return a.localeCompare(b) }, 
-      fullName:   (a, b) => { return a.localeCompare(b) }, 
+      fullName:    (a, b) => { return a.localeCompare(b) }, 
       items:       (a, b) => { return b - a }, 
       dateVisited: (a, b) => { return b - a }, 
       dateCreated: (a, b) => { return b - a }, 

@@ -13,17 +13,36 @@
          <v-col cols="1" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
             <ThumbSizeButton :thumbType="ThumbType.GALLERY"/>
             <SortButton :sortByDate="sortByDate" @click="sortByDate=!sortByDate" class="mx-2"/>
-            <GalleryThumbConfig/>
+            <ChildGalleriesButton class="mr-2"/>
+            <GalleryThumbConfig class="mr-2"/>
+            <ToolTip location="bottom" iconClass="mx-n2">
+               <div>
+                  <div><v-icon icon="mdi-image-size-select-large"/> Image size</div>
+                  <div><v-icon icon="mdi-sort-calendar-ascending"/> / <v-icon icon="mdi-sort-alphabetical-ascending"/> 
+                     Sort by Date/Name</div>
+                  <div><v-icon icon="mdi-folder-multiple-image"/> / <v-icon icon="mdi-folder-image"/> 
+                     Show/Hide Child Galleries</div>
+                  <div><v-icon icon="mdi-image-edit"/> Additional Config</div>
+               </div>
+            </ToolTip>   
          </v-col>
       </v-row>
    </v-container>
    <div style="clear:both"></div>
-   <v-container>
-      <v-row justify="space-around" class="mb-md-4" >
-         <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" 
+   <HorizontalDiv class="mr-2">
+      <div v-if="isSiteGallery" class="mr-4">
+         <div v-for="user in avatarUsers" :key="user.id">
+             <Avatar :user="user" :size="60" @click="selectUser(user)" :toolTip="user.username" 
+               class="hand pa-1" :class="selectedUserId==user.id?'bg-blue':'bg-black'"/>
+         </div>
+      </div>
+      <v-container>
+      <v-row justify="space-around"  density="compact" class="mb-md-4" >
+         <GalleryThumb v-for="gallery in selectedGalleries" :key="gallery.id" :gallery="gallery" 
             :bypassShowUser="bypassShowUser" :showChildImages="!showChildGalleries"/>
       </v-row>
-   </v-container>
+      </v-container>
+   </HorizontalDiv>
 </template>
 
 <script setup>
@@ -31,24 +50,31 @@
    import { useSeoMeta } from '@unhead/vue'
    import { useRoute } from 'vue-router'
    import { useUserStore }    from '@/stores/userStore'
+   import { useUserMgr }      from '@/stores/userMgr'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import GalleryThumb        from '@/components/gallery/thumb/GalleryThumb.vue'
    import GalleryThumbConfig  from '@/components/gallery/thumb/GalleryThumbConfig.vue'
+   import ChildGalleriesButton from '@/components/gallery/thumb/ChildGalleriesButton.vue'
+   import Avatar              from '@/components/user/Avatar.vue'
+   import HorizontalDiv       from '@/components/util/HorizontalDiv.vue'
    import SortButton          from '@/components/util/SortButton.vue'
    import ThumbSizeButton     from '@/components/util/ThumbSizeButton.vue'
+   import ToolTip             from '@/components/util/ToolTip.vue'
    import { handleError, isPrivate } from '@/utils/utils'
    import { Defaults, GalleryThumbOptions, Route, ThumbType } from '@/utils/constants'
   
    const route = useRoute()
    const userStore    = useUserStore()
+   const userMgr      = useUserMgr()
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
    const sortByDate   = ref(true)
+   const selectedUserId = ref(null)
    
    useSeoMeta({ title: "Hell-No Galleries" })
    onMounted(async() => {
@@ -57,14 +83,15 @@
 
    onErrorCaptured((err) => { return handleError(err, "GalleriesView") })
 
-   const user     = computed(() => route.params.id == Defaults.SITE_ID ? null : userStore.getUser(route.params.id) )
-   const username = computed(() => user.value ? user.value.username : null)
+   const isSiteGallery = computed(() => route.params.id == Defaults.SITE_ID)
+   const user          = computed(() => isSiteGallery.value ? null : userStore.getUser(route.params.id) )
+   const username      = computed(() => user.value ? user.value.username : null)
   
    const showChildGalleries     = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SHOW_CHILD))
    const showMyPrivateGalleries = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SHOW_PRIVATE))
 
    const visibleGalleries = computed(() => { 
-      if (route.params.id == Defaults.SITE_ID) {
+      if (isSiteGallery.value) {
          return viewMgr.solo ? galleryStore.myGalleries : galleryStore.publicGalleries 
       }
 
@@ -93,6 +120,12 @@
       return galleries
    })
 
+   const selectedGalleries = computed(() => selectedUserId.value ?
+         thumbGalleries.value.filter(gallery => gallery.userId == selectedUserId.value) : thumbGalleries.value)
+
+   const avatarUsers = computed(() => userMgr.avatarUsers)
+   const selectUser = (user) => { selectedUserId.value = selectedUserId.value == user.id ? null : user.id }
+   
    const bypassShowUser = computed(() => username.value ? true : false)
 </script>
 

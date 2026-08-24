@@ -1,7 +1,7 @@
 <template>
    <v-card :width="wallItem.wallImageWidth" ref="cardRef" color="transparent" flat class="d-flex flex-column text-center">
       <div v-if="topRow" class="position-relative">
-         <v-card class="mt-6 bg-black">
+         <v-card class="mt-7 bg-black">
             <div class="ma-1">
                <RouterLink :to="itemURL">
                   <v-img :src="wallItem.wallImageUrl" @mouseover="mouseover()" @mouseleave="mouseleave()"/>
@@ -9,10 +9,8 @@
                <div class="text-white">{{ wallItem.title }}</div>  
             </div> 
          </v-card>
-         <RouterLink v-if="avatar" :to="userUrl" class="position-absolute top-0 left-0">
-            <ToolTipHover :text="user.username" v-slot="{ props }">
-               <Avatar v-bind="props" :image="avatar" size.number="60" class="ml-2 mt-1 pa-1 bg-black"/>
-            </ToolTipHover>
+         <RouterLink v-if="showAvatar" :to="userUrl" class="position-absolute top-0 left-0">
+            <Avatar :user="user" :size="60" :toolTip="user.username" class="ml-2 pa-1 bg-black"/>
          </RouterLink>
       </div>
       <div v-else class="bg-black">
@@ -28,12 +26,10 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useUserStore }  from '@/stores/userStore'
-   import { useUserMgr }    from '@/stores/userMgr'
    import { useItemMgr }    from '@/stores/itemMgr'
    import { useSwipeStore } from './SwipeStore'
    import { useViewMgr }    from '@/stores/viewMgr'
    import Avatar            from '@/components/user/Avatar.vue'
-   import ToolTipHover      from '@/components/util/ToolTipHover.vue'
    import { objAspectRatio } from '@/utils/utils'
    import { Emit, Route } from '@/utils/constants'
    
@@ -41,7 +37,6 @@
    const emit  = defineEmits([ Emit.POPUP ])
 
    const userStore  = useUserStore()
-   const userMgr    = useUserMgr()
    const itemMgr    = useItemMgr()
    const swipeStore = useSwipeStore()
    const viewMgr    = useViewMgr()
@@ -53,8 +48,7 @@
    const userId  = computed(() => props.wallItem.userId ?? null)
    const userUrl = computed(() => userId.value ? Route.USER.url + userId.value : null)
    const user    = computed(() => userId.value ? userStore.getUser(userId.value) : null)
-   const avatar  = computed(() => props.showAvatar && user.value ? userMgr.getAvatar(user.value) : null)   
-
+   
    const getPopupImage = () => { 
       if (!cardRef.value) { return null }
       

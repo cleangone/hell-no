@@ -1,11 +1,10 @@
 <template>
    <v-card :width="cardWidth" ref="cardRef" class="d-flex flex-column text-center user-thumb-link hand pa-2" 
          :class="cardMargin" :style="backgroundStyle" style="z-index: 1"
-         @mouseover="mouseover()" @mouseleave="mouseleave()"
-         >
+         @mouseover="mouseover()" @mouseleave="mouseleave()">
       <HorizontalDiv>
          <RouterLink v-if="userImages.length" :to="mouseoverLink">
-            <Avatar :image="userImages[0]" />
+            <AvatarImage :image="userImages[0]" />
          </RouterLink>
          <div class="ml-2 text-left">
             <RouterLink :to="userUrl">{{ username }} {{ itemCount ? "(" + itemCount + ")" : "" }}</RouterLink>
@@ -25,9 +24,9 @@
    import { useImageMgr }   from '@/stores/image/imageMgr'
    import { useViewStore }  from '@/stores/viewStore'
    import { useViewMgr }    from '@/stores/viewMgr'
-   import ItemPopup      from '@/components/item/ItemPopup.vue'
-   import Avatar         from '@/components/user/Avatar.vue'
-   import HorizontalDiv  from '@/components/util/HorizontalDiv.vue'
+   import ItemPopup         from '@/components/item/ItemPopup.vue'
+   import AvatarImage       from '@/components/user/AvatarImage.vue'
+   import HorizontalDiv     from '@/components/util/HorizontalDiv.vue'
    import { objAspectRatio, thumbBackgroundColorStyle } from '@/utils/utils'
    import { displayDate } from '@/utils/dateUtils'
    import { GalleryThumbOptions, GalleryThumbWidth, ItemOrigin, Route } from '@/utils/constants'
@@ -59,6 +58,7 @@
    const cardMargin = computed(() => smallThumb.value ? "mb-2" : "mb-5")
    const username   = computed(() => props.user ? props.user.username : "" ) 
 
+   // overlap with userMgr
    const userImages = computed(() => { 
       const images = []
       if (props.user?.images?.length) {

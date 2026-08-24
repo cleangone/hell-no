@@ -19,9 +19,15 @@ export const useUserMgr = defineStore('userMgr', () => {
             if (user.id != userStore.userId) { users.push(user)}      
          }
       }
-      users.sort((a, b) => a.username.localeCompare(b.username))
-      return users
+      return sort(users)
    })
+
+   const avatarUsers = computed(() => 
+      userStore.users?.length ? sort(userStore.users.filter(user => getAvatar(user))) : [])
+
+   function sort(users) { 
+      return users.length ? users.toSorted((a, b) => a.username.localeCompare(b.username)) : users 
+   }
 
    const myKnownUserIds = computed(() => { 
       const knownUserIds = []
@@ -166,7 +172,7 @@ export const useUserMgr = defineStore('userMgr', () => {
    }
 
    return { 
-      otherUsers, getFullName, getUserIdByEmail, getUserContactByEmail, 
+      otherUsers, avatarUsers, getFullName, getUserIdByEmail, getUserContactByEmail,
       setItemHeaders, setGalleryThumbOptions, setItemThumbOptions, setThumbSize, setShowHiddenItems, 
       myProfiles, myUserContacts, myAvatar, getAvatar, getUserContactsNotInGroup, 
       addProfileUser, addFavoriteItem, removeFavoriteItem, addMessagingToken }

@@ -10,6 +10,7 @@
 
 */
 export const versions = [          
+   ["v2.46.0", "8/23/26"], // Add avatars and showChild toggle to GalleriesView
    ["v2.45.0", "8/21/26"], // Add ThumbSixe.XL for desktop images
    ["v2.44.0", "8/21/26"], // Show Avatars on Site Wall top row
    ["v2.43.2", "8/19/26"], // Handle mobile wall sizing issue

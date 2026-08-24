@@ -7,7 +7,7 @@
          <v-row no-gutters>
             <v-col cols="5" >
                <HorizontalDiv>
-                  <Avatar v-if="avatar" :image="avatar" class="mt-1 mr-2" />
+                  <Avatar :user="user" class="mt-1 mr-2" />
                   <v-text-field v-model="user.firstName" label="First Name" readonly/>
                </HorizontalDiv>
             </v-col>
@@ -47,7 +47,6 @@
 
 <script setup>
    import { computed }   from 'vue'
-   import { useUserMgr } from '@/stores/userMgr'
    import Avatar         from '@/components/user/Avatar.vue'
    import HorizontalDiv  from '@/components/util/HorizontalDiv.vue'
    import IconButton     from '@/components/util/IconButton.vue'
@@ -57,14 +56,11 @@
    
    const props = defineProps({ user: Object })
    
-   const userMgr  = useUserMgr() 
    const settings = props.user.settings ?? DefaultUserSettings
 
-   const avatar           = computed(() => userMgr.getAvatar(props.user))
    const soloMode         = computed(() => settings.soloMode)
    const notifyViaEmail   = computed(() => settings.notifyViaEmail != Options.NEVER)
    const notifyViaMessage = computed(() => settings.notifyViaMessage != Options.NEVER)
-
 </script>
 
 <style>

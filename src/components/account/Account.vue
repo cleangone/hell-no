@@ -15,7 +15,7 @@
             <v-row>
                <v-col>
                   <HorizontalDiv>
-                     <Avatar v-if="userMgr.myAvatar" :image="userMgr.myAvatar" @click="showImages=true" class="hand mt-1 mr-2" />
+                     <AvatarImage :image="userMgr.myAvatar" @click="showImages=true" class="hand mt-1 mr-2" />
                      <v-text-field v-model="firstName" label="First Name" :rules="requiredRule"/>
                   </HorizontalDiv>
                </v-col>
@@ -75,7 +75,7 @@
    import { useUserMgr }    from '@/stores/userMgr'
    import { useViewMgr }    from '@/stores/viewMgr'
    import EditAccountImages from './EditAccountImages.vue'
-   import Avatar            from '@/components/user/Avatar.vue'
+   import AvatarImage       from '@/components/user/AvatarImage.vue'
    import EditEmail         from '@/components/user/EditEmail.vue'
    import EditPassword      from '@/components/user/EditPassword.vue'
    import HorizontalDiv     from '@/components/util/HorizontalDiv.vue'
