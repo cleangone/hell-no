@@ -1,5 +1,5 @@
 <template>
-   <IconButton v-if="!isBrowserDarkMode" :icon="isDark?'mdi-brightness-5':'mdi-brightness-3'" @click="toggleDark()"/> 
+   <IconButton v-if="!isBrowserDarkMode" :icon="isDark?'mdi-brightness-3':'mdi-brightness-5'" @click="toggleDark()"/> 
 </template>
 
 <script setup>

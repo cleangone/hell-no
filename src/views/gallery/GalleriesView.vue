@@ -13,14 +13,15 @@
          <v-col cols="1" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
             <ThumbSizeButton :thumbType="ThumbType.GALLERY"/>
             <SortButton :sortByDate="sortByDate" @click="sortByDate=!sortByDate" class="mx-2"/>
-            <ChildGalleriesButton class="mr-2"/>
+            <ChildGalleriesButton v-if="childGalleriesExist" class="mr-2"/>
             <GalleryThumbConfig class="mr-2"/>
             <ToolTip location="bottom" iconClass="mx-n2">
                <div>
                   <div><v-icon icon="mdi-image-size-select-large"/> Image size</div>
                   <div><v-icon icon="mdi-sort-calendar-ascending"/> / <v-icon icon="mdi-sort-alphabetical-ascending"/> 
                      Sort by Date/Name</div>
-                  <div><v-icon icon="mdi-folder-multiple-image"/> / <v-icon icon="mdi-folder-image"/> 
+                  <div v-if="childGalleriesExist">
+                     <v-icon icon="mdi-folder-multiple-image"/> / <v-icon icon="mdi-folder-image"/> 
                      Show/Hide Child Galleries</div>
                   <div><v-icon icon="mdi-image-edit"/> Additional Config</div>
                </div>
@@ -135,14 +136,8 @@
          }
       }  
 
-      // for (const galleryArray of parentToChildren.values()) {
-      //    galleryArray.sort(function(a, b) { return a.name.localeCompare(b.name) })
-      // }
-
       parentToChildren.values().forEach((galleryArray) => 
          galleryArray.sort(function(a, b) { return a.name.localeCompare(b.name) }))
-      
-
       parentIdToChildGalleries.value = parentToChildren // side-effect hack
       return galleries
    })
@@ -179,6 +174,8 @@
    const selectUser = (user) => { selectedUserId.value = selectedUserId.value == user.id ? null : user.id }
    
    const bypassShowUser = computed(() => username.value ? true : false)
+
+   const childGalleriesExist = computed(() => parentIdToChildGalleries.value.size)
 
    const getChildIcon  = (gallery) => { return gallery.parentGalleryId ? "mdi-close-circle" : null }
    const getParentIcon = (gallery) => { 

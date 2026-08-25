@@ -16,12 +16,12 @@
                      <v-btn v-bind="props" icon="mdi-menu" class="icon-btn" size="medium" variant="text"></v-btn>
                   </template>
                   <v-list>
-                     <v-list-item @click="toggleDark()">
+                     <!-- <v-list-item @click="toggleDark()">
                         <template v-slot:prepend>
                            <v-icon :icon="isDark?'mdi-brightness-5':'mdi-brightness-3'" class="menu-icon"></v-icon>
                         </template>
                         <v-list-item-title>{{isDark ? "Light mode" : "Dark mode"}}</v-list-item-title>
-                     </v-list-item>
+                     </v-list-item> -->
                      <v-list-item @click="toggleSoloMode()">
                         <template v-slot:prepend>
                            <v-icon :icon="viewMgr.solo?'mdi-account-multiple': 'mdi-account'" class="menu-icon"></v-icon>
@@ -94,7 +94,8 @@
             <!-- top right icon for mobile -->
             <div v-if="viewMgr.isMobile">
                <span v-if="inRoutes(Route.HOME, Route.USER)">
-                  <Icon icon="mdi-dice-multiple" @click="toRoute(Route.RANDOM)"/>
+                  <!-- <Icon icon="mdi-dice-multiple" @click="toRoute(Route.RANDOM)"/> -->
+                  <DarkButton/>
                </span>
                <span v-else-if="isRoute(Route.GALLERIES)" class="text-no-wrap">
                    <ThumbSizeButton :thumbType="ThumbType.GALLERY"/>
@@ -213,6 +214,7 @@
    import GalleryThumbConfig  from '@/components/gallery/thumb/GalleryThumbConfig.vue'
    import ItemThumbConfig     from '@/components/item/thumb/ItemThumbConfig.vue'
    import MessageSetup        from '@/components/notification/MessageSetup.vue'
+   import DarkButton          from '@/components/util/DarkButton.vue'
    import LinkOrText          from '@/components/util/LinkOrText.vue'
    import Icon                from '@/components/util/Icon.vue'
    import SearchBox           from '@/components/util/SearchBox.vue'

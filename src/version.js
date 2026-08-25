@@ -10,6 +10,8 @@
 
 */
 export const versions = [          
+   ["v2.47.1", "8/25/26"], // Show light/dark button in mobile home top right
+                           // Do not show gallery expansion icons in image-only mode
    ["v2.47.0", "8/24/26"], // Add individual gallery expansion to GalleriesView
    ["v2.46.0", "8/23/26"], // Add avatars and showChild toggle to GalleriesView
    ["v2.45.0", "8/21/26"], // Add ThumbSixe.XL for desktop images

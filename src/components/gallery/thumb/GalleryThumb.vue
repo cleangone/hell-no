@@ -19,7 +19,8 @@
          </div>
          <UserDateText :user="fromUser" :date="showDateModified ? gallery.dateContentModified : null" class="text-body-2"/>
       </div>
-      <div v-if="parentIcon||childIcon" class="position-absolute bottom-0 right-0 hand blue-dk">
+      <div v-if="addIconRow">&nbsp;</div>
+      <div v-if="showIcons" class="position-absolute bottom-0 right-0 hand blue-dk">
          <v-icon v-if="parentIcon" :icon="parentIcon" @click="$emit(Emit.TOGGLE)"/>
          <v-icon v-if="childIcon"  :icon="childIcon"  @click="$emit(Emit.CLOSE)"/>
       </div>
@@ -71,6 +72,8 @@
    const galleryUrl = computed(() => Route.GALLERY.url + (props.gallery?.tag?.length ? props.gallery.tag : props.gallery.id))
    const thumbSize  = computed(() => viewMgr.isXs ? viewStore.thumbSize.galleryXsSize : viewStore.thumbSize.gallerySize)
    const showText   = computed(() => thumbSize.value != ThumbSize.IMG)
+   const showIcons  = computed(() => showText.value && (props.parentIcon || props.childIcon))
+   const addIconRow = computed(() => viewMgr.isXs && showIcons.value)
    const cardWidth = computed(() => viewMgr.isXs ? 
       windowWidth.value * MaxWidths.xsSizes.get(thumbSize.value) :
       MaxWidths.sizes.get(thumbSize.value)
