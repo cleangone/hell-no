@@ -1,5 +1,5 @@
 <template>
-   <v-card :width="cardWidth" ref="cardRef" class="d-flex flex-column text-center thumb-link" 
+   <v-card :width="cardWidth" ref="cardRef" class="position-relative d-flex flex-column text-center thumb-link" 
          :class="cardMargin" :style="backgroundStyle" style="z-index: 1">
       <RouterLink :to="galleryUrl">
          <v-carousel v-if="galleryImages.length>1" cycle :interval="carouselInterval" :height="carouselHeight"
@@ -18,6 +18,10 @@
             <span v-if="visibleItemCount" class="ml-1">({{ visibleItemCount }})</span>
          </div>
          <UserDateText :user="fromUser" :date="showDateModified ? gallery.dateContentModified : null" class="text-body-2"/>
+      </div>
+      <div v-if="parentIcon||childIcon" class="position-absolute bottom-0 right-0 hand blue-dk">
+         <v-icon v-if="parentIcon" :icon="parentIcon" @click="$emit(Emit.TOGGLE)"/>
+         <v-icon v-if="childIcon"  :icon="childIcon"  @click="$emit(Emit.CLOSE)"/>
       </div>
    </v-card>
    
@@ -40,15 +44,16 @@
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { handleError, objAspectRatio, thumbBackgroundColorStyle } from '@/utils/utils'
-   import { GalleryThumbOptions, GalleryThumbWidth, ImageType, Route, ThumbSize } from '@/utils/constants'
+   import { Emit, GalleryThumbOptions, GalleryThumbWidth, ImageType, Route, ThumbSize } from '@/utils/constants'
    
-   // xs is % of width - 4/3/2 thumbs/row
-   const MaxWidths = { 
+   const MaxWidths = {  // xs is % of width - 4/3/2 thumbs/row
       sizes:   new Map([ [ThumbSize.IMG, 150], [ThumbSize.SM, 150], [ThumbSize.MED, 200], [ThumbSize.LG, GalleryThumbWidth] ]),
       xsSizes: new Map([ [ThumbSize.IMG, .22],  [ThumbSize.SM, .22], [ThumbSize.MED, .3], [ThumbSize.LG, .45] ]) }
    
-   const props = defineProps({ gallery: Object, showChildImages:Boolean, bypassShowUser:Boolean, dense:Boolean })
-
+   const props = defineProps({ gallery: Object, showChildImages:Boolean, bypassShowUser:Boolean, 
+       parentIcon:String, childIcon:String, dense:Boolean })
+   const emit = defineEmits([ Emit.CLOSE, Emit.TOGGLE ])
+   
    const { width: windowWidth } = useWindowSize()
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
@@ -132,7 +137,6 @@
       mouseleaveTime.value = Date.now()
       popup.value = null 
    }
-
 </script>
 
 <style>

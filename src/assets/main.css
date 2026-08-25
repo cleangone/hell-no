@@ -14,6 +14,17 @@ a, .blue, .icon-btn {
   transition: 0.4s;
 }
 
+.blue-dk {
+  text-decoration: none;
+  color: var(--color-link); 
+  transition: 0.4s;
+}
+.dark .blue-dk {
+  text-decoration: none;
+  color: var(--color-link-dark);
+  transition: 0.4s;
+}
+
 .admin-link { color: var(--c-link); }
 
 .nav-text { color: var(--color-link); }

@@ -57,6 +57,7 @@ export const EmailSourceState = {
  
 export const Emit = {
    CANCEL:      'cancel',
+   CLOSE:       'close',
    CONFIRM:     'confirm',
    DELETE:      'delete',
    DONE:        'done',
