@@ -148,8 +148,6 @@
          const childGallery = galleryStore.getGallery(childGalleryId)
          if (viewMgr.galleryIsVisibleToUser(childGallery) && childGallery.images.length ) { galleries.push(childGallery) }
       }
-
-      galleries.sort((a, b) => a.name.localeCompare(b.name))
       return galleries
    })
 

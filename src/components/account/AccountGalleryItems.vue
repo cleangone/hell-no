@@ -10,15 +10,18 @@
             <TextButton v-if="selectedItemIds.length" @click="editItems()"     text="Edit Selected"/>
             <TextButton v-if="selectedItemIds.length" @click="bulkEditItems()" text="Bulk Edit"/>
             <TextButton v-if="selectedItemIds.length" @click="groupItems()"    text="Group Items"/>
-            <TextButton v-if="viewTable" @click="viewTable=false" text="View Thumbnails"/>
-            <TextButton v-else           @click="viewTable=true"  text="View Table"/>
+            <span v-if="view==View.TABLE">
+               <TextButton v-if="thumbItems.length" @click="view=View.ITEM" text="Reorder Items"/>
+               <TextButton v-if="thumbChildGalleries.length > 1" @click="view=View.GALLERY" text="Reorder Child Galleries"/>
+            </span>
+            <span v-else><TextButton @click="view=View.TABLE" text="View Table"/></span>
          </v-col>
          <v-col cols="1" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
             <IconButton v-if="!viewTable" icon="mdi-image-size-select-large" @click="isSmallThumb=!isSmallThumb" size="med"/> 
          </v-col>
       </v-row>
 
-      <v-data-table v-if="viewTable" v-model="selectedItemIds" :headers="itemHeaders" 
+      <v-data-table v-if="view==View.TABLE" v-model="selectedItemIds" :headers="itemHeaders" 
             :items="galleryDisplayItems" item-key="id" items-per-page="100" 
             :custom-key-sort="customKeySort" @update:currentItems="setSortedItems"
             :show-select="isMyGallery" :item-selectable="item => item.isMyItem">
@@ -47,8 +50,8 @@
                :disabled="isChildItem(item.id)" class="admin-link"/>
          </template>
       </v-data-table>
-      <div v-else class="ma-4">
-         <draggable v-model="galleryThumbItems" item-key="id" class="main">
+      <div v-else-if="view==View.ITEM" class="ma-4">
+         <draggable v-model="thumbItems" item-key="id" class="main">
             <template #item="{element}">
                <v-card :width="thumbWidth(element)" class="mx-2 my-1 mcard bg-grey-lighten-4">
                   <v-card-text class="text-center my-0 py-0">
@@ -59,6 +62,19 @@
                         :src="childItem.primaryImage.thumbUrl" :height="thumbHeight"/>
                   </v-row>
                   <v-img v-else :src="element.primaryImage.thumbUrl" class="pa-1"></v-img>
+                  <v-card-text :class="textClass" class="pa-0 text-center">{{ element.name }}</v-card-text>
+               </v-card>
+            </template>
+         </draggable>
+      </div>
+      <div v-else-if="view==View.GALLERY" class="ma-4">
+         <draggable v-model="thumbChildGalleries" item-key="id" class="main">
+            <template #item="{element}">
+               <v-card :width="GalleryThumbWidth" class="mx-2 my-1 mcard bg-grey-lighten-4">
+                  <v-card-text class="text-center my-0 py-0">
+                    <v-icon icon="mdi-drag" color="blue-darken-2" class="justify-center"></v-icon>
+                  </v-card-text>
+                  <v-img :src="element.image.thumbUrl" class="pa-1"></v-img>
                   <v-card-text :class="textClass" class="pa-0 text-center">{{ element.name }}</v-card-text>
                </v-card>
             </template>
@@ -117,10 +133,11 @@
    import TextButton      from '@/components/util/TextButton.vue'
    import ToolTipHover    from '@/components/util/ToolTipHover.vue'
    import { isHidden } from '@/utils/utils'
-   import { Defaults, Emit, ItemOrigin, Route } from '@/utils/constants'
+   import { Defaults, Emit, GalleryThumbWidth, ImageType, ItemOrigin, Route } from '@/utils/constants'
    
    const THUMB_HEIGHT    = 200
    const THUMB_HEIGHT_SM = 125
+   const View = { TABLE: "table", ITEM: "item", GALLERY: "gallery" }
 
    const props = defineProps(['galleryId'])
    const emit = defineEmits([Emit.DONE])
@@ -139,6 +156,7 @@
    const showGroupItemsDialog  = ref(false)
    const showBulkEditDialog    = ref(false)
    const showRemoveItemDialog  = ref(false)
+   const view                  = ref(View.TABLE) 
    const viewTable = ref(true)
    const isSmallThumb = ref(false)
    const sortedItems = ref(null)
@@ -147,7 +165,7 @@
    const selectedItems = ref([])
    const groupedGalleryItemIds = ref([])
 
-    const itemHeaders = computed(() => { 
+   const itemHeaders = computed(() => { 
       const headers = [
          { title: 'ID',      key: 'id',                   align: ' d-none' }, // hide column, keep data
          { title: '',            value: 'position',       align: 'center', sortable: true },
@@ -184,6 +202,16 @@
       return viewStore.setVisibleItems(ItemOrigin.ADMIN, "Admin", Route.USER.url, displayItems)
    })
 
+   const childGalleries = computed(() => { 
+      const galleries = []
+      if (gallery.value?.childGalleryIds) {
+         for (const galleryId of gallery.value?.childGalleryIds) {
+            galleries.push(galleryStore.getMyGallery(galleryId))
+         }
+      }
+      return galleries
+   })
+
    const ownerExists = computed(() => { 
       for (const gallery of galleryDisplayItems.value) {
          if (gallery.ownerUsername) { return true }
@@ -206,8 +234,8 @@
       galleryStore.updateGallery({ id: props.galleryId, itemIds: itemIds }) 
     }
 
-   // thumb drag/drop reordering 
-   const galleryThumbItems = computed({ 
+   // items for thumb drag/drop reordering 
+   const thumbItems = computed({ 
       get() {
          groupedGalleryItemIds.value = []
          const displayItems = []
@@ -231,6 +259,28 @@
       }
    })
 
+   const thumbChildGalleries = computed({ 
+      get() {
+         const galleries = []
+         for (const childGallery of childGalleries.value) {
+            const image = getGalleryImage(childGallery)
+            if (image) { galleries.push({ ...childGallery, image: image }) }
+         }
+         return galleries
+      },
+      set(updatedChildGalleries) {
+         const childGalleryIds = updatedChildGalleries.map(a => a.id)
+         galleryStore.updateGallery({ id: props.galleryId, childGalleryIds: childGalleryIds })
+      }
+   })
+
+   const getGalleryImage = (gallery) => { 
+      for (const image of gallery.images) {
+         if (image.imageType == ImageType.GALLERY) { return image }
+      }
+      return null
+   }
+     
    const thumbHeight = computed(() => isSmallThumb.value ? THUMB_HEIGHT_SM : THUMB_HEIGHT)
    const textClass   = computed(() => isSmallThumb.value ? "text-body-small" : "font-weight-bold")
    

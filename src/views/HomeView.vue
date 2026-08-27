@@ -227,7 +227,7 @@
             return false // parent has same dateContentModified as a child
          }
       } 
-      return true // gallery a parent with dateContentModified different than all children
+      return true // gallery is a parent with dateContentModified different than all children
    }
 
    const thumbGalleries = computed(() => {   

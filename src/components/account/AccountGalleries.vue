@@ -117,16 +117,19 @@
       return galleries
    })
 
+   const galleryIdToGallery = computed(() => displayGalleries.value ? 
+      new Map(displayGalleries.value.map(gallery => [gallery.id, gallery])) : new Map())
+
    const galleryIdToChildGalleries = computed(() => { 
       const idToChildGalleries = new Map()
+
       for (const gallery of displayGalleries.value) {
-         if (gallery.parentGalleryId) { 
-            let childGalleries = idToChildGalleries.get(gallery.parentGalleryId)
-            if (childGalleries == null) {
-               childGalleries = []
-               idToChildGalleries.set(gallery.parentGalleryId, childGalleries)
+         if (gallery.childGalleryIds?.length) { 
+            let childGalleries = []
+            for (const childGalleryId of gallery.childGalleryIds) {
+               childGalleries.push(galleryIdToGallery.value.get(childGalleryId))
             }
-            childGalleries.push(gallery) 
+            idToChildGalleries.set(gallery.id, childGalleries)
          }
       }
       return idToChildGalleries

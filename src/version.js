@@ -8,8 +8,17 @@
       - combine recent updated and viewed with toggle
       - filter by artist?
 
+      Chris K:
+       - ipads don't have background image?
+       - recomendation engine
+       - really liked groups idea
+       - want to bring ipad to art meet-up - has to be app in order to alwyas work
+
 */
-export const versions = [          
+export const versions = [        
+   ["v2.47.2", "8/27/26"], // Add drag & drop control of child Gallery order
+                           // Update AdminGalleries to sync gallery dataContentModified
+   ["v2.47.1", "8/25/26"], // Individual gallery expansion expands entire family
    ["v2.47.1", "8/25/26"], // Show light/dark button in mobile home top right
                            // Do not show gallery expansion icons in image-only mode
    ["v2.47.0", "8/24/26"], // Add individual gallery expansion to GalleriesView

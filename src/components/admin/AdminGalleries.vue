@@ -1,9 +1,6 @@
 <template>
    <div v-if="userId" class="text-left">
       <div>
-         <TextButton @click="showAddDialog=true" text="Add Gallery"/>
-      </div>
-      <div>
          <v-row>
             <v-col cols="5">
                <v-text-field v-model="search" prepend-inner-icon="mdi-magnify" label="Search"
@@ -29,93 +26,60 @@
                <span v-if="item.childGalleryIds.length"> ({{ item.childGalleryIds.length }})</span>
             </template>
             <template v-slot:item.images="{ item }">
-               <span v-if="item.images.length" style="min-width:90px" class="d-flex align-center">
-                  <img :src="item.images[0].thumbUrl" height="40"/>
+               <span v-if="getThumb(item.images)" style="min-width:90px" class="d-flex align-center">
+                  <img :src="getThumb(item.images).thumbUrl" height="40"/>
                </span>
             </template>
             <template v-slot:item.dateCreated="{ item }">{{ defaultDisplayDate(item.dateCreated) }}</template>
-            <template v-slot:item.dateModified="{ item }">{{ defaultDisplayDate(item.dateModified) }}</template>
+            <template v-slot:item.dateModified="{ item }">{{ dateTimeString(item.dateModified) }}</template>
             <template v-slot:item.dateContentModified="{ item }">
-               {{ defaultDisplayDate(item.dateContentModified) }} 
-               <EditButton @click="editContentModified(item)"/>
-            </template>
-            <template v-slot:item.actions="{ item }">
-               <EditButton @click="editGallery(item)"/>
-               <DeleteButton @click="deleteGallery(item)"/>
+               {{ dateTimeString(item.dateContentModified) }}        
+               <ToolTipHover text="Sync with Item/ChildGallery dateContentModified" v-slot="{ props }">
+                  <IconButton v-bind="props" @click="syncContentModified(item)" icon="mdi-calendar-sync"/>
+               </ToolTipHover>    
             </template>
          </v-data-table>
       </div>
    </div>
-   
-   <v-dialog v-model="showAddDialog" width="auto">
-      <AddGallery :userId="userId" @done="showAddDialog=false"/>
-   </v-dialog>
-   <v-dialog v-model="showEditDialog" width="auto" height="auto">
-      <EditGallery :gallery="selectedGallery" @done="showEditDialog=false"/>
-   </v-dialog>
-   <v-dialog v-model="showEditContentModifiedDialog" width="auto" height="auto">
-      <EditGalleryContentModified :gallery="selectedGallery" @done="showEditContentModifiedDialog=false"/>
-   </v-dialog>
-   <v-dialog v-model="showDeleteDialog" width="auto">
-      <DeleteGallery :gallery="selectedGallery" @done="showDeleteDialog=false"/>
-   </v-dialog>
 </template>
 
 <script setup>
    import { computed, onMounted, ref } from 'vue'
    import { useGalleryStore } from '@/stores/galleryStore'
+   import { useItemStore }    from '@/stores/itemStore'
    import { useViewStore }    from '@/stores/viewStore'
-   import EditGalleryContentModified from '@/components/admin/EditGalleryContentModified.vue'
-   import AddGallery    from '@/components/gallery/AddGallery.vue'
-   import EditGallery   from '@/components/gallery/EditGallery.vue'
-   import DeleteGallery from '@/components/gallery/DeleteGallery.vue'
-   import EditButton    from '@/components/util/EditButton.vue'
-   import DeleteButton  from '@/components/util/DeleteButton.vue'
-   import IconButton    from '@/components/util/IconButton.vue'
-   import TextButton    from '@/components/util/TextButton.vue'
-   import { defaultDisplayDate } from '@/utils/dateUtils'
+   import ToolTipHover        from '@/components/util/ToolTipHover.vue'
+   import IconButton          from '@/components/util/IconButton.vue'
+   import { dateTimeString, defaultDisplayDate } from '@/utils/dateUtils'
    import { removeArrayEntry } from '@/utils/utils'
+   import { ImageType } from '@/utils/constants'
    
    const props = defineProps({ userId: String })
    const galleryStore = useGalleryStore()
+   const itemStore    = useItemStore()
    const viewStore    = useViewStore()
-   const selectedGallery = ref({})
    const search = ref("")
-   const expandedGalleryIds = ref([])
-   const showAddDialog    = ref(false)   
-   const showEditDialog   = ref(false)   
-   const showEditContentModifiedDialog = ref(false)   
-   const showDeleteDialog = ref(false)   
+   const expandedGalleryIds = ref([])  
    
    const Headers = {
       NAME:       {        title:'Name',        key:'name',          value: 'name' },
-      IMAGES:     {        title:'Images',      key:'images' },
-      CONTENT_MOD:{ col:3, title:'Content Modified', key:'dateContentModified',value: 'dateContentModified', align: 'center' },
-      VISIBILITY: { col:4, title:'Visibility',  key:'state',         value: 'state',        align: 'center' },
-      CREATED:    { col:5, title:'Created',     key:'dateCreated',   value: 'dateCreated',  align: 'center' },
-      MODIFIED:   { col:6, title:'Modified',    key:'dateModified',  value: 'dateModified', align: 'center' },
-      ACTIONS:    {        title:'',            key:'actions' },
+      IMAGES:     {        title:'Images',      key:'images',                             sortable:false },
+      VISIBILITY: { col:3, title:'Visibility',  key:'state',         value: 'state',        align: 'center' },
+      CONTENT_MOD:{ col:4, title:'Content Modified', key:'dateContentModified',value: 'dateContentModified', align: 'center' },
+      MODIFIED:   { col:5, title:'Modified',    key:'dateModified',  value: 'dateModified', align: 'center' },
+      CREATED:    { col:6, title:'Created',     key:'dateCreated',   value: 'dateCreated',  align: 'center' },
    }
 
    const customKeySort = {
-      hits:          (a, b) => { return b - a }, 
       name:          (a, b) => { return a.localeCompare(b) }, 
-      artist:        (a, b) => { return a.localeCompare(b) }, 
-      dateCreated:   (a, b) => { return b - a }, 
-      dateModified:  (a, b) => { return b - a }, 
-      dateContentModified: (a, b) => { return b - a }, 
-      yearCreated:   (a, b) => { return safeCompare(a, b) }, 
       state:         (a, b) => { return a.localeCompare(b) }, 
+      dateContentModified: (a, b) => { return b - a }, 
+      dateModified:  (a, b) => { return b - a }, 
+      dateCreated:   (a, b) => { return b - a },   
    } 
 
-   const safeCompare = (a, b) => { 
-      if (a && b) { return a.localeCompare(b) }
-      else if (a) { return 1 }
-      return -1
-    }
-
-   const headerOptions = [ Headers.CONTENT_MOD, Headers.VISIBILITY, Headers.CREATED, Headers.MODIFIED ]
-   const selectedHeaders = ref([ Headers.CONTENT_MOD, Headers.VISIBILITY, Headers.MODIFIED ])
+   const headerOptions = [  Headers.VISIBILITY, Headers.CONTENT_MOD, Headers.MODIFIED, Headers.CREATED ]
+   const selectedHeaders = ref([ Headers.VISIBILITY, Headers.CONTENT_MOD, Headers.MODIFIED, Headers.CREATED ])
    
    onMounted(async() => {
       if (viewStore.adminGalleryHeaders) { selectedHeaders.value = [...viewStore.adminGalleryHeaders] }
@@ -136,7 +100,6 @@
       const headers = []
       headers.push(...[Headers.NAME, Headers.IMAGES])
       headers.push(...selected)
-      headers.push(Headers.ACTIONS) 
       return headers
    })
 
@@ -194,6 +157,15 @@
       return galleries
    }
 
+   const getThumb = (images) => { 
+      if (images?.length) {
+         for (const image of images) {
+            if (image.imageType == ImageType.GALLERY ) { return image }
+         }
+      }
+      return null      
+   }
+
    const expandGallery   = (id) => { expandedGalleryIds.value.push(id) }
    const contractGallery = (id) => { removeArrayEntry(expandedGalleryIds.value, id) }
    const indent = (generation) => {
@@ -204,13 +176,30 @@
       return html
    }
    
-   const editGallery         = (gallery) => { showDialog(gallery, showEditDialog) }
-   const editContentModified = (gallery) => { showDialog(gallery, showEditContentModifiedDialog) }
-   const deleteGallery       = (gallery) => { showDialog(gallery, showDeleteDialog) }
-   const showDialog = (gallery, showDialog) => {
-      selectedGallery.value = gallery
-      showDialog.value = true
+   const syncContentModified = (gallery) => { 
+      let dateContentModified = null
+      
+      for (const childGalleryId of gallery.childGalleryIds) {
+         const childGallery = galleryStore.getGallery(childGalleryId)
+         dateContentModified = mostRecentDate(dateContentModified, childGallery.dateContentModified)
+      }
+      for (const item of itemStore.getGalleryItems(gallery.id)) {
+         dateContentModified = mostRecentDate(dateContentModified, item.dateContentModified)
+      }
+
+      if (dateContentModified) {
+         if (dateContentModified.seconds == gallery.dateContentModified.seconds) {
+            console.log(gallery.name + " dateContentModified unchanged")
+         }
+         else { 
+            console.log(gallery.name + " dateContentModified updated", dateTimeString(dateContentModified))
+            galleryStore.updateGallery({ id: gallery.id, dateContentModified:dateContentModified }) 
+         }
+      }
    }
+
+   const mostRecentDate = (date1, date2) => { return !date1 || date2 && date2 > date1 ? date2 : date1 }
+      
 </script>
 
 <style>

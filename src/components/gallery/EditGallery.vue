@@ -120,7 +120,7 @@
       for (const gallery of galleryMgr.getUserGalleries(props.gallery.userId) ) {
          if (isChildGalleryOption(gallery)) { galleries.push(gallery) }
       }
-      return galleries
+      return galleries.toSorted((a, b) => a.name.localeCompare(b.name)) 
    })
 
    const isChildGalleryOption = (gallery) => {

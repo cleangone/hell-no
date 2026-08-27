@@ -41,8 +41,8 @@
       <v-row justify="space-around"  density="compact" class="mb-md-4" >
          <GalleryThumb v-for="gallery in selectedGalleries" :key="gallery.id" :gallery="gallery" 
             :bypassShowUser="bypassShowUser" :showChildImages="!showChildGalleries" 
-            :parentIcon="getParentIcon(gallery)" @toggle="toggleParentId(gallery.id)"
-            :childIcon="getChildIcon(gallery)"   @close="closeChild(gallery)"/>
+            :parentIcon="getElderIcon(gallery)" @toggle="toggleExpandedId(gallery.id)"
+            :childIcon="getChildIcon(gallery)"  @close="closeChild(gallery)"/>
       </v-row>
       </v-container>
    </HorizontalDiv>
@@ -78,8 +78,8 @@
    const viewMgr      = useViewMgr()
    const sortByDate   = ref(true)
    const selectedUserId = ref(null)
-   const expandedParentIds = ref(new Set())
-   const parentIdToChildGalleries = ref(new Map())
+   const expandedElderIds = ref(new Set()) // elder is the top level parent 
+   const elderIdToFamilyGalleries = ref(new Map())
    
    useSeoMeta({ title: "Hell-No Galleries" })
    onMounted(async() => {
@@ -96,10 +96,10 @@
    const showChildGalleries     = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.SHOW_CHILD))
    watch(showChildGalleries, (newValue, oldValue) => {
       if (newValue) {
-         const parentIds = [ ...parentIdToChildGalleries.value.keys() ]
-         parentIds.forEach((parentId) => { expandedParentIds.value.add(parentId) })
+         const elderIds = [ ...elderIdToFamilyGalleries.value.keys() ]
+         elderIds.forEach((elderId) => { expandedElderIds.value.add(elderId) })
       }
-      else { expandedParentIds.value.clear() }
+      else { expandedElderIds.value.clear() }
    })
 
    const visibleGalleries = computed(() => { 
@@ -119,28 +119,39 @@
 
    const thumbGalleries = computed(() => { 
       const galleries = []     
-      const parentToChildren = new Map()
+      const elderIdToFamily = new Map()
       for (const gallery of visibleGalleries.value) {
          if (galleryMgr.hasGalleryThumbImage(gallery)) {
             if (showMyPrivateGalleries.value || !isPrivate(gallery)) {
-               if (gallery.parentGalleryId) {
-                  let childGalleries = parentToChildren.get(gallery.parentGalleryId)
-                  if (!childGalleries) {
-                     childGalleries = []
-                     parentToChildren.set(gallery.parentGalleryId, childGalleries)
+               if (!gallery.parentGalleryId) { galleries.push(gallery) }
+
+               if (gallery.childGalleryIds) {
+                  const elderId = getElderId(gallery)
+                  let familyGalleries = elderIdToFamily.get(elderId)
+                  if (!familyGalleries) {
+                     familyGalleries = []
+                     elderIdToFamily.set(elderId, familyGalleries)
                   }
-                  childGalleries.push(gallery)
+                  for (const galleryId of gallery.childGalleryIds) {
+                     familyGalleries.push(galleryStore.getGallery(galleryId))
+                  }
                }
-               else {galleries.push(gallery) }
             }
          }
       }  
 
-      parentToChildren.values().forEach((galleryArray) => 
-         galleryArray.sort(function(a, b) { return a.name.localeCompare(b.name) }))
-      parentIdToChildGalleries.value = parentToChildren // side-effect hack
+      elderIdToFamilyGalleries.value = elderIdToFamily // side-effect hack
       return galleries
    })
+
+   // todo - extract to map - hit multiple times
+   const getElderId = (gallery) => { 
+      let parent = gallery
+      while (parent.parentGalleryId) {
+         parent = galleryStore.getGallery(parent.parentGalleryId)
+      }
+      return parent.id
+    }
 
    const sortedGalleries = computed(() => { 
       return sortByDate.value ?
@@ -153,21 +164,15 @@
       const topLevelGalleries = selectedUserId.value ?
          sortedGalleries.value.filter(gallery => gallery.userId == selectedUserId.value) : sortedGalleries.value
       for (const gallery of topLevelGalleries) {
-         addGalleryAndChildren(gallery, displayGalleries)
-      }
-
-      return displayGalleries
-   })
-
-   // recursive
-   const addGalleryAndChildren = (gallery, displayGalleries) => { 
-      displayGalleries.push(gallery)
-      if (expandedParentIds.value.has(gallery.id) && parentIdToChildGalleries.value.has(gallery.id)) {
-         for (const childGallery of parentIdToChildGalleries.value.get(gallery.id)) {
-            addGalleryAndChildren(childGallery, displayGalleries)
+         displayGalleries.push(gallery)
+         if (expandedElderIds.value.has(gallery.id)) {
+            for (const familyGallery of elderIdToFamilyGalleries.value.get(gallery.id)) {
+                displayGalleries.push(familyGallery)
+            }
          }
       }
-   }
+      return displayGalleries
+   })
 
    const showAvatars = computed(() => isSiteGallery.value && !viewMgr.solo)   
    const avatarUsers = computed(() => userMgr.avatarUsers)
@@ -175,20 +180,20 @@
    
    const bypassShowUser = computed(() => username.value ? true : false)
 
-   const childGalleriesExist = computed(() => parentIdToChildGalleries.value.size)
+   const childGalleriesExist = computed(() => elderIdToFamilyGalleries.value.size)
 
-   const getChildIcon  = (gallery) => { return gallery.parentGalleryId ? "mdi-close-circle" : null }
-   const getParentIcon = (gallery) => { 
-      if (gallery.childGalleryIds?.length) {
-         return expandedParentIds.value.has(gallery.id) ? "mdi-folder-multiple-image" : "mdi-folder-image"
+   const getChildIcon = (gallery) => { return gallery.parentGalleryId ? "mdi-close-circle" : null }
+   const getElderIcon = (gallery) => { 
+      if (!gallery.parentGalleryId && gallery.childGalleryIds?.length) { 
+         return expandedElderIds.value.has(gallery.id) ? "mdi-folder-multiple-image" : "mdi-folder-image"
       }
       return null
    }
    
-   const closeChild = (gallery) => { toggleParentId(gallery.parentGalleryId) }
-   const toggleParentId = (galleryId) => {    
-      if (expandedParentIds.value.has(galleryId)) { expandedParentIds.value.delete(galleryId) } 
-      else { expandedParentIds.value.add(galleryId) }
+   const closeChild = (gallery) => { toggleExpandedId(getElderId(gallery)) }
+   const toggleExpandedId = (galleryId) => {    
+      if (expandedElderIds.value.has(galleryId)) { expandedElderIds.value.delete(galleryId) } 
+      else { expandedElderIds.value.add(galleryId) }
    }
 </script>
 
