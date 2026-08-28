@@ -1,8 +1,11 @@
 <template>
    <v-col>
-      <div v-for="chkbox in visibleCheckboxes" :key="chkbox.id" class="d-flex align-center tight-checkbox">
-         <v-checkbox v-model="chkbox.isSelected" :label="chkbox.name" density="compact" hide-details class="py-0"/>
-         <v-icon v-if="chkbox.isParent" :icon="icon(chkbox)" @click="toggleExpand(chkbox.id)" 
+      <div v-for="checkbox in visibleCheckboxes" :key="checkbox.id" class="d-flex align-center tight-checkbox">
+         <ToolTipHover v-if="isAbbrev(checkbox)" :text="checkbox.name" v-slot="{ props }">
+            <v-checkbox v-bind="props" v-model="checkbox.isSelected" :label="label(checkbox)" density="compact" hide-details class="py-0"/>
+         </ToolTipHover>         
+         <v-checkbox v-else v-model="checkbox.isSelected" :label="label(checkbox)" density="compact" hide-details class="py-0"/>
+         <v-icon v-if="checkbox.isParent" :icon="icon(checkbox)" @click="toggleExpand(checkbox.id)" 
             size="small" class="menu-icon ml-1"/>                           
       </div>
    </v-col>           
@@ -10,13 +13,15 @@
 
 <script setup>
    import { computed, ref } from 'vue'
+   import ToolTipHover from '@/components/util/ToolTipHover.vue'
     
-   const props = defineProps({ checkboxes: Array })
+   const props = defineProps({ checkboxes: Array, maxChars: Number })
    const expandedCheckboxIds = ref(new Set())
 
-   const icon = (chkbox) => { 
-      return expandedCheckboxIds.value.has(chkbox.id) ? "mdi-chevron-down-circle" : "mdi-chevron-right-circle" 
-   }
+   const isAbbrev = (checkbox) => { return checkbox.name.length > props.maxChars }
+   const label = (checkbox) => { return isAbbrev(checkbox) ? checkbox.name.substr(0, props.maxChars) + "..." : checkbox.name }
+   const icon = (checkbox) => { 
+      return expandedCheckboxIds.value.has(checkbox.id) ? "mdi-chevron-down-circle" : "mdi-chevron-right-circle" }
 
    const allCheckboxes = computed(() => {
       const checkboxes = []

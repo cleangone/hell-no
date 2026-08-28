@@ -6,7 +6,8 @@
       </v-expansion-panel-title>
       <v-expansion-panel-text>
          <v-row class="mb-2">
-            <CheckboxCol v-for="chkboxCol in checkboxCols" :key="chkboxCol" :checkboxes="chkboxCol" class="mx-3"/>
+            <CheckboxCol v-for="chkboxCol in checkboxCols" :key="chkboxCol" :checkboxes="chkboxCol" 
+               :maxChars="maxChars" class="mx-3"/>
          </v-row>
       </v-expansion-panel-text>
    </v-expansion-panel>
@@ -16,8 +17,8 @@
    import { computed } from 'vue'
    import CheckboxCol from './CheckboxCol.vue'
    
-   const props = defineProps({ type:String, checkboxes:Array, cols:Number })
-   
+   const props = defineProps({ type:String, checkboxes:Array, cols:Number, maxChars:{type: Number, default:20} })
+
    const checkboxFamilies = computed(() => {
       const families = []
       const idToCheckbox = new Map()

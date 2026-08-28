@@ -16,6 +16,7 @@
 
 */
 export const versions = [        
+   ["v2.48.0", "8/28/26"], // Add Gallery thumbs to search results
    ["v2.47.2", "8/27/26"], // Add drag & drop control of child Gallery order
                            // Update AdminGalleries to sync gallery dataContentModified
    ["v2.47.1", "8/25/26"], // Individual gallery expansion expands entire family

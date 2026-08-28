@@ -43,7 +43,7 @@
    const headers = computed(() => [
          { title: 'Thumb Text', value: 'title', sortable: true },
          { title: 'Popup Text', value: 'name',  sortable: true },
-         { title: 'Profile',    value: 'profile' },
+         { title: 'Featured',   value: 'profile' },
          { title: '',           value: 'image', align: 'center' },
          { title: '', key: 'actions' }
       ]

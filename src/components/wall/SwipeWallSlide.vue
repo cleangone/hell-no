@@ -10,7 +10,7 @@
             </div> 
          </v-card>
          <RouterLink v-if="showAvatar" :to="userUrl" class="position-absolute top-0 left-0">
-            <Avatar :user="user" :size="60" :toolTip="user.username" class="ml-2 pa-1 bg-black"/>
+            <Avatar v-if="user" :user="user" :size="60" :toolTip="user.username" class="ml-2 pa-1 bg-black"/>
          </RouterLink>
       </div>
       <div v-else class="bg-black">
