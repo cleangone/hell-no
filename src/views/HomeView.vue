@@ -23,18 +23,15 @@
       </div>
    </v-container>
    
-   <!-- galleries, favorites -->
-   <div v-if="recentGalleries.length || favoriteItems?.length" class="my-3">
-      <v-row>
-         <v-col v-if="recentGalleries.length">
-            <div class="my-5">
-               <span class="font-weight-bold">Galleries</span> |
-               <RouterLink :to="Route.GALLERIES.url + Defaults.SITE_ID">View all</RouterLink>
-            </div>
-            <v-row justify="space-around" ref="galleryRef" class="mb-md-4" >
-               <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" showChildImages dense />
-            </v-row>
-         </v-col>
+   <!-- galleries -->
+   <v-container v-if="recentGalleries.length" class="mt-10 mb-5">
+      <!-- box-border box-border-color -->
+      <v-row ref="galleryRef"/> <!-- needed to evaluate galleryWidth -->
+      <RecentGalleryThumbs :galleries="recentGalleries" :rowWidth="galleryWidth" :maxRows="2"/>
+   </v-container>
+
+   <!-- <div v-if="recentGalleries.length || favoriteItems?.length" class="my-3">
+      <v-row> -->
          <!-- <v-col v-if="favoriteItems?.length" class="box-border box-border-color ma-4 px-3">
             <div class="font-weight-bold">
                Favorites | <RouterLink :to="Route.FAVORITES.url">View all</RouterLink>
@@ -49,7 +46,7 @@
             </v-row>
          </v-col> -->
 
-          <v-col v-if="viewedItems.length" class="box-border box-border-color ma-4 px-4">
+          <!-- <v-col v-if="viewedItems.length" class="box-border box-border-color ma-4 px-4">
             <div class="mb-5">
                <span class="font-weight-bold">Recent Viewed</span> | 
                <RouterLink :to="Route.VIEWED.url">View all</RouterLink>
@@ -59,20 +56,29 @@
             </v-row>
          </v-col>
       </v-row>
-   </div>
+   </div> -->
 
-   <!-- updates -->
-   <v-container class="mt-5 pt-3 bg-shade">
-      <div class="mb-3">
-         <span class="font-weight-bold">Recent Updates</span> |
-         <RouterLink :to="Route.RECENT.url + Defaults.SITE_ID">View all</RouterLink>
-      </div>
-      <v-container>
-         <v-row justify="space-around" ref="recentRef" class="mb-md-4">
+   <!-- updates, viewed -->
+   <v-row density="comfortable">
+      <v-col cols="6" class="mx-2 bg-shade">
+         <div class="mb-5">
+            <span class="font-weight-bold">Recent Updates</span> |
+            <RouterLink :to="Route.RECENT.url + Defaults.SITE_ID">View all</RouterLink>
+         </div>
+         <v-row justify="space-around" ref="recentRef" class="">
             <ItemThumb v-for="item in recentItems" :key="item.id" :item="item" :origin="ItemOrigin.RECENT"/>
          </v-row>
-      </v-container>
-   </v-container>
+      </v-col>
+      <v-col class="mx-2 bg-shade">
+         <div class="mb-5">
+            <span class="font-weight-bold">Recent Viewed</span> | 
+            <RouterLink :to="Route.VIEWED.url">View all</RouterLink>
+         </div>
+         <v-row justify="space-around" ref="viewedRef" class="">
+            <ItemThumb v-for="item in viewedItems" :key="item.id" :item="item" :origin="ItemOrigin.VIEWED" showDateViewed/>
+         </v-row>
+      </v-col>
+   </v-row>
 </template>
 
 <script setup>
@@ -89,15 +95,15 @@
    import { useCacheStore }   from '@/stores/cacheStore'
    import { useLocalStore }   from '@/stores/localStore'
    import ItemThumb    from '@/components/item/thumb/ItemThumb.vue'
-   import GalleryThumb from '@/components/gallery/thumb/GalleryThumb.vue'
+   import RecentGalleryThumbs from '@/components/gallery/thumb/RecentGalleryThumbs.vue'
    import UserThumb    from '@/components/user/UserThumb.vue'
    import SplitWall    from '@/components/wall/SplitWall.vue'
    import DarkButton   from '@/components/util/DarkButton.vue'
-   import ShowNotifications from '@/components/notification/ShowNotifications.vue'
+   import ShowNotifications   from '@/components/notification/ShowNotifications.vue'
    import { timestampsEqual } from '@/utils/dateUtils'
    import { ThumbRow } from '@/utils/utilClasses'
    import { randomizeArray } from '@/utils/utils'
-   import { Defaults, GalleryThumbWidth, ItemOrigin, TodoType, Route, WallRowHeight } from '@/utils/constants'
+   import { Defaults, ItemOrigin, Route, TodoType, WallRowHeight } from '@/utils/constants'
    
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
@@ -114,8 +120,8 @@
    const viewedRef    = ref(null)
    const { width: galleryWidth   } = useElementSize(galleryRef)
    const { width: favoritesWidth } = useElementSize(favoritesRef)
-   const { width: recentWidth    }  = useElementSize(recentRef)
-   const { width: viewedWidth    }  = useElementSize(viewedRef)
+   const { width: recentWidth    } = useElementSize(recentRef)
+   const { width: viewedWidth    } = useElementSize(viewedRef)
    const currSiteWall = ref(null)
    const currMyWall   = ref(null)
    const wallBackgroundOpacity = ref(.1) 
@@ -206,20 +212,15 @@
    const wallDivStyle   = computed(() => "height:" + (((slideRowHeight.value + 10) * wallRows.value)) + "px;")
    const wallBackgroundStyle = computed(() => wallDivStyle.value + " opacity:" + wallBackgroundOpacity.value + ";")
 
-   // not caching galleries - caching everything causes wall to not paint quickly
    const recentGalleries = computed(() => { 
-      // console.log("recentGalleries")
       const galleries = []     
-
       const allGalleries = viewMgr.solo ? galleryStore.myGalleries : galleryStore.publicGalleries
       for (const gallery of allGalleries) {
-         // console.log("recentGalleries - gallery")
-      if (gallery.images.length && showGallery(gallery) ) { galleries.push(gallery) }
+         if (gallery.images.length && showGallery(gallery)) { galleries.push(gallery) }
       }   
-      //  console.log("recentGalleries - sort") 
-      galleries.sort(function(a, b) { return b.dateContentModified - a.dateContentModified }) 
-      return galleries
+      return galleries.toSorted(function(a, b) { return b.dateContentModified - a.dateContentModified }) 
    })
+
    const showGallery = (gallery)  => {
       if (!gallery.childGalleryIds.length) { return true } // not a parent
       for (const childGallery of galleryStore.publicGalleryIdToChildGalleries.get(gallery.id)) {
@@ -229,15 +230,6 @@
       } 
       return true // gallery is a parent with dateContentModified different than all children
    }
-
-   const thumbGalleries = computed(() => {   
-      // console.log("galleryWidth " + galleryWidth.value)
-      const thumbRow = new ThumbRow(2, galleryWidth.value ? galleryWidth.value : 400 ) // maxRows, maxWidth
-      for (const gallery of recentGalleries.value) {
-         if (!thumbRow.addThumb(gallery, GalleryThumbWidth)) { break }  
-      } 
-      return thumbRow.thumbs
-   })
    
    const allRecentItems = computed(() => {
       let items = viewMgr.solo ? [ ...itemMgr.myRecentItems ] : [ ...cacheStore.recentPublicItems ]

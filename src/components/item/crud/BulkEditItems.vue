@@ -195,7 +195,7 @@
 
 <style>
 .bulk-edit-items {
-   min-width:  600px;
+   min-width:  900px;
    min-height: 500px;
 }
 .expansion { 

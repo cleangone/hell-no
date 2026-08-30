@@ -22,15 +22,12 @@
       </div> 
    </div>
    <!-- galleries -->
-   <v-container v-if="thumbGalleries.length">
-      <div class="my-5">
-         <span class="font-weight-bold">Galleries</span> |
-         <RouterLink :to="Route.GALLERIES.url + route.params.id">View all</RouterLink>   
-      </div>
-      <v-row justify="space-around" ref="galleryRef" class="mb-md-4" >
-         <GalleryThumb v-for="gallery in thumbGalleries" :key="gallery.id" :gallery="gallery" bypassShowUser showChildImages dense />
-      </v-row>
+   <v-container v-if="visibleGalleries.length" class="mt-10 mb-5">
+      <v-row ref="galleryRef"/> <!-- needed to evaluate galleryWidth -->
+      <RecentGalleryThumbs :galleries="visibleGalleries" :toRouteId="route.params.id" 
+         :rowWidth="galleryWidth" :maxRows="2" bypassShowUser/>
    </v-container>
+
    <!-- recent items -->
    <v-container v-if="recentItems.length" class="mt-4 pt-1 bg-shade">
       <div class="my-3">
@@ -57,13 +54,13 @@
    import { useWallMgr }      from '@/stores/wallMgr'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
-   import GalleryThumb from '@/components/gallery/thumb/GalleryThumb.vue'
-   import ItemThumb    from '@/components/item/thumb/ItemThumb.vue'
-   import SplitWall    from '@/components/wall/SplitWall.vue'
-   import EmailButton  from '@/components/email/EmailButton.vue'
+   import RecentGalleryThumbs from '@/components/gallery/thumb/RecentGalleryThumbs.vue'
+   import ItemThumb           from '@/components/item/thumb/ItemThumb.vue'
+   import SplitWall           from '@/components/wall/SplitWall.vue'
+   import EmailButton         from '@/components/email/EmailButton.vue'
    import { ThumbRow } from '@/utils/utilClasses'
    import { randomizeArray } from '@/utils/utils'
-   import { GalleryThumbWidth, ItemOrigin, Route, WallRowHeight } from '@/utils/constants'
+   import { ItemOrigin, Route, WallRowHeight } from '@/utils/constants'
    
    const route  = useRoute()
    const userStore    = useUserStore()
@@ -87,23 +84,14 @@
    const userId = computed(() => user.value ? user.value.id : null )
    const displayName = computed(() => user.value ? (user.value.displayName ?? user.value.username) : "")
 
-   const contentExists = computed(() => wallItemsExist.value || thumbGalleries.value.length || recentItems.value.length) 
+   const contentExists = computed(() => wallItemsExist.value || visibleGalleries.value.length || recentItems.value.length) 
    
    const visibleGalleries = computed(() => { 
       const galleries = []     
       for (const gallery of galleryStore.getPublicGalleries(userId.value) ) {
          if (gallery.images.length && !gallery.parentGalleryId && viewMgr.galleryIsVisibleToUser(gallery)) { galleries.push(gallery) }
       }    
-
-      galleries.sort(function(a, b){return b.dateModified - a.dateModified}) 
-      return galleries
-   })
-   const thumbGalleries = computed(() => {    
-      const thumbRow = new ThumbRow(2, galleryWidth.value ? galleryWidth.value : 400 ) // maxRows, maxWidth
-      for (const gallery of visibleGalleries.value) {
-         if (!thumbRow.addThumb(gallery, GalleryThumbWidth))  { break }  
-      } 
-      return thumbRow.thumbs
+      return galleries.toSorted(function(a, b){return b.dateContentModified - a.dateContentModified}) 
    })
 
    const allRecentItems = computed(() => {

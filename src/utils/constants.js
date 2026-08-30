@@ -119,7 +119,7 @@ export const ImageType = {
    UPLOAD:     'Upload',
    USER:       'User',
 }
-export const GalleryImageTypes = [ ImageType.GALLERY, ImageType.HEADER, ImageType.BACKGROUND ]
+export const GalleryImageTypes = [ ImageType.GALLERY, ImageType.HEADER, ImageType.BACKGROUND ]  
 
 export const InviteState = {
    CREATED:  'Created',
@@ -223,6 +223,11 @@ export const ThumbSize = {
    LG:  'Large',
    XL:  'XL',
 }  
+
+export const GalleryThumbMaxWidths = { // xs is % of width - 4/3/2 thumbs/row
+   sizes:   new Map([ [ThumbSize.IMG, 150], [ThumbSize.SM, 150], [ThumbSize.MED, 200], [ThumbSize.LG, GalleryThumbWidth] ]),
+   xsSizes: new Map([ [ThumbSize.IMG, .22], [ThumbSize.SM, .22], [ThumbSize.MED, .3],  [ThumbSize.LG, .45] ]) 
+}
 
 export const ThumbType = {
    ITEM:       'Item',

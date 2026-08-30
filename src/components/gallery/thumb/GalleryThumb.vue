@@ -45,14 +45,10 @@
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { handleError, objAspectRatio, thumbBackgroundColorStyle } from '@/utils/utils'
-   import { Emit, GalleryThumbOptions, GalleryThumbWidth, ImageType, Route, ThumbSize } from '@/utils/constants'
-   
-   const MaxWidths = {  // xs is % of width - 4/3/2 thumbs/row
-      sizes:   new Map([ [ThumbSize.IMG, 150], [ThumbSize.SM, 150], [ThumbSize.MED, 200], [ThumbSize.LG, GalleryThumbWidth] ]),
-      xsSizes: new Map([ [ThumbSize.IMG, .22],  [ThumbSize.SM, .22], [ThumbSize.MED, .3], [ThumbSize.LG, .45] ]) }
+   import { Emit, GalleryThumbMaxWidths as MaxWidths, GalleryThumbOptions, ImageType, Route, ThumbSize } from '@/utils/constants'
    
    const props = defineProps({ gallery: Object, showChildImages:Boolean, bypassShowUser:Boolean, 
-       parentIcon:String, childIcon:String, dense:Boolean })
+       parentIcon:String, childIcon:String, size:String, dense:Boolean })
    const emit = defineEmits([ Emit.CLOSE, Emit.TOGGLE ])
    
    const { width: windowWidth } = useWindowSize()
@@ -70,7 +66,7 @@
    onErrorCaptured((err) => { return handleError(err, "GalleryThumb") })
 
    const galleryUrl = computed(() => Route.GALLERY.url + (props.gallery?.tag?.length ? props.gallery.tag : props.gallery.id))
-   const thumbSize  = computed(() => viewMgr.isXs ? viewStore.thumbSize.galleryXsSize : viewStore.thumbSize.gallerySize)
+   const thumbSize  = computed(() => props.size ?? (viewMgr.isXs ? viewStore.thumbSize.galleryXsSize : viewStore.thumbSize.gallerySize))
    const showText   = computed(() => thumbSize.value != ThumbSize.IMG)
    const showIcons  = computed(() => showText.value && (props.parentIcon || props.childIcon))
    const addIconRow = computed(() => viewMgr.isXs && showIcons.value)
