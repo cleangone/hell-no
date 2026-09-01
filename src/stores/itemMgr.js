@@ -4,7 +4,7 @@ import { useWindowSize } from '@vueuse/core'
 import { useItemStore }  from '@/stores/itemStore'
 import { useHitStore }   from '@/stores/hitStore'
 import { objAspectRatio, randomizeArray } from '@/utils/utils'
-import { ImageType, ItemNavAction, ItemType, Route } from '@/utils/constants'
+import { Defaults, ImageType, ItemNavAction, ItemType, Route } from '@/utils/constants'
    
 export const useItemMgr = defineStore('itemMgr', () => {   
    const { width: windowWidth, height: windowHeight } = useWindowSize()
@@ -208,11 +208,40 @@ export const useItemMgr = defineStore('itemMgr', () => {
       return { ...popup, x: x, y: y }
    }
 
+   function getItemWidth(item, targetHeight, itemMaxLandscapeWidth) {
+      const aspectRatio = itemAspectRatio(item)
+      let targetWidth = Math.round(targetHeight * aspectRatio)
+      if (targetWidth > Defaults.MAX_THUMB_SIDE) { targetWidth = Defaults.MAX_THUMB_SIDE}
+      
+      if (aspectRatio > 2 && targetWidth == Defaults.MAX_THUMB_SIDE) {
+         targetWidth = itemMaxLandscapeWidth
+      }
+      return targetWidth
+   }
+
+   function getGroupWidth(item, targetHeight) { return getGroupWidthObj(item, targetHeight).targetWidth }
+   function getGroupWidthObj(item, targetHeight) {
+      let totalWidth = 0
+      let totalHeight = 0
+      for (const childItem of item.childItems) {
+         totalWidth += childItem.primaryImage.dimensions.width
+         totalHeight += childItem.primaryImage.dimensions.height
+      }
+
+      // does not address landscape images becasue they are not grouped
+      const avgHeight = totalHeight/item.childItems.length
+      const aspectRatio = totalWidth / avgHeight
+      const targetWidth = Math.round(targetHeight * aspectRatio)
+      
+      return { totalWidth: totalWidth, targetWidth: targetWidth, cardWidth: targetWidth.toString()}
+   }
+
    return { 
       myItemIdToItem, artistIdToMyItemIds, 
       getItems, getRandomItems, getPublicGalleryThumbs, getPublicGalleryThumbUrls,
       recentPublicItems, recentGroupMemberItems, myRecentItems, getRecentItems, getRecentPublicItems, 
       recentViewedPublicItems,
       mobileImageUrl, isItemGroup, ungroupItems, ungroupItem, ungroupAndExtractItems, extractFromItemGroup,
-      itemAspectRatio, itemNavURL, itemURL, getPopupImage }
+      itemAspectRatio, itemNavURL, itemURL, getPopupImage, 
+      getItemWidth, getGroupWidth, getGroupWidthObj }
 })

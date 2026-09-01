@@ -21,10 +21,13 @@
    import { useViewMgr }   from '@/stores/viewMgr'
    import ItemPopup     from '@/components/item/ItemPopup.vue'
    import ItemThumbText from './ItemThumbText.vue'
-   import { ThumbSize } from '@/utils/constants'
+   import { Emit, ThumbSize } from '@/utils/constants'
    
    const props = defineProps({ 
-      item:Object, origin:String, useAltName: Boolean, useLocalName: Boolean, bypassShowUser:Boolean, showDateViewed:Boolean })
+      item:Object, origin:String, size: String, 
+      useAltName: Boolean, useLocalName: Boolean, 
+      bypassShowUser:Boolean, showDateViewed:Boolean, emitPopup: Boolean })
+   const emit = defineEmits([ Emit.POPUP ])
 
    const itemMgr   = useItemMgr()
    const viewStore = useViewStore()
@@ -34,24 +37,9 @@
    const mouseleaveTime = ref(Date.now())
    
    const childItems = computed(() => props.item.childItems)
-   const thumbSize  = computed(() => viewMgr.isXs ? viewStore.thumbSize.xsSize : viewStore.thumbSize.size)
+   const thumbSize  = computed(() => props.size ?? (viewMgr.isXs ? viewStore.thumbSize.xsSize : viewStore.thumbSize.size))
    const showText   = computed(() => thumbSize.value != ThumbSize.IMG)
-
-   const groupWidth = computed(() => { 
-      let totalWidth = 0
-      let totalHeight = 0
-      for (const childItem of childItems.value) {
-         totalWidth += childItem.primaryImage.dimensions.width
-         totalHeight += childItem.primaryImage.dimensions.height
-      }
-
-      // does not address landscape images becasue they are not grouped
-      const avgHeight = totalHeight/props.item.childItems.length
-      const targetHeight = viewMgr.targetThumbHeight
-      const aspectRatio = totalWidth / avgHeight
-      const targetWidth = Math.round(targetHeight * aspectRatio)
-      return { totalWidth: totalWidth, targetWidth: targetWidth, cardWidth: targetWidth.toString()}
-   })
+   const groupWidth = computed(() => itemMgr.getGroupWidthObj(props.item, viewMgr.getTargetThumbHeight(thumbSize.value)))
 
    const thumbWidth = (childItem) => {
       // subtract to account for borders
@@ -64,18 +52,22 @@
          if (mouseoverTime > mouseleaveTime.value ) { 
             const boundingRect = cardRef.value.$el.getBoundingClientRect() // rect of card holding all thumbs
             const aspectRatio = itemMgr.itemAspectRatio(childItem)
-            popup.value = itemMgr.getPopupImage(
+            const popupImage = itemMgr.getPopupImage(
                childItem.name,
                childItem.primaryArtist ? childItem.primaryArtist.fullName : null,
                childItem.primaryImage.largeThumbUrl, 
                boundingRect, aspectRatio)
+
+            if (props.emitPopup) { emit(Emit.POPUP, popupImage) }
+            else { popup.value = popupImage }
          }
       }, 250)  
    }
 
    const mouseleave = () => {
       mouseleaveTime.value = Date.now()
-      popup.value = null 
+      if (props.emitPopup) { emit(Emit.POPUP, null) }
+      else { popup.value = null }
    }
 </script>
 

@@ -22,11 +22,8 @@
       </div> 
    </div>
    <!-- galleries -->
-   <v-container v-if="visibleGalleries.length" class="mt-10 mb-5">
-      <v-row ref="galleryRef"/> <!-- needed to evaluate galleryWidth -->
-      <RecentGalleryThumbs :galleries="visibleGalleries" :toRouteId="route.params.id" 
-         :rowWidth="galleryWidth" :maxRows="2" bypassShowUser/>
-   </v-container>
+   <RecentGalleryThumbs v-if="visibleGalleries.length" :galleries="visibleGalleries" 
+      :maxRows="galleryRows" :toRouteId="route.params.id"  bypassShowUser class="mt-10 mb-5"/>
 
    <!-- recent items -->
    <v-container v-if="recentItems.length" class="mt-4 pt-1 bg-shade">
@@ -70,9 +67,7 @@
    const wallMgr      = useWallMgr()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
-   const galleryRef = ref(null)
-   const recentRef  = ref(null)
-   const { width: galleryWidth } = useElementSize(galleryRef)
+   const recentRef    = ref(null)
    const { width: recentWidth }  = useElementSize(recentRef)
 
    useSeoMeta({
@@ -124,7 +119,8 @@
    const wallRows       = computed(() => displayWall.value ? displayWall.value.wallRows : 2 )
    const wallDivStyle   = computed(() => "height:" + (((slideRowHeight.value + 10) * wallRows.value)) + "px;")
    const wallBackgroundStyle = computed(() => wallDivStyle.value + " opacity:" + wallBackgroundOpacity.value + ";")
-
+   const galleryRows    = computed(() => viewMgr.isXs ? 1 : 2)
+   
    const wallImage = computed(() => {
       const urls = itemMgr.getPublicGalleryThumbUrls(userId.value)
       return urls.length ? randomizeArray(urls)[0] : wallMgr.randomWallImage

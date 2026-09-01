@@ -11,7 +11,7 @@ import { useHitStore }   from '@/stores/hitStore'
 import { useViewStore }  from '@/stores/viewStore'
 import { useLocalStore } from '@/stores/localStore'
 import { dateUuid, isHidden, isInvisible, isOwned, isPublic } from '@/utils/utils'  
-import { Route, ThumbHeights, ThumbSize } from '@/utils/constants'
+import { ItemMaxLandscapeWidths, Route, ThumbHeights, ThumbSize } from '@/utils/constants'
    
 export const useViewMgr = defineStore('viewMgr', () => {   
    const router = useRouter()
@@ -103,8 +103,7 @@ export const useViewMgr = defineStore('viewMgr', () => {
       return itemIds.size
    }
 
-   const targetThumbHeight = computed(() => {
-      const size    = isXs.value ? viewStore.thumbSize.xsSize : viewStore.thumbSize.size
+   function getTargetThumbHeight(size) {
       const heights = isXs.value ? ThumbHeights.xsSizes : ThumbHeights.sizes 
 
       if (size == ThumbSize.IMG)      { return heights[0] }
@@ -112,8 +111,14 @@ export const useViewMgr = defineStore('viewMgr', () => {
       else if (size == ThumbSize.MED) { return heights[2] }
       else if (size == ThumbSize.XL)  { return heights[4] }
       else { return heights[3] }
-    })    
+   }
+
+   function getItemMaxLandscapeWidth(thumbSize) {
+      const widths = isXs.value ? ItemMaxLandscapeWidths.xsSizes : ItemMaxLandscapeWidths.sizes 
+      return widths.get(thumbSize) 
+   }
       
    return { init, logout, isMobile, isXs, isDeskTop, solo, addHit, itemIsVisibleToUser, itemThumbVisibleToUser, 
-      galleryIsVisibleToUser, galleryThumbVisibleToUser, galleryItemCount, targetThumbHeight }
+      galleryIsVisibleToUser, galleryThumbVisibleToUser, galleryItemCount, 
+      getTargetThumbHeight, getItemMaxLandscapeWidth }
 })

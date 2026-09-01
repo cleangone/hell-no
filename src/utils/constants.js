@@ -215,7 +215,10 @@ export const ItemStates    = [ State.PUBLIC, State.PRIVATE, State.INVISIBLE, Sta
 export const GalleryStates = [ State.PUBLIC, State.PRIVATE, State.INVISIBLE ]
 export const GroupStates   = [ State.PUBLIC, State.GROUP, State.PRIVATE ]
 
-export const ThumbHeights = { sizes:[150, 150, 200, 250, 300], xsSizes:[125, 125, 150, 200] }
+export const ThumbHeights = { 
+   sizes:  [150, 150, 200, 250, 300], 
+   xsSizes:[125, 125, 150, 200] 
+}
 export const ThumbSize = { 
    IMG: 'Image', // small image only
    SM:  'Small',
@@ -226,8 +229,12 @@ export const ThumbSize = {
 
 export const GalleryThumbMaxWidths = { // xs is % of width - 4/3/2 thumbs/row
    sizes:   new Map([ [ThumbSize.IMG, 150], [ThumbSize.SM, 150], [ThumbSize.MED, 200], [ThumbSize.LG, GalleryThumbWidth] ]),
-   xsSizes: new Map([ [ThumbSize.IMG, .22], [ThumbSize.SM, .22], [ThumbSize.MED, .3],  [ThumbSize.LG, .45] ]) 
+   xsSizes: new Map([ [ThumbSize.IMG, .22], [ThumbSize.SM, .22], [ThumbSize.MED, .28],  [ThumbSize.LG, .45] ]) 
 }
+
+export const ItemMaxLandscapeWidths = { 
+   sizes:   new Map([ [ThumbSize.IMG, 200], [ThumbSize.SM, 200], [ThumbSize.MED, 250], [ThumbSize.LG, Defaults.MAX_THUMB_SIDE] ]),
+   xsSizes: new Map([ [ThumbSize.IMG, 125], [ThumbSize.SM, 125], [ThumbSize.MED, 175], [ThumbSize.LG, Defaults.MAX_THUMB_SIDE] ]) }
 
 export const ThumbType = {
    ITEM:       'Item',

@@ -19,16 +19,13 @@
    import ItemPopup        from '@/components/item/ItemPopup.vue'
    import ItemThumbText    from './ItemThumbText.vue'
    import { handleError } from '@/utils/utils'
-   import { Defaults, ThumbSize } from '@/utils/constants'
+   import { Emit, ThumbSize } from '@/utils/constants'
    
    const props = defineProps({ 
-      item: Object, origin: String, useAltName: Boolean, useLocalName: Boolean, 
-      bypassShowUser:Boolean, showDateViewed:Boolean })
-
-   const MaxLandscapeWidths = { 
-      sizes:   new Map([ [ThumbSize.IMG, 200], [ThumbSize.SM, 200], [ThumbSize.MED, 250], [ThumbSize.LG, Defaults.MAX_THUMB_SIDE] ]),
-      xsSizes: new Map([ [ThumbSize.IMG, 125], [ThumbSize.SM, 125], [ThumbSize.MED, 175], [ThumbSize.LG, Defaults.MAX_THUMB_SIDE] ]) }
-      
+      item: Object, origin: String, size: String, useAltName: Boolean, useLocalName: Boolean, 
+      bypassShowUser:Boolean, showDateViewed:Boolean, emitPopup: Boolean })
+   const emit = defineEmits([ Emit.POPUP ])
+   
    const itemMgr   = useItemMgr()
    const viewStore = useViewStore()
    const viewMgr   = useViewMgr()
@@ -45,23 +42,12 @@
    })
    const thumbUrl    = computed(() => item.value.primaryImage.thumbUrl)
    const artist      = computed(() => item.value.primaryArtist ? item.value.primaryArtist.fullName : null)
-   const thumbSize   = computed(() => viewMgr.isXs ? viewStore.thumbSize.xsSize : viewStore.thumbSize.size)
+   const thumbSize   = computed(() => props.size ?? (viewMgr.isXs ? viewStore.thumbSize.xsSize : viewStore.thumbSize.size))
    const showText    = computed(() => thumbSize.value != ThumbSize.IMG)
-   const aspectRatio = computed(() => itemMgr.itemAspectRatio(item.value))
-   const cardStyle   = computed(() => (showText.value ? "mb-5" : "mb-2") + (thumbSize.value == ThumbSize.IMG ? "" : " pa-1"))
-     
-   const cardWidth   = computed(() => { 
-      const targetHeight = viewMgr.targetThumbHeight
-      let targetWidth = Math.round(targetHeight * aspectRatio.value)
-      if (targetWidth > Defaults.MAX_THUMB_SIDE) { targetWidth = Defaults.MAX_THUMB_SIDE}
-      
-      if (aspectRatio.value > 2 && targetWidth == Defaults.MAX_THUMB_SIDE) {
-         targetWidth = viewMgr.isXs ? 
-            MaxLandscapeWidths.xsSizes.get(thumbSize.value) :
-            MaxLandscapeWidths.sizes.get(thumbSize.value)
-      }
-      return targetWidth
-   })
+   const cardStyle   = computed(() => (showText.value ? "mb-5" : "mb-2") + (thumbSize.value == ThumbSize.IMG ? "" : " pa-1")) 
+   const cardWidth   = computed(() => itemMgr.getItemWidth(item.value, 
+                                          viewMgr.getTargetThumbHeight(thumbSize.value), 
+                                          viewMgr.getItemMaxLandscapeWidth(thumbSize.value))) 
 
    const mouseover = () => {
       if (viewMgr.isMobile) { return }
@@ -71,15 +57,19 @@
          if (mouseoverTime > mouseleaveTime.value ) { 
             const boundingRect = cardRef.value.$el.getBoundingClientRect()
             const aspectRatio = itemMgr.itemAspectRatio(item.value)
-            popup.value = itemMgr.getPopupImage(
+            const popupImage = itemMgr.getPopupImage(
                item.value.name, artist.value, item.value.primaryImage.largeThumbUrl, boundingRect, aspectRatio)
+         
+            if (props.emitPopup) { emit(Emit.POPUP, popupImage) }
+            else { popup.value = popupImage }
          }
       }, 250)  
    }
 
    const mouseleave = () => {
       mouseleaveTime.value = Date.now()
-      popup.value = null 
+      if (props.emitPopup) { emit(Emit.POPUP, null) }
+      else { popup.value = null }
    }
 </script>
 
