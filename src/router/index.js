@@ -38,7 +38,7 @@ const router = createRouter({
       createRoute(Route.ARTIST,    ArtistView,    ':id'),
       createRoute(Route.SEARCH,    SearchView),
       createRoute(Route.FEED,      FeedView),
-      createRoute(Route.VIEWED,    ViewedView),
+      createRoute(Route.VIEWED,    ViewedView,    ':id'),
       createRoute(Route.RECENT,    RecentView,    ':id'),
       createRoute(Route.ITEM,      ItemView,      ':origin/:nav/:id'),
       createRoute(Route.ITEM_CHILD,ItemView,      ':origin/:nav/:id/:child'),

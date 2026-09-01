@@ -25,25 +25,33 @@
    <RecentGalleryThumbs v-if="visibleGalleries.length" :galleries="visibleGalleries" 
       :maxRows="galleryRows" :toRouteId="route.params.id"  bypassShowUser class="mt-10 mb-5"/>
 
-   <!-- recent items -->
-   <v-container v-if="recentItems.length" class="mt-4 pt-1 bg-shade">
-      <div class="my-3">
-         <span class="font-weight-bold">Recent Updates</span> |
-         <RouterLink :to="Route.RECENT.url + route.params.id">View all</RouterLink>   
+   <!-- recent updated, viewed -->
+   <div v-if="viewMgr.isXs">
+      <div class="mx-2 mb-10 bg-shade">
+         <ItemThumbsPanel title="Recent Updates" :items="recentUpdatedItems" 
+            :linkTo="Route.RECENT.url + route.params.id"/>
       </div>
-      <v-container>
-         <v-row justify="space-around" ref="recentRef" class="mb-md-4" >
-            <ItemThumb v-for="item in recentItems" :key="item.id" :item="item" :origin="ItemOrigin.RECENT" bypassShowUser/>
-         </v-row>
-      </v-container> 
-   </v-container>
+      <div class="mx-2 bg-shade">
+         <ItemThumbsPanel title="Recent Viewed" :items="recentViewedItems" 
+            :linkTo="Route.VIEWED.url + route.params.id" showDateViewed/>
+      </div>
+   </div>
+   <v-row v-else class="mr-5">
+      <v-col cols="6">
+         <ItemThumbsPanel title="Recent Updates" :items="recentUpdatedItems" 
+            :linkTo="Route.RECENT.url + route.params.id" class="bg-shade border-md fill-height"/>
+      </v-col>
+      <v-col cols="6" class="">
+         <ItemThumbsPanel title="Recent Viewed" :items="recentViewedItems" 
+            :linkTo="Route.VIEWED.url + route.params.id" showDateViewed class="bg-shade border-md fill-height"/>
+      </v-col>
+   </v-row>
 </template>
 
 <script setup>
    import { computed, ref } from 'vue'
    import { useSeoMeta } from '@unhead/vue'
    import { useRoute }   from 'vue-router'
-   import { useElementSize } from '@vueuse/core'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useItemMgr }      from '@/stores/itemMgr'
@@ -51,12 +59,12 @@
    import { useWallMgr }      from '@/stores/wallMgr'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
+   import { useCacheStore }   from '@/stores/cacheStore'  
    import RecentGalleryThumbs from '@/components/gallery/thumb/RecentGalleryThumbs.vue'
-   import ItemThumb           from '@/components/item/thumb/ItemThumb.vue'
+   import ItemThumbsPanel     from '@/components/item/thumb/ItemThumbsPanel.vue'
    import SplitWall           from '@/components/wall/SplitWall.vue'
    import EmailButton         from '@/components/email/EmailButton.vue'
-   import { ThumbRow } from '@/utils/utilClasses'
-   import { randomizeArray } from '@/utils/utils'
+   import { isOwned, randomizeArray } from '@/utils/utils'
    import { ItemOrigin, Route, WallRowHeight } from '@/utils/constants'
    
    const route  = useRoute()
@@ -67,9 +75,8 @@
    const wallMgr      = useWallMgr()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
-   const recentRef    = ref(null)
-   const { width: recentWidth }  = useElementSize(recentRef)
-
+   const cacheStore   = useCacheStore()
+   
    useSeoMeta({
       title: "Hell-No User"
    })
@@ -89,28 +96,15 @@
       return galleries.toSorted(function(a, b){return b.dateContentModified - a.dateContentModified}) 
    })
 
-   const allRecentItems = computed(() => {
-      const visibleItems = [ ...itemMgr.getRecentPublicItems(userId.value) ]
-      const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupItems(visibleItems) : visibleItems
-      return viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates",  Route.RECENT.url + route.params.id, ungroupedItems)
-   })
-
-   const recentItems = computed(() => {
-      const thumbRow = new ThumbRow(2, recentWidth.value ? recentWidth.value : 500 ) // maxRows, maxWidth  
-      for (const item of allRecentItems.value) {
-         const aspectRatio = itemMgr.itemAspectRatio(item)  // w/h
-         const newThumbWidth = Math.round(200 * aspectRatio) + 5
-         if (!thumbRow.addThumb(item, newThumbWidth))  { break }  
-      } 
-      return thumbRow.thumbs
-   })
-
+   const recentItems = computed(() => itemMgr.getRecentPublicItems(userId.value))
    const displayWall = computed(() => {
       const wall = { ...wallStore.getUserWall(userId.value) }
       wall.origWallRows = wall.wallRows // hack 
       if (viewMgr.isXs && wall.wallRows) { wall.wallRows = 1 }
-      else if (!viewMgr.isXs) { wall.wallRows = wall.origWallRows}
-      return wallMgr.fillWall(wall, allRecentItems.value)
+      else if (!viewMgr.isXs) { wall.wallRows = wall.origWallRows }
+
+      const ungroupedItems = viewMgr.isXs ? itemMgr.ungroupItems(recentItems.value) : recentItems.value
+      return wallMgr.fillWall(wall, ungroupedItems)
    })
 
    const wallBackgroundOpacity = ref(.15) // todo - configurable?
@@ -124,6 +118,26 @@
    const wallImage = computed(() => {
       const urls = itemMgr.getPublicGalleryThumbUrls(userId.value)
       return urls.length ? randomizeArray(urls)[0] : wallMgr.randomWallImage
+   })
+
+   const recentUpdatedItems = computed(() => {
+      const items = [ ...recentItems.value ]
+      const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupItems(items) : [...items]
+      viewStore.setVisibleItems(ItemOrigin.RECENT, "Recent Updates",  Route.RECENT.url + route.params.id, ungroupedItems)
+   
+      if (items.length > 10) { items.length = 10 }
+      return items
+   })
+
+   const recentViewedItems = computed(() => {
+      let items = [ ...cacheStore.recentViewedPublicItems ]   
+      items = items.filter(item => isOwned(item, userId.value))
+            
+      const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : [...items]
+      viewStore.setVisibleItems(ItemOrigin.VIEWED, "Recent Viewed", Route.VIEWED.url, ungroupedItems)
+      
+      if (items.length > 10) { items.length = 10 }
+      return items
    })
 </script>
 

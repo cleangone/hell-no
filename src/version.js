@@ -13,9 +13,9 @@
        - recomendation engine
        - really liked groups idea
        - want to bring ipad to art meet-up - has to be app in order to alwyas work
-
 */
 export const versions = [        
+   ["v2.49.1", "9/1/26"],  // Refactor User recent/viewed item display to ItemThumbsPanel 
    ["v2.49.0", "9/1/26"],  // Refactor Home recent/viewed item display to ItemThumbsPanel 
    ["v2.48.1", "8/29/26"], // Refactor Home/UserView gallery display to RecentGalleryThumbs 
    ["v2.48.0", "8/28/26"], // Add Gallery thumbs to search results

@@ -4,6 +4,7 @@
          <v-col v-if="viewMgr.isDeskTop" cols="2" class="flex-grow-0 flex-shrink-0"></v-col>
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
             <div v-if="viewMgr.isDeskTop" class="title">{{ title }}</div>
+            <RouterLink v-if="username" :to="Route.USER.url + route.params.id">{{ username }}</RouterLink>
          </v-col>
          <v-col v-if="viewMgr.isDeskTop" cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
             <ViewedSortButton class="mr-2"/>
@@ -22,6 +23,7 @@
 
 <script setup>
    import { computed, ref } from 'vue'
+   import { useRoute } from 'vue-router'
    import { useUserStore } from '@/stores/userStore'
    import { useItemMgr }   from '@/stores/itemMgr'
    import { useViewStore } from '@/stores/viewStore'
@@ -31,21 +33,25 @@
    import ThumbSizeButton  from '@/components/util/ThumbSizeButton.vue'  
    import ViewedSortButton from './ViewedSortButton.vue'  
    import { isOwned }      from '@/utils/utils'  
-   import { ItemOrigin, Route } from '@/utils/constants'
+   import { Defaults, ItemOrigin, Route } from '@/utils/constants'
    
+   const route     = useRoute()
    const userStore = useUserStore()
    const itemMgr   = useItemMgr()
    const viewStore = useViewStore()
    const viewMgr   = useViewMgr()
    
    const title        = computed(() => viewStore.sortRecentViewed ? "Recent Viewed" : "Least Recent Viewed")
+   const user         = computed(() => route.params.id == Defaults.SITE_ID ? null : userStore.getUser(route.params.id))
+   const userId       = computed(() => user.value ? user.value.id : null )
+   const username     = computed(() => user.value ? user.value.username : null)
    const displayItems = computed(() => viewStore.sortRecentViewed ? recentViewedItems.value : oldestViewedItems.value)
    
    const recentViewedItems = computed(() => {
-      const publicItems = itemMgr.recentViewedPublicItems
-      const items = viewMgr.solo ? 
-         publicItems.filter(item => isOwned(item, userStore.userId)) : publicItems
-
+      let items = itemMgr.recentViewedPublicItems
+      if (viewMgr.solo)       { items = items.filter(item => isOwned(item, userStore.userId)) }
+      else if (userId.value)  { items = items.filter(item => isOwned(item, userId.value)) }
+      
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
       return viewStore.setVisibleItems(ItemOrigin.VIEWED, "Recent Viewed", Route.VIEWED.url, ungroupedItems)
    })

@@ -44,23 +44,25 @@
          </v-col>
    </div> -->
 
-   <!-- updates, viewed -->
+   <!-- recent updated, viewed -->
    <div v-if="viewMgr.isXs">
       <div class="mx-2 mb-10 bg-shade">
-         <ItemThumbsPanel title="Recent Updates" :items="latestRecentItems" :linkTo="Route.RECENT.url + Defaults.SITE_ID"/>
+         <ItemThumbsPanel title="Recent Updates" :items="recentUpdatedItems" 
+            :linkTo="Route.RECENT.url + Defaults.SITE_ID"/>
       </div>
       <div class="mx-2 bg-shade">
-         <ItemThumbsPanel title="Recent Viewed" :items="latestViewedItems" :linkTo="Route.VIEWED.url" showDateViewed/>
+         <ItemThumbsPanel title="Recent Viewed" :items="recentViewedItems" 
+            :linkTo="Route.VIEWED.url + Defaults.SITE_ID" showDateViewed/>
       </div>
    </div>
    <v-row v-else class="mr-5">
       <v-col cols="6">
-         <ItemThumbsPanel title="Recent Updates" :items="latestRecentItems" 
+         <ItemThumbsPanel title="Recent Updates" :items="recentUpdatedItems" 
             :linkTo="Route.RECENT.url + Defaults.SITE_ID" class="bg-shade border-md fill-height"/>
       </v-col>
       <v-col cols="6" class="">
-         <ItemThumbsPanel title="Recent Viewed" :items="latestViewedItems" 
-            :linkTo="Route.VIEWED.url" showDateViewed class="bg-shade border-md fill-height"/>
+         <ItemThumbsPanel title="Recent Viewed" :items="recentViewedItems" 
+            :linkTo="Route.VIEWED.url + Defaults.SITE_ID" showDateViewed class="bg-shade border-md fill-height"/>
       </v-col>
    </v-row>
 </template>
@@ -208,7 +210,7 @@
       return true // gallery is a parent with dateContentModified different than all children
    }
    
-   const latestRecentItems = computed(() => {
+   const recentUpdatedItems = computed(() => {
       let items = viewMgr.solo ? [ ...itemMgr.myRecentItems ] : [ ...cacheStore.recentPublicItems ]
       if (items.length) { 
          items.sort(function(a, b){return b.dateContentModified - a.dateContentModified}) 
@@ -234,7 +236,7 @@
       return viewStore.setVisibleItems(ItemOrigin.FAVORITES, "My Favorites", Route.FAVORITES.url, visibleItems)
    })
 
-   const latestViewedItems = computed(() => {
+   const recentViewedItems = computed(() => {
       let items = [ ...cacheStore.recentViewedPublicItems ]   
       if (viewMgr.solo) { items = items.filter(item => isOwned(item, userStore.userId)) }
             

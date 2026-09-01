@@ -27,7 +27,6 @@
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
-   import ExpandItems         from '@/components/item/ExpandItems.vue'
    import ItemThumb           from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig     from '@/components/item/thumb/ItemThumbConfig.vue'
    import ThumbSizeButton     from '@/components/util/ThumbSizeButton.vue'
