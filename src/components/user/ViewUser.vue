@@ -47,7 +47,7 @@
 
 <script setup>
    import { computed }   from 'vue'
-   import Avatar         from '@/components/user/Avatar.vue'
+   import Avatar         from '@/components/user/avatar/Avatar.vue'
    import HorizontalDiv  from '@/components/util/HorizontalDiv.vue'
    import IconButton     from '@/components/util/IconButton.vue'
    

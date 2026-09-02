@@ -39,9 +39,26 @@
             <div style="clear:both"></div>
             <div>
                <v-row no-gutters class="d-flex align-center flex-nowrap">
-                  <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
+                  <v-col cols="2" class="d-flex justify-start flex-grow-0 flex-shrink-0">
+                     <UserLinkAvatar :user="itemUser"/>
+                  </v-col>
                   <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
-                     <span style="font-size: 30px">{{ paramItem.name }}</span>
+                     <div class="title">{{ paramItem.name }}</div>
+                     <!-- origin page and galleries -->
+                     <div v-if="showNav"> <!-- origin page and gallery if there is only one -->
+                        <RouterLink v-if="viewStoreVisibleItems" :to="viewStoreVisibleItems.linkUrl" :class="singleOtherGallery ? 'font-weight-bold' : ''">
+                           {{ viewStoreVisibleItems.linkName }}
+                        </RouterLink> 
+                        <span v-if="singleOtherGallery">
+                           | <RouterLink :to="galleryUrl(otherGalleries[0].id)">{{ otherGalleries[0].name }} Gallery</RouterLink>
+                        </span>
+                     </div>
+                     <div v-if="!showNav || multipleOtherGalleries"> <!-- row of galleries -->
+                        <span v-for="gallery,index in otherGalleries" :key="gallery.id">
+                           <span v-if="index"> | </span>
+                           <RouterLink :to="galleryUrl(gallery.id)">{{ gallery.name }} Gallery</RouterLink>
+                        </span>
+                     </div>
                   </v-col>
                   <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
                      <ExpandItems :items="viewStoreItems" :item="paramItem"
@@ -50,25 +67,6 @@
                      <EditButton v-if="isOwnedByUser" @click="editItem(paramItem)" class="mx-n2"/>
                   </v-col>
                </v-row>
-            </div>
-            <div> 
-               <!-- origin page and galleries -->
-               <span style="text-align:center">
-                  <div v-if="showNav"> <!-- origin page and gallery if there is only one -->
-                     <RouterLink v-if="viewStoreVisibleItems" :to="viewStoreVisibleItems.linkUrl" :class="singleOtherGallery ? 'font-weight-bold' : ''">
-                        {{ viewStoreVisibleItems.linkName }}
-                     </RouterLink> 
-                     <span v-if="singleOtherGallery">
-                        | <RouterLink :to="galleryUrl(otherGalleries[0].id)">{{ otherGalleries[0].name }} Gallery</RouterLink>
-                     </span>
-                  </div>
-                  <div v-if="!showNav || multipleOtherGalleries"> <!-- row of galleries -->
-                     <span v-for="gallery,index in otherGalleries" :key="gallery.id">
-                        <span v-if="index"> | </span>
-                        <RouterLink :to="galleryUrl(gallery.id)">{{ gallery.name }} Gallery</RouterLink>
-                     </span>
-                  </div>
-               </span>
             </div>
             <!-- nav row -->
             <v-row v-if="showNav" class="smThumbRow align-center justify-center flex-nowrap my-5" >
@@ -175,6 +173,7 @@
    import ShowItemGroupImages from '@/components/item/ShowItemGroupImages.vue'
    import EditItemDialog      from '@/components/item/crud/EditItemDialog.vue'
    import EmailButton         from '@/components/email/EmailButton.vue'
+   import UserLinkAvatar      from '@/components/user/avatar/UserLinkAvatar.vue'
    import EditButton          from '@/components/util/EditButton.vue'
    import IconButton          from '@/components/util/IconButton.vue'
    import CopyLink            from '@/components/util/CopyLink.vue'

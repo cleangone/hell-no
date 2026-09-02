@@ -8,7 +8,7 @@
    const props = defineProps({ image: Object, size: Number })
    
    const url   = computed(() => props.image?.thumbUrl)
-   const size  = computed(() => props.size ?? 50)
+   const size  = computed(() => props.size ?? 60)
    const style = computed(() =>  "width:" + size.value + "px; height:" + size.value + "px;")
 </script>
 

@@ -25,12 +25,15 @@
             <div style="clear:both"></div>
             <!-- title -->
             <v-container class="pa-0 width-100">
-                  <v-row no-gutters class="d-flex align-center flex-nowrap">
-                  <v-col cols="2" class="flex-grow-0 flex-shrink-0"/>
-                  <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
-                     <span class="title">{{ gallery.name }} Gallery</span>
+               <v-row no-gutters class="d-flex align-center flex-nowrap">
+                  <v-col cols="2" class="d-flex justify-start flex-grow-0 flex-shrink-0">
+                     <UserLinkAvatar v-if="!isSolo" :user="user"/>
                   </v-col>
-                  <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
+                  <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
+                     <div class="title">{{ galleryName }} Gallery</div>
+                     <GalleryParentLink :gallery="gallery" style="text-align:center"/>
+                  </v-col>
+                  <v-col cols="2" class="d-flex justify-end align-center flex-grow-0 flex-shrink-0 ">
                      <ThumbSizeButton class="mx-n1"/>
                      <!-- <ExpandItems :items="galleryItems" buttonClass="mr-n2"/> -->
                      <CopyLink :route="Route.GALLERY.name" :id="galleryId"/>
@@ -38,7 +41,6 @@
                      <EditButton v-if="canEdit" @click="showEditGalleryDialog=true" class="mx-n2"/>
                   </v-col>
                </v-row>
-               <GalleryParentLink :gallery="gallery" style="text-align:center"/>
             </v-container>
             <!-- header and content below or beside -->
             <div v-if="headerImage" :class="verticalHeader?'horizontal-container':''">
@@ -46,7 +48,7 @@
                   <RouterLink :to="itemMgr.itemURL(headerImage.itemId, ItemOrigin.GALLERY)">
                      <!-- no description in vertical headers  -->
                      <v-img v-if="verticalHeader" :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" width="400"/>
-                     <v-img v-else :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" cover max-height="300">
+                     <v-img v-else :src="headerImage.url" @mouseover="headerMouseover()" @mouseleave="headerMouseleave()" cover max-height="300" class="mb-5">
                         <div v-if="descExists && descInHeader" class="pa-1 d-flex fill-height align-end justify-end">
                            <div v-html="gallery.desc" class="text-left desc-header-div" :style="headerDescStyle"></div>   
                         </div>
@@ -88,10 +90,10 @@
    import GalleryThumb        from '@/components/gallery/thumb/GalleryThumb.vue'
    import EditGalleryCard     from '@/components/gallery/EditGalleryCard.vue'
    import ItemPopup           from '@/components/item/ItemPopup.vue'
-   import ExpandItems         from '@/components/item/ExpandItems.vue'
    import AddItemDialog       from '@/components/item/crud/AddItemDialog.vue'
    import ItemThumb           from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig     from '@/components/item/thumb/ItemThumbConfig.vue'
+   import UserLinkAvatar      from '@/components/user/avatar/UserLinkAvatar.vue'
    import EditButton          from '@/components/util/EditButton.vue'
    import CopyLink            from '@/components/util/CopyLink.vue'
    import ThumbSizeButton     from '@/components/util/ThumbSizeButton.vue'
@@ -137,10 +139,11 @@
 
    const contentStyle      = computed(() => "min-height:" + windowHeight.value + "px;")
    const galleryId         = computed(() => gallery.value ? gallery.value.id : "")
-   const descExists        = computed(() => gallery.value.desc && gallery.value.desc.length)
-   const descInHeader      = computed(() => gallery.value.descInHeader)
+   const galleryName       = computed(() => gallery.value ? gallery.value.name : "")
+   const descExists        = computed(() => gallery.value?.desc?.length > 0)
+   const descInHeader      = computed(() => gallery.value?.descInHeader)
    const headerDescStyle   = computed(() => "width:" + (gallery.value.descHeaderPct ? gallery.value.descHeaderPct : "60") + "%")
-   const hasChildGalleries = computed(() => gallery.value.childGalleryIds && gallery.value.childGalleryIds.length)
+   const hasChildGalleries = computed(() => gallery.value?.childGalleryIds?.length > 0)
 
    const childThumbGalleries = computed(() => { 
       const galleries = []
@@ -151,7 +154,10 @@
       return galleries
    })
 
-   const canEdit         = computed(() => userStore.userId == gallery.value.userId)
+   const isSolo          = computed(() => viewMgr.solo)
+   const userId          = computed(() => gallery.value ? gallery.value.userId : null)
+   const user            = computed(() => userId.value ? userStore.getUser(userId.value) : null)
+   const canEdit         = computed(() =>  userStore.userId && userStore.userId == userId.value)
    const backgroundStyle = computed(() => "opacity: .05;") // make this configurable?
    const backgroundImage = computed(() => getImage(ImageType.BACKGROUND))
    const verticalHeader  = computed(() => headerImage.value?.dimensions && objAspectRatio(headerImage.value.dimensions) < 1)
@@ -166,7 +172,7 @@
    
    const galleryItems = computed(() => { 
       const displayItems = []
-      const galleryItemIds = gallery.value.itemIds ? gallery.value.itemIds : []
+      const galleryItemIds = gallery.value?.itemIds ?? []
       for (const item of itemStore.getGalleryItems(galleryId.value)) {
          if (viewMgr.itemThumbVisibleToUser(item)) {
             const displayItem = { ...item, position: galleryItemIds.indexOf(item.id) + 1 }  
@@ -177,7 +183,7 @@
    
       displayItems.sort(function(a, b) {return a.position - b.position}) 
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(displayItems) : displayItems
-      viewStore.setVisibleItems(ItemOrigin.GALLERY, gallery.value.name + " Gallery", Route.GALLERY.url + route.params.id, ungroupedItems, route.params.id)
+      viewStore.setVisibleItems(ItemOrigin.GALLERY, galleryName.value + " Gallery", Route.GALLERY.url + route.params.id, ungroupedItems, route.params.id)
       return displayItems
    })
 

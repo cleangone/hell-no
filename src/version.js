@@ -15,6 +15,7 @@
        - want to bring ipad to art meet-up - has to be app in order to alwyas work
 */
 export const versions = [        
+   ["v2.50.0", "9/2/26"],  // Add user Avatar to Galleries/Gallery/ItemView 
    ["v2.49.1", "9/1/26"],  // Refactor User recent/viewed item display to ItemThumbsPanel 
    ["v2.49.0", "9/1/26"],  // Refactor Home recent/viewed item display to ItemThumbsPanel 
    ["v2.48.1", "8/29/26"], // Refactor Home/UserView gallery display to RecentGalleryThumbs 

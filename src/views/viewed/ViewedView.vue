@@ -13,12 +13,12 @@
          </v-col>
       </v-row>
    </v-container>
-   <v-container style="width: 100%">
+   <div class="mt-3 w-100">
       <v-row justify="space-around">
          <ItemThumb v-for="item in displayItems" :key="item.id" :item="item" :origin="ItemOrigin.VIEWED" 
             showDateViewed :tight="viewMgr.isMobile"/>
       </v-row>
-   </v-container>
+   </div>
 </template>
 
 <script setup>

@@ -1,5 +1,5 @@
 <template>
-   <span>
+   <span v-if="gallery">
       <RouterLink v-if="gallery.parentGalleryId" :to="Route.GALLERY.url + gallery.parentGalleryId">{{ parentGalleryName }} Gallery</RouterLink>
       <RouterLink v-else-if="viewMgr.solo" :to="Route.GALLERIES.url + Defaults.SITE_ID">Galleries</RouterLink>
       <RouterLink v-else :to="Route.GALLERIES.url + galleriesLinkId">{{ usernamePossessive }} Galleries</RouterLink>

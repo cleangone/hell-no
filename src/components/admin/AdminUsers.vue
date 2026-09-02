@@ -44,7 +44,7 @@
    import { useItemStore }  from '@/stores/itemStore'
    import { useAdminStore } from '@/stores/adminStore'
    import { useWallStore }  from '@/stores/wallStore'
-   import Avatar       from '@/components/user/Avatar.vue'
+   import Avatar       from '@/components/user/avatar/Avatar.vue'
    import DeleteUser   from '@/components/user/DeleteUser.vue'
    import ViewUser     from '@/components/user/ViewUser.vue'
    import DeleteButton from '@/components/util/DeleteButton.vue'

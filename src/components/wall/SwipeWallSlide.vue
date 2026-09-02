@@ -9,9 +9,7 @@
                <div class="text-white">{{ wallItem.title }}</div>  
             </div> 
          </v-card>
-         <RouterLink v-if="showAvatar" :to="userUrl" class="position-absolute top-0 left-0">
-            <Avatar v-if="user" :user="user" :size="60" :toolTip="user.username" class="ml-2 pa-1 bg-black"/>
-         </RouterLink>
+         <UserLinkAvatar v-if="showAvatar" :user="user" class="position-absolute left-0 ml-2"  style="top: -10px;"/>
       </div>
       <div v-else class="bg-black">
          <div class="ma-1">
@@ -29,9 +27,9 @@
    import { useItemMgr }    from '@/stores/itemMgr'
    import { useSwipeStore } from './SwipeStore'
    import { useViewMgr }    from '@/stores/viewMgr'
-   import Avatar            from '@/components/user/Avatar.vue'
+   import UserLinkAvatar    from '@/components/user/avatar/UserLinkAvatar.vue'
    import { objAspectRatio } from '@/utils/utils'
-   import { Emit, Route } from '@/utils/constants'
+   import { Emit } from '@/utils/constants'
    
    const props = defineProps({ wallItem:Object, origin:String, row:Number, showAvatar:Boolean })
    const emit  = defineEmits([ Emit.POPUP ])
@@ -46,7 +44,6 @@
    const topRow  = computed(() => props.wallItem.wallRow == 1)
    const itemURL = computed(() => itemMgr.itemURL(props.wallItem.itemId, props.origin, props.wallItem.childNum))
    const userId  = computed(() => props.wallItem.userId ?? null)
-   const userUrl = computed(() => userId.value ? Route.USER.url + userId.value : null)
    const user    = computed(() => userId.value ? userStore.getUser(userId.value) : null)
    
    const getPopupImage = () => { 

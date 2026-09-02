@@ -25,7 +25,7 @@
    import { useViewStore }  from '@/stores/viewStore'
    import { useViewMgr }    from '@/stores/viewMgr'
    import ItemPopup         from '@/components/item/ItemPopup.vue'
-   import AvatarImage       from '@/components/user/AvatarImage.vue'
+   import AvatarImage       from '@/components/user/avatar/AvatarImage.vue'
    import HorizontalDiv     from '@/components/util/HorizontalDiv.vue'
    import { objAspectRatio, thumbBackgroundColorStyle } from '@/utils/utils'
    import { displayDate } from '@/utils/dateUtils'

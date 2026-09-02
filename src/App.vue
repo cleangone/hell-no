@@ -355,7 +355,14 @@
    width: 100%;
    text-align: center; 
 }
-.title    { font-size: 35px; }
+.title { 
+   font-size: 35px;
+   padding-top: 0;
+   padding-bottom: 0;
+   margin-top: 0;
+   margin-bottom: 0;
+   line-height: 1;
+ }
 .title-sm { font-size: 16px; }
 .edit-dialog {
    min-width: 500px;  

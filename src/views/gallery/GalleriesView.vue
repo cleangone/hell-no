@@ -2,12 +2,14 @@
    <div v-if="viewMgr.isMobile && username" class="mt-n2">
       <RouterLink :to="Route.USER.url + route.params.id">{{ username }}</RouterLink>
    </div>
-   <v-container v-if="!viewMgr.isMobile" class="mt-4 pa-0 pb-3 width-100">
+   <v-container v-if="!viewMgr.isMobile" class="pa-0 pb-3 width-100">
       <v-row no-gutters class="d-flex align-center flex-nowrap">
-         <v-col cols="1" class="flex-grow-0 flex-shrink-0"/>
+         <v-col cols="1" class="d-flex justify-start flex-grow-0 flex-shrink-0">
+            <UserLinkAvatar :v-if="user" :user="user"/>  
+         </v-col>
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
             <div class="title">Galleries</div>
-            <RouterLink v-if="username" :to="Route.USER.url + route.params.id" class="mt-n4">{{ username }}</RouterLink>
+            <RouterLink v-if="username" :to="Route.USER.url + route.params.id" class="mt-n10">{{ username }}</RouterLink>
             <!-- <div v-else-if="viewMgr.solo" class="text-subtitle-1 mt-n2 mb-2">Solo Mode</div> -->
          </v-col>      
          <v-col cols="1" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
@@ -33,7 +35,7 @@
    <HorizontalDiv class="mr-2">
       <div v-if="showAvatars" class="mr-4">
          <div v-for="user in avatarUsers" :key="user.id">
-             <Avatar :user="user" :size="60" @click="selectUser(user)" :toolTip="user.username" 
+            <Avatar :user="user" @click="selectUser(user)" :toolTip="user.username" 
                class="hand pa-1" :class="selectedUserId==user.id?'bg-blue':'bg-black'"/>
          </div>
       </div>
@@ -61,7 +63,8 @@
    import GalleryThumb        from '@/components/gallery/thumb/GalleryThumb.vue'
    import GalleryThumbConfig  from '@/components/gallery/thumb/GalleryThumbConfig.vue'
    import ChildGalleriesButton from '@/components/gallery/thumb/ChildGalleriesButton.vue'
-   import Avatar              from '@/components/user/Avatar.vue'
+   import Avatar              from '@/components/user/avatar/Avatar.vue'
+   import UserLinkAvatar      from '@/components/user/avatar/UserLinkAvatar.vue'
    import HorizontalDiv       from '@/components/util/HorizontalDiv.vue'
    import SortButton          from '@/components/util/SortButton.vue'
    import ThumbSizeButton     from '@/components/util/ThumbSizeButton.vue'

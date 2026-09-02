@@ -15,7 +15,7 @@
 
    const props = defineProps({ user: Object, size: Number, toolTip: String })
 
-   const avatar  = computed(() => userMgr.getAvatar(props.user))   
+   const avatar = computed(() => userMgr.getAvatar(props.user))   
 </script>
 
 <style>
