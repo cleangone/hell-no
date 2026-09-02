@@ -2,7 +2,7 @@
    <div v-if="viewMgr.isMobile && username" class="mt-n2">
       <RouterLink :to="Route.USER.url + route.params.id">{{ username }}</RouterLink>
    </div>
-   <v-container v-if="!viewMgr.isMobile" class="pa-0 pb-3 width-100">
+   <v-container v-if="!viewMgr.isMobile" class="pa-0 mt-1 pb-3 width-100">
       <v-row no-gutters class="d-flex align-center flex-nowrap">
          <v-col cols="1" class="d-flex justify-start flex-grow-0 flex-shrink-0">
             <UserLinkAvatar :v-if="user" :user="user"/>  

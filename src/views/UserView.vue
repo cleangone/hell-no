@@ -20,6 +20,7 @@
       <div class="wall-content">
          <SplitWall :wall="displayWall" :rowHeight="slideRowHeight"/>
       </div> 
+      <Avatar v-if="viewMgr.isDeskTop" :user="user" :size="75" class="wall-content ml-2 mt-n7 pa-1 bg-black"/>
    </div>
    <!-- galleries -->
    <RecentGalleryThumbs v-if="visibleGalleries.length" :galleries="visibleGalleries" 
@@ -62,6 +63,7 @@
    import { useCacheStore }   from '@/stores/cacheStore'  
    import RecentGalleryThumbs from '@/components/gallery/thumb/RecentGalleryThumbs.vue'
    import ItemThumbsPanel     from '@/components/item/thumb/ItemThumbsPanel.vue'
+   import Avatar              from '@/components/user/avatar/Avatar.vue'
    import SplitWall           from '@/components/wall/SplitWall.vue'
    import EmailButton         from '@/components/email/EmailButton.vue'
    import { isOwned, randomizeArray } from '@/utils/utils'
