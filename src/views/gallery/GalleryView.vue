@@ -15,8 +15,14 @@
    </DefineTemplate>
 
    <div v-if="viewMgr.isMobile">
-      <GalleryParentLink :gallery="gallery" style="text-align:center"/>
-      <ReuseTemplate/>
+      <div class="content-wrapper mt-1" :style="contentStyle">
+         <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
+         <div class="content">
+            <div style="clear:both"></div>
+            <GalleryParentLink :gallery="gallery" style="text-align:center"/>
+            <ReuseTemplate/>
+         </div>
+      </div>
    </div>
    <div v-else> 
       <div class="content-wrapper mt-1" :style="contentStyle">
@@ -163,7 +169,8 @@
    const verticalHeader  = computed(() => headerImage.value?.dimensions && objAspectRatio(headerImage.value.dimensions) < 1)
    const headerImage     = computed(() => getImage(ImageType.HEADER))
    const getImage = (imageType)  => {
-      if (viewMgr.isMobile || !gallery.value) { return null } // gallery may not be populated yet
+      // if (viewMgr.isMobile || !gallery.value) { return null } // gallery may not be populated yet
+      if (!gallery.value) { return null } // gallery may not be populated yet
       for (const image of gallery.value.images) {
          if (image.active && image.imageType == imageType) { return image }
       }

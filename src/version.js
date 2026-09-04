@@ -15,6 +15,7 @@
        - want to bring ipad to art meet-up - has to be app in order to alwyas work
 */
 export const versions = [        
+   ["v2.51.0", "9/3/26"],  // Add background image to mobile GalleryView
    ["v2.50.2", "9/2/26"],  // Return to UserView if nav to ItemView from user wall
    ["v2.50.1", "9/2/26"],  // Add user Avatar to UserView 
    ["v2.50.0", "9/2/26"],  // Add user Avatar to Galleries/Gallery/ItemView 
