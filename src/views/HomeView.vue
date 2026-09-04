@@ -4,7 +4,7 @@
       <v-row no-gutters class="d-flex align-center flex-nowrap">
          <v-col cols="1" class="flex-grow-0 flex-shrink-0"></v-col>
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
-            <span class="title">Hell-No Gallery</span>
+            <span class="title">{{ title }}</span>
          </v-col>
          <v-col cols="1" class="flex-grow-0 flex-shrink-0 d-flex justify-end">
             <DarkButton class="mr-n2"/>
@@ -125,6 +125,10 @@
       title: "Hell-No Gallery" // displayed in browser tabs
    })
    
+   const user  = computed(() => userStore.user ?? null)
+   const title = computed(() => viewMgr.solo && user.value ? 
+                                 (user.value.displayName ?? user.value.username) : "Hell-No Gallery")
+
    // const seconds = () => { return " (" + viewStore.getSeconds() + " seconds)" }
    const showWall = computed(() => viewStore.showSiteWall) // allows for image fade out
    const fadeWallBackground = () => {
@@ -241,7 +245,7 @@
       if (viewMgr.solo) { items = items.filter(item => isOwned(item, userStore.userId)) }
             
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : [...items]
-      viewStore.setVisibleItems(ItemOrigin.VIEWED, "Recent Viewed", Route.VIEWED.url, ungroupedItems)
+      viewStore.setVisibleItems(ItemOrigin.VIEWED, "Recent Viewed", Route.VIEWED.url + Defaults.SITE_ID, ungroupedItems)
       
       if (items.length > 10) { items.length = 10 }
       return items

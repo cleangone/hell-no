@@ -18,7 +18,7 @@
    <div v-if="wallItemsExist" class="walldiv" :style="wallDivStyle">
       <v-img :src="wallImage" cover :style="wallBackgroundStyle" class="wall-background"></v-img>
       <div class="wall-content">
-         <SplitWall :wall="displayWall" :rowHeight="slideRowHeight"/>
+         <SplitWall :wall="displayWall" :rowHeight="slideRowHeight" :linkUrl="userLinkUrl"/>
       </div> 
       <Avatar v-if="viewMgr.isDeskTop" :user="user" :size="75" class="wall-content ml-2 mt-n7 pa-1 bg-black"/>
    </div>
@@ -69,6 +69,8 @@
    import { isOwned, randomizeArray } from '@/utils/utils'
    import { ItemOrigin, Route, WallRowHeight } from '@/utils/constants'
    
+   const WALL_BCKGND_OPACITY = .15
+   
    const route  = useRoute()
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
@@ -83,11 +85,11 @@
       title: "Hell-No User"
    })
 
-   const user = computed(() => userStore.getUser(route.params.id))
-   const userExists = computed(() => user.value ? true : false )
-   const userId = computed(() => user.value ? user.value.id : null )
-   const displayName = computed(() => user.value ? (user.value.displayName ?? user.value.username) : "")
-
+   const user          = computed(() => userStore.getUser(route.params.id))
+   const userExists    = computed(() => user.value ? true : false )
+   const userId        = computed(() => user.value ? user.value.id : null )
+   const userLinkUrl   = computed(() => Route.USER.url + userId.value)
+   const displayName   = computed(() => user.value ? (user.value.displayName ?? user.value.username) : "")
    const contentExists = computed(() => wallItemsExist.value || visibleGalleries.value.length || recentItems.value.length) 
    
    const visibleGalleries = computed(() => { 
@@ -109,12 +111,11 @@
       return wallMgr.fillWall(wall, ungroupedItems)
    })
 
-   const wallBackgroundOpacity = ref(.15) // todo - configurable?
    const wallItemsExist = computed(() => displayWall.value?.wallItems.length ? true : false)
    const slideRowHeight = computed(() => viewMgr.isMobile ? WallRowHeight.XS : WallRowHeight.DEFAULT)
    const wallRows       = computed(() => displayWall.value ? displayWall.value.wallRows : 2 )
    const wallDivStyle   = computed(() => "height:" + (((slideRowHeight.value + 10) * wallRows.value)) + "px;")
-   const wallBackgroundStyle = computed(() => wallDivStyle.value + " opacity:" + wallBackgroundOpacity.value + ";")
+   const wallBackgroundStyle = computed(() => wallDivStyle.value + " opacity:" + WALL_BCKGND_OPACITY + ";")
    const galleryRows    = computed(() => viewMgr.isXs ? 1 : 2)
    
    const wallImage = computed(() => {
@@ -136,7 +137,7 @@
       items = items.filter(item => isOwned(item, userId.value))
             
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : [...items]
-      viewStore.setVisibleItems(ItemOrigin.VIEWED, "Recent Viewed", Route.VIEWED.url, ungroupedItems)
+      viewStore.setVisibleItems(ItemOrigin.VIEWED, "Recent Viewed", Route.VIEWED.url + route.params.id, ungroupedItems)
       
       if (items.length > 10) { items.length = 10 }
       return items

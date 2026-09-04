@@ -179,30 +179,30 @@ export const NotificationOptions = {
 export const DefaultUserSettings = { "notifyViaEmail": NotificationOptions.NEVER, "notifyViaMessage": NotificationOptions.NEVER }
 
 export const Route = {
-   HOME:      { name: 'home',      url: '/',          display: 'Home' },
-   GROUP:     { name: 'group',     url: '/group/'     },
-   GALLERY:   { name: 'gallery',   url: '/gallery/'   },
-   GALLERIES: { name: 'galleries', url: '/galleries/',display: 'Galleries' },
-   ARTIST:    { name: 'artist',    url: '/artist/'    },
-   SEARCH:    { name: 'search',    url: '/search',    display: 'Search'},
-   FEED:      { name: 'feed',      url: '/feed'       },
-   RECENT:    { name: 'recent',    url: '/recent/',   display: 'Updates' },
-   VIEWED:    { name: 'viewed',    url: '/viewed',    display: 'Recent Viewed' },
-   ITEM:      { name: 'item',      url: '/item/'      },
-   ITEM_CHILD:{ name: 'itemch',    url: '/item/'      }, // overload item with additional params
-   USER:      { name: 'user',      url: '/user/'      },
-   FAVORITES: { name: 'favorites', url: '/favorites', display: 'My Favorites' },
-   RANDOM:    { name: 'random',    url: '/random'     },
-   LOGIN:     { name: 'login',     url: '/login',     display: 'Login' },
-   FORGOT:    { name: 'forgot',    url: '/forgot',    display: 'Forgot Password' },
-   REGISTER:  { name: 'register',  url: '/register/'  },
-   MESSAGE:   { name: 'message',   url: '/message',   display: 'Message' },
-   BROADCAST: { name: 'broadcast', url: '/broadcast'  },
    ABOUT:     { name: 'about',     url: '/about',     display: 'About' },
    ACCOUNT:   { name: 'account',   url: '/account',   display: 'My Account' },
-   ADMIN:     { name: 'admin',     url: '/admin',     display: 'Admin' },
    ADD_ITEM:  { name: 'add-item',  url: '/add-item',  display: 'Add Item' },
+   ADMIN:     { name: 'admin',     url: '/admin',     display: 'Admin' },
+   ARTIST:    { name: 'artist',    url: '/artist/'    },
+   BROADCAST: { name: 'broadcast', url: '/broadcast'  },
    EDIT_ITEM: { name: 'edit-item', url: '/edit-item/',display: 'Edit Item' },
+   GALLERY:   { name: 'gallery',   url: '/gallery/'   },
+   GALLERIES: { name: 'galleries', url: '/galleries/',display: 'Galleries' },
+   GROUP:     { name: 'group',     url: '/group/'     },
+   FAVORITES: { name: 'favorites', url: '/favorites', display: 'My Favorites' },
+   FEED:      { name: 'feed',      url: '/feed'       },
+   FORGOT:    { name: 'forgot',    url: '/forgot',    display: 'Forgot Password' },
+   HOME:      { name: 'home',      url: '/',          display: 'Home' },
+   ITEM:      { name: 'item',      url: '/item/'      },
+   ITEM_CHILD:{ name: 'itemch',    url: '/item/'      }, // overload item with additional params
+   LOGIN:     { name: 'login',     url: '/login',     display: 'Login' },
+   MESSAGE:   { name: 'message',   url: '/message',   display: 'Message' },
+   RANDOM:    { name: 'random',    url: '/random'     },
+   RECENT:    { name: 'recent',    url: '/recent/',   display: 'Updates' },
+   REGISTER:  { name: 'register',  url: '/register/'  },
+   SEARCH:    { name: 'search',    url: '/search',    display: 'Search'},
+   USER:      { name: 'user',      url: '/user/'      },
+   VIEWED:    { name: 'viewed',    url: '/viewed/',   display: 'Recent Viewed' } 
 }
 
 export const State = {

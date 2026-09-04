@@ -66,7 +66,7 @@
          <!-- top center title for mobile -->
          <v-col cols="2" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
             <div v-if="viewMgr.isMobile" class="text-h6"> 
-               <span v-if="isRoute(Route.HOME)">Hell-No Gallery</span>
+               <span v-if="isRoute(Route.HOME)">{{ homeTitle }}</span>
                <span v-else-if="isRoute(Route.GALLERIES)">{{ Route.GALLERIES.display }}</span>
                <span v-else-if="isRoute(Route.GALLERY)">{{ pageName }} Gallery</span>
                <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD, Route.RANDOM, Route.ARTIST)">{{ pageName }}</span>
@@ -281,10 +281,10 @@
    const currentRouteName = computed(() => router.currentRoute.value ? router.currentRoute.value.name : "")
    const isMyUserPage     = computed(() => currentRouteName.value == Route.USER.name && route.params.id == userStore.userId)
 
-   const isRoute  = (route) => { return currentRouteName.value == route.name }
-   const inRoutes = (...routes) => { return routes.map(route => route.name).includes(currentRouteName.value) }  
-   const toRoute     = (route) => { router.push(route.url) }
-   const toSiteRoute = (route) => { router.push(route.url + Defaults.SITE_ID) }
+   const isRoute     = (route)     => { return currentRouteName.value == route.name }
+   const inRoutes    = (...routes) => { return routes.map(route => route.name).includes(currentRouteName.value) }  
+   const toRoute     = (route)     => { router.push(route.url) }
+   const toSiteRoute = (route)     => { router.push(route.url + Defaults.SITE_ID) }
 
    const user = computed(() => { 
       const currUser = userStore.userExists ? userStore.user : null 
@@ -297,11 +297,14 @@
    const userIsAdmin = computed(() => adminStore.isAdmin)
    const userOwnerId = computed(() => userStore.user.ownerId) 
    const myProfiles  = computed(() => userMgr.myProfiles) 
-
+   
    const displayName = computed(() => {
       const currUser = user.value // ugly - check user, which drives update of localStore.soloMode
       return localStore.soloMode ? "Solo" : (currUser ? currUser.firstName : "")
    })
+
+   const homeTitle = computed(() => 
+      viewMgr.solo && user.value ? (user.value.displayName ?? user.value.username) : "Hell-No Gallery")
 
    const version = computed(() => { return versions[0][0] })
    const userAgent = computed(() => navigator.userAgent)

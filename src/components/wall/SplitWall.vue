@@ -143,7 +143,7 @@
          }
       }
 
-      viewStore.setVisibleItems(ItemOrigin.WALL, "Art Wall", props.linkUrl ? props.linkUrl : Route.HOME.url, navItems) 
+      viewStore.setVisibleItems(ItemOrigin.WALL, "Art Wall", props.linkUrl ?? Route.HOME.url, navItems) 
       return rows
    }) 
 

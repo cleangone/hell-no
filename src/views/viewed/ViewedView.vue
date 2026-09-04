@@ -53,7 +53,7 @@
       else if (userId.value)  { items = items.filter(item => isOwned(item, userId.value)) }
       
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
-      return viewStore.setVisibleItems(ItemOrigin.VIEWED, "Recent Viewed", Route.VIEWED.url, ungroupedItems)
+      return viewStore.setVisibleItems(ItemOrigin.VIEWED, "Recent Viewed", Route.VIEWED.url + route.params.id, ungroupedItems)
    })
 
    const oldestViewedItems = computed(() => recentViewedItems.value.toSorted(function(a, b) {return a.dateViewed - b.dateViewed}))
