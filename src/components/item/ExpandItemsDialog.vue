@@ -17,22 +17,32 @@
          </v-row>
       </v-card-title>
       
-      <!-- non-fullscreen image -->
-      <v-img v-if="!isFullscreen && currItem" :src="currItem.primaryImage.url" :aspect-ratio="aspectRatio" @click="$emit(Emit.DONE)" class="mx-3"/>
-
-      <!-- fullscreen with background image -->
       <div ref="fullscreenEle">
-         <div v-if="isFullscreen" class="full-container">
-            <img v-if="backgroundImage" :src="backgroundImage.url" class="full-dimmed"/>
-            <div class="full-content">
-               <div class="text-center">
-                  <IconButton v-if="multipleItems" icon="mdi-chevron-left" @click="prev()" size="med" class="full-text"/>
-                  <span v-if="isFullscreen" class="mx-4 full-text">{{ currItem?.name }}</span>
-                  <IconButton v-if="multipleItems" icon="mdi-chevron-right" @click="next()" size="med" class="full-text"/>
+         <!-- fullscreen with background image -->
+         <div v-if="isFullscreen" class="fullscreen-container">
+            <img v-if="backgroundImage" :src="backgroundImage.url" class="fullscreen-dimmed"/>
+            <div class="fullscreen-content">
+               <div v-if="multipleItems" class="text-center fullscreen-text">
+                  <IconButton icon="mdi-chevron-left" @click="prev()" size="med"/>
+                  <span class="mx-4">{{ currItem?.name }}</span>
+                  <IconButton v-if="isPlaying" icon="mdi-pause" @click="pause()"/>
+                  <IconButton v-else icon="mdi-play" @click="play()"/>
+                  <IconButton icon="mdi-chevron-right" @click="next()" size="med"/>
                </div>
-               <v-img v-if="currItem" :src="currItem.primaryImage.url" @click="$emit(Emit.DONE)" class="full-image"/>
+               <div v-else class="text-center mx-4">{{ currItem?.name }}</div>
+               <v-container fluid class="pa-0 ma-0 fullscreen-slider">  
+                  <div class="slider-wrapper" :class="transition">
+                     <transition name="slide">
+                        <!-- div for smooth slide transition -->
+                        <div :key="currItem.id" :style="{ backgroundImage: `url(${currItem.primaryImage.url})` }" 
+                           class="fullscreen-image-slide"></div>
+                        <!-- <v-img :src="currItem.primaryImage.url" :key="currItem.id" class="fullscreen-image"/> -->
+                     </transition>
+                  </div>
+               </v-container>
             </div>
          </div>
+         <v-img v-else-if="currItem" :src="currItem.primaryImage.url" :aspect-ratio="aspectRatio" @click="$emit(Emit.DONE)" class="mx-3"/>
       </div>
    </v-card>
 </template>
@@ -51,9 +61,12 @@
    const { width: windowWidth, height: windowHeight } = useWindowSize()
    const itemMgr = useItemMgr()
    const viewMgr = useViewMgr()
-   const items = ref([])
-   const itemIndex = ref(0)
    const fullscreenEle = ref(null)
+   const items      = ref([])
+   const itemIndex  = ref(0)
+   const isPlaying  = ref(false)
+   const transition = ref('slide-left')
+
    const { isFullscreen, toggle: fullscreenToggle } = useFullscreen(fullscreenEle)  
 
    onMounted(() => { 
@@ -64,7 +77,7 @@
 
    const cardStyle = computed(() => "width:" + (windowWidth.value - 100) + "px; height:" + (windowHeight.value - 20) + "px")
 
-   const multipleItems = computed(() => items.value.length > 0)
+   const multipleItems = computed(() => items.value.length > 1)
    const currItem = computed(() => {
       const item = items.value.length ? items.value[itemIndex.value] : null      
       if (item) { viewMgr.addHit(item.linkId ? item.linkId : item.id) }
@@ -81,8 +94,29 @@
       return 0
    }
 
-   const prev = () => { itemIndex.value = itemIndex.value ? itemIndex.value -1 : items.value.length - 1 }
-   const next = () => { itemIndex.value = itemIndex.value == items.value.length - 1 ? 0 : itemIndex.value + 1 }
+   const prev = () => { 
+      transition.value = 'slide-right'
+      itemIndex.value = itemIndex.value ? itemIndex.value -1 : items.value.length - 1 
+   }
+   const next = () => { 
+      transition.value = 'slide-left' 
+      itemIndex.value = itemIndex.value == items.value.length - 1 ? 0 : itemIndex.value + 1 
+   }
+
+   const continuePlay = () => { 
+      setTimeout(() => { 
+         if (isPlaying.value) { 
+            next()
+            continuePlay()
+         }
+      }, 5000)  
+   }
+
+   const play = () => { 
+      isPlaying.value = true 
+      continuePlay()
+   }
+   const pause = () => { isPlaying.value = false }
 
    // dialog listeners added last and executed last - stopImmediatePropagation and return false doesn't stop previous listeners 
    onKeyStroke('ArrowLeft',  (e) => { prev() })
@@ -91,12 +125,12 @@
 </script>
 
 <style>
-.full-container {
+.fullscreen-container {
    position: relative;
    min-height: 100vh;
    overflow: hidden;
 }
-.full-dimmed {
+.fullscreen-dimmed {
    position: absolute;
    top: 0;
    left: 0;
@@ -107,17 +141,71 @@
    filter: brightness(0.10); 
    z-index: -1;
 }
-.full-content {
+.fullscreen-content {
    position: relative;
    z-index: 1;
    padding: 2rem;
 }
-.full-text {
-   background-color: black !important; 
+.fullscreen-text {
    color: var(--c-link-light)  !important;
 }
-.full-image {
+.fullscreen-text .v-btn {
+   color: inherit;
+}
+
+.fullscreen-image {
    height: 95vh;
    width: auto;
+}
+
+.fullscreen-slider {
+  height: 95vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.slider-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* sliding replacement for v-img */
+.fullscreen-image-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: contain;      /* Keeps the aspect ratio accurate like your old code */
+  background-position: center;   /* Centers the desktop asset */
+  background-repeat: no-repeat;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.5, 1), opacity 0.6s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.slide-left .slide-enter-from {
+  transform: translateX(100%);
+  opacity: 0;
+}
+.slide-left .slide-leave-to {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.slide-right .slide-enter-from {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+.slide-right .slide-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
 }
 </style>
