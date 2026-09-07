@@ -15,6 +15,7 @@
        - want to bring ipad to art meet-up - has to be app in order to alwyas work
 */
 export const versions = [        
+   ["v2.53.0", "9/7/26"],  // Add PlayItems, which goes directly to fullscreen
    ["v2.52.0", "9/5/26"],  // Add smooth slide transition to fullscreen images
    ["v2.51.0", "9/3/26"],  // Add background image to mobile GalleryView
    ["v2.50.2", "9/2/26"],  // Return to UserView if nav to ItemView from user wall

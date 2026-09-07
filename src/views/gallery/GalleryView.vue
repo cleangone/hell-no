@@ -19,6 +19,7 @@
          <img v-if="backgroundImage" :src="backgroundImage.url" class="background" :style="backgroundStyle"/>
          <div class="content">
             <div style="clear:both"></div>
+            <PlayItems v-if="!viewMgr.isXs" :items="galleryItems"/>
             <GalleryParentLink :gallery="gallery" style="text-align:center"/>
             <ReuseTemplate/>
          </div>
@@ -40,8 +41,8 @@
                      <GalleryParentLink :gallery="gallery" style="text-align:center"/>
                   </v-col>
                   <v-col cols="2" class="d-flex justify-end align-center flex-grow-0 flex-shrink-0 ">
+                     <PlayItems :items="galleryItems" :backgroundImage="backgroundImage" buttonClass="mr-2"/>
                      <ThumbSizeButton class="mx-n1"/>
-                     <!-- <ExpandItems :items="galleryItems" buttonClass="mr-n2"/> -->
                      <CopyLink :route="Route.GALLERY.name" :id="galleryId"/>
                      <ItemThumbConfig/>
                      <EditButton v-if="canEdit" @click="showEditGalleryDialog=true" class="mx-n2"/>
@@ -96,6 +97,7 @@
    import GalleryThumb        from '@/components/gallery/thumb/GalleryThumb.vue'
    import EditGalleryCard     from '@/components/gallery/EditGalleryCard.vue'
    import ItemPopup           from '@/components/item/ItemPopup.vue'
+   import PlayItems           from '@/components/item/PlayItems.vue'
    import AddItemDialog       from '@/components/item/crud/AddItemDialog.vue'
    import ItemThumb           from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig     from '@/components/item/thumb/ItemThumbConfig.vue'

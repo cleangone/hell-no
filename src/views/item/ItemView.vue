@@ -61,8 +61,7 @@
                      </div>
                   </v-col>
                   <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end align-center">
-                     <ExpandItems :items="viewStoreItems" :item="paramItem"
-                        :backgroundImage="backgroundImage" buttonClass="mr-n2"/>
+                     <PlayItems :items="viewStoreItems" :item="paramItem" :backgroundImage="backgroundImage"/>
                      <CopyLink :route="Route.ITEM.name" :id="route.params.id"/>
                      <EditButton v-if="isOwnedByUser" @click="editItem(paramItem)" class="mx-n2"/>
                   </v-col>
@@ -94,8 +93,7 @@
             <!-- image with info beside or below-->
             <div style="position:relative" class="text-left w-100">  
                <IconButton :icon="descBeside?'mdi-image':'mdi-image-text'" @click="viewStore.toggleItemDescBesideImage()" class="mx-n2"/>
-               <ExpandItems :items="viewStoreItems" :item="paramItem" fullscreen 
-                  :backgroundImage="backgroundImage" :buttonClass="EXPAND_ITEMS_CLASS"/>
+               <ExpandItems :items="viewStoreItems" :item="paramItem" :backgroundImage="backgroundImage" :buttonClass="EXPAND_ITEMS_CLASS"/>
                <IconButton v-if="userStore.userExists" :icon="isUserFavorite?'mdi-heart':'mdi-heart-plus-outline'" @click="toggleUserFavorite()" class="mx-n2"/>
                <v-row class="w-100">
                   <v-col :cols="descBeside ? 8 : 12">
@@ -169,6 +167,7 @@
    import ItemMobileView      from './ItemMobileView.vue'
    import ItemGroupSmThumb    from '@/components/item/ItemGroupSmThumb.vue'
    import ExpandItems         from '@/components/item/ExpandItems.vue'
+   import PlayItems           from '@/components/item/PlayItems.vue'
    import ShowItemImages      from '@/components/item/ShowItemImages.vue'
    import ShowItemGroupImages from '@/components/item/ShowItemGroupImages.vue'
    import EditItemDialog      from '@/components/item/crud/EditItemDialog.vue'
