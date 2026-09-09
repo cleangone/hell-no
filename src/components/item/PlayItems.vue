@@ -11,9 +11,8 @@
    
    const props = defineProps({ items:Array, item:Object, backgroundImage:Object, buttonClass:String })   
    
-   const buttonClass = computed(() => props.buttonClass ? props.buttonClass : "")
    const showFullscreen = ref(false)
-
+   const buttonClass = computed(() => props.buttonClass ? props.buttonClass : "")
    const done = () => { showFullscreen.value = false }
 </script>
 

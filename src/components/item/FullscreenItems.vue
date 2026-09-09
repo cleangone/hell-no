@@ -17,7 +17,7 @@
                      <IconButton icon="mdi-chevron-right" @click="next()" size="med"/>
                   </v-col>
                   <v-col cols="2" class="d-flex justify-end align-center flex-grow-0 flex-shrink-0 ">
-                     <span v-if="isPlaying && countdown">{{ currSeconds }}</span>                  
+                     <span v-if="isPlaying && countdown">{{ timerCurrSeconds }}</span>                  
                   </v-col>
                </v-row>
             </div>
@@ -25,11 +25,13 @@
             <!-- image -->
             <v-container fluid class="pa-0 ma-0 fullscreen-slider">  
                <div class="slider-wrapper" :class="transition">
-                  <transition name="slide">
-                     <!-- div for smooth slide transition -->
-                     <div :key="currItem.id" :style="{ backgroundImage: `url(${currItem.primaryImage.url})` }" 
-                        class="fullscreen-image-slide"></div>
-                  </transition>
+                  <div @wheel="onWheel" class="swipe-box">
+                     <transition name="slide">
+                        <!-- div for smooth slide transition -->
+                        <div :key="currItem.id" :style="{ backgroundImage: `url(${currItem.primaryImage.url})` }" 
+                           class="fullscreen-image-slide"></div>
+                     </transition>
+                  </div>
                </div>
             </v-container>
          </div>
@@ -48,21 +50,20 @@
    const props = defineProps({ items:Object, item:Object, backgroundImage:Object, play:Boolean })
    const emit = defineEmits([Emit.DONE])
 
-   const MAX_SECONDS = 15 
+   const TIMER_MAX_SECONDS = 15 
    const Slide = { LEFT: "slide-left", RIGHT: "slide-right" }
    
    const fullscreenEle = ref(null)
    const { isFullscreen, toggle: fullscreenToggle } = useFullscreen(fullscreenEle)  
-   const itemMgr    = useItemMgr()
-   const viewMgr    = useViewMgr()
-   const items      = ref([])
-   const itemIndex  = ref(0)
-   const isPlaying  = ref(false)
-   const transition = ref(Slide.LEFT)
-
-   const maxSeconds  = ref(15) 
-   const currSeconds = ref(0) 
+   const itemMgr     = useItemMgr()
+   const viewMgr     = useViewMgr()
+   const items       = ref([])
+   const itemIndex   = ref(0)
+   const isPlaying   = ref(false)
+   const transition  = ref(Slide.LEFT)
+   const swipeLocked = ref(false)
    const timer       = ref(null)
+   const timerCurrSeconds = ref(0) 
 
     onMounted(() => { 
       items.value = itemMgr.ungroupAndExtractItems(props.items)
@@ -91,7 +92,7 @@
       return 0
    }
 
-   const countdown = computed(() => currSeconds.value && currSeconds.value <= 10)
+   const countdown = computed(() => timerCurrSeconds.value && timerCurrSeconds.value <= 10)
    
    const prev = () => { 
       isPlaying.value = false
@@ -105,6 +106,9 @@
    const advance = () => { 
       transition.value = Slide.LEFT 
       itemIndex.value = itemIndex.value == items.value.length - 1 ? 0 : itemIndex.value + 1 
+
+      const nextIndex = itemIndex.value == items.value.length - 1 ? 0 : itemIndex.value + 1 
+      if (nextIndex) { viewStore.loadImage(items.value[itemIndex.value].primaryImage.url) }  
    }
 
    const clearTimer = () => { 
@@ -114,11 +118,11 @@
       }
    }
 
-   const continuePlay = (maxSeconds = MAX_SECONDS) => { 
+   const continuePlay = (maxSeconds = TIMER_MAX_SECONDS) => { 
       clearInterval(timer.value)
-      currSeconds.value = maxSeconds
+      timerCurrSeconds.value = maxSeconds
       timer.value = setInterval(() => {
-         if (currSeconds.value > 0) { currSeconds.value -= 1 } 
+         if (timerCurrSeconds.value > 0) { timerCurrSeconds.value -= 1 } 
          else {
             if (isPlaying.value) { 
                advance()
@@ -133,6 +137,25 @@
       continuePlay(10)
    }
    const pause = () => { isPlaying.value = false }
+
+   const onWheel = (event) => {
+      event.preventDefault()
+      event.stopPropagation()
+
+      if (swipeLocked.value)  { return }
+      else {
+         swipeLocked.value = true
+         setTimeout(() => {
+            swipeLocked.value = false
+         }, 1500)
+      }
+
+      if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) {
+         if (event.deltaX > 0) { prev() } 
+         else { next() }
+      }
+      else { emit(Emit.DONE) }
+   }
 
    // dialog listeners added last and executed last - stopImmediatePropagation and return false doesn't stop previous listeners 
    onKeyStroke('ArrowLeft',  (e) => { prev() })
@@ -206,7 +229,6 @@
   left: 0;
   width: 100%;
 }
-
 .slide-left .slide-enter-from {
   transform: translateX(100%);
   opacity: 0;
@@ -215,7 +237,6 @@
   transform: translateX(-100%);
   opacity: 0;
 }
-
 .slide-right .slide-enter-from {
   transform: translateX(-100%);
   opacity: 0;

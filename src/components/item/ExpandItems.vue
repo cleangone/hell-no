@@ -13,7 +13,6 @@
 
    const showFullscreen = ref(false)
    const buttonClass = computed(() => props.buttonClass ? props.buttonClass : "")
-
    const done = () => { showFullscreen.value = false }
 </script>
 
