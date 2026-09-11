@@ -4,7 +4,7 @@
          <v-tab :value="tabs.items">Items</v-tab>
          <v-tab :value="tabs.galleries">Galleries</v-tab>
          <v-tab v-if="!isProfile" :value="tabs.profiles">Profiles</v-tab>
-         <!-- <v-tab :value="tabs.group">Groups</v-tab> -->
+         <v-tab :value="tabs.group">Groups</v-tab>
          <v-tab v-if="!isProfile" :value="tabs.invites">Invites</v-tab>
          <v-tab :value="tabs.wall">Wall</v-tab>
          <v-tab v-if="!isProfile" :value="tabs.artists">Artists</v-tab>

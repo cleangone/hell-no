@@ -6,14 +6,14 @@
             <div v-if="viewMgr.isDeskTop" class="title">{{ artistFullName }}</div>
          </v-col>
          <v-col cols="2" class="d-flex flex-grow-0 flex-shrink-0 justify-end">
-            <ExpandItems :items="items" buttonClass="mb-1"/>
+            <PlayItems :items="searchItems" buttonClass="mr-1"/>
             <ItemThumbConfig/>
          </v-col>
       </v-row>
    </v-container>
    <v-container style="width: 100%">
       <v-row justify="space-around">
-         <ItemThumb v-for="item in items" :key="item.id" :item="item" :origin="ItemOrigin.ARTIST" :tight="viewMgr.isMobile"/>
+         <ItemThumb v-for="item in artistItems" :key="item.id" :item="item" :origin="ItemOrigin.ARTIST" :tight="viewMgr.isMobile"/>
       </v-row>
    </v-container>
 </template>
@@ -27,9 +27,9 @@
    import { useItemMgr }     from '@/stores/itemMgr'
    import { useViewStore }   from '@/stores/viewStore'
    import { useViewMgr }     from '@/stores/viewMgr'
-   import ExpandItems     from '@/components/item/ExpandItems.vue'
-   import ItemThumb       from '@/components/item/thumb/ItemThumb.vue'
-   import ItemThumbConfig from '@/components/item/thumb/ItemThumbConfig.vue'
+   import PlayItems          from '@/components/item/PlayItems.vue'
+   import ItemThumb          from '@/components/item/thumb/ItemThumb.vue'
+   import ItemThumbConfig    from '@/components/item/thumb/ItemThumbConfig.vue'
    import { isOwned }     from '@/utils/utils'  
    import { ItemOrigin, Route } from '@/utils/constants'
    
@@ -47,18 +47,17 @@
       return artistName
    })
 
-   const items = computed(() => {
+   const artistItems = computed(() => {
       // needed to drive the viewStore for mobile (not reactive in onMounted?)
       artistFullName.value 
 
-      // todo - add my invisible items
       const allArtistIds = artistStore.getAllArtistIds(route.params.id) // all artists related by aka
 
-      const publicItems = [ ...itemStore.getArtistPublicItems(allArtistIds) ]
-      const items = viewMgr.solo ? 
-         publicItems.filter(item => isOwned(item, userStore.userId)) : publicItems
+      let items = [ ...itemStore.getArtistPublicItems(allArtistIds) ]
+      if (viewMgr.solo) { items = items.filter(item => isOwned(item, userStore.userId)) }
+      else { items = items.filter(item => !itemMgr.isInvisible(item)) }
 
-      console.log("itemMgr", itemMgr) // todo - seems like this is needed to force itemMgr instantiation
+      // console.log("itemMgr", itemMgr) // todo - seems like this is needed to force itemMgr instantiation
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
       ungroupedItems.sort((a, b) => a.name.localeCompare(b.name))
       return viewStore.setVisibleItems(ItemOrigin.ARTIST, "Artist", Route.ARTIST.url + route.params.id, ungroupedItems)

@@ -216,6 +216,8 @@
    
    const recentUpdatedItems = computed(() => {
       let items = viewMgr.solo ? [ ...itemMgr.myRecentItems ] : [ ...cacheStore.recentPublicItems ]
+      items = items.filter(item => !itemMgr.isInvisible(item))
+
       if (items.length) { 
          items.sort(function(a, b){return b.dateContentModified - a.dateContentModified}) 
          // localStore.setRecentItems(items) 

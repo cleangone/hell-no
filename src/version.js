@@ -14,7 +14,8 @@
        - really liked groups idea
        - want to bring ipad to art meet-up - has to be app in order to alwyas work
 */
-export const versions = [        
+export const versions = [   
+   ["v2.54.0", "9/9/26"],  // Update Invisible items to be any that are not in a gallery
    ["v2.53.1", "9/8/26"],  // Handle trackpad sweep in FullscreenItems
    ["v2.53.0", "9/7/26"],  // Add PlayItems, which goes directly to fullscreen
    ["v2.52.0", "9/5/26"],  // Add smooth slide transition to fullscreen images

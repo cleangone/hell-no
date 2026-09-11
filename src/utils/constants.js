@@ -140,16 +140,17 @@ export const ItemNavAction = {
 }
 
 export const ItemOrigin = {
-   WALL:      'wall',
-   RECENT:    'recent',
-   VIEWED:    'viewed',
-   FAVORITES: 'favorites',
-   RANDOM:    'random',
-   SEARCH:    'search',
-   GALLERY:   'gallery',
-   ARTIST:    'artist',
    ADMIN:     'admin',
+   ARTIST:    'artist',
    EXTERNAL:  'ext',
+   FAVORITES: 'favorites',
+   GALLERY:   'gallery',
+   INVISIBLE: 'invisible',
+   RANDOM:    'random',
+   RECENT:    'recent',
+   SEARCH:    'search',
+   VIEWED:    'viewed',
+   WALL:      'wall',
 }
 
 export const ItemType = {
@@ -193,6 +194,7 @@ export const Route = {
    FEED:      { name: 'feed',      url: '/feed'       },
    FORGOT:    { name: 'forgot',    url: '/forgot',    display: 'Forgot Password' },
    HOME:      { name: 'home',      url: '/',          display: 'Home' },
+   INVISIBLE: { name: 'invisible', url: '/invisible/',display: 'Invisible Items' },
    ITEM:      { name: 'item',      url: '/item/'      },
    ITEM_CHILD:{ name: 'itemch',    url: '/item/'      }, // overload item with additional params
    LOGIN:     { name: 'login',     url: '/login',     display: 'Login' },
@@ -208,11 +210,10 @@ export const Route = {
 export const State = {
    PUBLIC:    'Public',
    PRIVATE:   'Private',
-   HIDDEN:    'Hidden',  
-   INVISIBLE: 'Invisible',  
+   HIDDEN:    'Hidden',   
 }
-export const ItemStates    = [ State.PUBLIC, State.PRIVATE, State.INVISIBLE, State.HIDDEN ]
-export const GalleryStates = [ State.PUBLIC, State.PRIVATE, State.INVISIBLE ]
+export const ItemStates    = [ State.PUBLIC, State.PRIVATE, State.HIDDEN ]
+export const GalleryStates = [ State.PUBLIC, State.PRIVATE ]
 export const GroupStates   = [ State.PUBLIC, State.GROUP, State.PRIVATE ]
 
 export const ThumbHeights = { 

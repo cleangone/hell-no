@@ -38,12 +38,11 @@ function random3(chars) {
     return result
 }
 
-export function thumbBackgroundColorStyle(obj) { return isPrivate(obj) || isInvisible(obj) ? backgroundColorStyle(obj.state) : "" }
+export function thumbBackgroundColorStyle(obj) { return isPrivate(obj) ? backgroundColorStyle(obj.state) : "" }
 export function backgroundColorStyle(state) { return "background-color: " + backgroundColorCode(state) }
 export function backgroundColorCode(state) {
    if (state == State.PUBLIC)         { return BackgroundColors.GREEN.code }
    else if (state == State.PRIVATE)   { return BackgroundColors.RED.code }
-   else if (state == State.INVISIBLE) { return BackgroundColors.GREY.code }
    
    return BackgroundColors.WHITE.code
 }
@@ -64,7 +63,6 @@ export const IdSet = class {
 export function isPublic(obj)    { return obj && obj.state == State.PUBLIC  }
 export function isPrivate(obj)   { return obj && obj.state == State.PRIVATE }
 export function isHidden(obj)    { return obj && obj.state == State.HIDDEN  }
-export function isInvisible(obj) { return obj && obj.state == State.INVISIBLE  }
 export function isOwned(obj, userId) { return obj && userId && obj.userId == userId }   
 
 export function objAspectRatio(object) { return object.width / object.height }

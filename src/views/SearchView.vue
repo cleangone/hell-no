@@ -61,9 +61,9 @@
    const search = () => { if (validQuery.value) { searchMgr.search(searchQuery.value) }}
 
    const resultItems = computed(() => {
-      const searchItems = [ ...viewStore.searchItems ]    
-      const items = viewMgr.solo ? 
-         searchItems.filter(item => isOwned(item, userStore.userId)) : searchItems
+      let items = [ ...viewStore.searchItems ]    
+      if (viewMgr.solo) { items = items.filter(item => isOwned(item, userStore.userId)) }
+      else { items = items.filter(item => !itemMgr.isInvisible(item)) }
 
       if (items.length) {
          if (sortByDate.value) { items.sort((a, b) => b.dateModified - a.dateModified) }

@@ -52,6 +52,7 @@
       }
       else { items.push(...itemMgr.recentPublicItems) }
 
+      items = items.filter(item => !itemMgr.isInvisible(item))
       items.sort(function(a, b){return b.dateContentModified - a.dateContentModified})    
       // const displayItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
       const visibleItems = []

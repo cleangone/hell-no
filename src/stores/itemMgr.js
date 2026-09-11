@@ -15,6 +15,9 @@ export const useItemMgr = defineStore('itemMgr', () => {
       return itemStore.myItems ? new Map(itemStore.myItems.map((obj) => [obj.id, obj])) : new Map() 
    })
 
+   const myInvisibleItems = computed(() => { return itemStore.myItems ? itemStore.myItems.filter(item => isInvisible(item)) : [] })
+   function isInvisible(item) { return !item.galleryIds.length }
+   
    const artistIdToMyItemIds = computed(() => { 
       const artistIdToItemIds = new Map() 
       if (itemStore.myItems) {
@@ -68,10 +71,11 @@ export const useItemMgr = defineStore('itemMgr', () => {
    const recentViewedPublicItems = computed(() => { 
       const itemIdToDateViewed = new Map(hitStore.hits.map(hit => [ hit.id, hit.dateModified ]))
 
-      const items = itemStore.publicItems.map(item => ({
+      let items = itemStore.publicItems.map(item => ({
           ...item, 
           dateViewed: itemIdToDateViewed.get(item.id) ?? item.dateModified 
       }))
+      items = items.filter(item => !isInvisible(item))
 
       return items.toSorted(function(a, b) {return b.dateViewed - a.dateViewed}) // most recent first
    })
@@ -237,7 +241,7 @@ export const useItemMgr = defineStore('itemMgr', () => {
    }
 
    return { 
-      myItemIdToItem, artistIdToMyItemIds, 
+      myItemIdToItem, myInvisibleItems, artistIdToMyItemIds, isInvisible,
       getItems, getRandomItems, getPublicGalleryThumbs, getPublicGalleryThumbUrls,
       recentPublicItems, recentGroupMemberItems, myRecentItems, getRecentItems, getRecentPublicItems, 
       recentViewedPublicItems,

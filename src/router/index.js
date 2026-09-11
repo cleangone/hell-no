@@ -1,25 +1,26 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView      from '../views/HomeView.vue'
+import ItemView      from '../views/item/ItemView.vue'
+import AddItemView   from '../views/item/AddItemView.vue'
+import EditItemView  from '../views/item/EditItemView.vue'
 import GalleryView   from '../views/gallery/GalleryView.vue'
 import GalleriesView from '../views/gallery/GalleriesView.vue'
-import ArtistView    from '../views/ArtistView.vue'
-import SearchView    from '../views/SearchView.vue'
-import FeedView      from '../views/FeedView.vue'
-import RecentView    from '../views/RecentView.vue'
-import ViewedView    from '../views/viewed/ViewedView.vue'
-import ItemView      from '../views/item/ItemView.vue'
-import UserView      from '../views/UserView.vue'
-import FavoritesView from '../views/FavoritesView.vue'
-import RandomView    from '../views/RandomView.vue'
-import LoginView     from '../views/LoginView.vue'
-import ForgotView    from '../views/ForgotView.vue'
-import RegisterView  from '../views/RegisterView.vue'
-import MessageView   from '../views/MessageView.vue'
 import AboutView     from '../views/AboutView.vue'
 import AccountView   from '../views/AccountView.vue'
 import AdminView     from '../views/AdminView.vue'
-import AddItemView   from '../views/item/AddItemView.vue'
-import EditItemView  from '../views/item/EditItemView.vue'
+import ArtistView    from '../views/ArtistView.vue'
+import FavoritesView from '../views/FavoritesView.vue'
+import FeedView      from '../views/FeedView.vue'
+import ForgotView    from '../views/ForgotView.vue'
+import InvisibleView from '../views/InvisibleView.vue'
+import LoginView     from '../views/LoginView.vue'
+import MessageView   from '../views/MessageView.vue'
+import RandomView    from '../views/RandomView.vue'
+import RecentView    from '../views/RecentView.vue'
+import RegisterView  from '../views/RegisterView.vue'
+import SearchView    from '../views/SearchView.vue'
+import UserView      from '../views/UserView.vue'
+import ViewedView    from '../views/viewed/ViewedView.vue'
 import { Route } from '@/utils/constants'
 
 // lazy load not working - chunk retrieval error
@@ -32,28 +33,29 @@ import { Route } from '@/utils/constants'
 const router = createRouter({
    history: createWebHistory(import.meta.env.BASE_URL),
    routes: [
-      createRoute(Route.HOME,      HomeView),
-      createRoute(Route.GALLERY,   GalleryView,   ':id'),
-      createRoute(Route.GALLERIES, GalleriesView, ':id'),
-      createRoute(Route.ARTIST,    ArtistView,    ':id'),
-      createRoute(Route.SEARCH,    SearchView),
-      createRoute(Route.FEED,      FeedView),
-      createRoute(Route.VIEWED,    ViewedView,    ':id'),
-      createRoute(Route.RECENT,    RecentView,    ':id'),
-      createRoute(Route.ITEM,      ItemView,      ':origin/:nav/:id'),
-      createRoute(Route.ITEM_CHILD,ItemView,      ':origin/:nav/:id/:child'),
-      createRoute(Route.USER,      UserView,      ':id'),
-      createRoute(Route.FAVORITES, FavoritesView),
-      createRoute(Route.RANDOM,    RandomView),
-      createRoute(Route.LOGIN,     LoginView),
-      createRoute(Route.FORGOT,    ForgotView),
-      createRoute(Route.REGISTER,  RegisterView,  ':registerId'),
-      createRoute(Route.MESSAGE,   MessageView),
-      createRoute(Route.ABOUT,     AboutView),
-      createRoute(Route.ACCOUNT,   AccountView),
-      createRoute(Route.ADMIN,     AdminView),
-      createRoute(Route.ADD_ITEM,  AddItemView),
-      createRoute(Route.EDIT_ITEM, EditItemView,  ':id')
+      createRoute(Route.HOME,       HomeView),
+      createRoute(Route.ITEM,       ItemView,      ':origin/:nav/:id'),
+      createRoute(Route.ITEM_CHILD, ItemView,      ':origin/:nav/:id/:child'),
+      createRoute(Route.ADD_ITEM,   AddItemView),
+      createRoute(Route.EDIT_ITEM,  EditItemView,  ':id'),
+      createRoute(Route.GALLERY,    GalleryView,   ':id'),
+      createRoute(Route.GALLERIES,  GalleriesView, ':id'),
+      createRoute(Route.ABOUT,      AboutView),
+      createRoute(Route.ACCOUNT,    AccountView),
+      createRoute(Route.ADMIN,      AdminView),
+      createRoute(Route.ARTIST,     ArtistView,    ':id'),
+      createRoute(Route.FAVORITES,  FavoritesView),
+      createRoute(Route.FEED,       FeedView),
+      createRoute(Route.FORGOT,     ForgotView),
+      createRoute(Route.INVISIBLE,  InvisibleView),
+      createRoute(Route.LOGIN,      LoginView),
+      createRoute(Route.MESSAGE,    MessageView),
+      createRoute(Route.RANDOM,     RandomView),
+      createRoute(Route.RECENT,     RecentView,    ':id'),
+      createRoute(Route.REGISTER,   RegisterView,  ':registerId'),
+      createRoute(Route.SEARCH,     SearchView),
+      createRoute(Route.USER,       UserView,      ':id'),
+      createRoute(Route.VIEWED,     ViewedView,    ':id'),
       
       // route level code-splitting
       // this generates a separate chunk (About.[hash].js) for this route

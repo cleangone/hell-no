@@ -10,7 +10,7 @@ import { useWallStore }  from '@/stores/wallStore'
 import { useHitStore }   from '@/stores/hitStore'
 import { useViewStore }  from '@/stores/viewStore'
 import { useLocalStore } from '@/stores/localStore'
-import { dateUuid, isHidden, isInvisible, isOwned, isPublic } from '@/utils/utils'  
+import { dateUuid, isHidden, isOwned, isPublic } from '@/utils/utils'  
 import { ItemMaxLandscapeWidths, Route, ThumbHeights, ThumbSize } from '@/utils/constants'
    
 export const useViewMgr = defineStore('viewMgr', () => {   
@@ -65,12 +65,12 @@ export const useViewMgr = defineStore('viewMgr', () => {
    const solo      = computed(() => localStore.soloMode)
 
    // can nav directly to INVISIBLE item even though thumb/link not visible, but HIDDEN items never visible
-   function itemIsVisibleToUser(item)    { return itemThumbVisibleToUser(item) || isInvisible(item) }
+   function itemIsVisibleToUser(item)    { return itemThumbVisibleToUser(item) }
    function itemThumbVisibleToUser(item) { return isPublic(item) || item.onUserWall || (isOwned(item, userStore.userId) && !isHidden(item)) }
       
    // can nav directly to INVISIBLE gallery even though thumb/link not visible
    function galleryIsVisibleToUser(gallery) { 
-      return isOwned(gallery, userStore.userId) || !solo.value && (isPublic(gallery) || isInvisible(gallery)) }
+      return isOwned(gallery, userStore.userId) || !solo.value && (isPublic(gallery)) }
    function galleryThumbVisibleToUser(gallery) { 
       return isOwned(gallery, userStore.userId) || !solo.value && isPublic(gallery) }
 

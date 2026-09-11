@@ -6,7 +6,12 @@
             <div class="title">{{ displayName }} </div>
          </v-col>
          <v-col cols="2" class="mr-n2 d-flex flex-grow-0 flex-shrink-0 justify-end">
-            <EmailButton v-if="userExists" :user="user"/>
+            <div v-if="isLoggedInUser">  
+               <RouterLink v-if="invisibleItemsExist" :to="Route.INVISIBLE.url">
+                  <v-icon icon="mdi-incognito" class="mr-2"/>
+               </RouterLink>
+            </div>
+            <EmailButton v-else-if="userExists" :user="user"/>
          </v-col>
       </v-row>
    </v-container>
@@ -85,13 +90,15 @@
       title: "Hell-No User"
    })
 
-   const user          = computed(() => userStore.getUser(route.params.id))
-   const userExists    = computed(() => user.value ? true : false )
-   const userId        = computed(() => user.value ? user.value.id : null )
-   const userLinkUrl   = computed(() => Route.USER.url + userId.value)
-   const displayName   = computed(() => user.value ? (user.value.displayName ?? user.value.username) : "")
-   const contentExists = computed(() => wallItemsExist.value || visibleGalleries.value.length || recentItems.value.length) 
-   
+   const user           = computed(() => userStore.getUser(route.params.id))
+   const userExists     = computed(() => user.value ? true : false )
+   const userId         = computed(() => user.value ? user.value.id : null )
+   const isLoggedInUser = computed(() => userId.value && userId.value == userStore.userId)
+   const userLinkUrl    = computed(() => Route.USER.url + userId.value)
+   const displayName    = computed(() => user.value ? (user.value.displayName ?? user.value.username) : "")
+   const contentExists  = computed(() => wallItemsExist.value || visibleGalleries.value.length || recentItems.value.length) 
+   const invisibleItemsExist = computed(() => itemMgr.myInvisibleItems.length) 
+
    const visibleGalleries = computed(() => { 
       const galleries = []     
       for (const gallery of galleryStore.getPublicGalleries(userId.value) ) {
@@ -100,7 +107,7 @@
       return galleries.toSorted(function(a, b){return b.dateContentModified - a.dateContentModified}) 
    })
 
-   const recentItems = computed(() => itemMgr.getRecentPublicItems(userId.value))
+   const recentItems = computed(() => itemMgr.getRecentPublicItems(userId.value).filter(item => !itemMgr.isInvisible(item)))
    const displayWall = computed(() => {
       const wall = { ...wallStore.getUserWall(userId.value) }
       wall.origWallRows = wall.wallRows // hack 
@@ -134,7 +141,7 @@
 
    const recentViewedItems = computed(() => {
       let items = [ ...cacheStore.recentViewedPublicItems ]   
-      items = items.filter(item => isOwned(item, userId.value))
+      items = items.filter(item => isOwned(item, userId.value)) 
             
       const ungroupedItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : [...items]
       viewStore.setVisibleItems(ItemOrigin.VIEWED, "Recent Viewed", Route.VIEWED.url + route.params.id, ungroupedItems)

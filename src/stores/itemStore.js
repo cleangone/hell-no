@@ -80,12 +80,13 @@ export const useItemStore = defineStore('item', () => {
       return ids
    })
    
-   const myItemsQuery = computed(() => userStore.userId && query(itemCollection, where('userId', '==', userStore.userId)))
-   const myItems = useFirestore(myItemsQuery, null)
+   const myItemsQuery   = computed(() => userStore.userId && query(itemCollection, where('userId', '==', userStore.userId)))
+   const myItems        = useFirestore(myItemsQuery, null)
    const myItemIdToItem = computed(() => { return myItems && myItems.value ? new Map(myItems.value.map((obj) => [obj.id, obj])) : new Map() })
-   const publicItemsQuery = computed(() => query(itemCollection, where('state', '==', State.PUBLIC)))
-   const publicItems = useFirestore(publicItemsQuery, [])
    
+   const publicItemsQuery = computed(() => query(itemCollection, where('state', '==', State.PUBLIC)))
+   const publicItems      = useFirestore(publicItemsQuery, [])
+
    const myChildItemIds = computed(() => { 
       const childItemIds = new Set()
       for (const item of myItems.value) {
