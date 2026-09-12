@@ -1,5 +1,5 @@
 <template>
-   <v-card :title="'Edit ' + group.name + ' Users'" class="edit-group-dialog">
+   <v-card title="Group Users" class="edit-group-dialog">
       <template v-slot:append>
          <IconButton icon="mdi-close" @click="$emit(Emit.DONE)" class="admin-link"/>
       </template>
@@ -20,6 +20,8 @@
    const groupUserStates = [ GroupUserState.MEMBER, GroupUserState.MODERATOR ] //GroupUserState.VIEWER
    const groupUserState = ref('')
    
+
+   // TODO - not implemented yet
    onMounted(() => {
       // console.log("EditGroupUser", props.groupUser)
       // groupUserState.value = props.groupUser.state

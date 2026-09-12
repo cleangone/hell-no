@@ -59,7 +59,7 @@
                <div v-if="isPrimaryImage(item)" class="d-flex flex-column">
                   <TextButton text="crop"         @click="cropImage(item, ImageType.CROP)"/>
                   <TextButton text="gallery crop" @click="cropImage(item, ImageType.GALLERY)"/>
-                  <TextButton text="group crop"   @click="cropImage(item, ImageType.GROUP)"/>
+                  <!-- <TextButton text="group crop"   @click="cropImage(item, ImageType.GROUP)"/> -->
                   <TextButton text="avatar crop"  @click="cropImage(item, ImageType.USER)"/>
                </div>
             </template>

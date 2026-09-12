@@ -19,7 +19,7 @@
    import { Emit, GroupStates } from '@/utils/constants'
    
    const props = defineProps({group: Object})
-   const emitv = defineEmits([Emit.DONE])
+   const emit  = defineEmits([Emit.DONE])
 
    const groupStore = useGroupStore()
    const groupName  = ref('')
@@ -39,6 +39,7 @@
          name: groupName.value,
          desc: desc.value,
          state: groupState.value,
+         images: props.group.images ?? [],  // backward compatibility to add images[]
       })
      
       emit(Emit.DONE)

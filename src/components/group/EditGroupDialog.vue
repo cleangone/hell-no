@@ -4,15 +4,13 @@
          <IconButton icon="mdi-close" @click="$emit(Emit.DONE)" class="admin-link"/>
       </template>
       <div class="mt-n5">
-         <TextButton text="Edit Images" @click="edit=Edit.IMAGE" class="mx-3"/>
-         <TextButton text="Edit Users"  @click="edit=Edit.USER"  class="mx-3"/>
+         <TextButton text="Edit Images" @click="edit=Edit.IMAGE" class="ml-3"/>
+         <TextButton text="Edit Users"  @click="edit=Edit.USER"/>
       </div>
       <EditGroup :group="group" @done="$emit(Emit.DONE)"/>
    </v-card>
-   <EditGroupImages v-else-if="edit==Edit.IMAGE" :group="group" @done="edit=Edit.GROUP" class="edit-group-dialog"/>
-
-   <!-- TODO - not implemented - can only edit users via Admin -->
-   <!-- <EditGroupUsers  v-else-if="edit==Edit.USER"  :group="group" @done="edit=Edit.GROUP" class="edit-group-dialog"/> -->
+   <EditGroupImages v-else-if="edit==Edit.IMAGE" :groupId="group.id" @done="edit=Edit.GROUP"/>
+   <EditGroupUsers  v-else-if="edit==Edit.USER"  :group="group"      @done="edit=Edit.GROUP" class="edit-group-dialog"/>
 </template>
 
 <script setup>

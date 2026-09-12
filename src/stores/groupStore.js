@@ -105,6 +105,7 @@ export const useGroupStore = defineStore('group', () => {
          userIds: [ownerId],
          moderatorIds: [],
          invitedIds: [],
+         images: [],
          dateCreated:  serverTimestamp(),
          dateModified: serverTimestamp()
       })
@@ -119,8 +120,22 @@ export const useGroupStore = defineStore('group', () => {
    function removeUserId(groupId, userId)      { update(groupId, { userIds:      arrayRemove(userId) }) }
    function removeModeratorId(groupId, userId) { update(groupId, { moderatorIds: arrayRemove(userId) }) } 
    function removeInvitedId(groupId, userId)   { update(groupId, { invitedIds:   arrayRemove(userId) }) }
-   function acceptInvite(groupId, userId)      { update(groupId, { userIds: arrayUnion(userId), invitedIds: arrayRemove(userId) }) }
-   function declineInvite(groupId, userId)     { update(groupId, { invitedIds: arrayRemove(userId) }) }
+   function acceptInvite(groupId, userId)      { update(groupId, { userIds:      arrayUnion(userId), invitedIds: arrayRemove(userId) }) }
+   function declineInvite(groupId, userId)     { update(groupId, { invitedIds:   arrayRemove(userId) }) }
+   function addImage(groupId, image)           { update(groupId, { images:       arrayUnion(image) }) }
+   function deleteImage(groupId, image)        { update(groupId, { images:       arrayRemove(image) }) }
+
+   function updateImage(groupId, updatedImage) {
+      const images = []
+      const group = groupIdToMyGroup.value.get(groupId)
+      if (group) {
+         for (const image of group.images) {
+            images.push(image.id == updatedImage.id ? updatedImage : image)
+         }
+         update(groupId, { images: images })
+      }
+      else { console.log("updateImage cannot find group", groupId)}
+   }
 
    function update(groupId, group) { 
       updateDoc(groupDoc(groupId), { ...group, dateModified: serverTimestamp() }) 
@@ -134,6 +149,7 @@ export const useGroupStore = defineStore('group', () => {
    return { 
       groups, groupIdToGroup, myGroups, myGroupIds, myInvitedGroups, groupIdToMyGroup, getMyGroup, getUserGroups, getUserGroupsMap, getGroup, getUserIds, 
       addGroup, updateGroup, deleteGroup,
-      addUserIds, addModeratorId, removeModeratorId, inviteUserIds, removeUserId, acceptInvite, declineInvite, removeInvitedId
+      addUserIds, addModeratorId, removeModeratorId, inviteUserIds, removeUserId, acceptInvite, declineInvite, removeInvitedId,
+      addImage, updateImage, deleteImage
    }
 })

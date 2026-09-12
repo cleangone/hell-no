@@ -1,46 +1,102 @@
 <template>
-   <v-card :title="'Edit ' + group.name + ' Images'" class="edit-group-dialog">
+   <v-card title="Group Images" class="edit-group-dialog">
       <template v-slot:append>
          <IconButton icon="mdi-close" @click="$emit(Emit.DONE)" class="admin-link"/>
       </template>
-      <!-- <v-form>
-         <div>
-            <v-select v-model="groupUserState" label="Status" :items="groupUserStates" class="mx-3"></v-select>
-         </div>
-      </v-form>
-      <v-card-actions class="justify-end">
-         <v-btn color="primary" @click="save()">save</v-btn>
-         <v-btn color="primary" @click="$emit(Emit.DONE)">Cancel</v-btn>
-      </v-card-actions> -->
+   
+      <span class="text-left mt-n3">
+         <TextButton text="Upload Image" @click="showUploadDialog=true" class="mx-3"/>
+         <!-- <TextButton text="Add item images" @click="addItemImages()" class="ml-n2"/> -->
+      </span>
+
+      <CropImage v-if="showCrop" :imageToCrop="imageToCrop" :cropImageType="cropImageType" 
+         :uploadHandler="imageHandler" :uploadContext="uploadContext" @done="showCrop=false"/>
+
+      <v-data-table v-else :headers="headers" :items="groupImages" item-key="id">
+         <template v-slot:item.image="{ item }">
+            <img :src="item.thumbUrl" height="75"/>
+         </template>
+         <template v-slot:item.active="{ item }" >
+            <div v-if="item.imageType == ImageType.GROUP" width="100%" class="d-flex justify-center">
+               <v-checkbox v-model="item.active" @change="updateImage(item)" class="mt-5"/>
+            </div>
+         </template>
+         <template v-slot:item.cropActions="{ item }">
+            <div v-if="imageMgr.isUploadImage(item)" class="d-flex flex-column">
+               <TextButton text="group crop" @click="cropImage(item, ImageType.GROUP)"/>
+            </div>
+         </template>
+         <template v-slot:item.actions="{ item }">
+            <DeleteButton @click="deleteImage(item)"/>
+         </template>
+      </v-data-table>
    </v-card>
+   <v-dialog v-model="showUploadDialog" width="auto">
+      <UploadImage :uploadHandler="imageHandler" :uploadContext="uploadContext" @done="showUploadDialog=false"/>
+   </v-dialog>
 </template>
 
 <script setup>
-   import { onMounted, ref } from 'vue'
+   import { computed, ref } from 'vue'
+   import { useItemStore }  from '@/stores/itemStore'
    import { useGroupStore } from '@/stores/groupStore'
+   import { useImageMgr }   from '@/stores/image/imageMgr'
+   import { useGroupImageHandler } from '@/stores/image/groupImageHandler'
+   import UploadImage       from '@/components/image/UploadImage.vue'
+   import CropImage         from '@/components/image/CropImage.vue'
    import IconButton        from '@/components/util/IconButton.vue'
-   import { Emit, GroupUserState } from '@/utils/constants'
+   import TextButton        from '@/components/util/TextButton.vue'
+   import DeleteButton      from '@/components/util/DeleteButton.vue'
+   import { ImageType } from '@/utils/constants'
+   import { Emit } from '@/utils/constants'
    
-   const props = defineProps({ group: Object })
+   const props = defineProps({ groupId: String })
    const emit  = defineEmits([Emit.DONE])
 
    const groupStore = useGroupStore()
-   const groupUserStates = [ GroupUserState.MEMBER, GroupUserState.MODERATOR ] //GroupUserState.VIEWER
-   const groupUserState = ref('')
+   const itemStore    = useItemStore()
+   const imageMgr     = useImageMgr()
+   const imageHandler = useGroupImageHandler()
+   const showCrop  = ref(false)
+   const imageToCrop = ref(null)
+   const cropImageType = ref("")
+   const showUploadDialog = ref(false)
    
-   onMounted(() => {
-      // console.log("EditGroupUser", props.groupUser)
-      // groupUserState.value = props.groupUser.state
-   })
+   const headers = [
+      { title: '',       key: 'image',       align: 'center', sortable: false },
+      { title: 'Type',   value: 'imageType', align: 'center' },
+      { title: 'Active', key: 'active',      align: 'center', sortable: false },
+      { title: "",       key: "cropActions" },
+      { title: '',       key: 'actions',     align: 'center', sortable: false }
+   ]
    
-   const save = () => {
-      if (stateChanged(GroupUserState.MEMBER, GroupUserState.MODERATOR)) { groupStore.addModeratorId(   props.groupUser.groupId, props.groupUser.id) }
-      if (stateChanged(GroupUserState.MODERATOR, GroupUserState.MEMBER)) { groupStore.removeModeratorId(props.groupUser.groupId, props.groupUser.id) }
-     
-      emit(Emit.DONE)
+   // read from store so image list dynamically updated 
+   const group         = computed(() => groupStore.getMyGroup(props.groupId))
+   const groupImages   = computed(() => group.value?.images ?? [])
+   const uploadContext = computed(() => { return { uploadImageType:ImageType.UPLOAD, groupId:props.groupId }})
+   
+   const cropImage = (imageSet, imageType) => {
+      imageToCrop.value = imageSet
+      cropImageType.value = imageType
+      showCrop.value = true
    }
+   
+   // commented out because group items somewhat hidden, so doesn't make sense to get from item
+   // const addItemImages = () => { 
+   //    const images = [ ...userImages.value ]
+   //    const currImageIds = images.map(image => image.id)
+   //    for (const item of itemStore.myItems) {
+   //       for (const imageSet of item.otherImages) {
+   //          if (imageSet.imageType == ImageType.USER && !currImageIds.includes(imageSet.id))  {
+   //             images.push({ ...imageSet, originItemId: item.id })
+   //          }
+   //       }
+   //    }
+   //    userStore.updateImages(images)
+   // }
 
-   const stateChanged = (prev, curr) => { return (props.groupUser.state == prev && groupUserState.value == curr) }
+   const updateImage  = (imageSet) => { groupStore.updateImage(props.groupId, imageSet) }
+   const deleteImage  = (imageSet) => { groupStore.deleteImage(props.groupId, imageSet) }
 </script>
 
 <style>
