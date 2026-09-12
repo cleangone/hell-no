@@ -19,7 +19,7 @@
          <template v-slot:item.actions="{ item }">
             <div v-if="userOwnsGroup(item)">
                <EditButton   @click="editGroup(item)"/>
-               <DeleteButton @click="deleteGroup(item)"/>
+               <DeleteButton @click="deleteGroup(item)" :disabled="disableDelete(item)"/>
             </div>
          </template>
       </v-data-table>
@@ -32,7 +32,7 @@
       <AddGroup :userId="userStore.userId" @done="showAddGroupDialog=false"/>
    </v-dialog>
    <v-dialog v-model="showEditGroupDialog" width="auto">
-      <EditGroup :group="selectedGroup" @done="showEditGroupDialog=false"/>
+      <EditGroupDialog :groupId="selectedGroup.id" @done="showEditGroupDialog=false"/>
    </v-dialog>
    <v-dialog v-model="showDeleteGroupDialog" width="auto">
       <DeleteGroup :group="selectedGroup" @done="showDeleteGroupDialog=false"/>
@@ -44,13 +44,13 @@
    import { useUserStore }   from '@/stores/userStore'
    import { useGroupStore }  from '@/stores/groupStore'
    import { useActionStore } from '@/stores/actionStore'
-   import AccountGroupUsers from './AccountGroupUsers.vue'
-   import AddGroup       from '@/components/group/AddGroup.vue'
-   import EditGroup      from '@/components/group/EditGroup.vue'
-   import DeleteGroup    from '@/components/group/DeleteGroup.vue'
-   import EditButton     from '@/components/util/EditButton.vue'
-   import DeleteButton   from '@/components/util/DeleteButton.vue'
-   import TextButton     from '@/components/util/TextButton.vue'
+   import AccountGroupUsers  from './AccountGroupUsers.vue'
+   import AddGroup           from '@/components/group/AddGroup.vue'
+   import EditGroupDialog    from '@/components/group/EditGroupDialog.vue'
+   import DeleteGroup        from '@/components/group/DeleteGroup.vue'
+   import EditButton         from '@/components/util/EditButton.vue'
+   import DeleteButton       from '@/components/util/DeleteButton.vue'
+   import TextButton         from '@/components/util/TextButton.vue'
    import { ActionType, GroupUserState } from '@/utils/constants'
    
    const userStore   = useUserStore()
@@ -72,6 +72,7 @@
    ]
 
    const userOwnsGroup = (group) => { return group.ownerId == userStore.userId }
+   const disableDelete = (group) => { return group.userIds.length > 1 } // userIds includes ownerId
 
    const groups = computed(() => { 
       const displayGroups = []

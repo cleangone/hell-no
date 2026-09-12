@@ -12,6 +12,7 @@ import ArtistView    from '../views/ArtistView.vue'
 import FavoritesView from '../views/FavoritesView.vue'
 import FeedView      from '../views/FeedView.vue'
 import ForgotView    from '../views/ForgotView.vue'
+import GroupView     from '../views/GroupView.vue'
 import InvisibleView from '../views/InvisibleView.vue'
 import LoginView     from '../views/LoginView.vue'
 import MessageView   from '../views/MessageView.vue'
@@ -47,6 +48,7 @@ const router = createRouter({
       createRoute(Route.FAVORITES,  FavoritesView),
       createRoute(Route.FEED,       FeedView),
       createRoute(Route.FORGOT,     ForgotView),
+      createRoute(Route.GROUP,      GroupView,     ':id'),
       createRoute(Route.INVISIBLE,  InvisibleView),
       createRoute(Route.LOGIN,      LoginView),
       createRoute(Route.MESSAGE,    MessageView),

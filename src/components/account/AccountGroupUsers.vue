@@ -9,8 +9,8 @@
 
       <v-data-table :headers="headers" :items="groupUsers">
          <template v-slot:item.actions="{ item }">
-            <EditButton   v-if="canEditGroupUser(item)"   @click="editGroupUser(item)"/>
-            <DeleteButton v-if="canDeleteGroupUser(item)" @click="deleteGroupUser(item)"/>
+            <EditButton v-if="canEditUser(item)" @click="editUser(item)"/>
+            <IconButton v-if="canRemoveUser(item)" icon="mdi-account-remove" @click="removeUser(item)"/>
          </template>
       </v-data-table>
    </div>
@@ -24,8 +24,8 @@
    <v-dialog v-model="showEditDialog" width="auto">
       <EditGroupUser :groupUser="selectedGroupUser" @done="showEditDialog=false"/>
    </v-dialog>
-   <v-dialog v-model="showDeleteDialog" max-width="500px">
-      <DeleteGroupUser :groupUser="selectedGroupUser" @done="showDeleteDialog=false"/>
+   <v-dialog v-model="showRemoveDialog" max-width="500px">
+      <RemoveGroupUser :groupUser="selectedGroupUser" @done="showRemoveDialog=false"/>
    </v-dialog>
 </template>
 
@@ -33,13 +33,13 @@
    import { computed, ref } from 'vue'
    import { useGroupStore } from '@/stores/groupStore'
    import { useUserStore }  from '@/stores/userStore'
-   import InviteOtherGroup from '@/components/group/InviteOtherGroup.vue'
-   import EditGroupUser    from '@/components/group/EditGroupUser.vue'
-   import DeleteGroupUser  from '@/components/group/DeleteGroupUser.vue'
-   import AddGroupInvite   from '@/components/invite/AddGroupInvite.vue'  
-   import EditButton       from '@/components/util/EditButton.vue'
-   import DeleteButton     from '@/components/util/DeleteButton.vue'
-   import TextButton       from '@/components/util/TextButton.vue'
+   import InviteOtherGroup  from '@/components/group/InviteOtherGroup.vue'
+   import EditGroupUser     from '@/components/group/EditGroupUser.vue'
+   import RemoveGroupUser   from '@/components/group/RemoveGroupUser.vue'
+   import AddGroupInvite    from '@/components/invite/AddGroupInvite.vue'  
+   import EditButton        from '@/components/util/EditButton.vue'
+   import IconButton        from '@/components/util/IconButton.vue'
+   import TextButton        from '@/components/util/TextButton.vue'
    import { Emit, GroupUserState } from '@/utils/constants'
    
    const props = defineProps(['groupId'])
@@ -47,17 +47,17 @@
    
    const groupStore = useGroupStore()
    const userStore  = useUserStore()
-   const showInviteDialog = ref(false)
+   const showInviteDialog  = ref(false)
    const showInviteOtherGroupDialog = ref(false)
-   const showEditDialog   = ref(false)
-   const showDeleteDialog = ref(false)
+   const showEditDialog    = ref(false)
+   const showRemoveDialog  = ref(false)
    const selectedGroupUser = ref({})
 
    const headers = [
       { title: 'Username',   value: 'username',  sortable: true },
       { title: 'First Name', value: 'firstName', sortable: true },
       { title: 'Status',     value: 'state', align: 'center', sortable: true },
-      { title: '', key: "actions" },
+      { title: '', key: "actions", sortable: false },
    ]
 
    const group = computed(() => { return groupStore.getGroup(props.groupId) })
@@ -86,7 +86,7 @@
          { id: user.id, groupId: groupId, username: user.username, firstName: user.firstName, state: state } : {}
    }
 
-   const canDeleteGroupUser = (groupUser) => { 
+   const canRemoveUser = (groupUser) => { 
       // owner can delete if not trying to delete self
       // mod can delete if not trying to delete the owner or a mod
       if (group.value.ownerId == userStore.userId) {
@@ -98,21 +98,21 @@
       else { return false }
    }
 
-   const canEditGroupUser = (groupUser) => { 
+   const canEditUser = (groupUser) => { 
       // owner can edit if not trying to edit self or invited user
       return (group.value.ownerId == userStore.userId &&
               groupUser.state != GroupUserState.OWNER && 
               groupUser.state != GroupUserState.INVITED)
    }
    
-   const editGroupUser = (groupUser) => {
+   const editUser = (groupUser) => {
       selectedGroupUser.value = groupUser
       showEditDialog.value = true
    }
 
-   const deleteGroupUser = (groupUser) => {
+   const removeUser = (groupUser) => {
       selectedGroupUser.value = groupUser
-      showDeleteDialog.value = true
+      showRemoveDialog.value = true
    }
 </script>
 

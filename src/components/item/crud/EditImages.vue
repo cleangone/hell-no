@@ -33,6 +33,10 @@
                Item<br>Page
             </template>
             <template v-slot:item.image="{ item }">
+               <!-- TODO - add group vcard with curved sides -->
+               <!-- <div v-if="item.imageType==ImageType.GROUP" class="shaped-image-container">
+                  <img :src="item.thumbUrl" @click="showItemImage(item)" class="hand">
+               </div> -->
                <img :src="item.thumbUrl" @click="showItemImage(item)" height="75" class="hand" :class="imageClass(item)"/>
             </template>
             <template v-slot:header.imageType="{ }">
@@ -55,6 +59,7 @@
                <div v-if="isPrimaryImage(item)" class="d-flex flex-column">
                   <TextButton text="crop"         @click="cropImage(item, ImageType.CROP)"/>
                   <TextButton text="gallery crop" @click="cropImage(item, ImageType.GALLERY)"/>
+                  <TextButton text="group crop"   @click="cropImage(item, ImageType.GROUP)"/>
                   <TextButton text="avatar crop"  @click="cropImage(item, ImageType.USER)"/>
                </div>
             </template>
@@ -237,5 +242,5 @@
 .image-circle {
   border-radius: 50%; 
   object-fit: cover;
-}      
+} 
 </style>

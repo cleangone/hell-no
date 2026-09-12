@@ -27,6 +27,14 @@
    <RecentGalleryThumbs v-if="recentGalleries.length" :galleries="recentGalleries" 
       :maxRows="recentRows" bypassShowUser class="mt-10 mb-5"/>
 
+   <!-- groups if user logged in and not solo -->
+   <div v-if="userStore.userExists && !viewMgr.solo && groups.length">
+      <span class="font-weight-bold">Groups</span> |
+      <span v-for="group in groups" :key="group.id">
+         <RouterLink :to="Route.GROUP.url + group.id">{{ group.name }} </RouterLink>  |
+      </span>
+   </div>
+
    <!-- <div v-if="favoriteItems?.length" class="my-3">
       <v-row> -->
          <!-- <v-col v-if="favoriteItems?.length" class="box-border box-border-color ma-4 px-3">
@@ -73,6 +81,7 @@
    import { useSeoMeta } from '@unhead/vue'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
+   import { useGroupStore }   from '@/stores/groupStore'
    import { useInviteStore }  from '@/stores/inviteStore'
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useWallMgr }      from '@/stores/wallMgr'
@@ -92,6 +101,7 @@
    
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
+   const groupStore   = useGroupStore()
    const inviteStore  = useInviteStore()
    const itemMgr      = useItemMgr()
    const wallMgr      = useWallMgr()
@@ -195,6 +205,8 @@
    const wallDivStyle   = computed(() => "height:" + (((slideRowHeight.value + 10) * wallRows.value)) + "px;")
    const wallBackgroundStyle = computed(() => wallDivStyle.value + " opacity:" + wallBackgroundOpacity.value + ";")
    
+   const groups = computed(() => { return groupStore.myGroups })
+
    const recentGalleries = computed(() => { 
       const galleries = []     
       const allGalleries = viewMgr.solo ? galleryStore.myGalleries : galleryStore.publicGalleries

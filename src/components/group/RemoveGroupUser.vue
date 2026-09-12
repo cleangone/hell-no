@@ -1,5 +1,5 @@
 <template>
-   <DeleteConfirm type="Group User" :name="props.groupUser.username" @delete="deleteGroupUser()" @cancel="$emit(Emit.DONE)"/>
+   <DeleteConfirm action="Remove" type="Group User" :name="props.groupUser.username" @delete="removeGroupUser()" @cancel="$emit(Emit.DONE)"/>
 </template>
 
 <script setup>
@@ -11,7 +11,7 @@
    const emit = defineEmits([Emit.DONE]);
    const groupStore = useGroupStore()
    
-   const deleteGroupUser = () => {
+   const removeGroupUser = () => {
       // no harm to remove an array entry that doesn't exist
       groupStore.removeUserId(props.groupUser.groupId, props.groupUser.id)
       groupStore.removeInvitedId(props.groupUser.groupId, props.groupUser.id)

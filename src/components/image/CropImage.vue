@@ -3,6 +3,8 @@
       <v-form>
          <cropper v-if="cropImageType == ImageType.GALLERY" ref="cropperElement" :src="urlToCrop" @change="onCropChange"
             :stencil-props="{aspectRatio: 16/9}" class="image-cropper"/>
+         <cropper v-if="cropImageType == ImageType.GROUP" ref="cropperElement" :src="urlToCrop" @change="onCropChange"
+            :stencil-props="{aspectRatio: 4/3}" class="image-cropper"/>
          <cropper v-else-if="cropImageType == ImageType.USER" ref="cropperElement" :src="urlToCrop" @change="onCropChange"
             :stencil-component="CircleStencil" class="image-cropper"/>
          <cropper v-else ref="cropperElement" :src="urlToCrop" @change="onCropChange" class="image-cropper"/>

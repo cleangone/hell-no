@@ -7,6 +7,7 @@
       - watch a gallery, filter by watched
       - combine recent updated and viewed with toggle
       - filter by artist?
+      - have a gallery badge with the number of items not seen by user
 
       Chris K:
        - ipads don't have background image?
@@ -15,6 +16,7 @@
        - want to bring ipad to art meet-up - has to be app in order to alwyas work
 */
 export const versions = [   
+   ["v2.55.0", "9/9/26"],  // Initial Groups 2.0, with emphisis on group users
    ["v2.54.0", "9/9/26"],  // Update Invisible items to be any that are not in a gallery
    ["v2.53.1", "9/8/26"],  // Handle trackpad sweep in FullscreenItems
    ["v2.53.0", "9/7/26"],  // Add PlayItems, which goes directly to fullscreen

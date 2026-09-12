@@ -114,6 +114,7 @@ export const ImageType = {
    OTHER:      'Other',
    CROP:       'Crop',
    GALLERY:    'Gallery',
+   GROUP:      'Group',
    HEADER:     'Header',
    BACKGROUND: 'Background',
    UPLOAD:     'Upload',
@@ -145,6 +146,7 @@ export const ItemOrigin = {
    EXTERNAL:  'ext',
    FAVORITES: 'favorites',
    GALLERY:   'gallery',
+   GROUP:     'group',
    INVISIBLE: 'invisible',
    RANDOM:    'random',
    RECENT:    'recent',
@@ -210,10 +212,11 @@ export const Route = {
 export const State = {
    PUBLIC:    'Public',
    PRIVATE:   'Private',
+   GROUP:     'Group',   
    HIDDEN:    'Hidden',   
 }
-export const ItemStates    = [ State.PUBLIC, State.PRIVATE, State.HIDDEN ]
-export const GalleryStates = [ State.PUBLIC, State.PRIVATE ]
+export const ItemStates    = [ State.PUBLIC, State.PRIVATE, State.GROUP, State.HIDDEN ]
+export const GalleryStates = [ State.PUBLIC, State.PRIVATE, State.GROUP ]
 export const GroupStates   = [ State.PUBLIC, State.GROUP, State.PRIVATE ]
 
 export const ThumbHeights = { 

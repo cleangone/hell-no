@@ -13,10 +13,21 @@ import { FeedType, State } from '@/utils/constants'
       id
       name
       ownerId (userId)
-      state: State: PUBLIC, GROUP, PRIVATE
+      state: State: PUBLIC, GROUP, PRIVATE - todo keep??? 
       userIds[] 
       moderatorIds[] - ids also in userIds
       invitedIds[]
+      images[]
+         id
+         itemId 
+         imageType: GalleryImageTypes: ImageType: GROUP, HEADER, BACKGROUND
+         name
+         active 
+         url
+         thumbUrl 
+         dimensions
+         originalDimensions
+         originalLargeThumbUrl
       dateCreated
       dateModified
 */
