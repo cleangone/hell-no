@@ -16,6 +16,7 @@
        - want to bring ipad to art meet-up - has to be app in order to alwyas work
 */
 export const versions = [   
+   ["v2.55.3", "9/12/26"], // Make GroupThumb a set height and variable width
    ["v2.55.2", "9/12/26"], // Add GroupThumb
    ["v2.55.1", "9/12/26"], // Add group image upload/crop
    ["v2.55.0", "9/9/26"],  // Initial Groups v2, with emphisis on group users

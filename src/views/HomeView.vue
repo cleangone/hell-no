@@ -33,9 +33,11 @@
       <span v-for="group in nonThumbGroups" :key="group.id">
          | <RouterLink :to="Route.GROUP.url + group.id">{{ group.name }} </RouterLink> 
       </span>
-      <v-row v-if="thumbGroups.length" justify="space-around" class="mt-2">
-         <GroupThumb v-for="group in thumbGroups" :key="group.id" :group="group" :size="ThumbSize.LG"/>
-      </v-row>
+      <v-container>
+         <v-row v-if="thumbGroups.length" justify="space-around" class="mt-2">
+            <GroupThumb v-for="group in thumbGroups" :key="group.id" :group="group"/>
+         </v-row>
+      </v-container>
    </div>
 
    <!-- <div v-if="favoriteItems?.length" class="my-3">
