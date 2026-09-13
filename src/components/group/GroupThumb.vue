@@ -1,147 +1,53 @@
 <template>
-   <v-card :width="cardWidth" ref="cardRef" class="custom-radius-card position-relative d-flex flex-column text-center thumb-link" 
-         :class="cardMargin" :style="backgroundStyle" style="z-index: 1">
-      <RouterLink :to="galleryUrl">
-         <v-carousel v-if="galleryImages.length>1" cycle :interval="carouselInterval" :height="carouselHeight"
-            hide-delimiters :show-arrows="false" v-on:update:modelValue="setGalleryImageIndex">
-            <v-carousel-item v-for="image in galleryImages" :key="image.id">
-               <!-- v-carousel-item transition not working - old version of vuetify? -->
-               <!-- transition="v-slide-x-transition" reverse-transition="v-slide-x-reverse-transition"> -->
-               <v-img :src="image.thumbUrl" @mouseover="mouseover()" @mouseleave="mouseleave()" class="pointer"></v-img>
-            </v-carousel-item>
-         </v-carousel>
-         <v-img v-else :src="galleryImage.thumbUrl" @mouseover="mouseover()" @mouseleave="mouseleave()"></v-img>
-      </RouterLink>
-      <div v-if="showText" :class="textMargin">
-         <div class="text-body-2">
-            <span class="font-weight-bold">{{ gallery.name }}</span>
-            <span v-if="visibleItemCount" class="ml-1">({{ visibleItemCount }})</span>
+   <v-card :width="cardWidth" :class="cardMargin" class="group-card d-flex flex-column thumb-link" style="z-index: 1">
+      <HorizontalDiv >
+         <RouterLink v-if="image" :to="groupUrl" class="d-block flex-grow-1"> <!-- class keeps RouterLink from minimizing -->
+            <v-img  :src="image.thumbUrl" class="hand"/>
+         </RouterLink>
+         <div class="mt-1 mx-3">
+            <span class="font-weight-bold">{{ group.name }}</span>
+            <UserDateText :date="group.dateModified" class="text-body-2"/>
          </div>
-         <UserDateText :user="fromUser" :date="showDateModified ? gallery.dateContentModified : null" class="text-body-2"/>
-      </div>
-      <div v-if="addIconRow">&nbsp;</div>
-      <div v-if="showIcons" class="position-absolute bottom-0 right-0 hand blue-dk">
-         <v-icon v-if="parentIcon" :icon="parentIcon" @click="$emit(Emit.TOGGLE)"/>
-         <v-icon v-if="childIcon"  :icon="childIcon"  @click="$emit(Emit.CLOSE)"/>
-      </div>
+      </HorizontalDiv>
    </v-card>
-   
-   <ItemPopup v-if="popup" :popupImage="popup"/>
-
-   <v-dialog v-model="showEditDialog" width="auto">
-      <EditGallery :gallery="gallery" @done="showEditDialog=false"/>
-   </v-dialog>
 </template>
 
 <script setup>
-   import { computed, onErrorCaptured, ref } from 'vue'
+   import { computed, ref } from 'vue'
    import { useWindowSize } from '@vueuse/core'
-   import ItemPopup    from '@/components/item/ItemPopup.vue'
-   import EditGallery  from '@/components/gallery/EditGallery.vue'
-   import UserDateText from '@/components/util/UserDateText.vue'
-   import { useUserStore }    from '@/stores/userStore'
-   import { useGalleryStore } from '@/stores/galleryStore'
-   import { useItemMgr }      from '@/stores/itemMgr'
-   import { useViewStore }    from '@/stores/viewStore'
-   import { useViewMgr }      from '@/stores/viewMgr'
-   import { handleError, objAspectRatio, thumbBackgroundColorStyle } from '@/utils/utils'
-   import { Emit, GalleryThumbMaxWidths as MaxWidths, GalleryThumbOptions, ImageType, Route, ThumbSize } from '@/utils/constants'
+   import { useViewStore }  from '@/stores/viewStore'
+   import { useViewMgr }    from '@/stores/viewMgr'
+   import HorizontalDiv     from '@/components/util/HorizontalDiv.vue'
+   import UserDateText      from '@/components/util/UserDateText.vue'
+   import { Emit, GalleryThumbMaxWidths as MaxWidths, ImageType, Route, ThumbSize } from '@/utils/constants'
    
-   const props = defineProps({ gallery: Object, showChildImages:Boolean, bypassShowUser:Boolean, 
-       parentIcon:String, childIcon:String, size:String, dense:Boolean })
-   const emit = defineEmits([ Emit.CLOSE, Emit.TOGGLE ])
+   const props = defineProps({ group: Object, size:String })
+   const emit  = defineEmits([ Emit.CLOSE ])
    
    const { width: windowWidth } = useWindowSize()
-   const userStore    = useUserStore()
-   const galleryStore = useGalleryStore()
-   const itemMgr      = useItemMgr()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
-   const cardRef = ref(null)
-   const popup = ref(null)
-   const showEditDialog = ref(false)
-   const mouseleaveTime = ref(Date.now())
-   const galleryImageIndex = ref(0)
    
-   onErrorCaptured((err) => { return handleError(err, "GalleryThumb") })
-
-   const galleryUrl = computed(() => Route.GALLERY.url + (props.gallery?.tag?.length ? props.gallery.tag : props.gallery.id))
+   const cardMargin = computed(() => viewMgr.isXs ? "mb-2" : "mb-5")
+   const groupUrl   = computed(() => Route.GROUP.url + props.group.id)
    const thumbSize  = computed(() => props.size ?? (viewMgr.isXs ? viewStore.thumbSize.galleryXsSize : viewStore.thumbSize.gallerySize))
-   const showText   = computed(() => thumbSize.value != ThumbSize.IMG)
-   const showIcons  = computed(() => showText.value && (props.parentIcon || props.childIcon))
-   const addIconRow = computed(() => viewMgr.isXs && showIcons.value)
    const cardWidth = computed(() => viewMgr.isXs ? 
       windowWidth.value * MaxWidths.xsSizes.get(thumbSize.value) :
       MaxWidths.sizes.get(thumbSize.value)
    )
    
-   const cardMargin  = computed(() => viewMgr.isXs ? "mb-2" : "mb-5")
-   const textMargin  = computed(() => props.dense || viewMgr.isXs ? "my-1" : "my-3")
-
-   const carouselHeight   = computed(() => cardWidth * 9 / 16)
-   const carouselInterval = computed(() => 4000 + Math.floor(Math.random() * 4000)) // random bet 4-8 secs 
-   const visibleItemCount = computed(() => viewMgr.galleryItemCount(props.gallery))
-   const showUser         = computed(() => !props.bypassShowUser && viewStore.galleryThumbOptions.includes(GalleryThumbOptions.USER))
-   const showDateModified = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.UPDATED))
-   
-   const fromUser = computed(() => { 
-      return showUser.value ? { id: props.gallery.userId, name: userStore.getUsername(props.gallery.userId) } : null
-   }) 
-
-   // todo - this only goes down one level
-   const childGalleryImages = computed(() => { 
-      const images = []
-      for (const childGalleryId of props.gallery.childGalleryIds) {
-         const childGallery = galleryStore.getGallery(childGalleryId)
-         if (childGallery.images.length && viewMgr.galleryIsVisibleToUser(childGallery)) { images.push(...childGallery.images) }
+   const image = computed(() => { 
+      for (const image of props.group.images) {
+         if (image.active && image.imageType == ImageType.GROUP) { 
+            console.log("thumbUrl", image.thumbUrl)
+            return image }
       }
-      return images
+      return null
    })
-
-   const galleryImages = computed(() => { 
-      const images = []
-      const allImages = [ ...props.gallery.images ]
-      if (props.showChildImages) { allImages.push(...childGalleryImages.value) }
-      for (const image of allImages) {
-         if (image.active && (!image.imageType || image.imageType == ImageType.GALLERY)) { images.push(image) }
-      }
-      if (!images.length) images.push(props.gallery.images[0]) 
-      return images
-   })
-
-   const setGalleryImageIndex = (index) => { galleryImageIndex.value = index }
-   const galleryImage = computed(() => { 
-      // galleryImageIndex can be invalid if showChildImages toggle reduces number of images
-      if (galleryImageIndex.value > galleryImages.value.length-1) { galleryImageIndex.value = 0 }
-      return galleryImages.value[galleryImageIndex.value]
-   })
-
-   const backgroundStyle = computed(() => thumbBackgroundColorStyle(props.gallery))
-
-   const mouseover = () => {
-      if (viewMgr.isXs) { return }
-      
-      const mouseoverTime = Date.now()  
-      setTimeout(() => {  // debounce mouseover 
-         if (mouseoverTime > mouseleaveTime.value ) { 
-            const boundingRect = cardRef.value.$el.getBoundingClientRect()
-            const aspectRatio = objAspectRatio(galleryImage.value.originalDimensions)
-            popup.value = itemMgr.getPopupImage(
-               galleryImage.value.name, null, galleryImage.value.originalLargeThumbUrl, boundingRect, aspectRatio)
-         }
-      }, 250)  
-   }
-
-   const mouseleave = () => {
-      mouseleaveTime.value = Date.now()
-      popup.value = null 
-   }
 </script>
 
 <style>
-
-.custom-radius-card {
+.group-card {
   border-radius: 40px 0 0 40px !important;
 }
-
 </style>

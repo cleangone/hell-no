@@ -28,11 +28,14 @@
       :maxRows="recentRows" bypassShowUser class="mt-10 mb-5"/>
 
    <!-- groups if user logged in and not solo -->
-   <div v-if="userStore.userExists && !viewMgr.solo && groups.length">
-      <span class="font-weight-bold">Groups</span> |
-      <span v-for="group in groups" :key="group.id">
-         <RouterLink :to="Route.GROUP.url + group.id">{{ group.name }} </RouterLink>  |
+   <div v-if="userStore.userExists && !viewMgr.solo && myGroups.length">
+      <span class="font-weight-bold">Groups</span> 
+      <span v-for="group in nonThumbGroups" :key="group.id">
+         | <RouterLink :to="Route.GROUP.url + group.id">{{ group.name }} </RouterLink> 
       </span>
+      <v-row v-if="thumbGroups.length" justify="space-around" class="mt-2">
+         <GroupThumb v-for="group in thumbGroups" :key="group.id" :group="group" :size="ThumbSize.LG"/>
+      </v-row>
    </div>
 
    <!-- <div v-if="favoriteItems?.length" class="my-3">
@@ -89,8 +92,9 @@
    import { useViewMgr }      from '@/stores/viewMgr'
    import { useCacheStore }   from '@/stores/cacheStore'
    import { useLocalStore }   from '@/stores/localStore'
-   import RecentGalleryThumbs from '@/components/gallery/thumb/RecentGalleryThumbs.vue'
    import ItemThumbsPanel     from '@/components/item/thumb/ItemThumbsPanel.vue'
+   import RecentGalleryThumbs from '@/components/gallery/thumb/RecentGalleryThumbs.vue'
+   import GroupThumb          from '@/components/group/GroupThumb.vue'
    import UserThumb           from '@/components/user/UserThumb.vue'
    import SplitWall           from '@/components/wall/SplitWall.vue'
    import DarkButton          from '@/components/util/DarkButton.vue'
@@ -205,7 +209,25 @@
    const wallDivStyle   = computed(() => "height:" + (((slideRowHeight.value + 10) * wallRows.value)) + "px;")
    const wallBackgroundStyle = computed(() => wallDivStyle.value + " opacity:" + wallBackgroundOpacity.value + ";")
    
-   const groups = computed(() => { return groupStore.myGroups })
+   const myGroups    = computed(() => groupStore.myGroups )
+   const thumbGroups = computed(() => {
+      const groups = []
+      if (myGroups.value) {
+         for (const group of myGroups.value) {
+            if (group.images?.length) {
+               for (const image of group.images) {
+                  if (image.active) { 
+                     groups.push(group) 
+                     break
+                  }
+               }
+            } 
+         }
+      }
+      return groups
+   })
+   const thumbGroupIds  = computed(() => thumbGroups.value ? thumbGroups.value.map(group => group.id) : [])
+   const nonThumbGroups = computed(() => thumbGroupIds.value ? myGroups.value.filter(group => !thumbGroupIds.value.includes(group.id)) : [])
 
    const recentGalleries = computed(() => { 
       const galleries = []     
