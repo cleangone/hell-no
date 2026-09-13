@@ -68,6 +68,7 @@
       <div v-else-if="isMyItem" class="expansion">
          <v-expansion-panels multiple>
             <CheckboxExpansion type="Galleries" :checkboxes="galleryCheckboxes" class="mx-3"/>
+            <CheckboxExpansion type="Groups"    :checkboxes="groupCheckboxes"   class="mx-3"/>
          </v-expansion-panels>
       </div>
    </v-form>
@@ -86,6 +87,7 @@
    import { useItemStore }    from '@/stores/itemStore'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
+   import { useGroupMgr }     from '@/stores/groupMgr'
    import { useArtistMgr }    from '@/stores/artistMgr'
    import { useWallStore }    from '@/stores/wallStore'
    import { useWallMgr }      from '@/stores/wallMgr'
@@ -105,6 +107,7 @@
    const itemStore    = useItemStore()
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
+   const groupMgr     = useGroupMgr()
    const artistMgr    = useArtistMgr()
    const wallStore    = useWallStore()
    const wallMgr      = useWallMgr()
@@ -118,8 +121,10 @@
    const currItemWall = ref(false)  
    const currPrimaryArtistContainer = ref(artistMgr.defaultArtistContainer) 
    const currOtherArtistsContainers = ref([]) 
-   const currItemGalleries = ref([])       
+   const currItemGalleries = ref([])   
+   const currItemGroups    = ref([])      
    const currItemGalleryCheckboxes = ref([])
+   const currItemGroupCheckboxes   = ref([])
    const nextItems = ref([])
    const dataValid = ref(true)
 
@@ -146,11 +151,16 @@
       currOtherArtistsContainers.value = artistMgr.getArtistContainers(item.otherArtists)
       currItemWall.value = wallStore.myWallIncludesItem(item.id)
       
-      const galleryCheckboxContainer = galleryMgr.getCheckboxes(item.galleryIds ?? [])
+      const galleryCheckboxContainer  = galleryMgr.getCheckboxes(item.galleryIds ?? [])
       currItemGalleryCheckboxes.value = galleryCheckboxContainer.checkboxes
       currItemGalleries.value         = galleryCheckboxContainer.selectedGalleries
+
+      const groupCheckboxContainer  = groupMgr.getCheckboxes(item.groupIds ?? [])
+      currItemGroupCheckboxes.value = groupCheckboxContainer.checkboxes
+      currItemGroups.value          = groupCheckboxContainer.selectedGroups
    }
 
+   // todo - remove - left over from when admin could edit items
    const isMyItem = computed(() => currItem.value && currItem.value.userId == userStore.userId)
 
    // handle situations where prop item images updated after component mounted
@@ -160,6 +170,7 @@
       props.item && (currItem.value.id == props.item.id) ? props.item.childItems : currItem.value.childItems)
 
    const selectedGalleryIds = computed(() => selectedCheckboxIds(currItemGalleryCheckboxes.value))
+   const selectedGroupIds   = computed(() => selectedCheckboxIds(currItemGroupCheckboxes.value))
    const selectedCheckboxIds = (checkboxes) => { 
       const ids = []
       for (const checkbox of checkboxes) {
@@ -170,6 +181,7 @@
 
    // computed vars to drive changes to component
    const galleryCheckboxes = computed(() => currItemGalleryCheckboxes.value) 
+   const groupCheckboxes   = computed(() => currItemGroupCheckboxes.value) 
    
    const isItemGroup = (item) => { return item.type == ItemType.GROUP }
    
@@ -201,6 +213,7 @@
          subtitle: currItemSubtitle.value,
          desc: currItemDescContainer.value.content,
          galleryIds: updatedGalleryIds,
+         groupIds: selectedGroupIds.value,
          primaryArtist: artistMgr.getArtistFromContainer(currPrimaryArtistContainer.value),
          otherArtists: artistMgr.getArtistsFromContainers(currOtherArtistsContainers.value),
          onUserWall: currItemWall.value

@@ -13,7 +13,7 @@ import { FeedType, State } from '@/utils/constants'
       id
       name
       ownerId (userId)
-      state: State: PUBLIC, GROUP, PRIVATE - todo keep??? 
+      state: State: PUBLIC, PRIVATE
       userIds[] 
       moderatorIds[] - ids also in userIds
       invitedIds[]
@@ -43,23 +43,17 @@ export const useGroupStore = defineStore('group', () => {
    const groups = useFirestore(groupCollection)   
    const groupIdToGroup = computed(() => { return groups.value ? new Map(groups.value.map((obj) => [obj.id, obj])) : new Map() })
    
-   const myGroupsQuery = computed(() => userStore.userId && query(groupCollection, where('userIds', "array-contains", userStore.userId)))
-   const myRawGroups = useFirestore(myGroupsQuery, [])
-   const myGroups = computed(() => {
-      const sortedGroups = [ ...myRawGroups.value ]
-      sortedGroups.sort(function(a, b){return a.name.localeCompare(b.name)}) 
-      return sortedGroups
-   })
+   const myGroupsQuery    = computed(() => userStore.userId && query(groupCollection, where('userIds', "array-contains", userStore.userId)))
+   const myRawGroups      = useFirestore(myGroupsQuery, [])
+   const myGroups         = computed(() => myRawGroups.value.toSorted((a, b) => a.name.localeCompare(b.name)))
+   const myGroupIds       = computed(() => { return myGroups.value.map((obj) => obj.id) })
+   const myGroupIdToGroup = computed(() => { return new Map(myGroups.value.map((obj) => [obj.id, obj])) })
    
    const myInvitedGroupsQuery = computed(() => userStore.userId && query(groupCollection, where('invitedIds', "array-contains", userStore.userId)))
    const myInvitedGroups = useFirestore(myInvitedGroupsQuery, [])
-   // const myGroupIds = computed(() => { return myGroups.value ? myGroups.value.map((obj) => obj.id) : [] })
-   // const groupIdToMyGroup = computed(() => { return myGroups.value ? new Map(myGroups.value.map((obj) => [obj.id, obj])) : new Map() })
-   const myGroupIds = computed(() => { return myGroups.value.map((obj) => obj.id) })
-   const groupIdToMyGroup = computed(() => { return new Map(myGroups.value.map((obj) => [obj.id, obj])) })
-
+   
    function getMyGroup(id) {
-      return groupIdToMyGroup.value.get(id)
+      return myGroupIdToGroup.value.get(id)
    }
 
    function getUserGroups(userId) {
@@ -127,7 +121,7 @@ export const useGroupStore = defineStore('group', () => {
 
    function updateImage(groupId, updatedImage) {
       const images = []
-      const group = groupIdToMyGroup.value.get(groupId)
+      const group = myGroupIdToGroup.value.get(groupId)
       if (group) {
          for (const image of group.images) {
             images.push(image.id == updatedImage.id ? updatedImage : image)
@@ -147,7 +141,8 @@ export const useGroupStore = defineStore('group', () => {
    }
 
    return { 
-      groups, groupIdToGroup, myGroups, myGroupIds, myInvitedGroups, groupIdToMyGroup, getMyGroup, getUserGroups, getUserGroupsMap, getGroup, getUserIds, 
+      groups, groupIdToGroup, myGroups, myGroupIds, myGroupIdToGroup, myInvitedGroups,
+      getMyGroup, getUserGroups, getUserGroupsMap, getGroup, getUserIds, 
       addGroup, updateGroup, deleteGroup,
       addUserIds, addModeratorId, removeModeratorId, inviteUserIds, removeUserId, acceptInvite, declineInvite, removeInvitedId,
       addImage, updateImage, deleteImage

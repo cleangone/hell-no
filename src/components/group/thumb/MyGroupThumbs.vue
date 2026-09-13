@@ -15,17 +15,17 @@
 
 <script setup>
    import { computed, ref } from 'vue'
-   import { useUserStore }  from '@/stores/userStore'
-   import { useGroupStore } from '@/stores/groupStore'
-   import GroupThumb        from './GroupThumb.vue'
+   import { useUserStore } from '@/stores/userStore'
+   import { useGroupMgr }  from '@/stores/groupMgr'
+   import GroupThumb       from './GroupThumb.vue'
    import { Route } from '@/utils/constants'
    
    const props = defineProps({ })
    
-   const userStore  = useUserStore()
-   const groupStore = useGroupStore()
+   const userStore = useUserStore()
+   const groupMgr  = useGroupMgr()
    
-   const myGroups = computed(() => groupStore.myGroups )
+   const myGroups = computed(() => groupMgr.myPublicGroups )
 
    const thumbGroups = computed(() => {
       const groups = []

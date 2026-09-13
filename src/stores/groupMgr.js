@@ -1,6 +1,7 @@
 import { computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useGroupStore } from '@/stores/groupStore'
+import { isPublic } from '@/utils/utils' 
  
 export const useGroupMgr = defineStore('groupmMgr', () => {   
    const groupStore = useGroupStore()   
@@ -15,11 +16,7 @@ export const useGroupMgr = defineStore('groupmMgr', () => {
       return userGroups
    }
    
-   const mySortedGroups = computed(() => { 
-      const groups = groupStore.myGroups ? groupStore.myGroups : []
-      groups.sort((a, b) => a.name.localeCompare(b.name))
-      return groups
-   })
+   const myPublicGroups = computed(() => groupStore.myGroups.filter(group => isPublic(group)))
 
    const myGroupOptions = computed(() => { 
      const options = []
@@ -32,12 +29,27 @@ export const useGroupMgr = defineStore('groupmMgr', () => {
    function getMyOverlapGroups(groupIds) {
       const groups = []
       for (const groupId of groupIds) { 
-         if (groupStore.groupIdToMyGroup.has(groupId)) { groups.push(groupStore.groupIdToMyGroup.get(groupId)) }
+         if (groupStore.myGroupIdToGroup.has(groupId)) { groups.push(groupStore.myGroupIdToGroup.get(groupId)) }
       }
       return groups
    }
-  
-   const groupIdToMyGroup = computed(() => groupStore.groupIdToMyGroup)
+
+   function getCheckboxes(selectedIds) { 
+      const checkboxContainer = { checkboxes: [], selectedGroups: [] }
       
-   return { mySortedGroups, myGroupOptions, groupIdToMyGroup, getUserMemberGroups, getMyOverlapGroups }
+      for (const group of groupStore.myGroups) {
+         const isSelected = selectedIds.includes(group.id)
+         if (isSelected) { checkboxContainer.selectedGroups.push(group) }
+         checkboxContainer.checkboxes.push({ 
+            id: group.id, 
+            name: group.name, 
+            isSelected: isSelected, 
+         })
+      }
+      // checkboxContainer.checkboxes.sort(function(a, b){return a.name.localeCompare(b.name)}) 
+
+      return checkboxContainer
+   }
+     
+   return { myPublicGroups, myGroupOptions, getUserMemberGroups, getMyOverlapGroups, getCheckboxes }
 })

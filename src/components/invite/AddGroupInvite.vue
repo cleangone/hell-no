@@ -49,7 +49,7 @@
    const groupOptions = computed(() => groupMgr.myGroupOptions) // { title: group.name, value: group.id }
    
    const usersToInvite = computed(() => {
-      const group = props.group ? props.group : groupMgr.groupIdToMyGroup.get(selectedGroupId.value)
+      const group = props.group ? props.group : groupStore.myGroupIdToGroup.get(selectedGroupId.value)
       if (!group) { return [] }
 
       const contactsNotInGroup = [] // { title: contact.fullName, value: contact.id }
@@ -63,7 +63,7 @@
    const invite = () => {
       console.log("AddGroupInvite")
       let newError = null
-      const group = props.group ? props.group : groupMgr.groupIdToMyGroup.get(selectedGroupId.value)
+      const group = props.group ? props.group : groupStore.myGroupIdToGroup.get(selectedGroupId.value)
       const invitedUserContact = selectedUserId.value ?
          userIdToUserContact.value.get(selectedUserId.value) :
          userMgr.getUserContactByEmail(email.value)

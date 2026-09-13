@@ -1,10 +1,12 @@
 <template>
-   <v-form v-model="dataValid">
-      <div>
-         <v-text-field v-model="groupName" label="Group name" :rules="requiredRule" class="ma-3"></v-text-field>
-         <v-text-field v-model="desc" label="Description" class="ma-3"></v-text-field>
-         <v-select v-model="groupState" label="Group State" :items="GroupStates" class="mx-3"></v-select>
-      </div>
+   <v-form v-model="dataValid" class="mt-3">
+      <v-row class="mx-3">
+         <v-col cols="4"><v-text-field v-model="groupName" label="Group name" :rules="requiredRule"/></v-col> 
+         <v-col><v-text-field v-model="desc" label="Description"/></v-col>
+      </v-row>
+      <v-row class="mt-n3 mx-3">
+         <v-col cols="4"><v-select v-model="groupState" label="Group State" :items="GroupStates"/></v-col> 
+      </v-row>
    </v-form>
    <v-card-actions class="justify-end">
       <v-btn color="primary" @click="save()" :disabled="!dataValid">save</v-btn>

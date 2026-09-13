@@ -1,5 +1,5 @@
 <template>
-   <v-card :width="cardWidth" ref="cardRef" style="z-index: 1" :class="cardStyle"
+   <v-card :width="cardWidth" ref="cardRef" style="z-index: 1" :style="cardStyle" :class="cardClass"
          class="d-flex flex-column text-center thumb-container thumb-link">
       <RouterLink :to="itemURL">
          <v-img :src="thumbUrl" @mouseover="mouseover()" @mouseleave="mouseleave()"></v-img>
@@ -18,7 +18,7 @@
    import { useViewMgr }   from '@/stores/viewMgr'
    import ItemPopup        from '@/components/item/ItemPopup.vue'
    import ItemThumbText    from './ItemThumbText.vue'
-   import { handleError } from '@/utils/utils'
+   import { handleError, thumbBackgroundColorStyle } from '@/utils/utils'
    import { Emit, ThumbSize } from '@/utils/constants'
    
    const props = defineProps({ 
@@ -44,11 +44,11 @@
    const artist      = computed(() => item.value.primaryArtist ? item.value.primaryArtist.fullName : null)
    const thumbSize   = computed(() => props.size ?? (viewMgr.isXs ? viewStore.thumbSize.xsSize : viewStore.thumbSize.size))
    const showText    = computed(() => thumbSize.value != ThumbSize.IMG)
-   const cardStyle   = computed(() => (showText.value ? "mb-5" : "mb-2") + (thumbSize.value == ThumbSize.IMG ? "" : " pa-1")) 
+   const cardClass   = computed(() => (showText.value ? "mb-5" : "mb-2") + (thumbSize.value == ThumbSize.IMG ? "" : " pa-1")) 
+   const cardStyle   = computed(() => thumbBackgroundColorStyle(props.item))
    const cardWidth   = computed(() => itemMgr.getItemWidth(item.value, 
                                           viewMgr.getTargetThumbHeight(thumbSize.value), 
                                           viewMgr.getItemMaxLandscapeWidth(thumbSize.value))) 
-
    const mouseover = () => {
       if (viewMgr.isMobile) { return }
 
