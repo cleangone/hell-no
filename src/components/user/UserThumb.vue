@@ -1,13 +1,15 @@
 <template>
-   <RouterLink :to="userUrl">
-      <HorizontalDiv>
+   <HorizontalDiv>
+      <RouterLink :to="userUrl">
          <AvatarImage :image="userImage" class="pa-1 bg-black"/>
-         <div class="ml-2 text-left">
+      </RouterLink>
+      <div class="ml-2 mb-2 d-flex flex-column align-start justify-center">
+         <RouterLink :to="userUrl">
             <div>{{ username }}</div>
-            <div>{{ itemCount ? "(" + itemCount + ")" : "" }}</div>
-         </div>
-      </HorizontalDiv>
-   </RouterLink>
+         </RouterLink>
+         <div class="mt-n1">{{ itemCount ? "(" + itemCount + ")" : "&nbsp" }}</div>
+      </div>
+   </HorizontalDiv>
 </template>
 
 <script setup>

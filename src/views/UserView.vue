@@ -31,6 +31,8 @@
    <RecentGalleryThumbs v-if="visibleGalleries.length" :galleries="visibleGalleries" 
       :maxRows="galleryRows" :toRouteId="route.params.id"  bypassShowUser class="mt-10 mb-5"/>
 
+   <MyGroupThumbs v-if="route.params.id == userStore.userId"/>
+
    <!-- recent updated, viewed -->
    <div v-if="viewMgr.isXs">
       <div class="mx-2 mb-10 bg-shade">
@@ -67,6 +69,7 @@
    import { useViewMgr }      from '@/stores/viewMgr'
    import { useCacheStore }   from '@/stores/cacheStore'  
    import RecentGalleryThumbs from '@/components/gallery/thumb/RecentGalleryThumbs.vue'
+   import MyGroupThumbs       from '@/components/group/thumb/MyGroupThumbs.vue'
    import ItemThumbsPanel     from '@/components/item/thumb/ItemThumbsPanel.vue'
    import Avatar              from '@/components/user/avatar/Avatar.vue'
    import SplitWall           from '@/components/wall/SplitWall.vue'
@@ -76,7 +79,7 @@
    
    const WALL_BCKGND_OPACITY = .15
    
-   const route  = useRoute()
+   const route        = useRoute()
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
    const itemMgr      = useItemMgr()

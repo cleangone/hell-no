@@ -28,17 +28,7 @@
       :maxRows="recentRows" bypassShowUser class="mt-10 mb-5"/>
 
    <!-- groups if user logged in and not solo -->
-   <div v-if="userStore.userExists && !viewMgr.solo && myGroups.length">
-      <span class="font-weight-bold">Groups</span> 
-      <span v-for="group in nonThumbGroups" :key="group.id">
-         | <RouterLink :to="Route.GROUP.url + group.id">{{ group.name }} </RouterLink> 
-      </span>
-      <v-container>
-         <v-row v-if="thumbGroups.length" justify="space-around" class="mt-2">
-            <GroupThumb v-for="group in thumbGroups" :key="group.id" :group="group"/>
-         </v-row>
-      </v-container>
-   </div>
+   <MyGroupThumbs v-if="!viewMgr.solo"/>
 
    <!-- <div v-if="favoriteItems?.length" class="my-3">
       <v-row> -->
@@ -86,7 +76,6 @@
    import { useSeoMeta } from '@unhead/vue'
    import { useUserStore }    from '@/stores/userStore'
    import { useGalleryStore } from '@/stores/galleryStore'
-   import { useGroupStore }   from '@/stores/groupStore'
    import { useInviteStore }  from '@/stores/inviteStore'
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useWallMgr }      from '@/stores/wallMgr'
@@ -96,18 +85,17 @@
    import { useLocalStore }   from '@/stores/localStore'
    import ItemThumbsPanel     from '@/components/item/thumb/ItemThumbsPanel.vue'
    import RecentGalleryThumbs from '@/components/gallery/thumb/RecentGalleryThumbs.vue'
-   import GroupThumb          from '@/components/group/GroupThumb.vue'
+   import MyGroupThumbs       from '@/components/group/thumb/MyGroupThumbs.vue'
    import UserThumb           from '@/components/user/UserThumb.vue'
    import SplitWall           from '@/components/wall/SplitWall.vue'
    import DarkButton          from '@/components/util/DarkButton.vue'
    import ShowNotifications   from '@/components/notification/ShowNotifications.vue'
    import { timestampsEqual } from '@/utils/dateUtils'
    import { isOwned, randomizeArray } from '@/utils/utils'
-   import { Defaults, ItemOrigin, Route, ThumbSize, TodoType, WallRowHeight } from '@/utils/constants'
+   import { Defaults, ItemOrigin, Route, TodoType, WallRowHeight } from '@/utils/constants'
    
    const userStore    = useUserStore()
    const galleryStore = useGalleryStore()
-   const groupStore   = useGroupStore()
    const inviteStore  = useInviteStore()
    const itemMgr      = useItemMgr()
    const wallMgr      = useWallMgr()
@@ -211,26 +199,6 @@
    const wallDivStyle   = computed(() => "height:" + (((slideRowHeight.value + 10) * wallRows.value)) + "px;")
    const wallBackgroundStyle = computed(() => wallDivStyle.value + " opacity:" + wallBackgroundOpacity.value + ";")
    
-   const myGroups    = computed(() => groupStore.myGroups )
-   const thumbGroups = computed(() => {
-      const groups = []
-      if (myGroups.value) {
-         for (const group of myGroups.value) {
-            if (group.images?.length) {
-               for (const image of group.images) {
-                  if (image.active) { 
-                     groups.push(group) 
-                     break
-                  }
-               }
-            } 
-         }
-      }
-      return groups
-   })
-   const thumbGroupIds  = computed(() => thumbGroups.value ? thumbGroups.value.map(group => group.id) : [])
-   const nonThumbGroups = computed(() => thumbGroupIds.value ? myGroups.value.filter(group => !thumbGroupIds.value.includes(group.id)) : [])
-
    const recentGalleries = computed(() => { 
       const galleries = []     
       const allGalleries = viewMgr.solo ? galleryStore.myGalleries : galleryStore.publicGalleries

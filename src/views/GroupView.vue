@@ -1,20 +1,26 @@
 <template>
    <v-row no-gutters class="flex-nowrap">
-      <v-col cols="1" class="flex-grow-0 flex-shrink-0"/>
-      <v-col cols="10" class="title flex-grow-1 flex-shrink-0">
+       <v-col cols="2" class="d-flex justify-start flex-grow-0 flex-shrink-0">
+         <GroupImage v-if="image" :src="image.thumbUrl" :height="60" class="mt-2"/>      
+      </v-col>
+      <v-col cols="8" class="title d-flex justify-center align-center flex-grow-1 flex-shrink-0">
          {{ groupName }} 
       </v-col>
-      <v-col cols="1" class="d-flex justify-end align-center flex-grow-0 flex-shrink-0">
+      <v-col cols="2" class="d-flex justify-end align-center flex-grow-0 flex-shrink-0">
          <ItemThumbConfig :origin="ItemOrigin.GROUP" :additionalFields="ThumbConfigFields"/> 
          <EditButton v-if="canEdit" @click="showEditDialog=true" class="mr-n2"/>          
       </v-col>
    </v-row>
 
-   <v-container>
-      <v-row justify="space-around" class="mt-4">
-         <UserThumb v-for="user in users" :key="user.id" :user="user" class="mr-5 mb-5"/>
-      </v-row>
-   </v-container>
+   <!-- users -->
+   <div class="bg-shade border-md fill-height mt-5 pa-3">
+      <swiper slides-per-view="auto" :space-between="spaceBetweenSlides" loop>
+         <swiper-slide v-for="user in groupUsers" :key="user.id" class="dynamic-slide-width mr-3">
+            <UserThumb :user="user"/>
+         </swiper-slide>
+      </swiper>
+   </div>
+
    <v-container>
       <v-row justify="space-around" class="mb-4" >
          <!-- <ItemThumb v-for="item in viewItems" :key="item.id" :item="item" :origin="ItemOrigin.GROUP"/> -->
@@ -29,16 +35,20 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useRoute } from 'vue-router'
+   import { Swiper, SwiperSlide } from "swiper/vue"
    import { useGroupStore } from '@/stores/groupStore'
    import { useUserStore }  from '@/stores/userStore'
    // import { useFeedStore }  from '@/stores/feedStore'
    import { useViewStore }  from '@/stores/viewStore'
+   import { useViewMgr }    from '@/stores/viewMgr'
    import EditGroupDialog   from '@/components/group/EditGroupDialog.vue'
+   import GroupImage        from '@/components/group/thumb/GroupImage.vue'
+   
    import ItemThumb         from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig   from '@/components/item/thumb/ItemThumbConfig.vue'
    import UserThumb         from '@/components/user/UserThumb.vue'
    import EditButton        from '@/components/util/EditButton.vue'
-   import { ItemOrigin, Route } from '@/utils/constants'
+   import { ImageType, ItemOrigin, Route } from '@/utils/constants'
     
    const SHOW_MY_ITEMS = "Show my items"
    const ThumbConfigFields = [{ title: SHOW_MY_ITEMS, value: true }]
@@ -47,13 +57,22 @@
    const userStore  = useUserStore()
    // const feedStore  = useFeedStore()
    const viewStore  = useViewStore()
+   const viewMgr = useViewMgr()
+   
    const showEditDialog = ref(false)
    
    const group     = computed(() => groupStore.getMyGroup(route.params.id) )
    const groupName = computed(() => group.value ? group.value.name : "" )
    // const groupFeed = computed(() => feedStore.getMyGroupFeed(route.params.id) )  
    const canEdit = computed(() => group.value && userStore.userId && group.value.ownerId == userStore.userId)
-   const users   = computed(() => group.value ? group.value.userIds.map(userId => userStore.getUser(userId)) : [])
+   
+   const groupUsers = computed(() => {
+      const users = group.value ? group.value.userIds.map(userId => userStore.getUser(userId)) : []
+      return users.toSorted((a, b) => a.username.localeCompare(b.username)) 
+   })
+
+   const spaceBetweenSlides = computed(() => viewMgr.isXs ? 5 : 10)
+   const slideStyle = (item) => { return "width:120px" } 
 
    // const viewItems = computed(() => { 
    //    const feedItems = groupFeed.value ? groupFeed.value.feedItems : []
@@ -67,7 +86,22 @@
 
    //    return viewStore.setVisibleItems(ItemOrigin.GROUP, group.value.name, Route.GROUP.url + route.params.id, items) 
    // })
+
+   // todo - move to groupMgr - overlap with groupThumb
+   const image = computed(() => { 
+      if ( group.value?.images) {
+         for (const image of group.value.images) {
+            if (image.active && image.imageType == ImageType.GROUP) { return image }
+         }
+      }
+      return null
+   })
 </script>
 
 <style>
+
+.dynamic-slide-width {
+  width: max-content; /* Shrinks the slide to fit the inner UserThumb content */
+  display: inline-block; /* Prevents block-level 100% width stretching */
+}
 </style>

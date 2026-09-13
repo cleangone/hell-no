@@ -1,8 +1,8 @@
 <template>
    <v-card :height="height" :class="cardMargin" class="group-card d-flex flex-column thumb-link">
       <HorizontalDiv>
-         <RouterLink v-if="image" :to="groupUrl" class="d-block flex-grow-1"> <!-- class keeps RouterLink from minimizing -->
-            <v-img :height="height" :width="width" :src="image.thumbUrl" class="hand image-tails"/>
+         <RouterLink v-if="image" :to="groupUrl">
+            <v-img :width="width" :height="height" :src="image.thumbUrl" class="hand image-tails"/>
          </RouterLink>
          <div class="mt-1 mr-3 d-flex flex-column justify-center">
             <div class="font-weight-bold">{{ group.name }}</div>        
@@ -19,7 +19,7 @@
    import UserDateText   from '@/components/util/UserDateText.vue'
    import { Emit, ImageType, Route } from '@/utils/constants'
    
-   const props = defineProps({ group: Object })
+   const props = defineProps({ group: Object, imageOnly: Boolean })
    const emit  = defineEmits([ Emit.CLOSE ])
    
    const viewMgr = useViewMgr()
@@ -31,9 +31,7 @@
    
    const image = computed(() => { 
       for (const image of props.group.images) {
-         if (image.active && image.imageType == ImageType.GROUP) { 
-            console.log("thumbUrl", image.thumbUrl)
-            return image }
+         if (image.active && image.imageType == ImageType.GROUP) { return image }
       }
       return null
    })
@@ -41,7 +39,7 @@
 
 <style>
 .group-card {
-   border-radius: 60px 0 0 60px !important;
+   border-radius: 60px 5px 5px 60px !important;
    overflow: hidden; 
 }
 .image-tails { 

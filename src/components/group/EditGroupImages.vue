@@ -14,7 +14,10 @@
 
       <v-data-table v-else :headers="headers" :items="groupImages" item-key="id">
          <template v-slot:item.image="{ item }">
-            <img :src="item.thumbUrl" height="75"/>
+            <div width="100%" class="d-flex justify-center">
+               <GroupImage v-if="item.imageType == ImageType.GROUP" :src="item.thumbUrl" :height="75"/>
+               <img v-else :src="item.thumbUrl" height="60"/>
+            </div>
          </template>
          <template v-slot:item.active="{ item }" >
             <div v-if="item.imageType == ImageType.GROUP" width="100%" class="d-flex justify-center">
@@ -42,6 +45,7 @@
    import { useGroupStore } from '@/stores/groupStore'
    import { useImageMgr }   from '@/stores/image/imageMgr'
    import { useGroupImageHandler } from '@/stores/image/groupImageHandler'
+   import GroupImage        from './thumb/GroupImage.vue'
    import UploadImage       from '@/components/image/UploadImage.vue'
    import CropImage         from '@/components/image/CropImage.vue'
    import IconButton        from '@/components/util/IconButton.vue'
