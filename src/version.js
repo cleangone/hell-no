@@ -16,6 +16,7 @@
        - want to bring ipad to art meet-up - has to be app in order to alwyas work
 */
 export const versions = [   
+   ["v2.55.7", "9/14/26"], // Add items, integrate EditGroupUsers in GroupView
    ["v2.55.6", "9/13/26"], // Initial integration of GROUP item state
    ["v2.55.5", "9/13/26"], // Refactor groupMgr.myPublicGroups
    ["v2.55.4", "9/13/26"], // Put GroupView users in a carousel, add GroupImage 

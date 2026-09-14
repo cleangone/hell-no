@@ -32,7 +32,7 @@
       <AddGroup :userId="userStore.userId" @done="showAddGroupDialog=false"/>
    </v-dialog>
    <v-dialog v-model="showEditGroupDialog" width="auto">
-      <EditGroupDialog :groupId="selectedGroup.id" @done="showEditGroupDialog=false"/>
+      <EditGroupCard :groupId="selectedGroup.id" @done="showEditGroupDialog=false"/>
    </v-dialog>
    <v-dialog v-model="showDeleteGroupDialog" width="auto">
       <DeleteGroup :group="selectedGroup" @done="showDeleteGroupDialog=false"/>
@@ -46,7 +46,7 @@
    import { useActionStore } from '@/stores/actionStore'
    import AccountGroupUsers  from './AccountGroupUsers.vue'
    import AddGroup           from '@/components/group/AddGroup.vue'
-   import EditGroupDialog    from '@/components/group/EditGroupDialog.vue'
+   import EditGroupCard      from '@/components/group/EditGroupCard.vue'
    import DeleteGroup        from '@/components/group/DeleteGroup.vue'
    import EditButton         from '@/components/util/EditButton.vue'
    import DeleteButton       from '@/components/util/DeleteButton.vue'

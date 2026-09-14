@@ -1,34 +1,34 @@
 <template>
    <v-row no-gutters class="flex-nowrap">
        <v-col cols="2" class="d-flex justify-start flex-grow-0 flex-shrink-0">
-         <GroupImage v-if="image" :src="image.thumbUrl" :height="60" class="mt-2"/>      
+         <GroupImage v-if="groupImage" :src="groupImage.thumbUrl" :height="60" class="mt-2"/>      
       </v-col>
       <v-col cols="8" class="title d-flex justify-center align-center flex-grow-1 flex-shrink-0">
          {{ groupName }} 
       </v-col>
       <v-col cols="2" class="d-flex justify-end align-center flex-grow-0 flex-shrink-0">
+         <ThumbSizeButton class="mr-2"/>
          <ItemThumbConfig :origin="ItemOrigin.GROUP" :additionalFields="ThumbConfigFields"/> 
          <EditButton v-if="canEdit" @click="showEditDialog=true" class="mr-n2"/>          
       </v-col>
    </v-row>
-
    <!-- users -->
    <div class="bg-shade border-md fill-height mt-5 pa-3">
-      <swiper slides-per-view="auto" :space-between="spaceBetweenSlides" loop>
+      <swiper slides-per-view="auto" :space-between="slideSpacing" loop>
          <swiper-slide v-for="user in groupUsers" :key="user.id" class="dynamic-slide-width mr-3">
             <UserThumb :user="user"/>
          </swiper-slide>
       </swiper>
    </div>
-
-   <v-container>
+   <!-- items -->
+   <v-container class="mt-5">
       <v-row justify="space-around" class="mb-4" >
-         <!-- <ItemThumb v-for="item in viewItems" :key="item.id" :item="item" :origin="ItemOrigin.GROUP"/> -->
+         <ItemThumb v-for="item in groupItems" :key="item.id" :item="item" :origin="ItemOrigin.GROUP"/>
       </v-row>
    </v-container>
 
    <v-dialog v-model="showEditDialog" width="75%" height="90%">
-      <EditGroupDialog :groupId="group.id" @done="showEditDialog=false"/>
+      <EditGroupCard :groupId="group.id" @done="showEditDialog=false"/>
    </v-dialog>
 </template>
 
@@ -36,70 +36,50 @@
    import { computed, ref } from 'vue'
    import { useRoute } from 'vue-router'
    import { Swiper, SwiperSlide } from "swiper/vue"
-   import { useGroupStore } from '@/stores/groupStore'
    import { useUserStore }  from '@/stores/userStore'
-   // import { useFeedStore }  from '@/stores/feedStore'
+   import { useGroupStore } from '@/stores/groupStore'
+   import { useGroupMgr }   from '@/stores/groupMgr'
+   import { useItemStore }  from '@/stores/itemStore'
    import { useViewStore }  from '@/stores/viewStore'
    import { useViewMgr }    from '@/stores/viewMgr'
-   import EditGroupDialog   from '@/components/group/EditGroupDialog.vue'
+   import EditGroupCard     from '@/components/group/EditGroupCard.vue'
    import GroupImage        from '@/components/group/thumb/GroupImage.vue'
-   
    import ItemThumb         from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig   from '@/components/item/thumb/ItemThumbConfig.vue'
    import UserThumb         from '@/components/user/UserThumb.vue'
    import EditButton        from '@/components/util/EditButton.vue'
-   import { ImageType, ItemOrigin, Route } from '@/utils/constants'
+   import ThumbSizeButton   from '@/components/util/ThumbSizeButton.vue'
+   import { ItemOrigin, Route } from '@/utils/constants'
     
    const SHOW_MY_ITEMS = "Show my items"
    const ThumbConfigFields = [{ title: SHOW_MY_ITEMS, value: true }]
    const route = useRoute()
-   const groupStore = useGroupStore()
    const userStore  = useUserStore()
-   // const feedStore  = useFeedStore()
+   const groupStore = useGroupStore()
+   const groupMgr   = useGroupMgr()
+   const itemStore  = useItemStore()
    const viewStore  = useViewStore()
-   const viewMgr = useViewMgr()
-   
+   const viewMgr    = useViewMgr()
    const showEditDialog = ref(false)
    
-   const group     = computed(() => groupStore.getMyGroup(route.params.id) )
-   const groupName = computed(() => group.value ? group.value.name : "" )
-   // const groupFeed = computed(() => feedStore.getMyGroupFeed(route.params.id) )  
-   const canEdit = computed(() => group.value && userStore.userId && group.value.ownerId == userStore.userId)
+   const group        = computed(() => groupStore.getMyGroup(route.params.id) )
+   const groupName    = computed(() => group.value ? group.value.name : "" )
+   const groupImage   = computed(() => groupMgr.getGroupImage(group.value))
+   const canEdit      = computed(() => group.value && userStore.userId && group.value.ownerId == userStore.userId)
+   const slideSpacing = computed(() => viewMgr.isXs ? 5 : 10)
    
    const groupUsers = computed(() => {
       const users = group.value ? group.value.userIds.map(userId => userStore.getUser(userId)) : []
       return users.toSorted((a, b) => a.username.localeCompare(b.username)) 
    })
 
-   const spaceBetweenSlides = computed(() => viewMgr.isXs ? 5 : 10)
-   const slideStyle = (item) => { return "width:120px" } 
-
-   // const viewItems = computed(() => { 
-   //    const feedItems = groupFeed.value ? groupFeed.value.feedItems : []
-   //    let items = feedItems
-   //    if (!viewStore.visibleThumbFields.get(ItemOrigin.GROUP).includes(SHOW_MY_ITEMS)) {
-   //       items = []
-   //       for (const feedItem of feedItems) { 
-   //          if (feedItem.userId != userStore.userId) { items.push(feedItem) }
-   //       }
-   //    }
-
-   //    return viewStore.setVisibleItems(ItemOrigin.GROUP, group.value.name, Route.GROUP.url + route.params.id, items) 
-   // })
-
-   // todo - move to groupMgr - overlap with groupThumb
-   const image = computed(() => { 
-      if ( group.value?.images) {
-         for (const image of group.value.images) {
-            if (image.active && image.imageType == ImageType.GROUP) { return image }
-         }
-      }
-      return null
+   const groupItems = computed(() => { 
+      const items = itemStore.getGroupItems(route.params.id)
+      return viewStore.setVisibleItems(ItemOrigin.GROUP, group.value.name, Route.GROUP.url + route.params.id, items) 
    })
 </script>
 
 <style>
-
 .dynamic-slide-width {
   width: max-content; /* Shrinks the slide to fit the inner UserThumb content */
   display: inline-block; /* Prevents block-level 100% width stretching */

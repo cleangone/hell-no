@@ -216,7 +216,7 @@ export const State = {
    HIDDEN:    'Hidden',   
 }
 export const ItemStates    = [ State.PUBLIC, State.PRIVATE, State.GROUP, State.HIDDEN ]
-export const GalleryStates = [ State.PUBLIC, State.PRIVATE, State.GROUP ]
+export const GalleryStates = [ State.PUBLIC, State.PRIVATE ]
 export const GroupStates   = [ State.PUBLIC, State.PRIVATE ]
 
 export const ThumbHeights = { 

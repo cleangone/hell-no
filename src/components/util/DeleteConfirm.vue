@@ -2,7 +2,7 @@
    <v-card :title="title">
       <div class="text-body-1 mt-2 mx-6">{{ text }}</div>
       <v-card-actions class="justify-end">
-         <v-btn color="primary" @click="$emit(Emit.DELETE)">Delete</v-btn>
+         <v-btn color="primary" @click="$emit(Emit.DELETE)">{{ action }}</v-btn>
          <v-btn color="primary" @click="$emit(Emit.CANCEL)">Cancel</v-btn>
       </v-card-actions>
    </v-card>

@@ -2,6 +2,7 @@ import { computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useGroupStore } from '@/stores/groupStore'
 import { isPublic } from '@/utils/utils' 
+import { ImageType } from '@/utils/constants'
  
 export const useGroupMgr = defineStore('groupmMgr', () => {   
    const groupStore = useGroupStore()   
@@ -14,6 +15,15 @@ export const useGroupMgr = defineStore('groupmMgr', () => {
          }
       }
       return userGroups
+   }
+
+   function getGroupImage(group) {
+      if (group?.images) {
+         for (const image of group.images) {
+            if (image.active && image.imageType == ImageType.GROUP) { return image }
+         }
+      }
+      return null
    }
    
    const myPublicGroups = computed(() => groupStore.myGroups.filter(group => isPublic(group)))
@@ -46,10 +56,8 @@ export const useGroupMgr = defineStore('groupmMgr', () => {
             isSelected: isSelected, 
          })
       }
-      // checkboxContainer.checkboxes.sort(function(a, b){return a.name.localeCompare(b.name)}) 
-
       return checkboxContainer
    }
      
-   return { myPublicGroups, myGroupOptions, getUserMemberGroups, getMyOverlapGroups, getCheckboxes }
+   return { myPublicGroups, myGroupOptions, getUserMemberGroups, getGroupImage, getMyOverlapGroups, getCheckboxes }
 })

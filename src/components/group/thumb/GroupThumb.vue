@@ -14,27 +14,22 @@
 
 <script setup>
    import { computed, ref } from 'vue'
-   import { useViewMgr } from '@/stores/viewMgr'
-   import HorizontalDiv  from '@/components/util/HorizontalDiv.vue'
-   import UserDateText   from '@/components/util/UserDateText.vue'
-   import { Emit, ImageType, Route } from '@/utils/constants'
+   import { useGroupMgr } from '@/stores/groupMgr'
+   import { useViewMgr }  from '@/stores/viewMgr'
+   import HorizontalDiv   from '@/components/util/HorizontalDiv.vue'
+   import UserDateText    from '@/components/util/UserDateText.vue'
+   import { Route } from '@/utils/constants'
    
-   const props = defineProps({ group: Object, imageOnly: Boolean })
-   const emit  = defineEmits([ Emit.CLOSE ])
+   const props = defineProps({ group: Object })
    
-   const viewMgr = useViewMgr()
+   const groupMgr = useGroupMgr()
+   const viewMgr  = useViewMgr()
    
    const height     = computed(() => viewMgr.isXs ? 60 : 90)
    const width      = computed(() => height.value * 4 / 3) // todo - make constant shared by Cropper
    const cardMargin = computed(() => viewMgr.isXs ? "mb-2" : "mb-5")
    const groupUrl   = computed(() => Route.GROUP.url + props.group.id)
-   
-   const image = computed(() => { 
-      for (const image of props.group.images) {
-         if (image.active && image.imageType == ImageType.GROUP) { return image }
-      }
-      return null
-   })
+   const image      = computed(() => groupMgr.getGroupImage(props.group))
 </script>
 
 <style>

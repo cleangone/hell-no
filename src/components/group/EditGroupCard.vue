@@ -9,18 +9,18 @@
       </div>
       <EditGroup :group="group" @done="$emit(Emit.DONE)"/>
    </v-card>
-   <EditGroupImages v-else-if="edit==Edit.IMAGE" :groupId="group.id" @done="edit=Edit.GROUP"/>
-   <EditGroupUsers  v-else-if="edit==Edit.USER"  :group="group"      @done="edit=Edit.GROUP" class="edit-group-dialog"/>
+   <EditGroupImages    v-else-if="edit==Edit.IMAGE" :groupId="group.id" @done="edit=Edit.GROUP"/>
+   <EditGroupUsersCard v-else-if="edit==Edit.USER"  :groupId="group.id" @done="edit=Edit.GROUP" class="edit-group-dialog"/>
 </template>
 
 <script setup>
    import { computed, ref } from 'vue'
-   import { useGroupStore } from '@/stores/groupStore'
-   import EditGroup         from './EditGroup.vue'
-   import EditGroupImages   from './EditGroupImages.vue'
-   import EditGroupUsers    from './EditGroupUsers.vue'
-   import IconButton        from '@/components/util/IconButton.vue'
-   import TextButton        from '@/components/util/TextButton.vue'
+   import { useGroupStore }  from '@/stores/groupStore'
+   import EditGroup          from './EditGroup.vue'
+   import EditGroupImages    from './EditGroupImages.vue'
+   import EditGroupUsersCard from './EditGroupUsersCard.vue'
+   import IconButton         from '@/components/util/IconButton.vue'
+   import TextButton         from '@/components/util/TextButton.vue'
    import { Emit } from '@/utils/constants'
    
    const Edit = { GROUP: "group", IMAGE: "image", USER: "user" }

@@ -2,7 +2,7 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { db } from '@/firebase'
 import { collection, doc, query, where, setDoc, updateDoc, deleteDoc, arrayRemove, arrayUnion, serverTimestamp } from "firebase/firestore"
-import { useFirestore } from '@vueuse/firebase/useFirestore'   
+import { useFirestore }  from '@vueuse/firebase/useFirestore'   
 import { useUserStore }  from './userStore'
 import { useGroupStore } from '@/stores/groupStore'
 import { getMapObjsById, randomPlate } from '@/utils/utils'
@@ -62,7 +62,7 @@ const TABLE = 'items'
 
 export const useItemStore = defineStore('item', () => {
    const userStore  = useUserStore()
-   const groupStore = useGroupStore()   
+   const groupStore = useGroupStore()      
    
    const itemCollection = collection(db, TABLE)
    function itemDoc(id) { return doc(db, TABLE, id) }
@@ -79,6 +79,9 @@ export const useItemStore = defineStore('item', () => {
       }
       return ids
    })
+
+   const groupItemsQuery = computed(() => query(itemCollection, where('state', '==', State.GROUP)))
+   const groupItems = useFirestore(groupItemsQuery, [])
    
    const myItemsQuery   = computed(() => userStore.userId && query(itemCollection, where('userId', '==', userStore.userId)))
    const myItems        = useFirestore(myItemsQuery, null)
@@ -157,6 +160,18 @@ export const useItemStore = defineStore('item', () => {
       return map
    }
 
+   function getGroupItems(groupId) { return groupIdToItems.value?.has(groupId) ? groupIdToItems.value.get(groupId) : [] }
+   const groupIdToItems = computed(() => {
+      const map = new Map()
+      for (const item of groupItems.value) {
+         for (const groupId of item.groupIds) {
+            if (!map.has(groupId)) { map.set(groupId, []) }
+            map.get(groupId).push(item)
+         }
+      }
+      return map
+   })
+
    // const myGroupMemberItemsQuery = computed(() => 
    //    groupStore.myGroupIds?.length && 
    //    query(itemCollection, where('state', '==', State.GROUP), where('groupIds', 'array-contains-any', groupStore.myGroupIds)))
@@ -210,9 +225,9 @@ export const useItemStore = defineStore('item', () => {
       return itemToUpdate
    }
 
-   return { items, publicItems, childItemIds, itemIdToItem, 
+   return { items, publicItems, childItemIds, itemIdToItem, groupItems, groupIdToItems,
             myItems, myItemIdToItem, myChildItemIds,
-            getGalleryItems, getArtistItems, getArtistPublicItems, getItem, getUserItems, getUserPubicItems,
+            getGalleryItems, getGroupItems, getArtistItems, getArtistPublicItems, getItem, getUserItems, getUserPubicItems,
             setItem, updateItem, 
             addOtherImage, updatePrimaryImage, updateOtherImage, removeOtherImage, 
             removeGalleryId, deleteItem }

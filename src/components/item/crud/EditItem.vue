@@ -68,7 +68,7 @@
       <div v-else-if="isMyItem" class="expansion">
          <v-expansion-panels multiple>
             <CheckboxExpansion type="Galleries" :checkboxes="galleryCheckboxes" class="mx-3"/>
-            <CheckboxExpansion type="Groups"    :checkboxes="groupCheckboxes"   class="mx-3"/>
+            <CheckboxExpansion v-if="isGroup({state:currItemState})" type="Groups" :checkboxes="groupCheckboxes" class="mx-3"/>
          </v-expansion-panels>
       </div>
    </v-form>
@@ -95,7 +95,7 @@
    import EditArtists         from './EditArtists.vue'
    import EditHtml            from '@/components/util/EditHtml.vue'
    import CheckboxExpansion   from '@/components/util/CheckboxExpansion.vue'
-   import { optionalYearRule, requiredRule, sortByName } from '@/utils/utils'
+   import { isGroup, optionalYearRule, requiredRule, sortByName } from '@/utils/utils'
    import { Emit, ItemStates, ItemType } from '@/utils/constants'
    
    const props = defineProps({item: Object, items: Array})

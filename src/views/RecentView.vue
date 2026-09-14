@@ -23,14 +23,13 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useRoute } from 'vue-router'
-   import { useUserStore }    from '@/stores/userStore'
-   import { useItemMgr }      from '@/stores/itemMgr'
-   import { useViewStore }    from '@/stores/viewStore'
-   import { useViewMgr }      from '@/stores/viewMgr'
-   import ItemThumb           from '@/components/item/thumb/ItemThumb.vue'
-   import ItemThumbConfig     from '@/components/item/thumb/ItemThumbConfig.vue'
-   import ThumbSizeButton     from '@/components/util/ThumbSizeButton.vue'
-   
+   import { useUserStore } from '@/stores/userStore'
+   import { useItemMgr }   from '@/stores/itemMgr'
+   import { useViewStore } from '@/stores/viewStore'
+   import { useViewMgr }   from '@/stores/viewMgr'
+   import ItemThumb        from '@/components/item/thumb/ItemThumb.vue'
+   import ItemThumbConfig  from '@/components/item/thumb/ItemThumbConfig.vue'
+   import ThumbSizeButton  from '@/components/util/ThumbSizeButton.vue'
    import { Defaults, ItemOrigin, Route } from '@/utils/constants'
    
    const route = useRoute()
