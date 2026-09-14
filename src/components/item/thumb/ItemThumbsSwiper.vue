@@ -10,13 +10,11 @@
 
 <script setup>
    import { computed, ref } from 'vue'
-   import { Swiper, SwiperSlide } from "swiper/vue"
    import { useItemMgr } from '@/stores/itemMgr'
    import { useViewMgr } from '@/stores/viewMgr'
    import ItemThumb      from './ItemThumb.vue'
    import ItemPopup      from '../ItemPopup.vue'
    import { ItemOrigin, ThumbSize } from '@/utils/constants'
-   import 'swiper/css'
 
    const props = defineProps({ items: Array, showDateViewed: Boolean })
 

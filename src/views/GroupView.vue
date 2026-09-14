@@ -35,7 +35,6 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useRoute } from 'vue-router'
-   import { Swiper, SwiperSlide } from "swiper/vue"
    import { useUserStore }  from '@/stores/userStore'
    import { useGroupStore } from '@/stores/groupStore'
    import { useGroupMgr }   from '@/stores/groupMgr'

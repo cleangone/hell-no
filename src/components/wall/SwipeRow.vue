@@ -1,5 +1,5 @@
 <template>
-   <swiper slides-per-view="auto" :space-between="spaceBetweenSlides" 
+   <swiper slides-per-view="auto" :space-between="spaceBetweenSlides"
          :autoplay="{ delay:4000, pauseOnMouseEnter:true }" navigation loop @sliderMove="onSliderMove" 
          :modules="modules" :style="rowStyle" style="--swiper-navigation-size:20px;">
       <swiper-slide v-for="slideItem in wallRow.items" :key="slideItem.itemId" :width="slideItem.width" 
@@ -12,15 +12,12 @@
 
 <script setup>
    import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
-   import { Swiper, SwiperSlide } from "swiper/vue"
    import { Autoplay, Navigation, Pagination } from 'swiper/modules'
    import { useSwipeStore } from './SwipeStore'
    import { useViewMgr }    from '@/stores/viewMgr'
    import SwipeWallSlide    from './SwipeWallSlide.vue'
    import { Emit, ItemOrigin } from '@/utils/constants'
-   import 'swiper/css'
-   import 'swiper/css/navigation'
-   import 'swiper/css/pagination'
+   import 'swiper/css' // needed for slides-per-view
 
    const props = defineProps({ wallRow:Object, rowHeight:Number, showAvatars:Boolean, linkUrl:String })
    const emit  = defineEmits([ Emit.POPUP ])

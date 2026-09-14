@@ -10,11 +10,15 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { createHead } from '@unhead/vue'
 import "@mdi/font/css/materialdesignicons.css"
+import { Swiper, SwiperSlide } from 'swiper/vue'
 import CKEditor from "@ckeditor/ckeditor5-vue"
 import VueGtag from 'vue-gtag'
 import { Route } from '@/utils/constants'
 import { GoogleAnalyticsConfig } from '@/config/config'
 import './assets/main.css'
+import 'swiper/css'
+import 'swiper/css/navigation'
+// import 'swiper/css/pagination'
 
 // setLogLevel("debug") 
 
@@ -44,6 +48,8 @@ app.use(createHead())
 app.use(vuetify)
 app.use(CKEditor)
 app.use(VueGtag, { config: { id: GoogleAnalyticsConfig.measurementID }}, router)
+app.component('Swiper', Swiper)
+app.component('SwiperSlide', SwiperSlide)
 
 app.mount('#app')
    
