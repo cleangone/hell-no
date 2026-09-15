@@ -182,6 +182,7 @@ export const NotificationOptions = {
 export const DefaultUserSettings = { "notifyViaEmail": NotificationOptions.NEVER, "notifyViaMessage": NotificationOptions.NEVER }
 
 export const Route = {
+   HOME:      { name: 'home',      url: '/',          display: 'Home' },
    ABOUT:     { name: 'about',     url: '/about',     display: 'About' },
    ACCOUNT:   { name: 'account',   url: '/account',   display: 'My Account' },
    ADD_ITEM:  { name: 'add-item',  url: '/add-item',  display: 'Add Item' },
@@ -192,10 +193,10 @@ export const Route = {
    GALLERY:   { name: 'gallery',   url: '/gallery/'   },
    GALLERIES: { name: 'galleries', url: '/galleries/',display: 'Galleries' },
    GROUP:     { name: 'group',     url: '/group/'     },
+   GROUPS:    { name: 'groups',    url: '/groups',    display: 'Groups' },
    FAVORITES: { name: 'favorites', url: '/favorites', display: 'My Favorites' },
    FEED:      { name: 'feed',      url: '/feed'       },
    FORGOT:    { name: 'forgot',    url: '/forgot',    display: 'Forgot Password' },
-   HOME:      { name: 'home',      url: '/',          display: 'Home' },
    INVISIBLE: { name: 'invisible', url: '/invisible/',display: 'Invisible Items' },
    ITEM:      { name: 'item',      url: '/item/'      },
    ITEM_CHILD:{ name: 'itemch',    url: '/item/'      }, // overload item with additional params

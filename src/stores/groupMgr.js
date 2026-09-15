@@ -7,6 +7,29 @@ import { ImageType } from '@/utils/constants'
 export const useGroupMgr = defineStore('groupmMgr', () => {   
    const groupStore = useGroupStore()   
    
+   const myPublicGroups = computed(() => groupStore.myGroups.filter(group => isPublic(group)))
+   const myGroupsExist  = computed(() => myPublicGroups.value?.length > 0)
+   const myThumbGroups  = computed(() => {
+      const groups = []
+      if (myPublicGroups.value) {
+         for (const group of myPublicGroups.value) {
+            if (group.images?.length) {
+               for (const image of group.images) {
+                  if (image.active) { 
+                     groups.push(group) 
+                     break
+                  }
+               }
+            } 
+         }
+      }
+      return groups
+   })
+
+   const myThumbGroupIds  = computed(() => myThumbGroups.value ? myThumbGroups.value.map(group => group.id) : [])
+   const myNonThumbGroups = computed(() => 
+      myThumbGroupIds.value ? myPublicGroups.value.filter(group => !myThumbGroupIds.value.includes(group.id)) : [])
+
    function getUserMemberGroups(userId) {
       const userGroups = []
       if (groupStore.groups) {  
@@ -26,8 +49,6 @@ export const useGroupMgr = defineStore('groupmMgr', () => {
       return null
    }
    
-   const myPublicGroups = computed(() => groupStore.myGroups.filter(group => isPublic(group)))
-
    const myGroupOptions = computed(() => { 
      const options = []
       for (const group of mySortedGroups.value) { 
@@ -59,5 +80,6 @@ export const useGroupMgr = defineStore('groupmMgr', () => {
       return checkboxContainer
    }
      
-   return { myPublicGroups, myGroupOptions, getUserMemberGroups, getGroupImage, getMyOverlapGroups, getCheckboxes }
+   return { myPublicGroups, myGroupsExist, myThumbGroups, myNonThumbGroups, myGroupOptions, 
+      getUserMemberGroups, getGroupImage, getMyOverlapGroups, getCheckboxes }
 })

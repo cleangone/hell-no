@@ -1,5 +1,5 @@
 <template>
-   <div v-if="userStore.userExists && myGroups.length">
+   <div v-if="userStore.userExists && groupMgr.myGroupsExist">
       <span class="font-weight-bold">Groups</span> 
       <span v-for="group in nonThumbGroups" :key="group.id">
          | <RouterLink :to="Route.GROUP.url + group.id">{{ group.name }} </RouterLink> 
@@ -10,7 +10,6 @@
          </v-row>
       </v-container>
    </div>
-
 </template>
 
 <script setup>
@@ -25,27 +24,8 @@
    const userStore = useUserStore()
    const groupMgr  = useGroupMgr()
    
-   const myGroups = computed(() => groupMgr.myPublicGroups )
-
-   const thumbGroups = computed(() => {
-      const groups = []
-      if (myGroups.value) {
-         for (const group of myGroups.value) {
-            if (group.images?.length) {
-               for (const image of group.images) {
-                  if (image.active) { 
-                     groups.push(group) 
-                     break
-                  }
-               }
-            } 
-         }
-      }
-      return groups
-   })
-
-   const thumbGroupIds  = computed(() => thumbGroups.value ? thumbGroups.value.map(group => group.id) : [])
-   const nonThumbGroups = computed(() => thumbGroupIds.value ? myGroups.value.filter(group => !thumbGroupIds.value.includes(group.id)) : [])
+   const thumbGroups    = computed(() => groupMgr.myThumbGroups)
+   const nonThumbGroups = computed(() => groupMgr.myNonThumbGroups)
 </script>
 
 <style>

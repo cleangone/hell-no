@@ -16,6 +16,7 @@
        - want to bring ipad to art meet-up - has to be app in order to alwyas work
 */
 export const versions = [   
+   ["v2.56.0", "9/14/26"], // Add GroupsView 
    ["v2.55.9", "9/14/26"], // Add GroupView mobile page name
    ["v2.55.8", "9/14/26"], // Make Swiper imports global
    ["v2.55.7", "9/14/26"], // Add items, integrate EditGroupUsers in GroupView

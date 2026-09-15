@@ -55,6 +55,9 @@
                <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.HOME"/>
                <span v-if="!inRoutes(Route.ACCOUNT, Route.ADMIN, Route.REGISTER)">
                   | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.GALLERIES" :targetId="Defaults.SITE_ID" :url="Route.GALLERIES.url + Defaults.SITE_ID"/>
+                  <span v-if="userExists && !viewMgr.solo && groupMgr.myGroupsExist">
+                     | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.GROUPS"/>
+                  </span> 
                   | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.SEARCH"/>
                   <span v-if="userExists && !viewMgr.solo">
                      | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.MESSAGE"/>
@@ -69,6 +72,7 @@
                <span v-if="isRoute(Route.HOME)">{{ homeTitle }}</span>
                <span v-else-if="isRoute(Route.GALLERIES)">{{ Route.GALLERIES.display }}</span>
                <span v-else-if="inRoutes(Route.GALLERY, Route.GROUP, Route.ITEM, Route.ITEM_CHILD, Route.RANDOM, Route.ARTIST)">{{ pageName }}</span>
+               <span v-else-if="isRoute(Route.GROUPS)">{{ Route.GROUPS.display }}</span>
                <span v-else-if="isRoute(Route.SEARCH)">{{ Route.SEARCH.display }}</span>
                <span v-else-if="isRoute(Route.FAVORITES)">{{ Route.FAVORITES.display }}</span>
                <span v-else-if="isRoute(Route.RECENT)">{{ Route.RECENT.display }}</span>
@@ -207,6 +211,7 @@
    import { useUserStore }    from '@/stores/userStore'
    import { useUserMgr }      from '@/stores/userMgr'
    import { useAdminStore }   from '@/stores/adminStore'
+   import { useGroupMgr }     from '@/stores/groupMgr'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { useLocalStore }   from '@/stores/localStore'
@@ -231,6 +236,7 @@
    const userStore  = useUserStore()
    const userMgr    = useUserMgr()
    const adminStore = useAdminStore()
+   const groupMgr   = useGroupMgr()
    const viewStore  = useViewStore()
    const viewMgr    = useViewMgr()
    const localStore = useLocalStore()
