@@ -218,7 +218,7 @@ export const State = {
 }
 export const ItemStates    = [ State.PUBLIC, State.PRIVATE, State.GROUP, State.HIDDEN ]
 export const GalleryStates = [ State.PUBLIC, State.PRIVATE ]
-export const GroupStates   = [ State.PUBLIC, State.PRIVATE ]
+export const GroupStates   = [ State.PUBLIC, State.PRIVATE, State.HIDDEN ]
 
 export const ThumbHeights = { 
    sizes:  [150, 150, 200, 250, 300], 

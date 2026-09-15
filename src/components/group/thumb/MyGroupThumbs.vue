@@ -1,11 +1,11 @@
 <template>
-   <div v-if="userStore.userExists && groupMgr.myGroupsExist">
-      <span class="font-weight-bold">Groups</span> 
-      <span v-for="group in nonThumbGroups" :key="group.id">
-         | <RouterLink :to="Route.GROUP.url + group.id">{{ group.name }} </RouterLink> 
-      </span>
-      <v-container>
-         <v-row v-if="thumbGroups.length" justify="space-around" class="mt-1">
+   <div v-if="userStore.userExists && groupMgr.myThumbGroupsExist">
+      <div>
+         <span class="font-weight-bold">Groups</span> |
+         <RouterLink :to="Route.GROUPS.url">View all</RouterLink>
+      </div>
+      <v-container class="mt-2">
+         <v-row v-if="thumbGroups.length" justify="space-around">
             <GroupThumb v-for="group in thumbGroups" :key="group.id" :group="group"/>
          </v-row>
       </v-container>
@@ -24,8 +24,7 @@
    const userStore = useUserStore()
    const groupMgr  = useGroupMgr()
    
-   const thumbGroups    = computed(() => groupMgr.myThumbGroups)
-   const nonThumbGroups = computed(() => groupMgr.myNonThumbGroups)
+   const thumbGroups = computed(() => groupMgr.myThumbGroups)
 </script>
 
 <style>

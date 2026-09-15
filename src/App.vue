@@ -1,4 +1,3 @@
-
 <template>
    <!-- <Head>
       <title>App title</title>
@@ -55,7 +54,7 @@
                <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.HOME"/>
                <span v-if="!inRoutes(Route.ACCOUNT, Route.ADMIN, Route.REGISTER)">
                   | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.GALLERIES" :targetId="Defaults.SITE_ID" :url="Route.GALLERIES.url + Defaults.SITE_ID"/>
-                  <span v-if="userExists && !viewMgr.solo && groupMgr.myGroupsExist">
+                  <span v-if="userExists && !viewMgr.solo && groupMgr.myThumbGroupsExist">
                      | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.GROUPS"/>
                   </span> 
                   | <LinkOrText :currentRoute="currentRoute" :targetRoute="Route.SEARCH"/>

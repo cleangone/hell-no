@@ -1,35 +1,29 @@
 import { computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useGroupStore } from '@/stores/groupStore'
-import { isPublic } from '@/utils/utils' 
+import { isHidden } from '@/utils/utils' 
 import { ImageType } from '@/utils/constants'
  
 export const useGroupMgr = defineStore('groupmMgr', () => {   
    const groupStore = useGroupStore()   
    
-   const myPublicGroups = computed(() => groupStore.myGroups.filter(group => isPublic(group)))
-   const myGroupsExist  = computed(() => myPublicGroups.value?.length > 0)
-   const myThumbGroups  = computed(() => {
+   const myThumbGroups = computed(() => {
       const groups = []
-      if (myPublicGroups.value) {
-         for (const group of myPublicGroups.value) {
-            if (group.images?.length) {
-               for (const image of group.images) {
-                  if (image.active) { 
-                     groups.push(group) 
-                     break
-                  }
+      const myGroups = groupStore.myGroups ? groupStore.myGroups.filter(group => !isHidden(group)) : []
+      for (const group of myGroups) {
+         if (group.images?.length) {
+            for (const image of group.images) {
+               if (image.active) { 
+                  groups.push(group) 
+                  break
                }
-            } 
-         }
+            }
+         } 
       }
       return groups
    })
-
-   const myThumbGroupIds  = computed(() => myThumbGroups.value ? myThumbGroups.value.map(group => group.id) : [])
-   const myNonThumbGroups = computed(() => 
-      myThumbGroupIds.value ? myPublicGroups.value.filter(group => !myThumbGroupIds.value.includes(group.id)) : [])
-
+   const myThumbGroupsExist = computed(() => myThumbGroups.value?.length > 0)
+   
    function getUserMemberGroups(userId) {
       const userGroups = []
       if (groupStore.groups) {  
@@ -80,6 +74,6 @@ export const useGroupMgr = defineStore('groupmMgr', () => {
       return checkboxContainer
    }
      
-   return { myPublicGroups, myGroupsExist, myThumbGroups, myNonThumbGroups, myGroupOptions, 
+   return { myThumbGroups, myThumbGroupsExist, myGroupOptions, 
       getUserMemberGroups, getGroupImage, getMyOverlapGroups, getCheckboxes }
 })

@@ -15,9 +15,6 @@
    <div v-for="group in thumbGroups" :key="group.id" class="mt-1">
       <GroupThumb :group="group"/>
    </div>
-   <div v-for="group in nonThumbGroups" :key="group.id" class="mt-1">
-      <RouterLink :to="Route.GROUP.url + group.id">{{ group.name }} </RouterLink> 
-   </div>
 </template>
 
 <script setup>
@@ -54,11 +51,9 @@
       if (!viewStore.isInitialized) { viewMgr.init() }
    })
 
-   const user = computed(() => userStore.user)
-   
-   
-
-   
+   const user        = computed(() => userStore.user)
+   const thumbGroups = computed(() => groupMgr.myThumbGroups)
+      
 
    const selectedGalleries = computed(() => {
       const displayGalleries = []
@@ -80,8 +75,7 @@
    const selectUser = (user) => { selectedUserId.value = selectedUserId.value == user.id ? null : user.id }
    
   
-   const thumbGroups    = computed(() => groupMgr.myThumbGroups)
-   const nonThumbGroups = computed(() => groupMgr.myNonThumbGroups)
+   
 </script>
 
 <style>
