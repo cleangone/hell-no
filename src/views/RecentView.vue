@@ -42,7 +42,7 @@
    const username = computed(() => user.value ? user.value.username : null)
 
    const recentItems = computed(() => {
-      const items = [] 
+      let items = [] 
       if (viewMgr.solo) {  // param could be siteId but overridden by solo
          items.push(...itemMgr.myRecentItems)
       }

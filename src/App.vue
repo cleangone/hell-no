@@ -68,8 +68,7 @@
             <div v-if="viewMgr.isMobile" class="text-h6"> 
                <span v-if="isRoute(Route.HOME)">{{ homeTitle }}</span>
                <span v-else-if="isRoute(Route.GALLERIES)">{{ Route.GALLERIES.display }}</span>
-               <span v-else-if="isRoute(Route.GALLERY)">{{ pageName }} Gallery</span>
-               <span v-else-if="inRoutes(Route.ITEM, Route.ITEM_CHILD, Route.RANDOM, Route.ARTIST)">{{ pageName }}</span>
+               <span v-else-if="inRoutes(Route.GALLERY, Route.GROUP, Route.ITEM, Route.ITEM_CHILD, Route.RANDOM, Route.ARTIST)">{{ pageName }}</span>
                <span v-else-if="isRoute(Route.SEARCH)">{{ Route.SEARCH.display }}</span>
                <span v-else-if="isRoute(Route.FAVORITES)">{{ Route.FAVORITES.display }}</span>
                <span v-else-if="isRoute(Route.RECENT)">{{ Route.RECENT.display }}</span>
@@ -98,10 +97,10 @@
                   <DarkButton/>
                </span>
                <span v-else-if="isRoute(Route.GALLERIES)" class="text-no-wrap">
-                   <ThumbSizeButton :thumbType="ThumbType.GALLERY"/>
-                   <GalleryThumbConfig/>
+                  <ThumbSizeButton :thumbType="ThumbType.GALLERY"/>
+                  <GalleryThumbConfig/>
                </span>
-               <span v-else-if="inRoutes(Route.GALLERY, Route.RECENT, Route.SEARCH, Route.FAVORITES)" class="text-no-wrap"> 
+               <span v-else-if="inRoutes(Route.GALLERY, Route.GROUP, Route.RECENT, Route.SEARCH, Route.FAVORITES)" class="text-no-wrap"> 
                   <ThumbSizeButton/>
                   <ItemThumbConfig/>
                </span>

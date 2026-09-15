@@ -53,6 +53,7 @@ function formatDate(date, todayOptions, recentDayOptions, thisYearOptions, lastY
    if (!date) { return "" }
    const days = getDaysOld(date)
    let options = days ? recentDayOptions : todayOptions
+   const now = new Date()
    if (days > 2) { options = sameYear(date, now) ? thisYearOptions : lastYearOptions }
    
    return date.toLocaleString('en-us', options) 

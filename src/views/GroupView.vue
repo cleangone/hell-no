@@ -1,10 +1,10 @@
 <template>
-   <v-row no-gutters class="flex-nowrap">
+   <v-row v-if="!viewMgr.isXs" no-gutters class="flex-nowrap">
        <v-col cols="2" class="d-flex justify-start flex-grow-0 flex-shrink-0">
          <GroupImage v-if="groupImage" :src="groupImage.thumbUrl" :height="60" class="mt-2"/>      
       </v-col>
       <v-col cols="8" class="title d-flex justify-center align-center flex-grow-1 flex-shrink-0">
-         {{ groupName }} 
+         {{ groupName }} Group
       </v-col>
       <v-col cols="2" class="d-flex justify-end align-center flex-grow-0 flex-shrink-0">
          <ThumbSizeButton class="mr-2"/>
@@ -61,8 +61,12 @@
    const viewMgr    = useViewMgr()
    const showEditDialog = ref(false)
    
-   const group        = computed(() => groupStore.getMyGroup(route.params.id) )
-   const groupName    = computed(() => group.value ? group.value.name : "" )
+   const group = computed(() => {
+      const grp = groupStore.getMyGroup(route.params.id)
+      viewStore.setPageName((grp ? grp.name  : "") + " Group")
+      return grp
+   })
+   const groupName    = computed(() => group.value ? group.value.name : "")
    const groupImage   = computed(() => groupMgr.getGroupImage(group.value))
    const canEdit      = computed(() => group.value && userStore.userId && group.value.ownerId == userStore.userId)
    const slideSpacing = computed(() => viewMgr.isXs ? 5 : 10)

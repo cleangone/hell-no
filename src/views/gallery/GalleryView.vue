@@ -139,7 +139,7 @@
 
       if (!viewMgr.galleryIsVisibleToUser(gallery)) { router.push(Route.HOME.url) }
 
-      viewStore.setPageName(gallery.name)
+      viewStore.setPageName(gallery.name + " Gallery")
       return gallery 
    })
       
