@@ -245,9 +245,14 @@ export const ItemMaxLandscapeWidths = {
 export const ThumbType = {
    ITEM:       'Item',
    GALLERY:    'Gallery',
+   GROUP:      'Group',
    RECENT:     'Recent',
    FEED:       'Feed',
 }
+
+export const ThumbAspectRatio = { 
+   GROUP:      4/3, 
+}  
 
 export const TodoType = {
    INVITE:       'Invite',

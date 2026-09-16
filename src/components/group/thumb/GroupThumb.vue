@@ -19,7 +19,7 @@
    import { useViewMgr }  from '@/stores/viewMgr'
    import HorizontalDiv   from '@/components/util/HorizontalDiv.vue'
    import UserDateText    from '@/components/util/UserDateText.vue'
-   import { Route } from '@/utils/constants'
+   import { Route, ThumbAspectRatio } from '@/utils/constants'
    
    const props = defineProps({ group: Object })
    
@@ -28,7 +28,7 @@
    const viewMgr  = useViewMgr()
    
    const height     = computed(() => viewMgr.isXs ? 60 : 90)
-   const width      = computed(() => height.value * 4 / 3) // todo - make constant shared by Cropper
+   const width      = computed(() => height.value * ThumbAspectRatio.GROUP)
    const cardMargin = computed(() => viewMgr.isXs ? "mb-2" : "mb-5")
    const groupUrl   = computed(() => Route.GROUP.url + props.group.id)
    const image      = computed(() => groupMgr.getGroupImage(props.group))

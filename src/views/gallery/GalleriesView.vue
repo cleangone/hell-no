@@ -2,7 +2,7 @@
    <div v-if="viewMgr.isMobile && username" class="mt-n2">
       <RouterLink :to="Route.USER.url + route.params.id">{{ username }}</RouterLink>
    </div>
-   <v-container v-if="!viewMgr.isMobile" class="pa-0 mt-1 pb-3 width-100">
+   <v-container v-if="!viewMgr.isMobile" class="pa-0 mt-1 pb-3 mb-2 width-100">
       <v-row no-gutters class="d-flex align-center flex-nowrap">
          <v-col cols="1" class="d-flex justify-start flex-grow-0 flex-shrink-0">
             <UserLinkAvatar v-if="user" :user="user"/>  
@@ -34,7 +34,7 @@
    <div style="clear:both"></div>
    <v-container>
       <!-- users -->
-      <div v-if="showAvatars" class="bg-shade border-md fill-height mt-5 pa-3">
+      <div v-if="showAvatars" class="bg-shade border-md fill-height pa-3">
          <UserThumbSwiper :users="avatarUsers" @userId="selectUser"/>
       </div>
       <!-- galleries -->
@@ -60,7 +60,7 @@
    import GalleryThumb        from '@/components/gallery/thumb/GalleryThumb.vue'
    import GalleryThumbConfig  from '@/components/gallery/thumb/GalleryThumbConfig.vue'
    import ChildGalleriesButton from '@/components/gallery/thumb/ChildGalleriesButton.vue'
-   import UserThumbSwiper     from '@/components/user/UserThumbSwiper.vue'
+   import UserThumbSwiper     from '@/components/user/thumb/UserThumbSwiper.vue'
    import UserLinkAvatar      from '@/components/user/avatar/UserLinkAvatar.vue'
    import SortButton          from '@/components/util/SortButton.vue'
    import ThumbSizeButton     from '@/components/util/ThumbSizeButton.vue'
@@ -187,14 +187,13 @@
    const showAvatars = computed(() => isSiteGallery.value && !viewMgr.solo)   
    const avatarUsers = computed(() => {
       const users = userMgr.avatarUsers.map((user) => {
-         const numGalleries = getNumGalleries(user.id)
+         const numGalleries = userIdToNumGalleries.value.get(user.id)
          return { ...user,
             displayInfo: numGalleries ? "(" + numGalleries + ")" : null,
             sort: numGalleries ?? 0 }
       })
       return users.toSorted(function(a, b) {return b.sort - a.sort}) 
    })
-   const getNumGalleries = (userId) => { return userIdToNumGalleries.value.get(userId) }
    
    const selectUser = (userId) => { selectedUserId.value = userId }
    

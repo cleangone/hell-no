@@ -16,6 +16,7 @@
       <!-- users -->
       <div class="bg-shade border-md fill-height pa-3">
          <UserThumbSwiper :users="groupUsers" @userId="selectUser"/>
+         <!-- <UserThumbCol :users="groupUsers" @userId="selectUser"/> -->
       </div>
       <!-- items -->
       <v-row justify="space-around" class="mt-3 mb-4" >
@@ -41,7 +42,8 @@
    import GroupImage        from '@/components/group/thumb/GroupImage.vue'
    import ItemThumb         from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig   from '@/components/item/thumb/ItemThumbConfig.vue'
-   import UserThumbSwiper   from '@/components/user/UserThumbSwiper.vue'
+   import UserThumbCol      from '@/components/user/thumb/UserThumbCol.vue'
+   import UserThumbSwiper   from '@/components/user/thumb/UserThumbSwiper.vue'
    import EditButton        from '@/components/util/EditButton.vue'
    import ThumbSizeButton   from '@/components/util/ThumbSizeButton.vue'
    import { ItemOrigin, Route } from '@/utils/constants'

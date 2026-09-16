@@ -9,7 +9,7 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useViewMgr } from '@/stores/viewMgr'
-   import UserThumb      from '@/components/user/UserThumb.vue'
+   import UserThumb      from './UserThumb.vue'
    import { Emit } from '@/utils/constants'
    
    const props = defineProps({ users: Array })

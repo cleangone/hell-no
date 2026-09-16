@@ -86,7 +86,6 @@
    import ItemThumbsPanel     from '@/components/item/thumb/ItemThumbsPanel.vue'
    import RecentGalleryThumbs from '@/components/gallery/thumb/RecentGalleryThumbs.vue'
    import MyGroupThumbs       from '@/components/group/thumb/MyGroupThumbs.vue'
-   import UserThumb           from '@/components/user/UserThumb.vue'
    import SplitWall           from '@/components/wall/SplitWall.vue'
    import DarkButton          from '@/components/util/DarkButton.vue'
    import ShowNotifications   from '@/components/notification/ShowNotifications.vue'

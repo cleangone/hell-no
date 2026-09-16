@@ -6,10 +6,11 @@
 
 <script setup>
    import { computed } from 'vue'
+   import { ThumbAspectRatio } from '@/utils/constants'
    
    const props = defineProps({ src: String, height: Number, cardClass: String })
 
-   const width = computed(() => props.height * 4 / 3) // todo - make constant shared by Cropper
+   const width = computed(() => props.height * ThumbAspectRatio.GROUP)
 </script>
 
 <style>
