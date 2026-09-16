@@ -5,7 +5,7 @@
    <v-container v-if="!viewMgr.isMobile" class="pa-0 mt-1 pb-3 width-100">
       <v-row no-gutters class="d-flex align-center flex-nowrap">
          <v-col cols="1" class="d-flex justify-start flex-grow-0 flex-shrink-0">
-            <UserLinkAvatar :v-if="user" :user="user"/>  
+            <UserLinkAvatar v-if="user" :user="user"/>  
          </v-col>
          <v-col cols="1" class="flex-grow-1 flex-shrink-0" style="min-width: 100px; max-width: 100%;">
             <div class="title">Galleries</div>
@@ -32,22 +32,19 @@
       </v-row>
    </v-container>
    <div style="clear:both"></div>
-   <HorizontalDiv class="mr-2">
-      <div v-if="showAvatars" class="mr-4">
-         <div v-for="user in avatarUsers" :key="user.id">
-            <Avatar :user="user" @click="selectUser(user)" :toolTip="user.username" 
-               class="hand pa-1" :class="selectedUserId==user.id?'bg-blue':'bg-black'"/>
-         </div>
+   <v-container>
+      <!-- users -->
+      <div v-if="showAvatars" class="bg-shade border-md fill-height mt-5 pa-3">
+         <UserThumbSwiper :users="avatarUsers" @userId="selectUser"/>
       </div>
-      <v-container>
-      <v-row justify="space-around"  density="compact" class="mb-md-4" >
+      <!-- galleries -->
+      <v-row justify="space-around"  density="compact" class="mt-5 mb-md-4" >
          <GalleryThumb v-for="gallery in selectedGalleries" :key="gallery.id" :gallery="gallery" 
             :bypassShowUser="bypassShowUser" :showChildImages="!showChildGalleries" 
             :parentIcon="getElderIcon(gallery)" @toggle="toggleExpandedId(gallery.id)"
             :childIcon="getChildIcon(gallery)"  @close="closeChild(gallery)"/>
       </v-row>
-      </v-container>
-   </HorizontalDiv>
+   </v-container>
 </template>
 
 <script setup>
@@ -63,9 +60,8 @@
    import GalleryThumb        from '@/components/gallery/thumb/GalleryThumb.vue'
    import GalleryThumbConfig  from '@/components/gallery/thumb/GalleryThumbConfig.vue'
    import ChildGalleriesButton from '@/components/gallery/thumb/ChildGalleriesButton.vue'
-   import Avatar              from '@/components/user/avatar/Avatar.vue'
+   import UserThumbSwiper     from '@/components/user/UserThumbSwiper.vue'
    import UserLinkAvatar      from '@/components/user/avatar/UserLinkAvatar.vue'
-   import HorizontalDiv       from '@/components/util/HorizontalDiv.vue'
    import SortButton          from '@/components/util/SortButton.vue'
    import ThumbSizeButton     from '@/components/util/ThumbSizeButton.vue'
    import ToolTip             from '@/components/util/ToolTip.vue'
@@ -82,6 +78,7 @@
    const sortByDate   = ref(true)
    const selectedUserId = ref(null)
    const expandedElderIds = ref(new Set()) // elder is the top level parent 
+   const userIdToNumGalleries = ref(new Map())
    const elderIdToFamilyGalleries = ref(new Map())
    
    useSeoMeta({ title: "Hell-No Galleries" })
@@ -123,6 +120,7 @@
    const thumbGalleries = computed(() => { 
       const galleries = []     
       const elderIdToFamily = new Map()
+      const userIdToGalleries = new Map()
       for (const gallery of visibleGalleries.value) {
          if (galleryMgr.hasGalleryThumbImage(gallery)) {
             if (showMyPrivateGalleries.value || !isPrivate(gallery)) {
@@ -139,10 +137,19 @@
                      familyGalleries.push(galleryStore.getGallery(galleryId))
                   }
                }
+
+               let userGalleries = userIdToGalleries.get(gallery.userId)
+               if (!userGalleries) {
+                  userGalleries = []
+                  userIdToGalleries.set(gallery.userId, userGalleries)
+               }
+               userGalleries.push(gallery)
             }
          }
       }  
 
+      userIdToNumGalleries.value = new Map(
+         Array.from(userIdToGalleries, ([userId, galleries]) => [userId, galleries.length]))
       elderIdToFamilyGalleries.value = elderIdToFamily // side-effect hack
       return galleries
    })
@@ -178,8 +185,18 @@
    })
 
    const showAvatars = computed(() => isSiteGallery.value && !viewMgr.solo)   
-   const avatarUsers = computed(() => userMgr.avatarUsers)
-   const selectUser = (user) => { selectedUserId.value = selectedUserId.value == user.id ? null : user.id }
+   const avatarUsers = computed(() => {
+      const users = userMgr.avatarUsers.map((user) => {
+         const numGalleries = getNumGalleries(user.id)
+         return { ...user,
+            displayInfo: numGalleries ? "(" + numGalleries + ")" : null,
+            sort: numGalleries ?? 0 }
+      })
+      return users.toSorted(function(a, b) {return b.sort - a.sort}) 
+   })
+   const getNumGalleries = (userId) => { return userIdToNumGalleries.value.get(userId) }
+   
+   const selectUser = (userId) => { selectedUserId.value = userId }
    
    const bypassShowUser = computed(() => username.value ? true : false)
 

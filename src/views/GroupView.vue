@@ -1,29 +1,25 @@
 <template>
    <v-row v-if="!viewMgr.isXs" no-gutters class="flex-nowrap">
        <v-col cols="2" class="d-flex justify-start flex-grow-0 flex-shrink-0">
-         <GroupImage v-if="groupImage" :src="groupImage.thumbUrl" :height="60" class="mt-2"/>      
+         <GroupImage v-if="groupImage" :src="groupImage.thumbUrl" :height="60" cardClass="pa-1 bg-black" class="mt-2"/>      
       </v-col>
       <v-col cols="8" class="title d-flex justify-center align-center flex-grow-1 flex-shrink-0">
          {{ groupName }} Group
       </v-col>
       <v-col cols="2" class="d-flex justify-end align-center flex-grow-0 flex-shrink-0">
          <ThumbSizeButton class="mr-2"/>
-         <ItemThumbConfig :origin="ItemOrigin.GROUP" :additionalFields="ThumbConfigFields"/> 
+         <ItemThumbConfig :origin="ItemOrigin.GROUP"/> 
          <EditButton v-if="canEdit" @click="showEditDialog=true" class="mr-n2"/>          
       </v-col>
    </v-row>
-   <!-- users -->
-   <div class="bg-shade border-md fill-height mt-5 pa-3">
-      <swiper slides-per-view="auto" :space-between="slideSpacing" loop>
-         <swiper-slide v-for="user in groupUsers" :key="user.id" class="dynamic-slide-width mr-3">
-            <UserThumb :user="user"/>
-         </swiper-slide>
-      </swiper>
-   </div>
-   <!-- items -->
-   <v-container class="mt-5">
-      <v-row justify="space-around" class="mb-4" >
-         <ItemThumb v-for="item in groupItems" :key="item.id" :item="item" :origin="ItemOrigin.GROUP"/>
+    <v-container class="mt-5">
+      <!-- users -->
+      <div class="bg-shade border-md fill-height pa-3">
+         <UserThumbSwiper :users="groupUsers" @userId="selectUser"/>
+      </div>
+      <!-- items -->
+      <v-row justify="space-around" class="mt-3 mb-4" >
+         <ItemThumb v-for="item in displayItems" :key="item.id" :item="item" :origin="ItemOrigin.GROUP"/>
       </v-row>
    </v-container>
 
@@ -45,13 +41,11 @@
    import GroupImage        from '@/components/group/thumb/GroupImage.vue'
    import ItemThumb         from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig   from '@/components/item/thumb/ItemThumbConfig.vue'
-   import UserThumb         from '@/components/user/UserThumb.vue'
+   import UserThumbSwiper   from '@/components/user/UserThumbSwiper.vue'
    import EditButton        from '@/components/util/EditButton.vue'
    import ThumbSizeButton   from '@/components/util/ThumbSizeButton.vue'
    import { ItemOrigin, Route } from '@/utils/constants'
     
-   const SHOW_MY_ITEMS = "Show my items"
-   const ThumbConfigFields = [{ title: SHOW_MY_ITEMS, value: true }]
    const route = useRoute()
    const userStore  = useUserStore()
    const groupStore = useGroupStore()
@@ -59,6 +53,8 @@
    const itemStore  = useItemStore()
    const viewStore  = useViewStore()
    const viewMgr    = useViewMgr()
+   const userIdToNumItems = ref(new Map())
+   const selectedUserId = ref(null)
    const showEditDialog = ref(false)
    
    const group = computed(() => {
@@ -66,25 +62,46 @@
       viewStore.setPageName((grp ? grp.name  : "") + " Group")
       return grp
    })
-   const groupName    = computed(() => group.value ? group.value.name : "")
-   const groupImage   = computed(() => groupMgr.getGroupImage(group.value))
-   const canEdit      = computed(() => group.value && userStore.userId && group.value.ownerId == userStore.userId)
-   const slideSpacing = computed(() => viewMgr.isXs ? 5 : 10)
-   
+   const groupName  = computed(() => group.value ? group.value.name : "")
+   const groupImage = computed(() => groupMgr.getGroupImage(group.value))
+   const canEdit    = computed(() => group.value && userStore.userId && group.value.ownerId == userStore.userId)
+  
    const groupUsers = computed(() => {
-      const users = group.value ? group.value.userIds.map(userId => userStore.getUser(userId)) : []
-      return users.toSorted((a, b) => a.username.localeCompare(b.username)) 
+      let users = group.value ? group.value.userIds.map(userId => userStore.getUser(userId)) : []
+
+      users = users.map((user) => {
+         const numItems = userIdToNumItems.value.get(user.id)
+         return { ...user,
+            displayInfo: numItems ? "(" + numItems + ")" : null,
+            sort: numItems ?? 0 }
+      })
+      return users.toSorted(function(a, b) {return b.sort - a.sort}) 
    })
 
    const groupItems = computed(() => { 
       const items = itemStore.getGroupItems(route.params.id)
+
+      const userIdToItems = new Map()
+      for (const item of items) {
+         let userItems = userIdToItems.get(item.userId)
+         if (!userItems) {
+            userItems = []
+            userIdToItems.set(item.userId, userItems)
+         }
+         userItems.push(item)
+      }
+
+      userIdToNumItems.value = new Map(Array.from(userIdToItems, ([userId, items]) => [userId, items.length]))
+      return items
+   })
+
+   const displayItems = computed(() => { 
+      const items = groupItems.value.filter(item => !selectedUserId.value || item.userId == selectedUserId.value )
       return viewStore.setVisibleItems(ItemOrigin.GROUP, group.value.name, Route.GROUP.url + route.params.id, items) 
    })
-</script>
+
+   const selectUser = (userId) => { selectedUserId.value = userId }
+  </script>
 
 <style>
-.dynamic-slide-width {
-  width: max-content; /* Shrinks the slide to fit the inner UserThumb content */
-  display: inline-block; /* Prevents block-level 100% width stretching */
-}
 </style>

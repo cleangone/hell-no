@@ -36,7 +36,7 @@
 
 <style>
 .edit-group-dialog {
-   width: 900px;
+   width: 700px;
    min-height: 500px;
 }
 </style>

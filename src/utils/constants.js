@@ -71,6 +71,7 @@ export const Emit = {
    SWIPE_UP:    'swipeUp',
    SWIPE_DOWN:  'swipeDown',
    TOGGLE:      'toggle',
+   USER_ID:     'userId',
 }
 
 export const FeedAction = {
