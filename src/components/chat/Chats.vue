@@ -3,12 +3,14 @@
       <div class="text-h6">
          Chats
          <TextButton @click="showAddDialog=true" text="Add Chat"/>
-         <TextButton v-if="archivedChatsExist && showArchived" @click="showArchived=false" text="Hide Archived"/>
-         <TextButton v-else-if="archivedChatsExist" @click="showArchived=true" text="Show Archived"/>
-         <IconButton v-if="expandCollapse" :icon="isExpanded?'mdi-arrow-collapse-horizontal':'mdi-arrow-expand-horizontal'" 
-            @click="toggleExpand()" style="float:right"/>
+         <span v-if="archivedChatsExist && showAllChats"> 
+            <TextButton v-if="showArchived" @click="showArchived=false" text="Hide Archived"/>
+            <TextButton v-else @click="showArchived=true" text="Show Archived"/>
+         </span>
+         <IconButton v-if="collapsible" :icon="showAllChats?'mdi-arrow-collapse-vertical':'mdi-arrow-expand-vertical'" 
+            @click="showAllChats=!showAllChats" style="float:right"/>
       </div>
-      <v-card v-for="chat in displayChats" :key="chat.id" class="mb-2 w-100">
+      <v-card v-if="allChats.length" v-for="chat in displayChats" :key="chat.id" class="mb-2 w-100">
          <div @click="toggleChat(chat)" :class="chatClass(chat)"> 
             <Chat :chat="chat" :postCount="postCount(chat)" />
          </div>
@@ -31,14 +33,13 @@
    import Posts            from './post/Posts.vue'
    import TextButton       from '@/components/util/TextButton.vue'
    import IconButton       from '@/components/util/IconButton.vue'
-   import { ChatStatus, Emit, State } from '@/utils/constants'
+   import { ChatStatus, State } from '@/utils/constants'
    
-   const props = defineProps({ state: String, groupId: String, expandCollapse: Boolean })
-   const emit = defineEmits([Emit.TOGGLE])
+   const props = defineProps({ state: String, groupId: String, collapsible: Boolean })
    
    const chatStore     = useChatStore()
    const chatMgr       = useChatMgr()
-   const isExpanded    = ref(false)
+   const showAllChats  = ref(true)
    const showArchived  = ref(false)
    const showAddDialog = ref(false)
    const selectedChatIds = ref(new Set())
@@ -50,9 +51,13 @@
       return chats.toSorted(function(a, b) { return b.dateModified - a.dateModified })
    })
    const activeChats = computed(() => allChats.value.filter(chat => chat.status == ChatStatus.ACTIVE))
-   const displayChats = computed(() => showArchived.value ? allChats.value : activeChats.value)
    const archivedChatsExist = computed(() => allChats.value?.length > activeChats.value?.length)
-
+   const displayChats = computed(() => {
+      const chats = showArchived.value ? allChats.value : activeChats.value
+      const collapsedChat = activeChats.value.length ? activeChats.value[0] : allChats.value[0]
+      return showAllChats.value ? chats : [ collapsedChat ]
+   })
+   
    // todo - postCount called 3 times
    const chatClass  = (chat) => { return postCount(chat) ? "pointer" : "" }   
    const isSelected = (chat) => { return selectedChatIds.value.has(chat.id) }   
@@ -61,11 +66,6 @@
       if (isSelected(chat)) { selectedChatIds.value.delete(chat.id) }
       else { selectedChatIds.value.add(chat.id) }
    }
-
-   const toggleExpand = () => { 
-      isExpanded.value = !isExpanded.value
-      emit (Emit.TOGGLE, isExpanded.value)
-   }   
 </script>
 
 <style>

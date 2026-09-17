@@ -13,18 +13,15 @@
       </v-col>
    </v-row>
    <div class="mt-5 w-100">
-      <!-- users -->
-      <div class="bg-shade border-md fill-height pa-3">
+      <div class="bg-shade border-md fill-height pa-3"> <!-- users -->
          <UserThumbSwiper :users="groupUsers" @userId="selectUser"/>
-         <!-- <UserThumbCol :users="groupUsers" @userId="selectUser"/> -->
       </div>
-      <!-- items, chats -->
-      <HorizontalDiv class="mt-2 w-100">
-         <v-row v-if="!chatExpanded" justify="space-around" class="mt-3 mb-4 mr-2">
-            <ItemThumb v-for="item in displayItems" :key="item.id" :item="item" :origin="ItemOrigin.GROUP"/>
-         </v-row>
-         <Chats :state="State.GROUP" :groupId="route.params.id" expandCollapse @toggle="toggleChat"/>
-      </HorizontalDiv>
+      <div  class="mt-5">  <!-- chats -->
+         <Chats :state="State.GROUP" :groupId="route.params.id" collapsible/>
+      </div>
+      <v-row v-if="!chatExpanded" class="mt-5"> <!-- items -->
+         <ItemThumb v-for="item in displayItems" :key="item.id" :item="item" :origin="ItemOrigin.GROUP"/>
+      </v-row>
    </div>
 
    <v-dialog v-model="showEditDialog" width="75%" height="90%">
@@ -45,12 +42,10 @@
    import GroupImage        from '@/components/group/thumb/GroupImage.vue'
    import ItemThumb         from '@/components/item/thumb/ItemThumb.vue'
    import ItemThumbConfig   from '@/components/item/thumb/ItemThumbConfig.vue'
-   import UserThumbCol      from '@/components/user/thumb/UserThumbCol.vue'
    import UserThumbSwiper   from '@/components/user/thumb/UserThumbSwiper.vue'
    import Chats             from '@/components/chat/Chats.vue'
    import EditButton        from '@/components/util/EditButton.vue'
    import ThumbSizeButton   from '@/components/util/ThumbSizeButton.vue'
-   import HorizontalDiv     from '@/components/util/HorizontalDiv.vue'
    import { ItemOrigin, Route, State } from '@/utils/constants'
     
    const route = useRoute()
@@ -109,7 +104,6 @@
    })
 
    const selectUser = (userId) => { selectedUserId.value = userId }
-   const toggleChat = (expand) => { chatExpanded.value = expand }
 </script>
 
 <style>
