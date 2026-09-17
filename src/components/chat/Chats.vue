@@ -23,17 +23,15 @@
    import Chat       from './Chat.vue'
    import Posts      from './post/Posts.vue'
    import TextButton from '@/components/util/TextButton.vue'
+   import { ChatStatus }  from '@/utils/constants'
    
    const chatStore = useChatStore()
    const chatMgr = useChatMgr()
    const selectedChatIds = ref(new Set())
    const showArchived = ref(false)
    
-   const displayChats = computed(() => {
-      const chats = showArchived.value ? chatStore.allChats : chatStore.activeChats
-      chats.sort(function(a, b) { return b.dateModified - a.dateModified })
-      return chats
-   })
+   const chats = computed(() => chatStore.publicChats.toSorted(function(a, b) { return b.dateModified - a.dateModified }))
+   const displayChats = computed(() => showArchived.value ? chats.value : chats.value.filter(chat => chat.status == ChatStatus.ACTIVE))
 
    // todo - postCount called 3 times
    const chatClass  = (chat) => { return postCount(chat) ? "pointer" : "" }   

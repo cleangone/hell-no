@@ -20,17 +20,17 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useUserStore } from '@/stores/userStore'
-   import AddPost    from './post/AddPost.vue'
-   import TextButton from '@/components/util/TextButton.vue'
-   
+   import AddPost          from './post/AddPost.vue'
+   import TextButton       from '@/components/util/TextButton.vue'
    import { chatDate } from '@/utils/dateUtils'
-   import { ChatState } from '@/utils/constants'
+   import { ChatStatus } from '@/utils/constants'
    
    const props = defineProps({ chat: Object, postCount: Number })
+   
    const userStore = useUserStore()
    const showAddPostDialog = ref(false)
    
-   const isArchived   = computed(() => props.chat.state ==  ChatState.ARCHIVED )
+   const isArchived   = computed(() => props.chat.status ==  ChatStatus.ARCHIVED )
    const dateModified = computed(() => chatDate(props.chat.dateModified.toDate()))
 </script>
 

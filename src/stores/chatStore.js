@@ -4,15 +4,17 @@ import { db } from '@/firebase'
 import { collection, doc, query, where, setDoc, updateDoc, deleteDoc, arrayUnion, serverTimestamp } from "firebase/firestore"
 import { useFirestore } from '@vueuse/firebase/useFirestore'
 import { useUserStore }  from './userStore'
-import { dateUuid } from '@/utils/utils'
-import { ChatState }  from '@/utils/constants'
+import { dateUuid, isGroup } from '@/utils/utils'
+import { State, ChatStatus }  from '@/utils/constants'
 
 /* 
    Chat
       id
       name
-      state: ChatState: ACTIVE, ARCHIVED
+      state: State: PUBLIC, GROUP, PRIVATE  
+      status: ChatStatus: ACTIVE, ARCHIVED
       userId
+      groupId
       description
       dateCreated
       dateModified
@@ -25,18 +27,31 @@ export const useChatStore = defineStore('chatStore', () => {
    const chatCollection = collection(db, TABLE)
    function chatDoc(id) { return doc(db, TABLE, id) }
 
-   const allChats = useFirestore(chatCollection, [])
-   const activeChatsQuery = computed(() => query(chatCollection, where('state', '==', ChatState.ACTIVE)))
-   const activeChats = useFirestore(activeChatsQuery, [])
+   const chats = useFirestore(chatCollection, [])
 
-   const chatIdToChat = computed(() => new Map(allChats.value.map((obj) => [obj.id, obj])))
+   const publicChatsQuery = computed(() => query(chatCollection, where('state', '==', State.PUBLIC)))  
+   const publicChats = useFirestore(publicChatsQuery, [])
+  
+   const chatIdToChat = computed(() => new Map(chats.value.map((obj) => [obj.id, obj])))
    function getChat(id) { return chatIdToChat.value.get(id) }
+
+   const groupIdToGroupChats = computed(() => chats.value.reduce((groupIdToChats, chat) => {
+         if (isGroup(chat) && chat.groupId) {
+            if (!groupIdToChats.has(chat.groupId)) { groupIdToChats.set(chat.groupId, []) }
+            groupIdToChats.get(chat.groupId).push({ ...chat })
+         }
+         return groupIdToChats 
+      }, new Map())
+   )
+   function getGroupChats(groupId) { 
+      return groupIdToGroupChats.value.has(groupId) ? groupIdToGroupChats.value.get(groupId) : [] }
 
    function addChat(chat) {
       const chatToAdd = { 
          ...chat, 
          id: dateUuid(), 
-         state: ChatState.ACTIVE,
+         state: State.PRIVATE,
+         status: ChatStatus.ACTIVE,
          userId: userStore.userId,
          dateCreated: serverTimestamp(), 
          dateModified: serverTimestamp() }
@@ -52,5 +67,5 @@ export const useChatStore = defineStore('chatStore', () => {
       deleteDoc(doc(chatCollection, id))
    }
 
-   return { allChats, activeChats, getChat, addChat, updateChat, deleteChat }
+   return { chats, publicChats, getChat, getGroupChats, addChat, updateChat, deleteChat }
 })

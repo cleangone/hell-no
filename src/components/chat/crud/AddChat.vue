@@ -2,8 +2,8 @@
    <v-card title="Add Chat" class="add-chat-dialog">
       <v-form v-model="dataValid">
          <div class="ma-3">
-            <v-text-field v-model="name"        label="Name"        :rules="requiredRule"/>
-            <v-text-field v-model="description" label="Description" :rules="requiredRule"/>
+            <v-text-field v-model="name"        label="Name"  :rules="requiredRule"/>
+            <v-text-field v-model="description" label="Description"/>
          </div>
       </v-form>
       <v-card-actions class="justify-end">

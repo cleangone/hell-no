@@ -28,29 +28,40 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useChatStore }  from '@/stores/chatStore'
-   import AddChat      from '@/components/chat/AddChat.vue'
-   import EditChat     from '@/components/chat/EditChat.vue'
-   import DeleteChat   from '@/components/chat/DeleteChat.vue'
+   import { useChatMgr }    from '@/stores/chatMgr'
+   import { useGroupStore } from '@/stores/groupStore'
+   import AddChat      from '@/components/chat/crud/AddChat.vue'
+   import EditChat     from '@/components/chat/crud/EditChat.vue'
+   import DeleteChat   from '@/components/chat/crud/DeleteChat.vue'
    import EditButton   from '@/components/util/EditButton.vue'
    import DeleteButton from '@/components/util/DeleteButton.vue'
    import TextButton   from '@/components/util/TextButton.vue'
    import { defaultDateString } from '@/utils/dateUtils'
    
-   const chatStore = useChatStore()
+   const chatStore   = useChatStore()
+   const chatMgr     = useChatMgr()
+   const groupStore  = useGroupStore()
+  
    const showAddDialog   = ref(false)
    const showEditDialog  = ref(false)
    const showDeleteDialog = ref(false)
    const selectedChat = ref({})
    
    const headers = [
-      { title: 'Name',     value: 'name' },
-      { title: 'State',    value: 'state', align: 'center' },
-      { title: 'Created',  key: 'dateCreated',   align: 'center' },
-      { title: 'Modified', key: 'dateModified',  align: 'center' },
+      { title: 'Name',        value: 'name' },
+      { title: 'Visibility',  value: 'state',   align: 'center' },
+      { title: 'Group',       value: 'group',   align: 'center' },
+      { title: 'Status',      value: 'status',  align: 'center' },
+      { title: 'Posts',       value: 'posts',   align: 'center' },
+      { title: 'Created',  key: 'dateCreated',  align: 'center' },
+      { title: 'Modified', key: 'dateModified', align: 'center' },
       { title: '',         key: "actions" },
    ]
 
-   const chats = computed(() => chatStore.allChats)
+   const chats = computed(() => chatStore.chats.map(chat => {
+      const group = chat.groupId ? groupStore.getGroup(chat.groupId) : null
+      return { ...chat, group: group ? group.name : "", posts: chatMgr.getPostCount(chat.id) } 
+   }))
 
    const editChat   = (chat)  => { showDialog(showEditDialog,   chat) }
    const deleteChat = (chat)  => { showDialog(showDeleteDialog, chat) }

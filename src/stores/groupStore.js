@@ -42,19 +42,17 @@ export const useGroupStore = defineStore('group', () => {
    
    const groups = useFirestore(groupCollection)   
    const groupIdToGroup = computed(() => { return groups.value ? new Map(groups.value.map((obj) => [obj.id, obj])) : new Map() })
-   
+   function getGroup(id) { return groupIdToGroup.value.get(id) }
+
    const myGroupsQuery    = computed(() => userStore.userId && query(groupCollection, where('userIds', "array-contains", userStore.userId)))
    const myRawGroups      = useFirestore(myGroupsQuery, [])
    const myGroups         = computed(() => myRawGroups.value.toSorted((a, b) => a.name.localeCompare(b.name)))
    const myGroupIds       = computed(() => { return myGroups.value.map((obj) => obj.id) })
    const myGroupIdToGroup = computed(() => { return new Map(myGroups.value.map((obj) => [obj.id, obj])) })
-   
+   function getMyGroup(id) { return myGroupIdToGroup.value.get(id) }
+
    const myInvitedGroupsQuery = computed(() => userStore.userId && query(groupCollection, where('invitedIds', "array-contains", userStore.userId)))
    const myInvitedGroups = useFirestore(myInvitedGroupsQuery, [])
-   
-   function getMyGroup(id) {
-      return myGroupIdToGroup.value.get(id)
-   }
 
    function getUserGroups(userId) {
       // todo: replace with query
@@ -142,7 +140,7 @@ export const useGroupStore = defineStore('group', () => {
 
    return { 
       groups, groupIdToGroup, myGroups, myGroupIds, myGroupIdToGroup, myInvitedGroups,
-      getMyGroup, getUserGroups, getUserGroupsMap, getGroup, getUserIds, 
+      getGroup, getMyGroup, getUserGroups, getUserGroupsMap, getGroup, getUserIds, 
       addGroup, updateGroup, deleteGroup,
       addUserIds, addModeratorId, removeModeratorId, inviteUserIds, removeUserId, acceptInvite, declineInvite, removeInvitedId,
       addImage, updateImage, deleteImage

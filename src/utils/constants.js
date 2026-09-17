@@ -37,10 +37,11 @@ export const ArtistState = {
    AKA:      'AKA',
 }
 
-export const ChatState = {
+export const ChatStatus = {
    ACTIVE:   'Active',
    ARCHIVED: 'Archived',
 }
+export const ChatStatuses = [ ChatStatus.ACTIVE, ChatStatus.ARCHIVED ]
 
 export const Defaults = {
    DELETED_USER_ID: "0",
@@ -217,9 +218,10 @@ export const State = {
    GROUP:     'Group',   
    HIDDEN:    'Hidden',   
 }
-export const ItemStates    = [ State.PUBLIC, State.PRIVATE, State.GROUP, State.HIDDEN ]
+export const ItemStates    = [ State.PUBLIC, State.GROUP, State.PRIVATE, State.HIDDEN ]
 export const GalleryStates = [ State.PUBLIC, State.PRIVATE ]
 export const GroupStates   = [ State.PUBLIC, State.PRIVATE, State.HIDDEN ]
+export const ChatStates    = [ State.PUBLIC, State.GROUP, State.PRIVATE ]
 
 export const ThumbHeights = { 
    sizes:  [150, 150, 200, 250, 300], 
