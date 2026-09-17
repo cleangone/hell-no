@@ -50,7 +50,6 @@ export const useChatStore = defineStore('chatStore', () => {
       const chatToAdd = { 
          ...chat, 
          id: dateUuid(), 
-         state: State.PRIVATE,
          status: ChatStatus.ACTIVE,
          userId: userStore.userId,
          dateCreated: serverTimestamp(), 

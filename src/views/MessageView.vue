@@ -2,13 +2,13 @@
    <br v-if="viewMgr.isDeskTop">
    <v-card>
       <v-tabs v-model="tab" bg-color="primary">
-         <v-tab :value="tabs.email">Emails</v-tab>
-         <v-tab :value="tabs.chat">Chats</v-tab>
+         <v-tab :value="TABS.email">Emails</v-tab>
+         <v-tab :value="TABS.chat">Chats</v-tab>
       </v-tabs>
       <v-card-text>
          <v-window v-model="tab">
-            <v-window-item :value="tabs.email"><Emails/></v-window-item>
-            <v-window-item :value="tabs.chat"><Chats/></v-window-item>
+            <v-window-item :value="TABS.email"><Emails/></v-window-item>
+            <v-window-item :value="TABS.chat"><Chats :state="State.PUBLIC"/></v-window-item>
          </v-window>
       </v-card-text>
   </v-card>
@@ -17,12 +17,14 @@
 <script setup>
    import { ref } from 'vue'
    import { useViewMgr } from '@/stores/viewMgr'
-   import Emails from '@/components/email/Emails.vue'
-   import Chats  from '@/components/chat/Chats.vue'
+   import Emails         from '@/components/email/Emails.vue'
+   import Chats          from '@/components/chat/Chats.vue'
+   import { State }  from '@/utils/constants'
+
+   const TABS = { email: "email", chat: "chat" }
    
    const viewMgr = useViewMgr()
-   const tabs = { email: "email", chat: "chat" }
-   const tab = ref(tabs.email)
+   const tab     = ref(TABS.email)
 </script>
 
 <style>

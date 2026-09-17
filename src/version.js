@@ -15,6 +15,7 @@
        - want to bring ipad to art meet-up - has to be app in order to alwyas work
 */
 export const versions = [   
+   ["v2.59.1", "9/17/26"], // Add chat to GroupView
    ["v2.59.0", "9/17/26"], // Refactor chat.state, status, groupId
    ["v2.58.0", "9/16/26"], // Update Group/GalleriesView UserThumb layout
    ["v2.57.0", "9/15/26"], // Redefine meaning of PUBLIC/PRIVATE groups, add HIDDEN

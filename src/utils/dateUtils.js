@@ -29,6 +29,7 @@ export function displayDate(dbDate) {
 }
 
 export function chatDate(date) { 
+   if (!date) { return "" }
    const options = { ...CHAT_OPTIONS }
    const now = new Date()
    if (date.getTime() + WEEK_IN_MILLIS > now.getTime()) { options.weekday = "short" }

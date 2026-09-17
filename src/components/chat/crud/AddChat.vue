@@ -17,8 +17,9 @@
    import { ref } from 'vue'
    import { useChatStore } from '@/stores/chatStore'
    import { requiredRule } from '@/utils/utils'
-   import { Emit }  from '@/utils/constants'
-
+   import { Emit, State }  from '@/utils/constants'
+   
+   const props = defineProps({ state: {type:String, default:State.PRIVATE}, groupId: String })
    const emit = defineEmits([Emit.DONE])
 
    const chatStore = useChatStore()
@@ -27,7 +28,12 @@
    const dataValid = ref(true)
 
    const addChat = () => {    
-      chatStore.addChat({ name: name.value, description: description.value })
+      chatStore.addChat({ 
+         name:        name.value, 
+         state:       props.state, 
+         description: description.value,
+         groupId:     props.groupId ?? null
+      })
       emit(Emit.DONE)
    }
 </script>

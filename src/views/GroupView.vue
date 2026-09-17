@@ -12,17 +12,20 @@
          <EditButton v-if="canEdit" @click="showEditDialog=true" class="mr-n2"/>          
       </v-col>
    </v-row>
-    <v-container class="mt-5">
+   <div class="mt-5 w-100">
       <!-- users -->
       <div class="bg-shade border-md fill-height pa-3">
          <UserThumbSwiper :users="groupUsers" @userId="selectUser"/>
          <!-- <UserThumbCol :users="groupUsers" @userId="selectUser"/> -->
       </div>
-      <!-- items -->
-      <v-row justify="space-around" class="mt-3 mb-4" >
-         <ItemThumb v-for="item in displayItems" :key="item.id" :item="item" :origin="ItemOrigin.GROUP"/>
-      </v-row>
-   </v-container>
+      <!-- items, chats -->
+      <HorizontalDiv class="mt-2 w-100">
+         <v-row v-if="!chatExpanded" justify="space-around" class="mt-3 mb-4 mr-2">
+            <ItemThumb v-for="item in displayItems" :key="item.id" :item="item" :origin="ItemOrigin.GROUP"/>
+         </v-row>
+         <Chats :state="State.GROUP" :groupId="route.params.id" expandCollapse @toggle="toggleChat"/>
+      </HorizontalDiv>
+   </div>
 
    <v-dialog v-model="showEditDialog" width="75%" height="90%">
       <EditGroupCard :groupId="group.id" @done="showEditDialog=false"/>
@@ -44,9 +47,11 @@
    import ItemThumbConfig   from '@/components/item/thumb/ItemThumbConfig.vue'
    import UserThumbCol      from '@/components/user/thumb/UserThumbCol.vue'
    import UserThumbSwiper   from '@/components/user/thumb/UserThumbSwiper.vue'
+   import Chats             from '@/components/chat/Chats.vue'
    import EditButton        from '@/components/util/EditButton.vue'
    import ThumbSizeButton   from '@/components/util/ThumbSizeButton.vue'
-   import { ItemOrigin, Route } from '@/utils/constants'
+   import HorizontalDiv     from '@/components/util/HorizontalDiv.vue'
+   import { ItemOrigin, Route, State } from '@/utils/constants'
     
    const route = useRoute()
    const userStore  = useUserStore()
@@ -57,6 +62,7 @@
    const viewMgr    = useViewMgr()
    const userIdToNumItems = ref(new Map())
    const selectedUserId = ref(null)
+   const chatExpanded = ref(false)
    const showEditDialog = ref(false)
    
    const group = computed(() => {
@@ -103,7 +109,8 @@
    })
 
    const selectUser = (userId) => { selectedUserId.value = userId }
-  </script>
+   const toggleChat = (expand) => { chatExpanded.value = expand }
+</script>
 
 <style>
 </style>

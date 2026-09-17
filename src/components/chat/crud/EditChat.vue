@@ -5,7 +5,7 @@
             <v-col cols="6"><v-text-field v-model="name" label="Name" :rules="requiredRule"/></v-col>
             <v-col ><v-select v-model="status" label="Status" :items="ChatStatuses"/></v-col> 
          </v-row>
-         <v-row class="mt-n5">
+         <v-row v-if="!bypassState" class="mt-n5">
             <v-col cols="6"><v-select v-model="state" label="Visibility" :items="ChatStates"/></v-col> 
             <v-col v-if="isGroup">
                <v-select v-model="groupId" label="Group" :items="groups" item-title="name" item-value="id"/>
@@ -29,7 +29,7 @@
    import { requiredRule } from '@/utils/utils'
    import { Emit, ChatStates, ChatStatuses, State } from '@/utils/constants'
    
-   const props = defineProps({ chat: Object })
+   const props = defineProps({ chat: Object, bypassState: Boolean })
    const emit = defineEmits([Emit.DONE])
 
    const chatStore   = useChatStore()
