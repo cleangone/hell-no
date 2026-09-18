@@ -2,7 +2,7 @@
    <v-card-item class="bg-blue-lighten-5 pr-0">
       <HorizontalDiv class="w-100">
          <div v-if="item" class="my-1 ml-n2">
-            <ItemThumb :item="item" :size="ThumbSize.IMG" :origin="ItemOrigin.EXTERNAL"/>
+            <ItemThumb :item="item" :size="ThumbSize.IMG" :origin="ItemOrigin.EXTERNAL" emitPopup @popup="onPopup"/>
          </div>
          <div class="w-100">
             <div>
@@ -50,10 +50,11 @@
    import IconButton    from '@/components/util/IconButton.vue'
    import HorizontalDiv from '@/components/util/HorizontalDiv.vue'
    import { chatDate } from '@/utils/dateUtils'
-   import { ChatStatus, ItemOrigin, ThumbSize } from '@/utils/constants'
+   import { ChatStatus, Emit, ItemOrigin, ThumbSize } from '@/utils/constants'
    
    const props = defineProps({ chat: Object, postCount: Number })
-   
+   const emit = defineEmits([ Emit.POPUP ])
+
    const userStore = useUserStore()
    const chatStore = useChatStore()
    const itemStore = useItemStore()   
@@ -72,6 +73,8 @@
 
    const editChat   = ()  => { showEditDialog.value   = true }
    const deleteChat = ()  => { showDeleteDialog.value = true }
+
+   const onPopup = (popup) => { emit(Emit.POPUP, popup) }
 </script>
 
 <style>
