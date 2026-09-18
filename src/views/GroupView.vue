@@ -22,7 +22,7 @@
       <v-row v-if="!chatExpanded" class="mt-5"> <!-- items -->
          <div v-for="item in displayItems" :key="item.id" class="group-thumb">
             <ItemThumb :item="item" :origin="ItemOrigin.GROUP"/>
-            <div class="group-thumb-icon">
+            <div class="group-thumb-icon" :class="thumbIconRight">
                <v-icon icon="mdi-message-image" @click="addChat(item)" color="blue-darken-2" class="hand"/> 
             </div>
          </div>
@@ -79,7 +79,7 @@
    const groupName  = computed(() => group.value ? group.value.name : "")
    const groupImage = computed(() => groupMgr.getGroupImage(group.value))
    const canEdit    = computed(() => group.value && userStore.userId && group.value.ownerId == userStore.userId)
-  
+   
    const groupUsers = computed(() => {
       let users = group.value ? group.value.userIds.map(userId => userStore.getUser(userId)) : []
 
@@ -119,6 +119,8 @@
       selectedItem.value = item
       showAddChatDialog.value = true
    }
+   
+   const thumbIconRight = computed(() => viewMgr.isXs ? "group-thumb-icon-right-xs" : "group-thumb-icon-right")
 </script>
 
 <style>
@@ -129,7 +131,6 @@
 .group-thumb-icon {
   position: absolute;
   top: 0px;
-  right: 17px;
   z-index: 2;
   display: flex;
   align-items: center;
@@ -137,5 +138,11 @@
   background-color: #FFF9C4;
   border-radius: 10%;
   padding: 4px;
+}
+.group-thumb-icon-right {
+  right: 17px;
+}
+.group-thumb-icon-right-xs {
+  right: 4px;
 }
 </style>

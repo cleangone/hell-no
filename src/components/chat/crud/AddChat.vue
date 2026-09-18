@@ -6,7 +6,7 @@
       </v-form>
    </DefineTemplate>
    <v-card title="Add Chat" class="add-chat-dialog">
-      <div v-if="item && isItemGroup">
+      <div v-if="item && (isItemGroup || isLandscape)">
          <ItemThumb :item="item" :size="ThumbSize.IMG" :origin="ItemOrigin.EXTERNAL"/>
          <div class="mx-3"><ReuseTemplate/></div>
       </div>
@@ -48,6 +48,7 @@
    })
 
    const isItemGroup = computed(() => itemMgr.isItemGroup(props.item))
+   const isLandscape = computed(() => itemMgr.itemAspectRatio(props.item) > 2)
 
    const addChat = () => {    
       chatStore.addChat({ 

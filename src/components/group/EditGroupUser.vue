@@ -2,7 +2,7 @@
    <v-card title="Edit Group User" class="edit-dialog">
       <v-form>
          <div>
-            <v-select v-model="groupUserState" label="Status" :items="groupUserStates" class="mx-3"></v-select>
+            <v-select v-model="userState" label="Status" :items="USER_STATES" class="mx-3"></v-select>
          </div>
       </v-form>
       <v-card-actions class="justify-end">
@@ -15,28 +15,27 @@
 <script setup>
    import { onMounted, ref } from 'vue'
    import { useGroupStore } from '@/stores/groupStore'
-   import { Emit, GroupUserState } from '@/utils/constants'
+   import { Emit, GroupUserState as UserState } from '@/utils/constants'
    
    const props = defineProps({ groupUser: Object })
-   const emit = defineEmits([Emit.DONE]);
+   const emit  = defineEmits([ Emit.DONE ])
+
+   const USER_STATES = [ UserState.MEMBER, UserState.MODERATOR ] //GroupUserState.VIEWER
    const groupStore = useGroupStore()
-   const groupUserStates = [ GroupUserState.MEMBER, GroupUserState.MODERATOR ] //GroupUserState.VIEWER
-   const groupUserState = ref('')
+   const userState = ref(null)
    
    onMounted(() => {
-      console.log("EditGroupUser", props.groupUser)
-      groupUserState.value = props.groupUser.state
+      userState.value = props.groupUser.state
    })
    
    const save = () => {
-      if (stateChanged(GroupUserState.MEMBER, GroupUserState.MODERATOR)) { groupStore.addModeratorId(   props.groupUser.groupId, props.groupUser.id) }
-      if (stateChanged(GroupUserState.MODERATOR, GroupUserState.MEMBER)) { groupStore.removeModeratorId(props.groupUser.groupId, props.groupUser.id) }
+      if (stateChanged(UserState.MEMBER, UserState.MODERATOR)) { groupStore.addModeratorId(   props.groupUser.groupId, props.groupUser.id) }
+      if (stateChanged(UserState.MODERATOR, UserState.MEMBER)) { groupStore.removeModeratorId(props.groupUser.groupId, props.groupUser.id) }
      
       emit(Emit.DONE)
    }
 
-   const stateChanged = (prev, curr) => { return (props.groupUser.state == prev && groupUserState.value == curr) }
-
+   const stateChanged = (prev, curr) => { return (props.groupUser.state == prev && userState.value == curr) }
 </script>
 
 <style>

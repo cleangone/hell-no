@@ -3,19 +3,23 @@
    <v-card class="admin">
       <v-tabs v-model="tab" bg-color="primary">
          <v-tab                          :value="tabs.users">Users</v-tab>
-         <v-tab v-if="viewMgr.isDeskTop" :value="tabs.items">Content</v-tab>
-         <v-tab v-if="viewMgr.isDeskTop" :value="tabs.walls">Walls</v-tab>
-         <v-tab v-if="viewMgr.isDeskTop" :value="tabs.artists">Artists</v-tab>
-         <v-tab v-if="viewMgr.isDeskTop" :value="tabs.feeds">Feeds</v-tab>
-         <v-tab v-if="viewMgr.isDeskTop" :value="tabs.chats">Chats</v-tab>
-         <v-tab v-if="viewMgr.isDeskTop" :value="tabs.actions">Actions</v-tab>
-         <v-tab v-if="viewMgr.isDeskTop" :value="tabs.files">Files</v-tab>
-         <v-tab v-if="viewMgr.isDeskTop" :value="tabs.test">Message Test</v-tab>
+         <template v-if="viewMgr.isDeskTop">
+            <v-tab  :value="tabs.groups">Groups</v-tab>
+            <v-tab  :value="tabs.items">Content</v-tab>
+            <v-tab  :value="tabs.walls">Walls</v-tab>
+            <v-tab  :value="tabs.artists">Artists</v-tab>
+            <!-- <v-tab :value="tabs.feeds">Feeds</v-tab> -->
+            <v-tab  :value="tabs.chats">Chats</v-tab>
+            <v-tab  :value="tabs.actions">Actions</v-tab>
+            <v-tab  :value="tabs.files">Files</v-tab>
+            <v-tab  :value="tabs.test">Message Test</v-tab>
+         </template>
       </v-tabs>
    
       <v-card-text>
          <v-window v-model="tab">
             <v-window-item :value="tabs.users"><AdminUsers/></v-window-item>
+            <v-window-item :value="tabs.groups"><AdminGroups/></v-window-item>
             <v-window-item :value="tabs.content"><AdminContent/></v-window-item>
             <v-window-item :value="tabs.walls"><AdminWalls/></v-window-item>
             <v-window-item :value="tabs.artists"><AdminArtists/></v-window-item>
@@ -35,6 +39,7 @@
    import { useSeoMeta } from '@unhead/vue'
    import { useViewMgr } from '@/stores/viewMgr'
    import AdminUsers   from '@/components/admin/AdminUsers.vue'
+   import AdminGroups  from '@/components/admin/AdminGroups.vue'
    import AdminContent from '@/components/admin/AdminContent.vue'
    import AdminWalls   from '@/components/admin/AdminWalls.vue'
    import AdminArtists from '@/components/admin/AdminArtists.vue'
@@ -46,7 +51,8 @@
    
    const viewMgr = useViewMgr()
    const tabs = { 
-      users: "users", content: "content", walls: "walls", artists: "artists", feeds: "feeds", 
+      users: "users", groups: "groups", content: "content", walls: "walls", artists: "artists", 
+      // feeds: "feeds", 
       chats: "chats", actions: "actions", files: "files", test: "test" 
    }
    const tab = ref(tabs.item)

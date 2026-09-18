@@ -106,6 +106,7 @@ export const useGroupStore = defineStore('group', () => {
    }
 
    function updateGroup(group)                 { update(group.id, group) }
+   function addUserId(groupId, userId)         { update(groupId, { userIds:      arrayUnion(userId) }) }
    function addUserIds(groupId, userIds)       { update(groupId, { userIds:      arrayUnion(...userIds) }) }
    function addModeratorId(groupId, userId)    { update(groupId, { moderatorIds: arrayUnion(userId) }) } 
    function inviteUserIds(groupId, userIds)    { update(groupId, { invitedIds:   arrayUnion(...userIds) }) }
@@ -142,7 +143,7 @@ export const useGroupStore = defineStore('group', () => {
       groups, groupIdToGroup, myGroups, myGroupIds, myGroupIdToGroup, myInvitedGroups,
       getGroup, getMyGroup, getUserGroups, getUserGroupsMap, getGroup, getUserIds, 
       addGroup, updateGroup, deleteGroup,
-      addUserIds, addModeratorId, removeModeratorId, inviteUserIds, removeUserId, acceptInvite, declineInvite, removeInvitedId,
+      addUserId, addUserIds, addModeratorId, removeModeratorId, inviteUserIds, removeUserId, acceptInvite, declineInvite, removeInvitedId,
       addImage, updateImage, deleteImage
    }
 })
