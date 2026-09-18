@@ -7,7 +7,7 @@
             <TextButton v-if="showArchived" @click="showArchived=false" text="Hide Archived"/>
             <TextButton v-else @click="showArchived=true" text="Show Archived"/>
          </span>
-         <IconButton v-if="collapsible" :icon="showAllChats?'mdi-arrow-collapse-vertical':'mdi-arrow-expand-vertical'" 
+         <IconButton v-if="collapsible && chatsExist" :icon="showAllChats?'mdi-arrow-collapse-vertical':'mdi-arrow-expand-vertical'" 
             @click="showAllChats=!showAllChats" style="float:right"/>
       </div>
       <v-card v-if="allChats.length" v-for="chat in displayChats" :key="chat.id" class="mb-2 w-100">
@@ -50,6 +50,7 @@
       
       return chats.toSorted(function(a, b) { return b.dateModified - a.dateModified })
    })
+   const chatsExist  = computed(() => allChats.value?.length)
    const activeChats = computed(() => allChats.value.filter(chat => chat.status == ChatStatus.ACTIVE))
    const archivedChatsExist = computed(() => allChats.value?.length > activeChats.value?.length)
    const displayChats = computed(() => {

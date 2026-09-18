@@ -59,11 +59,12 @@
                <div v-if="isPrimaryImage(item)" class="d-flex flex-column">
                   <TextButton text="crop"         @click="cropImage(item, ImageType.CROP)"/>
                   <TextButton text="gallery crop" @click="cropImage(item, ImageType.GALLERY)"/>
-                  <!-- <TextButton text="group crop"   @click="cropImage(item, ImageType.GROUP)"/> -->
+                  <TextButton text="group crop"   @click="cropImage(item, ImageType.GROUP)"/>
                   <TextButton text="avatar crop"  @click="cropImage(item, ImageType.USER)"/>
                </div>
             </template>
             <template v-slot:item.actions="{ item }">
+               <SendImage    v-if="isGroup(item)" :image="item" class="admin-link"/>
                <EditButton   v-if="canEdit(item)" @click="editItemImage(item)" class="admin-link"/>
                <DeleteButton v-if="!isPrimaryImage(item)" @click="deleteImage(item)" class="admin-link"/>
             </template>
@@ -82,6 +83,7 @@
    import { useEditItemImageHandler } from '@/stores/image/editItemImageHandler'
    import UploadImage  from '@/components/image/UploadImage.vue'
    import CropImage    from '@/components/image/CropImage.vue'
+   import SendImage    from './SendImage.vue'
    import EditButton   from '@/components/util/EditButton.vue'
    import DeleteButton from '@/components/util/DeleteButton.vue'
    import IconButton   from '@/components/util/IconButton.vue'
@@ -131,6 +133,7 @@
    const imageOnMyWall  = (imageId) => { return wallStore.myWallIncludesImage(imageId) }
    
    const isPrimaryImage = (itemImage) => { return itemImage.imageType == ImageType.PRIMARY }
+   const isGroup        = (itemImage) => { return itemImage.imageType == ImageType.GROUP }
    const canEdit        = (itemImage) => { return EditableImageTypes.includes(itemImage.imageType) }
    const addToWall      = (itemImage) => { wallStore.addMyWallItem(item.value, itemImage) }
 
@@ -159,7 +162,7 @@
       }
       showEdit.value = true
    }
-   
+
    const saveImage = () => {
       const itemToUpdate = { id:item.value.id, otherImages:[] }
       for (const image of item.value.otherImages) {

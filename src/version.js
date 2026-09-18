@@ -15,6 +15,11 @@
        - want to bring ipad to art meet-up - has to be app in order to alwyas work
 */
 export const versions = [   
+
+               // add chat.dateContentModified?
+               // create chat with initial post?
+               // is chat date the most recent post date?
+   ["v2.61.0", "9/18/26"], // AddChat with image  
    ["v2.60.1", "9/17/26"], // Expand/collapse Chat vertically
    ["v2.60.0", "9/17/26"], // Add chat to GroupView
    ["v2.59.0", "9/17/26"], // Refactor chat.state, status, groupId

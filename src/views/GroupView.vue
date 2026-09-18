@@ -9,7 +9,7 @@
       <v-col cols="2" class="d-flex justify-end align-center flex-grow-0 flex-shrink-0">
          <ThumbSizeButton class="mr-2"/>
          <ItemThumbConfig :origin="ItemOrigin.GROUP"/> 
-         <EditButton v-if="canEdit" @click="showEditDialog=true" class="mr-n2"/>          
+         <EditButton v-if="canEdit" @click="showEditGroupDialog=true" class="mr-n2"/>          
       </v-col>
    </v-row>
    <div class="mt-5 w-100">
@@ -20,12 +20,20 @@
          <Chats :state="State.GROUP" :groupId="route.params.id" collapsible/>
       </div>
       <v-row v-if="!chatExpanded" class="mt-5"> <!-- items -->
-         <ItemThumb v-for="item in displayItems" :key="item.id" :item="item" :origin="ItemOrigin.GROUP"/>
+         <div v-for="item in displayItems" :key="item.id" class="group-thumb">
+            <ItemThumb :item="item" :origin="ItemOrigin.GROUP"/>
+            <div class="group-thumb-icon">
+               <v-icon icon="mdi-message-image" @click="addChat(item)" color="blue-darken-2" class="hand"/> 
+            </div>
+         </div>
       </v-row>
    </div>
 
-   <v-dialog v-model="showEditDialog" width="75%" height="90%">
-      <EditGroupCard :groupId="group.id" @done="showEditDialog=false"/>
+   <v-dialog v-model="showEditGroupDialog" width="75%" height="90%">
+      <EditGroupCard :groupId="group.id" @done="showEditGroupDialog=false"/>
+   </v-dialog>
+    <v-dialog v-model="showAddChatDialog" width="auto">
+      <AddChat :state="State.GROUP" :groupId="route.params.id" :item="selectedItem" @done="showAddChatDialog=false"/>
    </v-dialog>
 </template>
 
@@ -44,6 +52,7 @@
    import ItemThumbConfig   from '@/components/item/thumb/ItemThumbConfig.vue'
    import UserThumbSwiper   from '@/components/user/thumb/UserThumbSwiper.vue'
    import Chats             from '@/components/chat/Chats.vue'
+   import AddChat           from '@/components/chat/crud/AddChat.vue'
    import EditButton        from '@/components/util/EditButton.vue'
    import ThumbSizeButton   from '@/components/util/ThumbSizeButton.vue'
    import { ItemOrigin, Route, State } from '@/utils/constants'
@@ -55,10 +64,12 @@
    const itemStore  = useItemStore()
    const viewStore  = useViewStore()
    const viewMgr    = useViewMgr()
-   const userIdToNumItems = ref(new Map())
-   const selectedUserId = ref(null)
-   const chatExpanded = ref(false)
-   const showEditDialog = ref(false)
+   const userIdToNumItems  = ref(new Map())
+   const selectedUserId    = ref(null)
+   const selectedItem      = ref(null)
+   const chatExpanded      = ref(false)
+   const showEditGroupDialog = ref(false)
+   const showAddChatDialog = ref(false)
    
    const group = computed(() => {
       const grp = groupStore.getMyGroup(route.params.id)
@@ -104,7 +115,27 @@
    })
 
    const selectUser = (userId) => { selectedUserId.value = userId }
+   const addChat = (item) => { 
+      selectedItem.value = item
+      showAddChatDialog.value = true
+   }
 </script>
 
 <style>
+.group-thumb {
+   position: relative;
+   display: inline-block; 
+}
+.group-thumb-icon {
+  position: absolute;
+  top: 0px;
+  right: 17px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #FFF9C4;
+  border-radius: 10%;
+  padding: 4px;
+}
 </style>
