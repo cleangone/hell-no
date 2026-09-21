@@ -3,7 +3,7 @@
 </template>
 
 <script setup>
-   import { useChatMgr } from '@/stores/chatMgr'
+   import { useChatMgr } from '@/stores/chat/chatMgr'
    import DeleteConfirm from '@/components/util/DeleteConfirm.vue'
    import { Emit } from '@/utils/constants'
    

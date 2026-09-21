@@ -24,7 +24,7 @@
 
 <script setup>
    import { computed, onMounted, ref } from 'vue'
-   import { useChatStore }  from '@/stores/chatStore'
+   import { useChatStore }  from '@/stores/chat/chatStore'
    import { useGroupStore } from '@/stores/groupStore'
    import { requiredRule } from '@/utils/utils'
    import { Emit, ChatStates, ChatStatuses, State } from '@/utils/constants'

@@ -14,13 +14,14 @@
 
 <script setup>
    import { onMounted, ref } from 'vue'
-   import { useChatPostStore } from '@/stores/chatPostStore'
+   import { usePostStore } from '@/stores/chat/postStore'
    import { requiredRule } from '@/utils/utils'
    import { Emit } from '@/utils/constants'
    
    const props = defineProps({ post: Object })
    const emit  = defineEmits([Emit.DONE])
-   const chatPostStore = useChatPostStore()
+
+   const postStore = usePostStore()
    const text = ref('')
    const dataValid = ref(true)
 
@@ -29,10 +30,7 @@
    })
    
    const save = () => {
-      chatPostStore.updatePost({
-         id: props.post.id,
-         text: text.value,
-      })
+      postStore.updatePost({ id: props.post.id, text: text.value })
       emit(Emit.DONE)
    }
 </script>

@@ -27,11 +27,11 @@
 
 <script setup>
    import { computed, ref } from 'vue'
-   import { useChatStore } from '@/stores/chatStore'
-   import { useChatMgr }   from '@/stores/chatMgr'
+   import { useChatStore } from '@/stores/chat/chatStore'
+   import { useChatMgr }   from '@/stores/chat/chatMgr'
    import Chat             from './Chat.vue'
    import AddChat          from './crud/AddChat.vue'
-   import Posts            from './post/Posts.vue'
+   import Posts            from './Posts.vue'
    import ItemPopup        from '@/components/item/ItemPopup.vue'
    import TextButton       from '@/components/util/TextButton.vue'
    import IconButton       from '@/components/util/IconButton.vue'

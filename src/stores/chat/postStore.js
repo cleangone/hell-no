@@ -18,14 +18,13 @@ import { dateUuid } from '@/utils/utils'
 
 const TABLE = 'chat_posts'
 
-export const useChatPostStore = defineStore('chatPostStore', () => {
+export const usePostStore = defineStore('chatPostStore', () => {
    const postCollection = collection(db, TABLE)
    function postDoc(id) { return doc(db, TABLE, id) }
 
    const posts = useFirestore(postCollection, [])
-   
-   // const postIdToPost = computed(() => new Map(posts.value.map((obj) => [obj.id, obj])))
    const chatIdToPosts = computed(() => {
+      // console.log("chatIdToPosts")
       const map = new Map()
       for (const post of posts.value) { 
          if (!map.has(post.chatId) ) { map.set(post.chatId, []) }
@@ -34,9 +33,12 @@ export const useChatPostStore = defineStore('chatPostStore', () => {
       return map
    })
    
-   // function getPost(postId) { return postIdToPost.value.get(postId) }
-   
+   function getPosts(chatId) { 
+      // console.log("getPosts", chatId)
+      return chatIdToPosts.value.has(chatId) ? chatIdToPosts.value.get(chatId) : [] }
+
    function addPost(post) {
+      console.log("addPost", post)
       const postToAdd = { 
          ...post, id: dateUuid(), dateCreated: serverTimestamp(), dateModified: serverTimestamp() }
       setDoc(postDoc(postToAdd.id), postToAdd)
@@ -59,5 +61,5 @@ export const useChatPostStore = defineStore('chatPostStore', () => {
       batch.commit()
    }
 
-   return { chatIdToPosts, addPost, updatePost, deletePost, deletePosts }
+   return { getPosts, addPost, updatePost, deletePost, deletePosts }
 })

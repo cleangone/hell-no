@@ -16,14 +16,13 @@
 
        - add any item, any image to a group chat, expand links
        - handle xs char layout
-       - xs group image layout
-       - admin can add user to group
 */
 export const versions = [   
 
                // add chat.dateContentModified?
                // create chat with initial post?
                // is chat date the most recent post date?
+   ["v2.62.0", "9/21/26"], // Expand/contract chats and posts
    ["v2.61.1", "9/18/26"], // Add AdminGroups, AdminGroupUsers
    ["v2.61.0", "9/18/26"], // AddChat with image  
    ["v2.60.1", "9/17/26"], // Expand/collapse Chat vertically

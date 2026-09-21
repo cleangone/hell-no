@@ -1,5 +1,5 @@
 <template>
-   <Avatar :user="user" @click="router.push(userUrl)" :toolTip="user.username" class="mt-3 hand pa-1 bg-black"/>
+   <Avatar v-if="user" :user="user" @click="router.push(userUrl)" :toolTip="user.username" class="mt-3 hand pa-1 bg-black"/>
 </template>
 
 <script setup>

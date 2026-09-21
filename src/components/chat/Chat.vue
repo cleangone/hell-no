@@ -38,9 +38,9 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useUserStore } from '@/stores/userStore'
-   import { useChatStore } from '@/stores/chatStore'
+   import { useChatStore } from '@/stores/chat/chatStore'
    import { useItemStore } from '@/stores/itemStore'
-   import AddPost       from './post/AddPost.vue'
+   import AddPost       from './crud/AddPost.vue'
    import EditChat      from './crud/EditChat.vue'
    import DeleteChat    from './crud/DeleteChat.vue'
    import ItemThumb     from '@/components/item/thumb/ItemThumb.vue'

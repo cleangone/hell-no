@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { db } from '@/firebase'
 import { collection, doc, query, where, setDoc, updateDoc, deleteDoc, arrayUnion, serverTimestamp } from "firebase/firestore"
 import { useFirestore } from '@vueuse/firebase/useFirestore'
-import { useUserStore }  from './userStore'
+import { useUserStore }  from '../userStore'
 import { dateUuid, isGroup } from '@/utils/utils'
 import { State, ChatStatus }  from '@/utils/constants'
 

@@ -26,7 +26,7 @@
 <script setup>
    import { computed, onMounted, ref } from 'vue'
    import { createReusableTemplate } from '@vueuse/core'   
-   import { useChatStore } from '@/stores/chatStore'
+   import { useChatStore } from '@/stores/chat/chatStore'
    import { useItemMgr }   from '@/stores/itemMgr'
    import ItemThumb     from '@/components/item/thumb/ItemThumb.vue'
    import HorizontalDiv from '@/components/util/HorizontalDiv.vue'

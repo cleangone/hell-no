@@ -14,13 +14,13 @@
 
 <script setup>
    import { computed, ref } from 'vue'
-   import { useChatPostStore } from '@/stores/chatPostStore'
+   import { usePostStore } from '@/stores/chat/postStore'
    import { requiredRule } from '@/utils/utils'
    import { Emit } from '@/utils/constants'
 
    const props = defineProps({ userId: String, chatId: String, replyToPostId: String })
    const emit  = defineEmits([Emit.DONE])
-   const chatPostStore = useChatPostStore()
+   const postStore = usePostStore()
    const text = ref('')
    const dataValid = ref(true)
 
@@ -29,7 +29,7 @@
    const addPost = () => {    
       const post = { chatId: props.chatId, userId: props.userId, text: text.value }
       if (props.replyToPostId) { post.replyToPostId = props.replyToPostId }
-      chatPostStore.addPost(post)
+      postStore.addPost(post)
       emit(Emit.DONE)
    }
 </script>

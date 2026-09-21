@@ -27,8 +27,8 @@
 
 <script setup>
    import { computed, ref } from 'vue'
-   import { useChatStore }  from '@/stores/chatStore'
-   import { useChatMgr }    from '@/stores/chatMgr'
+   import { useChatStore }  from '@/stores/chat/chatStore'
+   import { useChatMgr }    from '@/stores/chat/chatMgr'
    import { useGroupStore } from '@/stores/groupStore'
    import AddChat      from '@/components/chat/crud/AddChat.vue'
    import EditChat     from '@/components/chat/crud/EditChat.vue'
