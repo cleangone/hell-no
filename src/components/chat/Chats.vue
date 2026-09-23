@@ -10,13 +10,13 @@
             <TextButton v-else @click="showArchived=true" text="Show Archived"/>
          </span>
       </div>
-      <HorizontalDiv v-if="!isCollapsed" class="mx-2">
-         <div class="mr-3">
+      <HorizontalDiv v-if="!isCollapsed" class="mx-2 d-flex">
+         <div class="mr-3 flex-shrink-0">
             <div v-for="chat in displayChats" :key="chat.id"  @click="selectChat(chat)" class="hand mb-2">
                <Chat :chat="chat" :postCount="postCount(chat)" :isSeleted="isSelected(chat)" :canUpdate="canUpdate"/> 
             </div>
          </div>
-         <div class="mb-2 w-100">
+         <div class="mb-2 flex-grow-1">
             <div><Posts :chatId="selectedChatId" @popup="onPopup"/></div>
             <AddPost :chatId="selectedChatId" :userId="userStore.userId"/>
          </div> 

@@ -18,6 +18,7 @@
        - handle xs chat layout
 */
 export const versions = [   
+   ["v2.63.1", "9/23/26"], // Update Chat display for minimal/no Posts
    ["v2.63.0", "9/23/26"], // Lay out chat/posts horizontally
    ["v2.62.0", "9/21/26"], // Expand/contract chats and posts
    ["v2.61.1", "9/18/26"], // Add AdminGroups, AdminGroupUsers

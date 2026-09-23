@@ -32,8 +32,6 @@ export function chatDate(date) {
    if (!date) { return "" }
    if (isToday(date)) { return date.toLocaleTimeString('en-US', HH_MM) }
 
-
-
    const now = new Date()
    let options = { ...CHAT_OPTIONS }
    if (date.getTime() + WEEK_IN_MILLIS > now.getTime()) { options = DDD_HH_MM }

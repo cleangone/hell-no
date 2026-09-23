@@ -1,6 +1,6 @@
 <template>
-   <div class="d-flex flex-column h-100 w-100" style="height: 200px">
-      <v-virtual-scroll :items="posts" height="400px" ref="virtualScrollRef">
+   <div class="d-flex flex-column h-100 w-100" style="max-height: 400px;">
+      <v-virtual-scroll :items="posts" height="auto" ref="virtualScrollRef">
          <template v-slot:default="{ item }">
             <Post :key="item.id" :post="item" @popup="onPopup" />
          </template>
@@ -50,11 +50,10 @@
    
    const scrollToBottom = async () => {
       await nextTick()  // wait for vue dependencies 
-      await nextTick()  // wait for vuetify virtual DOM dimensions 
+      await nextTick()  // wait for vuetify DOM dimensions 
       
-      // if (virtualScrollRef.value && posts.value.length > 0) {
       if (virtualScrollRef.value && posts.value?.length) {
-         // Pass 'end' to align the item precisely at the bottom viewport threshold
+         // 'end' aligns item at viewport bottom
          virtualScrollRef.value.scrollToIndex(posts.value.length - 1, 'end')
       }
    }
