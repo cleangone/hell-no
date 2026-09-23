@@ -30,11 +30,22 @@ export function displayDate(dbDate) {
 
 export function chatDate(date) { 
    if (!date) { return "" }
-   const options = { ...CHAT_OPTIONS }
+   if (isToday(date)) { return date.toLocaleTimeString('en-US', HH_MM) }
+
+
+
    const now = new Date()
-   if (date.getTime() + WEEK_IN_MILLIS > now.getTime()) { options.weekday = "short" }
+   let options = { ...CHAT_OPTIONS }
+   if (date.getTime() + WEEK_IN_MILLIS > now.getTime()) { options = DDD_HH_MM }
    else if (date.getYear() != now.getYear()) { options.year = "numeric" }
    return date.toLocaleDateString('en-us', options) 
+}
+
+export function isToday(date) { 
+   const now = new Date()
+   return date.getDate() === now.getDate() &&
+          date.getMonth() === now.getMonth() &&
+          date.getFullYear() === now.getFullYear() 
 }
 
 export function emailThreadDate(date) { return formatDate(date, HH_MM, DDD_HH_MM, MM_DD, MM_DD_YY) }

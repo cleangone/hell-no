@@ -1,37 +1,40 @@
 <template>
-   <v-card :title="title" class="add-post-dialog">
-      <v-form v-model="dataValid">
-         <div class="ma-3">
-           <v-textarea v-model="text" label="Text" :rules="requiredRule"/>
-         </div>
+   <v-card>
+      <div class="d-flex justify-space-between align-center px-3"> 
+         <span class="font-weight-medium">Add Post</span> 
+         <span> 
+            <IconButton @click="addPost()" icon="mdi-check-bold"  :disabled="!text" color="blue-darken-2"/>
+            <IconButton @click="cancel()"  icon="mdi-close-thick" :disabled="!text" color="blue-darken-2"/>
+         </span>
+      </div>
+      <v-form v-model="dataValid" class="mx-3">
+         <v-textarea v-model="text" auto-grow rows="1"/>
       </v-form>
-      <v-card-actions class="justify-end">
-         <v-btn color="primary" @click="addPost()" :disabled="!dataValid">save</v-btn>
-         <v-btn color="primary" @click="$emit(Emit.DONE)">Cancel</v-btn>
-      </v-card-actions>
    </v-card>
 </template>
 
 <script setup>
-   import { computed, ref } from 'vue'
+   import { ref } from 'vue'
    import { usePostStore } from '@/stores/chat/postStore'
-   import { requiredRule } from '@/utils/utils'
+   import { useChatStore } from '@/stores/chat/chatStore'
+   import IconButton       from '@/components/util/IconButton.vue'
    import { Emit } from '@/utils/constants'
 
-   const props = defineProps({ userId: String, chatId: String, replyToPostId: String })
+   const props = defineProps({ chatId: String })
    const emit  = defineEmits([Emit.DONE])
+
    const postStore = usePostStore()
-   const text = ref('')
+   const chatStore = useChatStore()
+   const text = ref(null)
    const dataValid = ref(true)
 
-   const title = computed(() => props.replyToPostId ? "Add Reply" : "Add Post")
-   
    const addPost = () => {    
-      const post = { chatId: props.chatId, userId: props.userId, text: text.value }
-      if (props.replyToPostId) { post.replyToPostId = props.replyToPostId }
-      postStore.addPost(post)
-      emit(Emit.DONE)
+      postStore.addPost({ chatId: props.chatId, text: text.value })
+      chatStore.updateChatContentModified(props.chatId)
+      text.value = null
    }
+
+   const cancel = () => { text.value = null }
 </script>
 
 <style>

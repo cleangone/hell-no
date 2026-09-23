@@ -88,6 +88,11 @@ export function getMapObjsById(id, map) { return map && map.has(id) ? map.get(id
 export function populated(str) { return str && str.length }
 export function possessive(str) { return populated(str) ? str + (str.endsWith("s") ? "'" : "'s") : ""}
 
+export function toSortedNameAsc(objs) { 
+   return objs?.length ? objs.toSorted(function(a, b) { return a.name.localeCompare(b.name) }) : objs }
+export function toSortedDateCreatedAsc(objs) { 
+   return objs?.length ? objs.toSorted(function(a,b) { return a.dateCreated-b.dateCreated }) : objs }
+
 const KNOWN_ERRORS = [ " is null", ".value is undefined" ]
 export function handleError(err, component) { 
    // for (const suffix of KNOWN_ERRORS) {

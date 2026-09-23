@@ -16,14 +16,14 @@
       <div class="bg-shade border-md fill-height pa-3"> <!-- users -->
          <UserThumbSwiper :users="groupUsers" @userId="selectUser"/>
       </div>
-      <div  class="mt-5">  <!-- chats -->
-         <Chats :state="State.GROUP" :groupId="route.params.id" collapsible/>
+      <div  class="mt-5">
+         <Chats :state="State.GROUP" :groupId="route.params.id" collapsible @select="onChatSelected"/>
       </div>
       <v-row v-if="!chatExpanded" class="mt-5"> <!-- items -->
          <div v-for="item in displayItems" :key="item.id" class="group-thumb">
             <ItemThumb :item="item" :origin="ItemOrigin.GROUP"/>
-            <div class="group-thumb-icon" :class="thumbIconRight">
-               <v-icon icon="mdi-message-image" @click="addChat(item)" color="blue-darken-2" class="hand"/> 
+            <div v-if="selectedChatId" class="group-thumb-icon" :class="thumbIconRight">
+               <v-icon icon="mdi-message-image" @click="addPost(item)" color="blue-darken-2" class="hand"/> 
             </div>
          </div>
       </v-row>
@@ -32,8 +32,8 @@
    <v-dialog v-model="showEditGroupDialog" width="75%" height="90%">
       <EditGroupCard :groupId="group.id" @done="showEditGroupDialog=false"/>
    </v-dialog>
-    <v-dialog v-model="showAddChatDialog" width="auto">
-      <AddChat :state="State.GROUP" :groupId="route.params.id" :item="selectedItem" @done="showAddChatDialog=false"/>
+    <v-dialog v-model="showAddPostDialog" width="auto">
+      <AddImagePost :chatId="selectedChatId"  :groupId="route.params.id" :item="selectedItem" @done="showAddPostDialog=false"/>
    </v-dialog>
 </template>
 
@@ -52,7 +52,7 @@
    import ItemThumbConfig   from '@/components/item/thumb/ItemThumbConfig.vue'
    import UserThumbSwiper   from '@/components/user/thumb/UserThumbSwiper.vue'
    import Chats             from '@/components/chat/Chats.vue'
-   import AddChat           from '@/components/chat/crud/AddChat.vue'
+   import AddImagePost      from '@/components/chat/crud/AddImagePost.vue'
    import EditButton        from '@/components/util/EditButton.vue'
    import ThumbSizeButton   from '@/components/util/ThumbSizeButton.vue'
    import { ItemOrigin, Route, State } from '@/utils/constants'
@@ -68,8 +68,9 @@
    const selectedUserId    = ref(null)
    const selectedItem      = ref(null)
    const chatExpanded      = ref(false)
+   const selectedChatId    = ref(null)
    const showEditGroupDialog = ref(false)
-   const showAddChatDialog = ref(false)
+   const showAddPostDialog = ref(false)
    
    const group = computed(() => {
       const grp = groupStore.getMyGroup(route.params.id)
@@ -115,12 +116,14 @@
    })
 
    const selectUser = (userId) => { selectedUserId.value = userId }
-   const addChat = (item) => { 
+   const addPost = (item) => { 
       selectedItem.value = item
-      showAddChatDialog.value = true
+      showAddPostDialog.value = true
    }
    
    const thumbIconRight = computed(() => viewMgr.isXs ? "group-thumb-icon-right-xs" : "group-thumb-icon-right")
+
+   const onChatSelected = (chatId) => { selectedChatId.value = chatId }
 </script>
 
 <style>

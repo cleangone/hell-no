@@ -7,7 +7,9 @@
       <v-data-table :headers="headers" :items="chats" density="compact">
          <template v-slot:item.dateCreated="{ item }"> {{ defaultDateString(item.dateCreated) }}</template>
          <template v-slot:item.dateModified="{ item }">{{ defaultDateString(item.dateModified)}}</template>
+         <template v-slot:item.dateContentModified="{ item }">{{ defaultDateString(item.dateContentModified)}}</template>
          <template v-slot:item.actions="{ item }">
+            <IconButton :icon="isArchived(item)?'mdi-archive-remove':'mdi-archive'" color="blue-darken-2" @click="toggleArchive(item)"/>
             <EditButton   @click="editChat(item)" class="admin-link"/>
             <DeleteButton @click="deleteChat(item)" class="admin-link"/>
          </template>
@@ -36,6 +38,7 @@
    import EditButton   from '@/components/util/EditButton.vue'
    import DeleteButton from '@/components/util/DeleteButton.vue'
    import TextButton   from '@/components/util/TextButton.vue'
+   import IconButton   from '@/components/util/IconButton.vue'
    import { defaultDateString } from '@/utils/dateUtils'
    
    const chatStore   = useChatStore()
@@ -53,9 +56,10 @@
       { title: 'Group',       value: 'group',   align: 'center' },
       { title: 'Status',      value: 'status',  align: 'center' },
       { title: 'Posts',       value: 'posts',   align: 'center' },
-      { title: 'Created',  key: 'dateCreated',  align: 'center' },
-      { title: 'Modified', key: 'dateModified', align: 'center' },
-      { title: '',         key: "actions" },
+      { title: 'Created',          key: 'dateCreated',  align: 'center' },
+      { title: 'Modified',         key: 'dateModified', align: 'center' },
+      { title: 'Content Modified', key: 'dateContentModified', align: 'center' },
+      { title: '',                 key: "actions" },
    ]
 
    const chats = computed(() => chatStore.chats.map(chat => {
@@ -63,6 +67,9 @@
       return { ...chat, group: group ? group.name : "", posts: chatMgr.getPostCount(chat.id) } 
    }))
 
+   const isArchived    = (chat) => { return chatMgr.isArchived(chat) }
+   const toggleArchive = (chat) => { chatMgr.toggleArchive(chat) }
+   
    const editChat   = (chat)  => { showDialog(showEditDialog,   chat) }
    const deleteChat = (chat)  => { showDialog(showDeleteDialog, chat) }
    const showDialog = (showDialog, chat) => {

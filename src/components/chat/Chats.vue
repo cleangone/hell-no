@@ -1,76 +1,99 @@
 <template>
-   <div class="text-left w-100">
+   <v-card class="text-left w-100 elevation-1">
       <div class="text-h6">
+         <v-icon v-if="collapsible && chatsExist" :icon="isCollapsed?'mdi-chevron-right':'mdi-chevron-down'" 
+            @click="isCollapsed=!isCollapsed" large class="icon-btn mr-n1"/>
          Chats
-         <TextButton @click="showAddDialog=true" text="Add Chat"/>
-         <span v-if="archivedChatsExist && showAllChats"> 
+         <TextButton v-if="!isCollapsed && canUpdate" @click="showAddChatDialog=true" text="Add Chat"/>
+         <span v-if="!isCollapsed && archivedChatsExist"> 
             <TextButton v-if="showArchived" @click="showArchived=false" text="Hide Archived"/>
             <TextButton v-else @click="showArchived=true" text="Show Archived"/>
          </span>
-         <IconButton v-if="collapsible && chatsExist" :icon="showAllChats?'mdi-arrow-collapse-vertical':'mdi-arrow-expand-vertical'" 
-            @click="showAllChats=!showAllChats" style="float:right"/>
       </div>
-      <v-card v-if="allChats.length" v-for="chat in displayChats" :key="chat.id" class="mb-2 w-100 elevation-1">
-         <div @click="toggleChat(chat)" :class="chatClass(chat)"> 
-            <Chat :chat="chat" :postCount="postCount(chat)" @popup="onPopup"/>
+      <HorizontalDiv v-if="!isCollapsed" class="mx-2">
+         <div class="mr-3">
+            <div v-for="chat in displayChats" :key="chat.id"  @click="selectChat(chat)" class="hand mb-2">
+               <Chat :chat="chat" :postCount="postCount(chat)" :isSeleted="isSelected(chat)" :canUpdate="canUpdate"/> 
+            </div>
          </div>
-         <div v-if="isSelected(chat) && postCount(chat)" class="mt-2">
-            <Posts :chatId="chat.id"/>
-         </div>
-      </v-card>
-   </div> 
+         <div class="mb-2 w-100">
+            <div><Posts :chatId="selectedChatId" @popup="onPopup"/></div>
+            <AddPost :chatId="selectedChatId" :userId="userStore.userId"/>
+         </div> 
+      </HorizontalDiv>
+    </v-card>
+
    <ItemPopup v-if="popupImage" :popupImage="popupImage"/>
-   <v-dialog v-model="showAddDialog" width="auto">
-      <AddChat :state="state" :groupId="groupId" @done="showAddDialog=false"/>
+   <v-dialog v-model="showAddChatDialog" width="auto">
+      <AddChat :state="state" :groupId="groupId" @done="showAddChatDialog=false"/>
    </v-dialog>
 </template>
 
 <script setup>
    import { computed, ref } from 'vue'
-   import { useChatStore } from '@/stores/chat/chatStore'
-   import { useChatMgr }   from '@/stores/chat/chatMgr'
+   import { useUserStore }  from '@/stores/userStore'
+   import { useChatStore }  from '@/stores/chat/chatStore'
+   import { useChatMgr }    from '@/stores/chat/chatMgr'
+   import { useGroupStore } from '@/stores/groupStore'
+   import { useAdminStore } from '@/stores/adminStore'
    import Chat             from './Chat.vue'
    import AddChat          from './crud/AddChat.vue'
    import Posts            from './Posts.vue'
+   import AddPost          from './crud/AddPost.vue'
    import ItemPopup        from '@/components/item/ItemPopup.vue'
    import TextButton       from '@/components/util/TextButton.vue'
-   import IconButton       from '@/components/util/IconButton.vue'
-   import { ChatStatus, State } from '@/utils/constants'
+   import HorizontalDiv    from '../util/HorizontalDiv.vue'
+   import { toSortedNameAsc } from '@/utils/utils'
+   import { ChatStatus, Emit, State } from '@/utils/constants'
    
    const props = defineProps({ state: String, groupId: String, collapsible: Boolean })
-   
-   const chatStore     = useChatStore()
-   const chatMgr       = useChatMgr()
-   const showAllChats  = ref(true)
-   const showArchived  = ref(false)
-   const showAddDialog = ref(false)
-   const selectedChatIds = ref(new Set())
-   const popupImage    = ref(null)
+   const emit  = defineEmits([ Emit.SELECT ])
+
+   const userStore  = useUserStore()
+   const chatStore  = useChatStore()
+   const chatMgr    = useChatMgr()
+   const groupStore = useGroupStore()
+   const adminStore = useAdminStore()
+   const showArchived   = ref(false)
+   const popupImage     = ref(null)
+   const selectedChatId = ref(null)
+   const isCollapsed    = ref(false)
+   const showAddChatDialog = ref(false)
    
    const allChats = computed(() => {
-      let chats = props.state == State.PUBLIC ? chatStore.publicChats : []
-      if (props.state == State.GROUP && props.groupId) { chats = chatStore.getGroupChats(props.groupId) }
-      
-      return chats.toSorted(function(a, b) { return b.dateModified - a.dateModified })
+      if (props.state == State.GROUP && props.groupId) { return chatStore.getGroupChats(props.groupId) }   
+      return props.state == State.PUBLIC ? chatStore.publicChats : []
    })
+
    const chatsExist  = computed(() => allChats.value?.length)
    const activeChats = computed(() => allChats.value.filter(chat => chat.status == ChatStatus.ACTIVE))
    const archivedChatsExist = computed(() => allChats.value?.length > activeChats.value?.length)
    const displayChats = computed(() => {
-      const chats = showArchived.value ? allChats.value : activeChats.value
-      const collapsedChat = activeChats.value.length ? activeChats.value[0] : allChats.value[0]
-      return showAllChats.value ? chats : [ collapsedChat ]
+      let chats = showArchived.value ? allChats.value : activeChats.value
+     
+      if (!selectedChatId.value) {
+         let chatToSelect = null
+         for (const chat of chats) {
+            if (postCount(chat) && (!chatToSelect || chat.dateContentModified > chatToSelect.dateContentModified)) {
+               chatToSelect = chat
+            }
+         }
+         if (chatToSelect) { selectChat(chatToSelect) }
+      }
+      return toSortedNameAsc(chats)
    })
-   
-   // todo - postCount called 3 times
-   const chatClass  = (chat) => { return postCount(chat) ? "pointer" : "" }   
-   const isSelected = (chat) => { return selectedChatIds.value.has(chat.id) }   
-   const postCount  = (chat) => { return chatMgr.getPostCount(chat.id) }   
-   const toggleChat = (chat) => { 
-      if (isSelected(chat)) { selectedChatIds.value.delete(chat.id) }
-      else { selectedChatIds.value.add(chat.id) }
-   }
 
+   const group     = computed(() => props.groupId ? groupStore.getGroup(props.groupId) : null) 
+   const canUpdate = computed(() => adminStore.isAdmin || group.value?.moderatorIds.includes(userStore.userId))
+   
+   const isSelected = (chat) => { return selectedChatId.value == chat.id }
+   const postCount  = (chat) => { return chatMgr.getPostCount(chat.id) }   
+
+   const selectChat  = (chat) => { 
+      selectedChatId.value = chat.id 
+      emit(Emit.SELECT, chat.id)
+   }   
+   
    const onPopup = (popup)  => { popupImage.value = popup }
 </script>
 

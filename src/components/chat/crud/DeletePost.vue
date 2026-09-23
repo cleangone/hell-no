@@ -4,13 +4,14 @@
 
 <script setup>
    import { computed } from 'vue'
-   import { useChatMgr } from '@/stores/chat/chatMgr'
-   import DeleteConfirm from '@/components/util/DeleteConfirm.vue'
+   import { usePostStore } from '@/stores/chat/postStore'
+   import DeleteConfirm    from '@/components/util/DeleteConfirm.vue'
    import { Emit } from '@/utils/constants'
    
    const props = defineProps({ post: Object })
-   const emit = defineEmits([Emit.DONE])
-   const chatMgr = useChatMgr()
+   const emit  = defineEmits([Emit.DONE])
+   
+   const postStore = usePostStore()
    
    const text = computed(() => 
       "the Post '" + 
@@ -19,7 +20,7 @@
    )
 
    const deletePost = () => {
-      chatMgr.deletePost(props.post)
+      postStore.deletePost(props.post.id)
       emit(Emit.DONE)
    }
 </script>

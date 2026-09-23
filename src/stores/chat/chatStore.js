@@ -18,6 +18,7 @@ import { State, ChatStatus }  from '@/utils/constants'
       description
       dateCreated
       dateModified
+      dateContentModified
 */
 
 const TABLE = 'chats'
@@ -53,7 +54,8 @@ export const useChatStore = defineStore('chatStore', () => {
          status: ChatStatus.ACTIVE,
          userId: userStore.userId,
          dateCreated: serverTimestamp(), 
-         dateModified: serverTimestamp() }
+         dateModified: serverTimestamp(),
+         dateContentModified: serverTimestamp() }
       setDoc(chatDoc(chatToAdd.id), chatToAdd)
    }
 
@@ -62,9 +64,14 @@ export const useChatStore = defineStore('chatStore', () => {
       updateDoc(chatDoc(chatToUpdate.id), chatToUpdate)
    }
 
+   function updateChatContentModified(chatId) {
+      updateDoc(chatDoc(chatId), { dateContentModified:serverTimestamp(), dateModified:serverTimestamp() })
+   }
+
    function deleteChat(id) {
       deleteDoc(doc(chatCollection, id))
    }
 
-   return { chats, publicChats, getChat, getGroupChats, addChat, updateChat, deleteChat }
+   return { chats, publicChats, getChat, getGroupChats, 
+            addChat, updateChat, updateChatContentModified, deleteChat }
 })

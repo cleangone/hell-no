@@ -15,13 +15,10 @@
        - want to bring ipad to art meet-up - has to be app in order to alwyas work
 
        - add any item, any image to a group chat, expand links
-       - handle xs char layout
+       - handle xs chat layout
 */
 export const versions = [   
-
-               // add chat.dateContentModified?
-               // create chat with initial post?
-               // is chat date the most recent post date?
+   ["v2.63.0", "9/23/26"], // Lay out chat/posts horizontally
    ["v2.62.0", "9/21/26"], // Expand/contract chats and posts
    ["v2.61.1", "9/18/26"], // Add AdminGroups, AdminGroupUsers
    ["v2.61.0", "9/18/26"], // AddChat with image  

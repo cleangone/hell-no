@@ -1,25 +1,14 @@
 <template>
-   <v-card v-for="post in posts" :key="post.id" @click="toggleIfReplies(post.id)" class="mb-2"
-         :class="getClass(post)" :style="{marginLeft: (post.level * 20)+'px'}">
-      <v-card-item class="pr-0 pt-0">
-         <div v-if="!isDeleted(post)">
-            <RouterLink :to="Route.USER.url + post.userId" class="mr-2">{{ getUsername(post.userId) }}</RouterLink>
-            <span class="text-overline"> 
-               {{ getDate(post) }}
-               <IconButton @click="reply(post)" icon="mdi-reply" />
-               <IconButton v-if="hasReplies(post.id)" :icon="isCollapsed(post)?'mdi-arrow-expand-vertical':'mdi-arrow-collapse-vertical'"/>
-            </span>
-            <span v-if="canUpdate(post.userId)" style="float:right"> 
-               <EditButton   @click="editPost(post, comment)"/>
-               <DeleteButton @click="deletePost(post, comment)"/>
-            </span>
-         </div>   
-         <div class="pr-2 mt-n2">{{ post.text }}</div>
-      </v-card-item>
-   </v-card>
-
-   <v-dialog v-model="showRelyDialog" width="auto">
-      <AddPost :chatId="chatId" :userId="userStore.userId" :replyToPostId="selectedPost.id" @done="showRelyDialog=false"/>
+   <div class="d-flex flex-column h-100 w-100" style="height: 200px">
+      <v-virtual-scroll :items="posts" height="400px" ref="virtualScrollRef">
+         <template v-slot:default="{ item }">
+            <Post :key="item.id" :post="item" @popup="onPopup" />
+         </template>
+      </v-virtual-scroll>
+   </div>
+   
+   <v-dialog v-model="showReplyDialog" width="auto">
+      <AddReply :post="selectedPost" @done="showReplyDialog=false"/>
    </v-dialog>
    <v-dialog v-model="showEditDialog" width="auto">
       <EditPost :post="selectedPost" @done="showEditDialog=false"/>
@@ -30,56 +19,47 @@
 </template>
 
 <script setup>
-   import { computed, ref } from 'vue'
-   import { useUserStore } from '@/stores/userStore'
-   import { useChatMgr }   from '@/stores/chat/chatMgr'
-   import { useViewStore } from '@/stores/viewStore'
-   import AddPost       from './crud/AddPost.vue'
-   import EditPost      from './crud/EditPost.vue'
-   import DeletePost    from './crud/DeletePost.vue'
-   import EditButton    from '@/components/util/EditButton.vue'
-   import DeleteButton  from '@/components/util/DeleteButton.vue'
-   import IconButton    from '@/components/util/IconButton.vue'
-   import { chatDate } from '@/utils/dateUtils'
-   import { Defaults, Route } from '@/utils/constants'
+   import { computed, onMounted, nextTick, ref, watch } from 'vue'
+   import { usePostStore } from '@/stores/chat/postStore'
+   import Post       from './Post.vue'
+   import AddReply   from './crud/AddReply.vue'
+   import EditPost   from './crud/EditPost.vue'
+   import DeletePost from './crud/DeletePost.vue'
+   import { toSortedDateCreatedAsc } from '@/utils/utils'
+   import { Emit } from '@/utils/constants'
    
    const props = defineProps({ chatId: String })
-   const userStore = useUserStore()
-   const chatMgr   = useChatMgr()
-   const viewStore = useViewStore()
+   const emit  = defineEmits([ Emit.POPUP ])
+
+   const postStore = usePostStore()
+   const virtualScrollRef = ref(null)
    const selectedPost     = ref({})
-   const collapsedPostIds = ref(new Set())
-   const showRelyDialog   = ref(false)
+   const showReplyDialog  = ref(false)
    const showEditDialog   = ref(false)
    const showDeleteDialog = ref(false)
    
-   const postHiearchy = computed(() => chatMgr.getPostHiearchy(props.chatId, collapsedPostIds.value))
-   const posts = computed(() => postHiearchy.value?.posts ?? [])
+   const posts = computed(() => toSortedDateCreatedAsc(postStore.getPosts(props.chatId)))
+   onMounted(() => {
+      if (posts.value?.length) { scrollToBottom() }
+   })
+   watch(
+      () => posts.value, 
+      () => { scrollToBottom() }, 
+      { deep: true }
+   )
+   
+   const scrollToBottom = async () => {
+      await nextTick()  // wait for vue dependencies 
+      await nextTick()  // wait for vuetify virtual DOM dimensions 
+      
+      // if (virtualScrollRef.value && posts.value.length > 0) {
+      if (virtualScrollRef.value && posts.value?.length) {
+         // Pass 'end' to align the item precisely at the bottom viewport threshold
+         virtualScrollRef.value.scrollToIndex(posts.value.length - 1, 'end')
+      }
+   }
 
-   const getUsername = (userId) => { return userStore.getUsername(userId) }
-   const getBgColor  = (userId) => { return "bg-" + viewStore.getMsgColor(userId) }
-   const getClass    = (post)   => { return getBgColor(post.userId) }
-   const getDate     = (post)   => { return post.dateModified ? chatDate(post.dateModified.toDate()) : "" }
-   const isDeleted   = (post)   => { return post.userId == Defaults.DELETED_USER_ID }
-   const isCollapsed = (post)   => { return collapsedPostIds.value.has(post.id) }
-   const hasReplies  = (postId) => { return postHiearchy.value?.postIdtoReplies?.has(postId) }
-   const canUpdate   = (userId) => { return userId == userStore.userId }
-   
-   const toggleIfReplies = (postId) => { if (hasReplies(postId)) togglePost(postId) }
-   const togglePost = (postId) => { 
-      // console.log("togglePost")
-      const ids = new Set(collapsedPostIds.value)
-      ids.has(postId) ? ids.delete(postId) : ids.add(postId) 
-      collapsedPostIds.value = ids // drives display update
-   }
-   
-   const reply      = (post)   => { showDialog(showRelyDialog,   post) }
-   const editPost   = (post)   => { showDialog(showEditDialog,   post) }
-   const deletePost = (post)   => { showDialog(showDeleteDialog, post) }
-   const showDialog = (showDialog, post ) => {
-      selectedPost.value = post
-      showDialog.value = true
-   }
+   const onPopup = (popup) => { emit(Emit.POPUP, popup) }
 </script>
 
 <style>
