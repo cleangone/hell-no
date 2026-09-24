@@ -20,7 +20,7 @@
          <Chats :state="State.GROUP" :groupId="route.params.id" collapsible @select="onChatSelected"/>
       </div>
       <v-row v-if="!chatExpanded" class="mt-5"> <!-- items -->
-         <div v-for="item in displayItems" :key="item.id" class="group-thumb">
+         <div v-for="item in displayItems" :key="item.id" class="group-thumb mr-2">
             <ItemThumb :item="item" :origin="ItemOrigin.GROUP"/>
             <div v-if="selectedChatId" class="group-thumb-icon" :class="thumbIconRight">
                <v-icon icon="mdi-message-image" @click="addPost(item)" color="blue-darken-2" class="hand"/> 

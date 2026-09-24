@@ -42,7 +42,7 @@
    import { useGalleryMgr }   from '@/stores/galleryMgr'
    import { useItemStore }    from '@/stores/itemStore'
    import { useImageMgr }     from '@/stores/image/imageMgr'
-   import Icon         from '@/components/util/Icon.vue'
+   import Icon         from '@/components/util/icon/Icon.vue'
    import IconButton   from '@/components/util/IconButton.vue'
    import TextButton   from '@/components/util/TextButton.vue'
    import DeleteButton from '@/components/util/DeleteButton.vue'

@@ -11,14 +11,13 @@
                <span class="text-overline"> 
                   {{ getDate(post) }}
                   <IconButton @click="reply(post)" icon="mdi-reply" />
-                  <IconButton v-if="hasReplies(post.id)" 
-                     :icon="isCollapsed?'mdi-chevron-right':'mdi-chevron-down'"
-                     @click="isCollapsed=!isCollapsed"/>
+                  <ExpandIcon v-if="hasReplies(post.id)" :isExpanded="isExpanded"
+                     @click="isExpanded=!isExpanded" iconClass="icon-btn"/>
                </span>
                <span v-if="replyCount" class="text-label-small">{{ replyCountText }}</span>
                <span v-if="canUpdate(post.userId)" style="float:right"> 
-                  <EditButton   @click="editPost(post, comment)"/>
-                  <DeleteButton @click="deletePost(post, comment)"/>
+                  <EditButton   @click="editPost(post)"   size="x-small"/>
+                  <DeleteButton @click="deletePost(post)" size="x-small""/>
                </span>
                <div class="pr-2 mt-n2">{{ post.text }}</div>
             </div>
@@ -26,7 +25,7 @@
       </v-card-item>
    </v-card>
 
-   <Replies v-if="!isCollapsed" :postId="props.post.id"/>
+   <Replies v-if="isExpanded" :postId="props.post.id"/>
 
    <v-dialog v-model="showReplyDialog" width="auto">
       <AddReply :post="selectedPost" @done="showReplyDialog=false"/>
@@ -53,9 +52,10 @@
    import EditButton    from '@/components/util/EditButton.vue'
    import DeleteButton  from '@/components/util/DeleteButton.vue'
    import IconButton    from '@/components/util/IconButton.vue'
+   import ExpandIcon    from '../util/icon/ExpandIcon.vue'
    import HorizontalDiv from '@/components/util/HorizontalDiv.vue'
    import { chatDate } from '@/utils/dateUtils'
-   import { Defaults, Emit, ItemOrigin,  Route, ThumbSize } from '@/utils/constants'
+   import { Emit, ItemOrigin,  Route, ThumbSize } from '@/utils/constants'
    
    const props = defineProps({ post: Object })
    const emit  = defineEmits([ Emit.POPUP ])
@@ -66,15 +66,12 @@
    const viewStore  = useViewStore()
    const selectedPost     = ref({})
    const collapsedPostIds = ref(new Set())
-   
-   const isCollapsed  = ref(true)
-   
+   const isExpanded       = ref(false)
    const showReplyDialog  = ref(false)
    const showEditDialog   = ref(false)
    const showDeleteDialog = ref(false)
    
    const item       = computed(() => props.post.itemId ? itemStore.getItem(props.post.itemId) : null)
-
    const replies    = computed(() => replyStore.getReplies(props.post.id))
    const replyCount = computed(() => replies.value?.length ?? 0)
    const replyCountText = computed(() => replyCount.value + (replyCount.value == 1 ? " Reply " : " Replies"))
@@ -88,7 +85,6 @@
    
    const toggleIfReplies = (postId) => { if (hasReplies(postId)) togglePost(postId) }
    const togglePost = (postId) => { 
-      // console.log("togglePost")
       const ids = new Set(collapsedPostIds.value)
       ids.has(postId) ? ids.delete(postId) : ids.add(postId) 
       collapsedPostIds.value = ids // drives display update

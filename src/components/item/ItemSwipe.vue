@@ -18,7 +18,7 @@
    import {useWindowSize } from '@vueuse/core'
    import interact from "interactjs"
    import { useItemMgr } from '@/stores/itemMgr'
-   import Icon           from '@/components/util/Icon.vue'
+   import Icon           from '@/components/util/icon/Icon.vue'
    import { populated } from '@/utils/utils'
    import { Emit } from '@/utils/constants'
   
