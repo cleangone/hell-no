@@ -7,16 +7,12 @@
             </div>
             <div class="w-100">
                <RouterLink :to="Route.USER.url + post.userId" class="mr-2">{{ username }}</RouterLink>
-               <span class="text-overline"> 
-                  {{ postDate }}
-                  <IconButton @click="reply()" icon="mdi-reply" />
-                  <ExpandIcon v-if="hasReplies" :isExpanded="isExpanded"
-                     @click="isExpanded=!isExpanded" iconClass="icon-btn"/>
-               </span>
-               <span v-if="replyCount" class="text-label-small">{{ replyCountText }}</span>
+               <span class="text-overline">{{ postDate }}</span>
+               <ExpandIcon :isExpanded="isExpanded" @click="isExpanded=!isExpanded" iconClass="icon-btn"/>
+               <span class="text-label-small">{{ replyText }}</span>
                <span v-if="canUpdate" style="float:right"> 
-                  <EditButton   @click="editPost()"   size="x-small"/>
-                  <DeleteButton @click="deletePost()" size="x-small"/>
+                  <EditButton   @click="editPost()"   xs/>
+                  <DeleteButton @click="deletePost()" xs/>
                </span>
                <div class="pr-2 mt-n2">{{ post.text }}</div>
             </div>
@@ -24,11 +20,8 @@
       </v-card-item>
    </v-card>
 
-   <Replies v-if="isExpanded" :postId="props.post.id"/>
+   <Replies v-if="isExpanded" :postId="props.post.id" :chat="chat"/>
 
-   <v-dialog v-model="showReplyDialog" width="auto">
-      <AddReply :post="post" @done="showReplyDialog=false"/>
-   </v-dialog>
    <v-dialog v-model="showEditDialog" width="auto">
       <EditPost :post="post" @done="showEditDialog=false"/>
    </v-dialog>
@@ -45,18 +38,16 @@
    import { useViewStore }  from '@/stores/viewStore'
    import ItemThumb     from '@/components/item/thumb/ItemThumb.vue'
    import Replies       from './Replies.vue'
-   import AddReply      from './crud/AddReply.vue'
    import EditPost      from './crud/EditPost.vue'
    import DeletePost    from './crud/DeletePost.vue'
    import EditButton    from '@/components/util/EditButton.vue'
    import DeleteButton  from '@/components/util/DeleteButton.vue'
-   import IconButton    from '@/components/util/IconButton.vue'
    import ExpandIcon    from '../util/icon/ExpandIcon.vue'
    import HorizontalDiv from '@/components/util/HorizontalDiv.vue'
    import { chatDate } from '@/utils/dateUtils'
    import { Emit, ItemOrigin,  Route, ThumbSize } from '@/utils/constants'
    
-   const props = defineProps({ post: Object })
+   const props = defineProps({ post: Object, chat: Object })
    const emit  = defineEmits([ Emit.POPUP ])
 
    const userStore  = useUserStore()
@@ -64,7 +55,6 @@
    const replyStore = useReplyStore()
    const viewStore  = useViewStore()
    const isExpanded       = ref(false)
-   const showReplyDialog  = ref(false)
    const showEditDialog   = ref(false)
    const showDeleteDialog = ref(false)
    
@@ -72,13 +62,11 @@
    const username   = computed(() => userStore.getUsername(props.post.userId))  
    const replies    = computed(() => replyStore.getReplies(props.post.id))
    const replyCount = computed(() => replies.value?.length ?? 0)
-   const hasReplies = computed(() => replies.value?.length > 0)
-   const replyCountText = computed(() => replyCount.value + (replyCount.value == 1 ? " Reply " : " Replies"))
+   const replyText  = computed(() => replyCount.value ? replyCount.value + (replyCount.value == 1 ? " Reply" : " Replies") : "Reply")
    const postDate   = computed(() => props.post.dateModified ? chatDate(props.post.dateModified.toDate()) : "")
    const bgClass    = computed(() =>  "bg-" + viewStore.getMsgColor(props.post.userId))
    const canUpdate  = computed(() => props.post.userId == userStore.userId )
    
-   const reply      = () => { showReplyDialog.value = true }
    const editPost   = () => { showEditDialog.value = true }
    const deletePost = () => { showDeleteDialog.value = true }
 

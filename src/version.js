@@ -18,6 +18,7 @@
        - handle xs chat layout
 */
 export const versions = [   
+   ["v2.64.0", "9/23/26"], // AddReply inline instead of via dialog
    ["v2.63.5", "9/23/26"], // Reintroduce scolling posts for tablets
    ["v2.63.4", "9/23/26"], // Fix browser support for toSorted
    ["v2.63.3", "9/23/26"], // Fix ios chat/post issue

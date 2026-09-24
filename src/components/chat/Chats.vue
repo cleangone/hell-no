@@ -13,7 +13,7 @@
       <div v-if="viewMgr.isXs && isExpanded" class="mx-2">
           <div v-for="chat in displayChats" :key="chat.id"  @click="selectChat(chat)" class="hand mb-2">
             <Chat :chat="chat" :postCount="postCount(chat)" :isSeleted="isSelected(chat)" :canUpdate="canUpdate"/> 
-            <div v-if="selectedChatId == chat.id" class="mb-2 flex-grow-1">
+            <div v-if="selectedChat.id == chat.id" class="mb-2 flex-grow-1">
                <div><Posts :chatId="chat.id" @popup="onPopup"/></div>
                <AddPost :chatId="chat.id" :userId="userStore.userId"/>
             </div> 
@@ -26,8 +26,8 @@
             </div>
          </div>
          <div class="mb-2 flex-grow-1">
-            <div><Posts :chatId="selectedChatId" @popup="onPopup"/></div>
-            <AddPost v-if="selectedChatId" :chatId="selectedChatId" :userId="userStore.userId"/>
+            <div><Posts :chat="selectedChat" @popup="onPopup"/></div>
+            <AddPost v-if="selectedChat && isActive(selectedChat)" :chatId="selectedChat.id" :userId="userStore.userId"/>
          </div> 
       </HorizontalDiv>
     </v-card>
@@ -60,16 +60,16 @@
    const props = defineProps({ state: String, groupId: String, collapsible: Boolean })
    const emit  = defineEmits([ Emit.SELECT ])
 
-   const userStore      = useUserStore()
-   const chatStore      = useChatStore()
-   const chatMgr        = useChatMgr()
-   const groupStore     = useGroupStore()
-   const adminStore     = useAdminStore()
-   const viewMgr        = useViewMgr()
-   const showArchived   = ref(false)
-   const popupImage     = ref(null)
-   const selectedChatId = ref(null)
-   const isExpanded     = ref(true)
+   const userStore    = useUserStore()
+   const chatStore    = useChatStore()
+   const chatMgr      = useChatMgr()
+   const groupStore   = useGroupStore()
+   const adminStore   = useAdminStore()
+   const viewMgr      = useViewMgr()
+   const showArchived = ref(false)
+   const popupImage   = ref(null)
+   const selectedChat = ref(null)
+   const isExpanded   = ref(true)
    const showAddChatDialog = ref(false)
    
    const allChats = computed(() => {
@@ -83,12 +83,12 @@
    const displayChats = computed(() => {
       let chats = showArchived.value ? allChats.value : activeChats.value
      
-      // null out selectedChatId if that chat not in the curr list
+      // null out selectedChat if that chat not in the curr list
       const chatIds = chats.map(chat => chat.id)
-      if (selectedChatId.value && !chatIds.includes(selectedChatId.value)) { selectedChatId.value = null }
+      if (selectedChat.value && !chatIds.includes(selectedChat.value.id)) { selectedChat.value = null }
 
       // always try to select a chat if not xs
-      if (!viewMgr.isXs && !selectedChatId.value) {
+      if (!viewMgr.isXs && !selectedChat.value) {
          let chatToSelect = null
          for (const chat of chats) {
             if (postCount(chat) && (!chatToSelect || chat.dateContentModified > chatToSelect.dateContentModified)) {
@@ -103,13 +103,14 @@
    const group     = computed(() => props.groupId ? groupStore.getGroup(props.groupId) : null) 
    const canUpdate = computed(() => adminStore.isAdmin || group.value?.moderatorIds.includes(userStore.userId))
    
-   const isSelected = (chat) => { return selectedChatId.value == chat.id }
+   const isActive   = (chat) => { return chatMgr.isActive(chat) }
+   const isSelected = (chat) => { return selectedChat.value?.id == chat.id }
    const postCount  = (chat) => { return chatMgr.getPostCount(chat.id) }   
 
    const selectChat  = (chat) => { 
-      // xs toggles selectedChatId so user can see a view of just chats
-      if (viewMgr.isXs && selectedChatId.value == chat.id) { selectedChatId.value = null }
-      else { selectedChatId.value = chat.id }
+      // xs toggles selectedChat so user can see a view of just chats
+      if (viewMgr.isXs && isSelected(chat)) { selectedChat.value = null }
+      else { selectedChat.value = chat }
       emit(Emit.SELECT, chat.id)
    }   
    

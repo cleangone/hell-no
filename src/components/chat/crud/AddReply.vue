@@ -1,36 +1,37 @@
 <template>
-   <v-card title="Add Reply" class="add-post-dialog">
-      <v-form v-model="dataValid">
-         <div class="ma-3">
-           <v-textarea v-model="text" label="Text" :rules="requiredRule"/>
-         </div>
+   <v-card>
+      <div class="d-flex justify-space-between align-center px-3"> 
+         <span class="font-weight-medium">Add Reply</span> 
+         <span> 
+            <IconButton @click="addReply()" icon="mdi-check-bold"  :disabled="!text" xs color="blue-darken-2"/>
+            <IconButton @click="cancel()"   icon="mdi-close-thick" :disabled="!text" xs color="blue-darken-2"/>
+         </span>
+      </div>
+      <v-form class="mx-3">
+         <v-textarea v-model="text" auto-grow rows="1"/>
       </v-form>
-      <v-card-actions class="justify-end">
-         <v-btn color="primary" @click="addReply()" :disabled="!dataValid">save</v-btn>
-         <v-btn color="primary" @click="$emit(Emit.DONE)">Cancel</v-btn>
-      </v-card-actions>
    </v-card>
 </template>
 
 <script setup>
    import { computed, ref } from 'vue'
    import { useReplyStore } from '@/stores/chat/replyStore'
-   import { requiredRule } from '@/utils/utils'
-   import { Emit } from '@/utils/constants'
+   import { useChatStore }  from '@/stores/chat/chatStore'
+   import IconButton        from '@/components/util/IconButton.vue'
 
-   const props = defineProps({ post: Object })
-   const emit  = defineEmits([Emit.DONE])
+   const props = defineProps({ postId: String, chatId: String })
 
    const replyStore = useReplyStore()
-   const text = ref('')
-   const dataValid = ref(true)
+   const chatStore  = useChatStore()
+   const text       = ref(null)
 
    const addReply = () => {    
-      const reply = { postId: props.post.id, userId: props.post.userId, text: text.value }
-      console.log("addReply", reply)
-      replyStore.addReply(reply)
-      emit(Emit.DONE)
+      replyStore.addReply({ postId: props.postId, text: text.value })
+      chatStore.updateChatContentModified(props.chatId)
+      text.value = null
    }
+
+   const cancel = () => { text.value = null }
 </script>
 
 <style>

@@ -3,8 +3,8 @@
       <div class="d-flex justify-space-between align-center px-3"> 
          <span class="font-weight-medium">Add Post</span> 
          <span> 
-            <IconButton @click="addPost()" icon="mdi-check-bold"  :disabled="!text" color="blue-darken-2"/>
-            <IconButton @click="cancel()"  icon="mdi-close-thick" :disabled="!text" color="blue-darken-2"/>
+            <IconButton @click="addPost()" icon="mdi-check-bold"  :disabled="!text" xs color="blue-darken-2"/>
+            <IconButton @click="cancel()"  icon="mdi-close-thick" :disabled="!text" xs color="blue-darken-2"/>
          </span>
       </div>
       <v-form v-model="dataValid" class="mx-3">
@@ -18,10 +18,8 @@
    import { usePostStore } from '@/stores/chat/postStore'
    import { useChatStore } from '@/stores/chat/chatStore'
    import IconButton       from '@/components/util/IconButton.vue'
-   import { Emit } from '@/utils/constants'
-
+   
    const props = defineProps({ chatId: String })
-   const emit  = defineEmits([Emit.DONE])
 
    const postStore = usePostStore()
    const chatStore = useChatStore()

@@ -20,10 +20,11 @@ export const useChatMgr = defineStore('chatMgr', () => {
       chatStore.deleteChat(chatId)
    }
 
+   function isActive(chat)   { return (chat?.status == ChatStatus.ACTIVE   ? true : false) }
    function isArchived(chat) { return (chat?.status == ChatStatus.ARCHIVED ? true : false) }
    function toggleArchive(chat) { 
       chatStore.updateChat({ id: chat.id, status: isArchived(chat) ? ChatStatus.ACTIVE : ChatStatus.ARCHIVED })
    }
 
-   return { getPostCount, deleteChat, isArchived, toggleArchive }
+   return { getPostCount, deleteChat, isActive, isArchived, toggleArchive }
 })

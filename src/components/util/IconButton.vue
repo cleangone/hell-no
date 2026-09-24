@@ -5,8 +5,8 @@
 <script setup>
    import { computed } from 'vue'
    
-   const props = defineProps({ icon:String, disabled:Boolean, size:String, density:String })
+   const props = defineProps({ icon:String, disabled:Boolean, size:String, xs:Boolean, density:String })
    
-   const size    = computed(() => props.size    ? props.size    : "small")
+   const size    = computed(() => props.xs ? "x-small" : (props.size ? props.size : "small"))
    const density = computed(() => props.density ? props.density : "default")
 </script>

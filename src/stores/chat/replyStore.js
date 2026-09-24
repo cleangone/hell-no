@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { db } from '@/firebase'
 import { collection, doc, setDoc, updateDoc, deleteDoc, serverTimestamp, writeBatch } from "firebase/firestore"
 import { useFirestore } from '@vueuse/firebase/useFirestore'
+import { useUserStore } from '../userStore'
 import { dateUuid } from '@/utils/utils'
 
 /* 
@@ -18,6 +19,7 @@ import { dateUuid } from '@/utils/utils'
 const TABLE = 'chat-replies'
 
 export const useReplyStore = defineStore('replyStore', () => {
+   const userStore = useUserStore()
    const replyCollection = collection(db, TABLE)
    function replyDoc(id) { return doc(db, TABLE, id) }
 
@@ -36,7 +38,11 @@ export const useReplyStore = defineStore('replyStore', () => {
 
    function addReply(reply) {
       const replyToAdd = { 
-         ...reply, id: dateUuid(), dateCreated: serverTimestamp(), dateModified: serverTimestamp() }
+         ...reply, 
+         id: dateUuid(), 
+         userId: userStore.userId,
+         dateCreated: serverTimestamp(), 
+         dateModified: serverTimestamp() }
       setDoc(replyDoc(replyToAdd.id), replyToAdd)
    }
 
