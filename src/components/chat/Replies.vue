@@ -17,7 +17,7 @@
       <EditReply :reply="selectedReply" @done="showEditDialog=false"/>
    </v-dialog>
    <v-dialog v-model="showDeleteDialog" width="auto">
-      <DeleteReply :post="selectedReply" @done="showDeleteDialog=false"/>
+      <DeleteReply :reply="selectedReply" @done="showDeleteDialog=false"/>
    </v-dialog>
 </template>
 

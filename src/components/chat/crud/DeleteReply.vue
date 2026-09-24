@@ -17,7 +17,7 @@
       "'" + (props.reply.text.length > 7 ? props.reply.text.substring(0, 7) + "..." : props.reply.text) + "'")
 
    const deleteReply = () => {
-      replyStore.deleteReply(props.post)
+      replyStore.deleteReply(props.reply.id)
       emit(Emit.DONE)
    }
 </script>

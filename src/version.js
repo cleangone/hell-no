@@ -18,6 +18,7 @@
        - handle xs chat layout
 */
 export const versions = [   
+   ["v2.63.3", "9/23/26"], // Fix ios chat/post issue
    ["v2.63.2", "9/23/26"], // Lay out xs Chat/Posts vertically
    ["v2.63.1", "9/23/26"], // Update Chat display for minimal/no Posts
    ["v2.63.0", "9/23/26"], // Lay out chat/posts horizontally

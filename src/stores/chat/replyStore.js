@@ -19,7 +19,7 @@ const TABLE = 'chat-replies'
 
 export const useReplyStore = defineStore('replyStore', () => {
    const replyCollection = collection(db, TABLE)
-   function replytDoc(id) { return doc(db, TABLE, id) }
+   function replyDoc(id) { return doc(db, TABLE, id) }
 
    const replies = useFirestore(replyCollection, [])
    const postIdToReplies = computed(() => {
@@ -37,16 +37,14 @@ export const useReplyStore = defineStore('replyStore', () => {
    function addReply(reply) {
       const replyToAdd = { 
          ...reply, id: dateUuid(), dateCreated: serverTimestamp(), dateModified: serverTimestamp() }
-      setDoc(replytDoc(replyToAdd.id), replyToAdd)
+      setDoc(replyDoc(replyToAdd.id), replyToAdd)
    }
 
    function updateReply(reply) {
       updateDoc(replyDoc(reply.id), { ...reply, dateModified: serverTimestamp() })
    }
    
-   function deleteReply(id) {
-      deleteDoc(doc(replyCollection, id))
-   }
+   function deleteReply(id) { deleteDoc(doc(replyCollection, id)) }
 
    function deleteReplies(ids) {
       const batch = writeBatch(db)

@@ -1,23 +1,22 @@
 <template> 
-   <v-card @click="toggleIfReplies(post.id)" class="mb-2"
-         :class="getClass(post)" :style="{marginLeft: (post.level * 20)+'px'}">
+   <v-card class="mb-2" :class="bgClass">
       <v-card-item class="pr-0 pt-0">
          <HorizontalDiv class="w-100">
             <div v-if="item" class="my-1 ml-n2">
                <ItemThumb :item="item" :size="ThumbSize.IMG" :origin="ItemOrigin.EXTERNAL" emitPopup @popup="onPopup"/>
             </div>
             <div class="w-100">
-               <RouterLink :to="Route.USER.url + post.userId" class="mr-2">{{ getUsername(post.userId) }}</RouterLink>
+               <RouterLink :to="Route.USER.url + post.userId" class="mr-2">{{ username }}</RouterLink>
                <span class="text-overline"> 
-                  {{ getDate(post) }}
-                  <IconButton @click="reply(post)" icon="mdi-reply" />
-                  <ExpandIcon v-if="hasReplies(post.id)" :isExpanded="isExpanded"
+                  {{ postDate }}
+                  <IconButton @click="reply()" icon="mdi-reply" />
+                  <ExpandIcon v-if="hasReplies" :isExpanded="isExpanded"
                      @click="isExpanded=!isExpanded" iconClass="icon-btn"/>
                </span>
                <span v-if="replyCount" class="text-label-small">{{ replyCountText }}</span>
-               <span v-if="canUpdate(post.userId)" style="float:right"> 
-                  <EditButton   @click="editPost(post)"   size="x-small"/>
-                  <DeleteButton @click="deletePost(post)" size="x-small""/>
+               <span v-if="canUpdate" style="float:right"> 
+                  <EditButton   @click="editPost()"   size="x-small"/>
+                  <DeleteButton @click="deletePost()" size="x-small"/>
                </span>
                <div class="pr-2 mt-n2">{{ post.text }}</div>
             </div>
@@ -28,13 +27,13 @@
    <Replies v-if="isExpanded" :postId="props.post.id"/>
 
    <v-dialog v-model="showReplyDialog" width="auto">
-      <AddReply :post="selectedPost" @done="showReplyDialog=false"/>
+      <AddReply :post="post" @done="showReplyDialog=false"/>
    </v-dialog>
    <v-dialog v-model="showEditDialog" width="auto">
-      <EditPost :post="selectedPost" @done="showEditDialog=false"/>
+      <EditPost :post="post" @done="showEditDialog=false"/>
    </v-dialog>
    <v-dialog v-model="showDeleteDialog" width="auto">
-      <DeletePost :post="selectedPost" @done="showDeleteDialog=false"/>
+      <DeletePost :post="post" @done="showDeleteDialog=false"/>
    </v-dialog>
 </template>
 
@@ -64,39 +63,24 @@
    const itemStore  = useItemStore()   
    const replyStore = useReplyStore()
    const viewStore  = useViewStore()
-   const selectedPost     = ref({})
-   const collapsedPostIds = ref(new Set())
    const isExpanded       = ref(false)
    const showReplyDialog  = ref(false)
    const showEditDialog   = ref(false)
    const showDeleteDialog = ref(false)
    
    const item       = computed(() => props.post.itemId ? itemStore.getItem(props.post.itemId) : null)
+   const username   = computed(() => userStore.getUsername(props.post.userId))  
    const replies    = computed(() => replyStore.getReplies(props.post.id))
    const replyCount = computed(() => replies.value?.length ?? 0)
+   const hasReplies = computed(() => replies.value?.length > 0)
    const replyCountText = computed(() => replyCount.value + (replyCount.value == 1 ? " Reply " : " Replies"))
+   const postDate   = computed(() => props.post.dateModified ? chatDate(props.post.dateModified.toDate()) : "")
+   const bgClass    = computed(() =>  "bg-" + viewStore.getMsgColor(props.post.userId))
+   const canUpdate  = computed(() => props.post.userId == userStore.userId )
    
-   const getUsername = (userId) => { return userStore.getUsername(userId) }
-   const getBgColor  = (userId) => { return "bg-" + viewStore.getMsgColor(userId) }
-   const getClass    = (post)   => { return getBgColor(post.userId) }
-   const getDate     = (post)   => { return post.dateModified ? chatDate(post.dateModified.toDate()) : "" }
-   const hasReplies  = () => { return replies.value?.length }
-   const canUpdate   = (userId) => { return userId == userStore.userId }
-   
-   const toggleIfReplies = (postId) => { if (hasReplies(postId)) togglePost(postId) }
-   const togglePost = (postId) => { 
-      const ids = new Set(collapsedPostIds.value)
-      ids.has(postId) ? ids.delete(postId) : ids.add(postId) 
-      collapsedPostIds.value = ids // drives display update
-   }
-   
-   const reply      = (post)   => { showDialog(showReplyDialog,  post) }
-   const editPost   = (post)   => { showDialog(showEditDialog,   post) }
-   const deletePost = (post)   => { showDialog(showDeleteDialog, post) }
-   const showDialog = (showDialog, post ) => {
-      selectedPost.value = post
-      showDialog.value = true
-   }
+   const reply      = () => { showReplyDialog.value = true }
+   const editPost   = () => { showEditDialog.value = true }
+   const deletePost = () => { showDeleteDialog.value = true }
 
    const onPopup = (popup) => { emit(Emit.POPUP, popup) }
 </script>
