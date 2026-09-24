@@ -1,30 +1,35 @@
 <template>
    <v-card>
-      <div class="d-flex justify-space-between align-center px-3"> 
-         <span class="font-weight-medium">Add Post</span> 
-         <span> 
-            <IconButton @click="addPost()" icon="mdi-check-bold"  :disabled="!text" xs color="blue-darken-2"/>
-            <IconButton @click="cancel()"  icon="mdi-close-thick" :disabled="!text" xs color="blue-darken-2"/>
+      <div @click="isExpanded=!isExpanded" class="d-flex justify-space-between hand align-center px-3"> 
+         <span class="d-inline-flex font-weight-medium align-center">
+            <ExpandIcon :isExpanded="isExpanded" iconClass="icon-btn"/>
+            <span class="font-weight-medium admin-link my-1">Add Post</span>
+         </span>
+         <span v-if="isExpanded"> 
+            <IconButton @click.stop="addPost()" icon="mdi-check-bold"  :disabled="!text" xs color="blue-darken-2"/>
+            <IconButton @click.stop="cancel()"  icon="mdi-close-thick" :disabled="!text" xs color="blue-darken-2"/>
          </span>
       </div>
-      <v-form v-model="dataValid" class="mx-3">
+      <v-form v-if="isExpanded" class="mx-3">
          <v-textarea v-model="text" auto-grow rows="1"/>
       </v-form>
    </v-card>
 </template>
 
+  
 <script setup>
    import { ref } from 'vue'
    import { usePostStore } from '@/stores/chat/postStore'
    import { useChatStore } from '@/stores/chat/chatStore'
+   import ExpandIcon       from '@/components/util/icon/ExpandIcon.vue'
    import IconButton       from '@/components/util/IconButton.vue'
    
    const props = defineProps({ chatId: String })
 
-   const postStore = usePostStore()
-   const chatStore = useChatStore()
-   const text = ref(null)
-   const dataValid = ref(true)
+   const postStore  = usePostStore()
+   const chatStore  = useChatStore()
+   const isExpanded = ref(false)
+   const text       = ref(null)
 
    const addPost = () => {    
       postStore.addPost({ chatId: props.chatId, text: text.value })

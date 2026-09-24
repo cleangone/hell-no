@@ -1,7 +1,7 @@
 <template>
    <div class="ml-10 mb-2">
       <Reply v-for="reply in replies" :key="reply.id" :reply="reply"/>
-      <AddReply v-if="chatMgr.isActive(chat)" :postId="postId" :chatId="chat.id" />
+      <AddReply v-if="chatMgr.isActive(chat)" :postId="postId" :chatId="chat.id" :expand="!repliesExist"/>
    </div>
 </template>
 
@@ -17,7 +17,9 @@
    const replyStore = useReplyStore()
    const chatMgr    = useChatMgr()
    
-   const replies = computed(() => replyStore.getReplies(props.postId))
+   const replies      = computed(() => replyStore.getReplies(props.postId))
+   const repliesExist = computed(() => replies.value?.length)
+   
 </script>
 
 <style>

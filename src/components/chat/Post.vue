@@ -6,10 +6,13 @@
                <ItemThumb :item="item" :size="ThumbSize.IMG" :origin="ItemOrigin.EXTERNAL" emitPopup @popup="onPopup"/>
             </div>
             <div class="w-100">
+               <!-- <Avatar v-if="user" :user="user" :size="40" class="mt-3 hand"/> -->
                <RouterLink :to="Route.USER.url + post.userId" class="mr-2">{{ username }}</RouterLink>
                <span class="text-overline">{{ postDate }}</span>
-               <ExpandIcon :isExpanded="isExpanded" @click="isExpanded=!isExpanded" iconClass="icon-btn"/>
-               <span class="text-label-small">{{ replyText }}</span>
+               <span @click="isExpanded=!isExpanded" class="hand admin-link">
+                  <ExpandIcon :isExpanded="isExpanded" iconClass="icon-btn"/>
+                  <span class="text-label-small">{{ replyText }}</span>
+               </span>
                <span v-if="canUpdate" style="float:right"> 
                   <EditButton   @click="editPost()"   xs/>
                   <DeleteButton @click="deletePost()" xs/>
@@ -40,9 +43,11 @@
    import Replies       from './Replies.vue'
    import EditPost      from './crud/EditPost.vue'
    import DeletePost    from './crud/DeletePost.vue'
+   import Avatar        from '@/components/user/avatar/Avatar.vue'
+   import UserLinkAvatar from '@/components/user/avatar/UserLinkAvatar.vue'
    import EditButton    from '@/components/util/EditButton.vue'
    import DeleteButton  from '@/components/util/DeleteButton.vue'
-   import ExpandIcon    from '../util/icon/ExpandIcon.vue'
+   import ExpandIcon    from '@/components/util/icon/ExpandIcon.vue'
    import HorizontalDiv from '@/components/util/HorizontalDiv.vue'
    import { chatDate } from '@/utils/dateUtils'
    import { Emit, ItemOrigin,  Route, ThumbSize } from '@/utils/constants'
@@ -57,8 +62,9 @@
    const isExpanded       = ref(false)
    const showEditDialog   = ref(false)
    const showDeleteDialog = ref(false)
-   
+
    const item       = computed(() => props.post.itemId ? itemStore.getItem(props.post.itemId) : null)
+   const user       = computed(() => userStore.getUser(props.post.userId))  
    const username   = computed(() => userStore.getUsername(props.post.userId))  
    const replies    = computed(() => replyStore.getReplies(props.post.id))
    const replyCount = computed(() => replies.value?.length ?? 0)

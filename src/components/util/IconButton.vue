@@ -1,5 +1,5 @@
 <template>
-   <v-btn :icon="props.icon"  variant="text" :disabled="props.disabled" :size="size" :density="density" class="icon-btn"></v-btn>
+   <v-btn :icon="props.icon" variant="text" :disabled="props.disabled" :size="size" :density="density" class="icon-btn"></v-btn>
 </template>
 
 <script setup>
