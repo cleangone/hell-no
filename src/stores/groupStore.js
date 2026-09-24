@@ -5,7 +5,7 @@ import { collection, doc, query, where, setDoc, updateDoc, deleteDoc, arrayRemov
 import { useFirestore } from '@vueuse/firebase/useFirestore'
 import { useUserStore } from './userStore'
 import { useFeedStore } from './feedStore'
-import { dateUuid, isPublic } from '@/utils/utils'
+import { dateUuid, isPublic, toSortedNameAsc } from '@/utils/utils'
 import { FeedType, State } from '@/utils/constants'
    
 /*
@@ -46,7 +46,7 @@ export const useGroupStore = defineStore('group', () => {
 
    const myGroupsQuery    = computed(() => userStore.userId && query(groupCollection, where('userIds', "array-contains", userStore.userId)))
    const myRawGroups      = useFirestore(myGroupsQuery, [])
-   const myGroups         = computed(() => myRawGroups.value.toSorted((a, b) => a.name.localeCompare(b.name)))
+   const myGroups         = computed(() => toSortedNameAsc(myRawGroups.value))
    const myGroupIds       = computed(() => { return myGroups.value.map((obj) => obj.id) })
    const myGroupIdToGroup = computed(() => { return new Map(myGroups.value.map((obj) => [obj.id, obj])) })
    function getMyGroup(id) { return myGroupIdToGroup.value.get(id) }

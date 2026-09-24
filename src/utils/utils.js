@@ -88,10 +88,16 @@ export function getMapObjsById(id, map) { return map && map.has(id) ? map.get(id
 export function populated(str) { return str && str.length }
 export function possessive(str) { return populated(str) ? str + (str.endsWith("s") ? "'" : "'s") : ""}
 
-export function toSortedNameAsc(objs) { 
-   return objs?.length ? objs.toSorted(function(a, b) { return a.name.localeCompare(b.name) }) : objs }
-export function toSortedDateCreatedAsc(objs) { 
-   return objs?.length ? objs.toSorted(function(a,b) { return a.dateCreated-b.dateCreated }) : objs }
+// toSorted breaks old safari - use [...objs].sort
+export function toSortedNameAsc(objs)        { return objs?.length ? [...objs].sort((a, b) => a.name.localeCompare(b.name))    : objs }
+export function toSortedDateCreatedAsc(objs) { return objs?.length ? [...objs].sort((a, b) => a.dateCreated - b.dateCreated)   : objs }
+export function toSortedDateModifiedDesc(objs)        { return objs?.length ? [...objs].sort((a, b) => b.dateModified - a.dateModified) : objs }
+export function toSortedDateContentModifiedDesc(objs) { return objs?.length ? [...objs].sort((a, b) => b.dateContentModified - a.dateContentModified) : objs }
+export function toSortedDateViewedAsc(objs)  { return objs?.length ? [...objs].sort((a, b) => a.dateViewed - b.dateViewed)     : objs }
+export function toSortedDateViewedDesc(objs) { return objs?.length ? [...objs].sort((a, b) => b.dateViewed - a.dateViewed)     : objs }
+export function toSortedSortDesc(objs)       { return objs?.length ? [...objs].sort((a, b) => b.sort - a.sort)                 : objs }
+export function toSortedUsernameAsc(objs)    { return objs?.length ? [...objs].sort((a, b) => a.username.localeCompare(b.username)) : objs }
+
 
 const KNOWN_ERRORS = [ " is null", ".value is undefined" ]
 export function handleError(err, component) { 

@@ -90,7 +90,7 @@
    import DarkButton          from '@/components/util/DarkButton.vue'
    import ShowNotifications   from '@/components/notification/ShowNotifications.vue'
    import { timestampsEqual } from '@/utils/dateUtils'
-   import { isOwned, randomizeArray } from '@/utils/utils'
+   import { isOwned, randomizeArray, toSortedDateContentModifiedDesc } from '@/utils/utils'
    import { Defaults, ItemOrigin, Route, TodoType, WallRowHeight } from '@/utils/constants'
    
    const userStore    = useUserStore()
@@ -204,7 +204,7 @@
       for (const gallery of allGalleries) {
          if (gallery.images.length && showGallery(gallery)) { galleries.push(gallery) }
       }   
-      return galleries.toSorted(function(a, b) { return b.dateContentModified - a.dateContentModified }) 
+      return toSortedDateContentModifiedDesc(galleries)
    })
 
    const showGallery = (gallery)  => {

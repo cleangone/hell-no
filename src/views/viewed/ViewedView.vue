@@ -32,7 +32,7 @@
    import ItemThumbConfig  from '@/components/item/thumb/ItemThumbConfig.vue'
    import ThumbSizeButton  from '@/components/util/ThumbSizeButton.vue'  
    import ViewedSortButton from './ViewedSortButton.vue'  
-   import { isOwned }      from '@/utils/utils'  
+   import { isOwned, toSortedDateViewedAsc } from '@/utils/utils'  
    import { Defaults, ItemOrigin, Route } from '@/utils/constants'
    
    const route     = useRoute()
@@ -56,7 +56,7 @@
       return viewStore.setVisibleItems(ItemOrigin.VIEWED, "Recent Viewed", Route.VIEWED.url + route.params.id, ungroupedItems)
    })
 
-   const oldestViewedItems = computed(() => recentViewedItems.value.toSorted(function(a, b) {return a.dateViewed - b.dateViewed}))
+   const oldestViewedItems = computed(() => toSortedDateViewedAsc(recentViewedItems.value))
 </script>
 
 <style>

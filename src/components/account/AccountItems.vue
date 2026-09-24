@@ -194,7 +194,7 @@
    const computedHeaders = computed({ 
       get() { return selectedHeaders.value },
       set(updatedHeaders) {
-         const headers = updatedHeaders.toSorted(function(a, b) {return a.col - b.col})
+         const headers = [...updatedHeaders].sort((a, b) => a.col - b.col)
          userMgr.setItemHeaders(headers)
          selectedHeaders.value = [ ...headers ]
       }

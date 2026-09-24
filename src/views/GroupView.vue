@@ -55,6 +55,7 @@
    import AddImagePost      from '@/components/chat/crud/AddImagePost.vue'
    import EditButton        from '@/components/util/EditButton.vue'
    import ThumbSizeButton   from '@/components/util/ThumbSizeButton.vue'
+   import { toSortedSortDesc } from '@/utils/utils'
    import { ItemOrigin, Route, State } from '@/utils/constants'
     
    const route = useRoute()
@@ -90,7 +91,7 @@
             displayInfo: numItems ? "(" + numItems + ")" : null,
             sort: numItems ?? 0 }
       })
-      return users.toSorted(function(a, b) {return b.sort - a.sort}) 
+      return toSortedSortDesc(users)
    })
 
    const groupItems = computed(() => { 

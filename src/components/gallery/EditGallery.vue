@@ -53,7 +53,7 @@
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
    import EditHtml from '@/components/util/EditHtml.vue'
-   import { requiredRule } from '@/utils/utils'
+   import { requiredRule, toSortedNameAsc } from '@/utils/utils'
    import { Emit, GalleryStates } from '@/utils/constants'
    
    const props = defineProps({ gallery: Object })
@@ -120,7 +120,7 @@
       for (const gallery of galleryMgr.getUserGalleries(props.gallery.userId) ) {
          if (isChildGalleryOption(gallery)) { galleries.push(gallery) }
       }
-      return galleries.toSorted((a, b) => a.name.localeCompare(b.name)) 
+      return toSortedNameAsc(galleries) 
    })
 
    const isChildGalleryOption = (gallery) => {

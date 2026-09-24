@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { useWindowSize } from '@vueuse/core'
 import { useItemStore }  from '@/stores/itemStore'
 import { useHitStore }   from '@/stores/hitStore'
-import { objAspectRatio, randomizeArray } from '@/utils/utils'
+import { objAspectRatio, randomizeArray, toSortedDateViewedDesc } from '@/utils/utils'
 import { Defaults, ImageType, ItemNavAction, ItemType, Route } from '@/utils/constants'
    
 export const useItemMgr = defineStore('itemMgr', () => {   
@@ -76,8 +76,7 @@ export const useItemMgr = defineStore('itemMgr', () => {
           dateViewed: itemIdToDateViewed.get(item.id) ?? item.dateModified 
       }))
       items = items.filter(item => !isInvisible(item))
-
-      return items.toSorted(function(a, b) {return b.dateViewed - a.dateViewed}) // most recent first
+      return toSortedDateViewedDesc(items)
    })
 
    function getRandomItems() { 

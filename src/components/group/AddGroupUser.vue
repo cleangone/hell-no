@@ -15,7 +15,7 @@
    import { computed, ref } from 'vue'
    import { useUserStore }  from '@/stores/userStore'
    import { useGroupStore } from '@/stores/groupStore'
-   import { requiredRule } from '@/utils/utils'
+   import { requiredRule, toSortedUsernameAsc } from '@/utils/utils'
    import { Emit } from '@/utils/constants'
    
    const props = defineProps({ group: Object })
@@ -26,10 +26,8 @@
    const userId     = ref(null)
    const dataValid  = ref(true)
    
-   const potentialUsers = computed(() => userStore.users
-      .filter(user => !props.group.userIds.includes(user.id))
-      .toSorted((a, b) => a.username.localeCompare(b.username))) 
-   
+   const potentialUsers = computed(() => toSortedUsernameAsc(userStore.users.filter(user => !props.group.userIds.includes(user.id))))
+
    const save = () => {
       groupStore.addUserId(props.group.id, userId.value)    
       emit(Emit.DONE)

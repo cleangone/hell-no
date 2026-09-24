@@ -74,7 +74,7 @@
    import Avatar              from '@/components/user/avatar/Avatar.vue'
    import SplitWall           from '@/components/wall/SplitWall.vue'
    import EmailButton         from '@/components/email/EmailButton.vue'
-   import { isOwned, randomizeArray } from '@/utils/utils'
+   import { isOwned, randomizeArray, toSortedDateContentModifiedDesc } from '@/utils/utils'
    import { ItemOrigin, Route, WallRowHeight } from '@/utils/constants'
    
    const WALL_BCKGND_OPACITY = .15
@@ -107,7 +107,7 @@
       for (const gallery of galleryStore.getPublicGalleries(userId.value) ) {
          if (gallery.images.length && !gallery.parentGalleryId && viewMgr.galleryIsVisibleToUser(gallery)) { galleries.push(gallery) }
       }    
-      return galleries.toSorted(function(a, b){return b.dateContentModified - a.dateContentModified}) 
+      return toSortedDateContentModifiedDesc(galleries)
    })
 
    const recentItems = computed(() => itemMgr.getRecentPublicItems(userId.value).filter(item => !itemMgr.isInvisible(item)))

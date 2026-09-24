@@ -65,7 +65,7 @@
    import SortButton          from '@/components/util/SortButton.vue'
    import ThumbSizeButton     from '@/components/util/ThumbSizeButton.vue'
    import ToolTip             from '@/components/util/ToolTip.vue'
-   import { handleError, isPrivate } from '@/utils/utils'
+   import { handleError, isPrivate, toSortedDateContentModifiedDesc, toSortedNameAsc, toSortedSortDesc } from '@/utils/utils'
    import { Defaults, GalleryThumbOptions, Route, ThumbType } from '@/utils/constants'
   
    const route = useRoute()
@@ -163,11 +163,8 @@
       return parent.id
     }
 
-   const sortedGalleries = computed(() => { 
-      return sortByDate.value ?
-         thumbGalleries.value.toSorted(function(a, b) { return b.dateContentModified - a.dateContentModified }) :
-         thumbGalleries.value.toSorted(function(a, b) { return a.name.localeCompare(b.name) })
-   })
+   const sortedGalleries = computed(() => sortByDate.value ? 
+      toSortedDateContentModifiedDesc(thumbGalleries.value) : toSortedNameAsc(thumbGalleries.value))
 
    const selectedGalleries = computed(() => {
       const displayGalleries = []
@@ -192,7 +189,7 @@
             displayInfo: numGalleries ? "(" + numGalleries + ")" : null,
             sort: numGalleries ?? 0 }
       })
-      return users.toSorted(function(a, b) {return b.sort - a.sort}) 
+      return toSortedSortDesc(users)
    })
    
    const selectUser = (userId) => { selectedUserId.value = userId }

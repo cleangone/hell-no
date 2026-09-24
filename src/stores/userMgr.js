@@ -4,7 +4,8 @@ import { arrayUnion, arrayRemove } from "firebase/firestore"
 import { useUserStore }  from './userStore'
 import { useGroupStore } from './groupStore'
 import { useWallStore }  from '@/stores/wallStore'
-import { useImageMgr }   from '@/stores/image/imageMgr'  
+import { useImageMgr }   from '@/stores/image/imageMgr'
+import { toSortedUsernameAsc } from '@/utils/utils'
 
 export const useUserMgr = defineStore('userMgr', () => {
    const userStore  = useUserStore()
@@ -19,15 +20,11 @@ export const useUserMgr = defineStore('userMgr', () => {
             if (user.id != userStore.userId) { users.push(user)}      
          }
       }
-      return sort(users)
+      return toSortedUsernameAsc(users)
    })
 
    const avatarUsers = computed(() => 
       userStore.users?.length ? sort(userStore.users.filter(user => getAvatar(user))) : [])
-
-   function sort(users) { 
-      return users.length ? users.toSorted((a, b) => a.username.localeCompare(b.username)) : users 
-   }
 
    const myKnownUserIds = computed(() => { 
       const knownUserIds = []

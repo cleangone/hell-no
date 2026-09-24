@@ -39,7 +39,7 @@
    import ItemThumbConfig  from '@/components/item/thumb/ItemThumbConfig.vue'
    import BlueBtn          from '@/components/util/BlueBtn.vue'
    import SortButton       from '@/components/util/SortButton.vue'
-   import { isOwned } from '@/utils/utils'  
+   import { isOwned, toSortedNameAsc } from '@/utils/utils'  
    import { ItemOrigin, Route } from '@/utils/constants'
    
    const userStore     = useUserStore()
@@ -83,7 +83,7 @@
       }
 
       const galleries = [ ...galleryIdToGallery.values() ]
-      resultGalleries.value = galleries.toSorted((a, b) => a.name.localeCompare(b.name))
+      resultGalleries.value = toSortedNameAsc(galleries)
 
       const itemViewItems = viewMgr.isMobile ? itemMgr.ungroupAndExtractItems(items) : items
       viewStore.setVisibleItems(ItemOrigin.SEARCH, "Search Results", Route.SEARCH.url, itemViewItems)

@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { db } from '@/firebase'
 import { collection, doc, setDoc, updateDoc, increment, serverTimestamp } from "firebase/firestore"
 import { useFirestore } from '@vueuse/firebase/useFirestore'
+import { toSortedDateModifiedDesc } from '@/utils/utils'
 
 /*
    Hit
@@ -19,8 +20,7 @@ export const useHitStore = defineStore('hit', () => {
    function hitDoc(id) { return doc(db, TABLE, id) }
    
    const rawHits = useFirestore(hitCollection)   
-   const hits = computed(() => rawHits.value ? 
-      rawHits.value.toSorted(function(a, b) {return b.dateModified - a.dateModified}) : [])
+   const hits = computed(() => rawHits.value ? toSortedDateModifiedDesc(rawHits.value) : [])
    const idToHit = computed(() => { return rawHits.value ? new Map(rawHits.value.map((obj) => [obj.id, obj])) : new Map() })
    function getHit(id) { return idToHit.value ? idToHit.value.get(id) : null } 
 

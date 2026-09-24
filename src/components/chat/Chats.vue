@@ -27,7 +27,7 @@
          </div>
          <div class="mb-2 flex-grow-1">
             <div><Posts :chatId="selectedChatId" @popup="onPopup"/></div>
-            <AddPost :chatId="selectedChatId" :userId="userStore.userId"/>
+            <AddPost v-if="selectedChatId" :chatId="selectedChatId" :userId="userStore.userId"/>
          </div> 
       </HorizontalDiv>
     </v-card>
@@ -83,7 +83,11 @@
    const displayChats = computed(() => {
       let chats = showArchived.value ? allChats.value : activeChats.value
      
-      // always select a chat if not xs
+      // null out selectedChatId if that chat not in the curr list
+      const chatIds = chats.map(chat => chat.id)
+      if (selectedChatId.value && !chatIds.includes(selectedChatId.value)) { selectedChatId.value = null }
+
+      // always try to select a chat if not xs
       if (!viewMgr.isXs && !selectedChatId.value) {
          let chatToSelect = null
          for (const chat of chats) {
