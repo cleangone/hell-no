@@ -24,7 +24,7 @@ export const useUserMgr = defineStore('userMgr', () => {
    })
 
    const avatarUsers = computed(() => 
-      userStore.users?.length ? sort(userStore.users.filter(user => getAvatar(user))) : [])
+      userStore.users ? toSortedUsernameAsc(userStore.users.filter(user => getAvatar(user))) : [])
 
    const myKnownUserIds = computed(() => { 
       const knownUserIds = []

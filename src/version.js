@@ -18,6 +18,8 @@
        - handle xs chat layout
 */
 export const versions = [   
+   ["v2.63.5", "9/23/26"], // Reintroduce scolling posts for tablets
+   ["v2.63.4", "9/23/26"], // Fix browser support for toSorted
    ["v2.63.3", "9/23/26"], // Fix ios chat/post issue
    ["v2.63.2", "9/23/26"], // Lay out xs Chat/Posts vertically
    ["v2.63.1", "9/23/26"], // Update Chat display for minimal/no Posts

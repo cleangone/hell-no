@@ -1,6 +1,5 @@
 <template>
-   <div v-if="viewMgr.isMobile" class="w-100">
-      <!-- ios has an issue with virtual-scroll height -->
+   <div v-if="viewMgr.isXs" class="w-100">
       <Post v-for="post in posts" :key="post.id" :post="post" @popup="onPopup" />          
    </div>
    <div v-else class="d-flex flex-column h-100 w-100" style="max-height: 400px;">
