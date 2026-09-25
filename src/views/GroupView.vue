@@ -32,9 +32,6 @@
    <v-dialog v-model="showEditGroupDialog" width="75%" height="90%">
       <EditGroupCard :groupId="group.id" @done="showEditGroupDialog=false"/>
    </v-dialog>
-    <v-dialog v-model="showAddPostDialog" width="auto">
-      <AddImagePost :chatId="selectedChatId"  :groupId="route.params.id" :item="selectedItem" @done="showAddPostDialog=false"/>
-   </v-dialog>
 </template>
 
 <script setup>
@@ -43,6 +40,7 @@
    import { useUserStore }  from '@/stores/userStore'
    import { useGroupStore } from '@/stores/groupStore'
    import { useGroupMgr }   from '@/stores/groupMgr'
+   import { usePostStore }  from '@/stores/chat/postStore'
    import { useItemStore }  from '@/stores/itemStore'
    import { useViewStore }  from '@/stores/viewStore'
    import { useViewMgr }    from '@/stores/viewMgr'
@@ -52,7 +50,6 @@
    import ItemThumbConfig   from '@/components/item/thumb/ItemThumbConfig.vue'
    import UserThumbSwiper   from '@/components/user/thumb/UserThumbSwiper.vue'
    import Chats             from '@/components/chat/Chats.vue'
-   import AddImagePost      from '@/components/chat/crud/AddImagePost.vue'
    import EditButton        from '@/components/util/EditButton.vue'
    import ThumbSizeButton   from '@/components/util/ThumbSizeButton.vue'
    import { toSortedSortDesc } from '@/utils/utils'
@@ -62,16 +59,15 @@
    const userStore  = useUserStore()
    const groupStore = useGroupStore()
    const groupMgr   = useGroupMgr()
+   const postStore  = usePostStore()
    const itemStore  = useItemStore()
    const viewStore  = useViewStore()
    const viewMgr    = useViewMgr()
    const userIdToNumItems  = ref(new Map())
    const selectedUserId    = ref(null)
-   const selectedItem      = ref(null)
    const chatExpanded      = ref(false)
    const selectedChatId    = ref(null)
    const showEditGroupDialog = ref(false)
-   const showAddPostDialog = ref(false)
    
    const group = computed(() => {
       const grp = groupStore.getMyGroup(route.params.id)
@@ -81,6 +77,7 @@
    const groupName  = computed(() => group.value ? group.value.name : "")
    const groupImage = computed(() => groupMgr.getGroupImage(group.value))
    const canEdit    = computed(() => group.value && userStore.userId && group.value.ownerId == userStore.userId)
+   const thumbIconRight = computed(() => viewMgr.isXs ? "group-thumb-icon-right-xs" : "group-thumb-icon-right")
    
    const groupUsers = computed(() => {
       let users = group.value ? group.value.userIds.map(userId => userStore.getUser(userId)) : []
@@ -116,14 +113,8 @@
       return viewStore.setVisibleItems(ItemOrigin.GROUP, group.value.name, Route.GROUP.url + route.params.id, items) 
    })
 
-   const selectUser = (userId) => { selectedUserId.value = userId }
-   const addPost = (item) => { 
-      selectedItem.value = item
-      showAddPostDialog.value = true
-   }
-   
-   const thumbIconRight = computed(() => viewMgr.isXs ? "group-thumb-icon-right-xs" : "group-thumb-icon-right")
-
+   const selectUser     = (userId) => { selectedUserId.value = userId }
+   const addPost        = (item) =>   { postStore.setPostItem(item) }
    const onChatSelected = (chatId) => { selectedChatId.value = chatId }
 </script>
 

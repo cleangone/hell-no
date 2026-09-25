@@ -64,5 +64,9 @@ export const usePostStore = defineStore('postStore', () => {
       batch.commit()
    }
 
-   return { getPosts, addPost, updatePost, deletePost, deletePosts }
+   const postItem = ref(null)
+   function setPostItem(item) { postItem.value = item }
+   function clearPostItem()   { postItem.value = null }
+
+   return { getPosts, addPost, updatePost, deletePost, deletePosts, postItem, setPostItem, clearPostItem }
 })

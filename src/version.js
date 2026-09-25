@@ -18,6 +18,7 @@
        - handle xs chat layout
 */
 export const versions = [   
+   ["v2.65.0", "9/24/26"], // Integrate item post with AddPost
    ["v2.64.2", "9/24/26"], // Streamline AddPost, AddReply expandansion
    ["v2.64.1", "9/24/26"], // Make AddPost, AddReply expandable
    ["v2.64.0", "9/24/26"], // AddReply inline instead of via dialog
