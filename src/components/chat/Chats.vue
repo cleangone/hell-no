@@ -13,8 +13,8 @@
       <div v-if="viewMgr.isXs && isExpanded" class="mx-2">
           <div v-for="chat in displayChats" :key="chat.id"  @click="selectChat(chat)" class="hand mb-2">
             <Chat :chat="chat" :postCount="postCount(chat)" :isSeleted="isSelected(chat)" :canUpdate="canUpdate"/> 
-            <div v-if="selectedChat.id == chat.id" class="mb-2 flex-grow-1">
-               <div><Posts :chatId="chat.id" @popup="onPopup"/></div>
+            <div v-if="selectedChat && selectedChat.id == chat.id" class="mb-2 flex-grow-1">
+               <div><Posts :chat="chat" @popup="onPopup"/></div>
                <AddPost :chatId="chat.id" :userId="userStore.userId"/>
             </div> 
          </div>

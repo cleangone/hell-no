@@ -25,6 +25,7 @@
    import { computed, ref, watch } from 'vue'
    import { usePostStore } from '@/stores/chat/postStore'
    import { useChatStore } from '@/stores/chat/chatStore'
+   import { useNotificationStore } from '@/stores/notificationStore'
    import ItemThumb        from '@/components/item/thumb/ItemThumb.vue'
    import ExpandIcon       from '@/components/util/icon/ExpandIcon.vue'
    import IconButton       from '@/components/util/IconButton.vue'
@@ -33,10 +34,11 @@
    
    const props = defineProps({ chatId: String })
 
-   const postStore  = usePostStore()
-   const chatStore  = useChatStore()
-   const isExpanded = ref(false)
-   const text       = ref(null)
+   const postStore   = usePostStore()
+   const chatStore   = useChatStore()
+   const notificationStore = useNotificationStore()
+   const isExpanded  = ref(false)
+   const text        = ref(null)
 
    const item = computed(() => postStore.postItem)
    watch (() => postStore.postItem, (newItem, oldItem) => { // doesn't work to watch item
@@ -51,6 +53,9 @@
       chatStore.updateChatContentModified(props.chatId)
       text.value = null
       postStore.clearPostItem()
+
+      // notificationStore
+      // Add all notifications
    }
 
    const cancel = () => { 
