@@ -24,7 +24,7 @@
                </v-col>
             </v-row>
             <v-row class="mt-n5">
-               <v-col><v-text-field v-model="username" label="Username" :rules="requiredRule"/></v-col>
+               <v-col><v-text-field v-model="username" label="Username" :rules="usernameRule"/></v-col>
                <v-col><v-text-field v-model="displayName" label="Display Name"/></v-col>
             </v-row>
             <v-row class="mt-n5">
@@ -51,6 +51,7 @@
                      <v-radio label="Daily/Batched"        :value="NotificationOptions.DAILY"/>
                   </v-radio-group>
                   <v-checkbox v-model="notifyViaMessage" label="By Message" class="mx-3 mt-n4 tight-checkbox"/>
+                  <v-checkbox v-model="groupChatSetting" label="Group Chat" class="mx-3 tight-checkbox"/>
                </v-col>
             </v-row>
          </v-form>  
@@ -81,9 +82,12 @@
    import HorizontalDiv     from '@/components/util/HorizontalDiv.vue'
    import TextButton        from '@/components/util/TextButton.vue'
    import { requiredRule } from '@/utils/utils'
-   import { NotificationOptions } from '@/utils/constants'
+   import { NotificationOptions, NotificationType } from '@/utils/constants'
    
-   const DEFAULT_SETTINGS =  { "notifyViaEmail": NotificationOptions.NEVER, "notifyViaMessage": NotificationOptions.NEVER }
+   const DEFAULT_SETTINGS =  { 
+      notifyViaEmail:   NotificationOptions.NEVER, 
+      notifyViaMessage: NotificationOptions.NEVER 
+   }
    const userStore = useUserStore()
    const userMgr   = useUserMgr()
    const viewMgr   = useViewMgr()   
@@ -99,6 +103,11 @@
    const showEditPassword = ref(false)
    const dataValid = ref(true)
    
+   const usernameRule = computed(() => [
+      ...requiredRule,
+      v => { return v != user.value?.username && userStore.usernames.has(v) ? "Username already exists" : true }
+   ])
+
    const user = computed(() => userStore.user ? userStore.user : {} )
    
    const resetUser = () => {
@@ -125,6 +134,11 @@
       get() { return settings.value.notifyViaMessage != NotificationOptions.NEVER },
       set(notify) { settings.value.notifyViaMessage = notify ? NotificationOptions.IMMEDIATE : NotificationOptions.NEVER }
    })
+
+   const groupChatSetting = computed({ 
+      get() { return settings.value[NotificationType.GROUP_CHAT] ? true : false},
+      set(setting) { settings.value[NotificationType.GROUP_CHAT] = setting }
+   })
    
    const dataUpdated = computed(() => 
       firstName.value   != user.value.firstName ||
@@ -134,9 +148,13 @@
       phone.value       != user.value.phone     ||
       hostname.value    != user.value.hostname  ||
       settings.value.soloMode         != user.value.settings?.soloMode ||
-      settings.value.notifyViaEmail   != user.value.settings?.notifyViaEmail  ||
-      settings.value.notifyViaMessage != user.value.settings?.notifyViaMessage)
-   
+      settings.value.notifyViaEmail   != user.value.settings?.notifyViaEmail ||
+      settings.value.notifyViaMessage != user.value.settings?.notifyViaMessage ||
+      settings.value[NotificationType.GROUP_CHAT] != userSetting(NotificationType.GROUP_CHAT)
+   )
+    
+   const userSetting = (fieldName) => { return user.value.settings ? user.value.settings[fieldName] : null }
+
    const updateUser = () => { 
       userStore.updateUser({
          id: user.value.id, 

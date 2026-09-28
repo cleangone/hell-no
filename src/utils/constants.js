@@ -244,6 +244,16 @@ export const ItemMaxLandscapeWidths = {
    sizes:   new Map([ [ThumbSize.IMG, 200], [ThumbSize.SM, 200], [ThumbSize.MED, 250], [ThumbSize.LG, Defaults.MAX_THUMB_SIDE] ]),
    xsSizes: new Map([ [ThumbSize.IMG, 125], [ThumbSize.SM, 125], [ThumbSize.MED, 175], [ThumbSize.LG, Defaults.MAX_THUMB_SIDE] ]) }
 
+export const NotificationStatus = { 
+   READ:       'Read', 
+   UNREAD:     'Unread' 
+}
+
+export const NotificationType = {
+   GROUP_ITEM: 'GroupItem',
+   GROUP_CHAT: 'GroupChat'
+}
+
 export const ThumbType = {
    ITEM:       'Item',
    GALLERY:    'Gallery',

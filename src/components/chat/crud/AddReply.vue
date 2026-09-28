@@ -1,6 +1,6 @@
 <template>
    <v-card>
-      <div @click="isExpanded=!isExpanded" class="d-flex justify-space-between hand align-center px-3"> 
+      <div @click.stop="isExpanded=!isExpanded" class="d-flex justify-space-between hand align-center px-3"> 
          <span class="d-inline-flex align-center">
             <ExpandIcon :isExpanded="isExpanded" iconClass="icon-btn"/>
             <span class="font-weight-medium admin-link my-1">Add Reply</span>

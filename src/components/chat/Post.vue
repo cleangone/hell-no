@@ -9,7 +9,7 @@
                <!-- <Avatar v-if="user" :user="user" :size="40" class="mt-3 hand"/> -->
                <RouterLink :to="Route.USER.url + post.userId" class="mr-2">{{ username }}</RouterLink>
                <span class="text-overline">{{ postDate }}</span>
-               <span @click="isExpanded=!isExpanded" class="hand admin-link">
+               <span @click.stop="isExpanded=!isExpanded" class="hand admin-link">
                   <ExpandIcon :isExpanded="isExpanded" iconClass="icon-btn"/>
                   <span class="text-label-small">{{ replyText }}</span>
                </span>

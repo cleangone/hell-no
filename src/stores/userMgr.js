@@ -21,10 +21,12 @@ export const useUserMgr = defineStore('userMgr', () => {
          }
       }
       return toSortedUsernameAsc(users)
-   })
+   })  
 
    const avatarUsers = computed(() => 
       userStore.users ? toSortedUsernameAsc(userStore.users.filter(user => getAvatar(user))) : [])
+
+   function getUsers(userIds) { return userIds ? userIds.map(id => userStore.getUser(id))  : []}
 
    const myKnownUserIds = computed(() => { 
       const knownUserIds = []
@@ -169,7 +171,7 @@ export const useUserMgr = defineStore('userMgr', () => {
    }
 
    return { 
-      otherUsers, avatarUsers, getFullName, getUserIdByEmail, getUserContactByEmail,
+      otherUsers, avatarUsers, getUsers, getFullName, getUserIdByEmail, getUserContactByEmail,
       setItemHeaders, setGalleryThumbOptions, setItemThumbOptions, setThumbSize, setShowHiddenItems, 
       myProfiles, myUserContacts, myAvatar, getAvatar, getUserContactsNotInGroup, 
       addProfileUser, addFavoriteItem, removeFavoriteItem, addMessagingToken }

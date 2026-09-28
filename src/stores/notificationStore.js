@@ -5,33 +5,35 @@ import { collection, doc, query, where, setDoc, updateDoc, deleteDoc, serverTime
 import { useFirestore } from '@vueuse/firebase/useFirestore'
 import { useUserStore } from './userStore'
 import { dateUuid, toSortedDateCreatedDesc } from '@/utils/utils'
+import { NotificationStatus } from '@/utils/constants'
 
 /*
    Notification
       id
-      status: NotifyStatus: READ, UNREAD
+      status: NotificationStatus: READ, UNREAD
+      notificationType: NotificationType: GROUP_ITEM, GROUP_CHAT
       userId
+      groupId
       text
       dateCreated
 */
 
 const TABLE = 'notifications'
-const NotificationStatus = { READ: 'Read', UNREAD: 'Read' }
 
 export const useNotificationStore = defineStore('notification', () => {
    const userStore = useUserStore()
    const notificationCollection = collection(db, TABLE)
    function notificationDoc(id) { return doc(db, TABLE, id) }
 
-   // const notifications = useFirestore(notificationCollection, [])      
-   // const userIdToNotifs = computed(() => {
-   //    const map = new Map()
-   //    for (const notification of notifications.value) {
-   //       if (!map.has(notification.userId)) { map.set(notification.userId, []) }
-   //       map.get(notification.userId).push(notification)
-   //    }
-   //    return map
-   // })
+   const notifications = useFirestore(notificationCollection, [])      
+   const userIdToNotifications = computed(() => {
+      const map = new Map()
+      for (const notification of notifications.value) {
+         if (!map.has(notification.userId)) { map.set(notification.userId, []) }
+         map.get(notification.userId).push(notification)
+      }
+      return map
+   })
 
    const myNotificationsQuery  = computed(() => userStore.userId && query(notificationCollection, where('userId', '==', userStore.userId)) )
    const myRawNotifications    = useFirestore(myNotificationsQuery, [])
@@ -39,8 +41,20 @@ export const useNotificationStore = defineStore('notification', () => {
    const myUnreadNotifications = computed(() => myNotifications.value.filter(notification => notification.status == NotificationStatus.UNREAD))
 
    function addNotification(notification) {
-      const notificationToSet = { ...notification, id: dateUuid(), status: NotifStatus.UNREAD, dateCreated: serverTimestamp() } 
-      setDoc(notificationDoc(notificationToSet.id), notificationToSet)
+      const notificationToSet = { ...notification, id: dateUuid(), status: NotificationStatus.UNREAD, dateCreated: serverTimestamp() } 
+         
+      const existingNotifications = userIdToNotifications.value.get(notification.userId)
+      const duplicates = existingNotifications ? 
+         existingNotifications.filter(existing => 
+            existing.notificationType == notificationToSet.notificationType &&
+            existing.status           == notificationToSet.status &&
+            existing.userId           == notificationToSet.userId &&
+            existing.groupId          == notificationToSet.groupId &&
+            existing.text             == notificationToSet.text)
+         : []
+
+      if (duplicates.length) { console.log("Bypassing duplicate notification") }
+      else { setDoc(notificationDoc(notificationToSet.id), notificationToSet) }
    }
 
    function setStatusRead(id)      { updateDoc(notificationDoc(id), { status: NotifStatus.READ }) }

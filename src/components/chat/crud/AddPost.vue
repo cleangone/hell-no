@@ -1,6 +1,6 @@
 <template>
    <v-card>
-      <div @click="isExpanded=!isExpanded" class="d-flex justify-space-between hand align-center mx-2"> 
+      <div @click.stop="isExpanded=!isExpanded" class="d-flex justify-space-between hand align-center mx-2"> 
          <span class="d-inline-flex font-weight-medium align-center">
             <ExpandIcon :isExpanded="isExpanded" iconClass="icon-btn"/>
             <span class="font-weight-medium admin-link my-1">Add Post</span>
@@ -25,18 +25,18 @@
    import { computed, ref, watch } from 'vue'
    import { usePostStore } from '@/stores/chat/postStore'
    import { useChatStore } from '@/stores/chat/chatStore'
-   import { useNotificationStore } from '@/stores/notificationStore'
+   import { useNotificationMgr } from '@/stores/notificationMgr'
    import ItemThumb        from '@/components/item/thumb/ItemThumb.vue'
    import ExpandIcon       from '@/components/util/icon/ExpandIcon.vue'
    import IconButton       from '@/components/util/IconButton.vue'
    import HorizontalDiv    from '@/components/util/HorizontalDiv.vue'
-   import { ItemOrigin, ThumbSize } from '@/utils/constants'
+   import { NotificationType } from '@/utils/constants'
    
-   const props = defineProps({ chatId: String })
+   const props = defineProps({ chatId: String, groupId: String })
 
    const postStore   = usePostStore()
    const chatStore   = useChatStore()
-   const notificationStore = useNotificationStore()
+   const notificationMgr = useNotificationMgr()
    const isExpanded  = ref(false)
    const text        = ref(null)
 
@@ -53,9 +53,8 @@
       chatStore.updateChatContentModified(props.chatId)
       text.value = null
       postStore.clearPostItem()
-
-      // notificationStore
-      // Add all notifications
+      if (props.groupId) { notificationMgr.addGroupNotification(
+         { notificationType: NotificationType.GROUP_CHAT, text: "Group chat updated", groupId: props.groupId }) }
    }
 
    const cancel = () => { 

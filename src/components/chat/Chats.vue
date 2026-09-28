@@ -15,7 +15,7 @@
             <Chat :chat="chat" :postCount="postCount(chat)" :isSeleted="isSelected(chat)" :canUpdate="canUpdate"/> 
             <div v-if="selectedChat && selectedChat.id == chat.id" class="mb-2 flex-grow-1">
                <div><Posts :chat="chat" @popup="onPopup"/></div>
-               <AddPost :chatId="chat.id" :userId="userStore.userId"/>
+               <AddPost :chatId="chat.id" :groupId="groupId"/>
             </div> 
          </div>
       </div>
@@ -27,7 +27,7 @@
          </div>
          <div class="mb-2 flex-grow-1">
             <div><Posts :chat="selectedChat" @popup="onPopup"/></div>
-            <AddPost v-if="selectedChat && isActive(selectedChat)" :chatId="selectedChat.id" :userId="userStore.userId"/>
+            <AddPost v-if="selectedChat && isActive(selectedChat)" :chatId="selectedChat.id", :groupId="groupId"/>
          </div> 
       </HorizontalDiv>
     </v-card>

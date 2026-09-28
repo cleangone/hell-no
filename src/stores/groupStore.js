@@ -74,15 +74,21 @@ export const useGroupStore = defineStore('group', () => {
    function getGroup(groupId) { return groupIdToGroup.value ? groupIdToGroup.value.get(groupId) : {} }
 
    // get all the userIds in any of the groupIds
-   function getUserIds(groupIds) {
-      const userIds = new Set()
-      if (groupIdToGroup.value) { 
-         for (const groupId of groupIds) { 
-            const group = groupIdToGroup.value.get(groupId)
-            if (group && isPublic(group)) { group.userIds.forEach(userId => userIds.add(userId)) }
-         }
-      } 
-      return Array.from(userIds)
+   // todo - only use is single groupId 
+   // function getUserIds(groupIds) {
+   //    const userIds = new Set()
+   //    if (groupIdToGroup.value) { 
+   //       for (const groupId of groupIds) { 
+   //          const group = groupIdToGroup.value.get(groupId)
+   //          if (group && isPublic(group)) { group.userIds.forEach(userId => userIds.add(userId)) }
+   //       }
+   //    } 
+   //    return Array.from(userIds)
+   // }
+
+   function getUserIds(groupId) {
+      const group = groupIdToGroup.value ? groupIdToGroup.value.get(groupId) : null
+      return isPublic(group) ? group.userIds : []
    }
 
    function addGroup(name, desc, ownerId) {
