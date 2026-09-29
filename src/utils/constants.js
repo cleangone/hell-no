@@ -195,13 +195,14 @@ export const Route = {
    GALLERY:   { name: 'gallery',   url: '/gallery/'   },
    GALLERIES: { name: 'galleries', url: '/galleries/',display: 'Galleries' },
    GROUP:     { name: 'group',     url: '/group/'     },
+   GROUP_CHAT:{ name: 'groupchat', url: '/group/'     },
    GROUPS:    { name: 'groups',    url: '/groups',    display: 'Groups' },
    FAVORITES: { name: 'favorites', url: '/favorites', display: 'My Favorites' },
    FEED:      { name: 'feed',      url: '/feed'       },
    FORGOT:    { name: 'forgot',    url: '/forgot',    display: 'Forgot Password' },
    INVISIBLE: { name: 'invisible', url: '/invisible/',display: 'Invisible Items' },
    ITEM:      { name: 'item',      url: '/item/'      },
-   ITEM_CHILD:{ name: 'itemch',    url: '/item/'      }, // overload item with additional params
+   ITEM_CHILD:{ name: 'itemch',    url: '/item/'      }, // overload item
    LOGIN:     { name: 'login',     url: '/login',     display: 'Login' },
    MESSAGE:   { name: 'message',   url: '/message',   display: 'Message' },
    RANDOM:    { name: 'random',    url: '/random'     },

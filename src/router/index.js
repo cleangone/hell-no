@@ -48,6 +48,7 @@ const router = createRouter({
       createRoute(Route.GALLERY,    GalleryView,   ':id'),
       createRoute(Route.GALLERIES,  GalleriesView, ':id'),
       createRoute(Route.GROUP,      GroupView,     ':id'),
+      createRoute(Route.GROUP_CHAT, GroupView,     ':id/:chatId'),
       createRoute(Route.GROUPS,     GroupsView),
       createRoute(Route.INVISIBLE,  InvisibleView),
       createRoute(Route.ITEM,       ItemView,      ':origin/:nav/:id'),

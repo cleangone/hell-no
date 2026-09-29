@@ -56,7 +56,7 @@
    import { toSortedNameAsc } from '@/utils/utils'
    import { ChatStatus, Emit, State } from '@/utils/constants'
    
-   const props = defineProps({ state: String, group: Object, collapsible: Boolean })
+   const props = defineProps({ state: String, group: Object, initialChatId: String, collapsible: Boolean })
    const emit  = defineEmits([ Emit.SELECT ])
 
    const userStore    = useUserStore()
@@ -71,8 +71,17 @@
    const showAddChatDialog = ref(false)
    
    const allChats = computed(() => {
-      if (props.state == State.GROUP && props.group.id) { return chatStore.getGroupChats(props.group.id) }   
-      return props.state == State.PUBLIC ? chatStore.publicChats : []
+      // console.log("props.initialChatId", props.initialChatId)
+      const chats = (props.state == State.GROUP && props.group.id) ? 
+         chatStore.getGroupChats(props.group.id) :
+         props.state == State.PUBLIC ? chatStore.publicChats : []
+      if (props.initialChatId) {
+         for (const chat of chats) {
+            if (chat.id == props.initialChatId) { selectedChat.value = chat }
+         }
+      }
+
+      return chats
    })
 
    const chatsExist  = computed(() => allChats.value?.length)

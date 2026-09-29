@@ -45,7 +45,7 @@
    const notifications = computed(() => showRead.value ? notificationStore.myNotifications : notificationStore.myUnreadNotifications)
 
    const toUrl = (notification) => { 
-      if (isUnread(notification)) { setStatusRead(notification) }
+      if (isUnread(notification)) { setStatus(notification) }
       router.push(notification.url) 
    } 
 

@@ -57,7 +57,7 @@
          notificationMgr.addGroupNotification({ 
             notificationType: NotificationType.GROUP_CHAT, 
             text: props.group.name + " group chat " + props.chat.name + " updated", 
-            url: Route.GROUP.url + props.group.id, 
+            url: Route.GROUP.url + props.group.id  + "/" +  props.chat.id,
             groupId: props.group.id }) 
       }
    }

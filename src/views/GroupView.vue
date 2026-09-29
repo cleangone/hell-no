@@ -17,7 +17,7 @@
          <UserThumbSwiper :users="groupUsers" @userId="selectUser"/>
       </div>
       <div  class="mt-5">
-         <Chats :state="State.GROUP" :group="group" collapsible @select="onChatSelected"/>
+         <Chats :state="State.GROUP" :group="paramGroup" :initialChatId="route.params.chatId" collapsible @select="onChatSelected"/>
       </div>
       <v-row v-if="!chatExpanded" class="mt-5"> <!-- items -->
          <div v-for="item in displayItems" :key="item.id" class="group-thumb mr-2">
@@ -30,7 +30,7 @@
    </div>
 
    <v-dialog v-model="showEditGroupDialog" width="75%" height="90%">
-      <EditGroupCard :groupId="group.id" @done="showEditGroupDialog=false"/>
+      <EditGroupCard :groupId="paramGroup.id" @done="showEditGroupDialog=false"/>
    </v-dialog>
 </template>
 
@@ -69,19 +69,19 @@
    const selectedChatId    = ref(null)
    const showEditGroupDialog = ref(false)
    
-   const group = computed(() => {
-      const grp = groupStore.getMyGroup(route.params.id)
-      viewStore.setPageName((grp ? grp.name  : "") + " Group")
-      return grp
+   const paramGroup = computed(() => {
+      const group = groupStore.getMyGroup(route.params.id)
+      viewStore.setPageName((group ? group.name  : "") + " Group")
+      return group
    })
-   const groupName  = computed(() => group.value ? group.value.name : "")
-   const groupImage = computed(() => groupMgr.getGroupImage(group.value))
-   const canEdit    = computed(() => group.value && userStore.userId && group.value.ownerId == userStore.userId)
+
+   const groupName  = computed(() => paramGroup.value ? paramGroup.value.name : "")
+   const groupImage = computed(() => groupMgr.getGroupImage(paramGroup.value))
+   const canEdit    = computed(() => paramGroup.value && userStore.userId && paramGroup.value.ownerId == userStore.userId)
    const thumbIconRight = computed(() => viewMgr.isXs ? "group-thumb-icon-right-xs" : "group-thumb-icon-right")
    
    const groupUsers = computed(() => {
-      let users = group.value ? group.value.userIds.map(userId => userStore.getUser(userId)) : []
-
+      let users = paramGroup.value ? paramGroup.value.userIds.map(userId => userStore.getUser(userId)) : []
       users = users.map((user) => {
          const numItems = userIdToNumItems.value.get(user.id)
          return { ...user,
@@ -110,7 +110,7 @@
 
    const displayItems = computed(() => { 
       const items = groupItems.value.filter(item => !selectedUserId.value || item.userId == selectedUserId.value )
-      return viewStore.setVisibleItems(ItemOrigin.GROUP, group.value.name, Route.GROUP.url + route.params.id, items) 
+      return viewStore.setVisibleItems(ItemOrigin.GROUP, paramGroup.value.name, Route.GROUP.url + route.params.id, items) 
    })
 
    const selectUser     = (userId) => { selectedUserId.value = userId }
