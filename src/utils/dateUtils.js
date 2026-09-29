@@ -69,6 +69,8 @@ function formatDate(date, todayOptions, recentDayOptions, thisYearOptions, lastY
    return date.toLocaleString('en-us', options) 
 }
 
+export function dateMmDd(date) { return date ? date.toLocaleDateString('en-US', MM_DD) : "" }
+
 export function defaultDateString(dbDate) { return dbDate ? dbDate.toDate().toLocaleDateString() : "" }
 export function dateTimeString(dbDate)    { return dbDate ? dbDate.toDate().toLocaleDateString('en-us', MM_DD_YY_HH_MM) : "" }
 

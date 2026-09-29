@@ -15,6 +15,7 @@ import { NotificationStatus } from '@/utils/constants'
       userId
       groupId
       text
+      url
       dateCreated
 */
 
@@ -57,7 +58,7 @@ export const useNotificationStore = defineStore('notification', () => {
       else { setDoc(notificationDoc(notificationToSet.id), notificationToSet) }
    }
 
-   function setStatusRead(id)      { updateDoc(notificationDoc(id), { status: NotifStatus.READ }) }
+   function setStatusRead(id)      { updateDoc(notificationDoc(id), { status: NotificationStatus.READ }) }
    function deleteNotification(id) { deleteDoc(doc(notificationCollection, id)) }
 
    return { myNotifications, myUnreadNotifications, addNotification, setStatusRead, deleteNotification }

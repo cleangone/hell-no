@@ -15,7 +15,7 @@
             <Chat :chat="chat" :postCount="postCount(chat)" :isSeleted="isSelected(chat)" :canUpdate="canUpdate"/> 
             <div v-if="selectedChat && selectedChat.id == chat.id" class="mb-2 flex-grow-1">
                <div><Posts :chat="chat" @popup="onPopup"/></div>
-               <AddPost :chatId="chat.id" :groupId="groupId"/>
+               <AddPost :chat="chat" :group="group"/>
             </div> 
          </div>
       </div>
@@ -27,7 +27,7 @@
          </div>
          <div class="mb-2 flex-grow-1">
             <div><Posts :chat="selectedChat" @popup="onPopup"/></div>
-            <AddPost v-if="selectedChat && isActive(selectedChat)" :chatId="selectedChat.id", :groupId="groupId"/>
+            <AddPost v-if="selectedChat && isActive(selectedChat)" :chat="selectedChat", :group="group"/>
          </div> 
       </HorizontalDiv>
     </v-card>
@@ -43,7 +43,6 @@
    import { useUserStore }  from '@/stores/userStore'
    import { useChatStore }  from '@/stores/chat/chatStore'
    import { useChatMgr }    from '@/stores/chat/chatMgr'
-   import { useGroupStore } from '@/stores/groupStore'
    import { useAdminStore } from '@/stores/adminStore'
    import { useViewMgr }    from '@/stores/viewMgr'
    import Chat              from './Chat.vue'
@@ -57,13 +56,12 @@
    import { toSortedNameAsc } from '@/utils/utils'
    import { ChatStatus, Emit, State } from '@/utils/constants'
    
-   const props = defineProps({ state: String, groupId: String, collapsible: Boolean })
+   const props = defineProps({ state: String, group: Object, collapsible: Boolean })
    const emit  = defineEmits([ Emit.SELECT ])
 
    const userStore    = useUserStore()
    const chatStore    = useChatStore()
    const chatMgr      = useChatMgr()
-   const groupStore   = useGroupStore()
    const adminStore   = useAdminStore()
    const viewMgr      = useViewMgr()
    const showArchived = ref(false)
@@ -73,7 +71,7 @@
    const showAddChatDialog = ref(false)
    
    const allChats = computed(() => {
-      if (props.state == State.GROUP && props.groupId) { return chatStore.getGroupChats(props.groupId) }   
+      if (props.state == State.GROUP && props.group.id) { return chatStore.getGroupChats(props.group.id) }   
       return props.state == State.PUBLIC ? chatStore.publicChats : []
    })
 
@@ -100,8 +98,7 @@
       return toSortedNameAsc(chats)
    })
 
-   const group     = computed(() => props.groupId ? groupStore.getGroup(props.groupId) : null) 
-   const canUpdate = computed(() => adminStore.isAdmin || group.value?.moderatorIds.includes(userStore.userId))
+   const canUpdate = computed(() => adminStore.isAdmin || props.group.moderatorIds.includes(userStore.userId))
    
    const isActive   = (chat) => { return chatMgr.isActive(chat) }
    const isSelected = (chat) => { return selectedChat.value?.id == chat.id }

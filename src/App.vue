@@ -211,6 +211,7 @@
    import { useUserMgr }      from '@/stores/userMgr'
    import { useAdminStore }   from '@/stores/adminStore'
    import { useGroupMgr }     from '@/stores/groupMgr'
+   import { useNotificationStore } from '@/stores/notificationStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
    import { useLocalStore }   from '@/stores/localStore'
@@ -240,7 +241,8 @@
    const viewMgr    = useViewMgr()
    const localStore = useLocalStore()
    const windowSize = ref({})
-
+   useNotificationStore() // instantiated ahead of time for messages/onMounted
+   
    onMounted(async() => {
       // console.log("App.onMounted")
       const auth = getAuth()

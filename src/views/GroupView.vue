@@ -17,7 +17,7 @@
          <UserThumbSwiper :users="groupUsers" @userId="selectUser"/>
       </div>
       <div  class="mt-5">
-         <Chats :state="State.GROUP" :groupId="route.params.id" collapsible @select="onChatSelected"/>
+         <Chats :state="State.GROUP" :group="group" collapsible @select="onChatSelected"/>
       </div>
       <v-row v-if="!chatExpanded" class="mt-5"> <!-- items -->
          <div v-for="item in displayItems" :key="item.id" class="group-thumb mr-2">
