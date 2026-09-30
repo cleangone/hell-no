@@ -12,7 +12,7 @@
       </div>
       <HorizontalDiv v-if="isExpanded" class="w-100 mb-2 d-flex">
          <div v-if="item" class="me-n4">
-            <ItemThumb :item="item" :size="ThumbSize.IMG" :origin="ItemOrigin.EXTERNAL"/>
+            <ItemThumb :item="item" :size="thumbSize.IMG" :origin="itemOrigin.EXTERNAL"/>
          </div>
          <div class="flex-grow-1 mx-2">
              <v-textarea v-model="text" auto-grow rows="1"/>
@@ -30,6 +30,7 @@
    import ExpandIcon       from '@/components/util/icon/ExpandIcon.vue'
    import IconButton       from '@/components/util/IconButton.vue'
    import HorizontalDiv    from '@/components/util/HorizontalDiv.vue'
+   import { ItemOrigin, ThumbSize } from '@/utils/constants'
    
    const props = defineProps({ chat: Object, group: Object })
 
@@ -38,6 +39,8 @@
    const notificationMgr = useNotificationMgr()
    const isExpanded  = ref(false)
    const text        = ref(null)
+   const itemOrigin  = ItemOrigin
+   const thumbSize   = ThumbSize
 
    const item = computed(() => postStore.postItem)
    watch (() => postStore.postItem, (newItem, oldItem) => { // doesn't work to watch item
