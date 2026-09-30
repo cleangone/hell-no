@@ -72,7 +72,7 @@
    
    const allChats = computed(() => {
       // console.log("props.initialChatId", props.initialChatId)
-      const chats = (props.state == State.GROUP && props.group.id) ? 
+      const chats = (props.state == State.GROUP && props.group?.id) ? 
          chatStore.getGroupChats(props.group.id) :
          props.state == State.PUBLIC ? chatStore.publicChats : []
       if (props.initialChatId) {
@@ -107,7 +107,7 @@
       return toSortedNameAsc(chats)
    })
 
-   const canUpdate = computed(() => adminStore.isAdmin || props.group.moderatorIds.includes(userStore.userId))
+   const canUpdate = computed(() => adminStore.isAdmin || props.group?.moderatorIds.includes(userStore.userId))
    
    const isActive   = (chat) => { return chatMgr.isActive(chat) }
    const isSelected = (chat) => { return selectedChat.value?.id == chat.id }

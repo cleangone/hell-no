@@ -3,7 +3,7 @@
       <v-form>
          <v-row no-gutters>
             <v-col><v-text-field v-model="namePrefix" label="Add Name Prefix" class="ml-3"/></v-col>
-            <v-col><v-select     v-model="itemState"  label="Item State" :items="ItemStates" class="mx-3"/></v-col>
+            <v-col><v-select     v-model="itemState"  label="Item State" :items="BulkEditItemStates" class="mx-3"/></v-col>
          </v-row>
          <v-row no-gutters class="mt-n3">
             <v-col><v-text-field v-model="nameFind"    label="Name Find"    class="ml-3"/></v-col>
@@ -41,9 +41,8 @@
    import EditArtists         from './EditArtists.vue'
    import CheckboxExpansion from '@/components/util/CheckboxExpansion.vue'
    import { optionalYearRule } from '@/utils/utils'
-   import { Emit, ItemStates } from '@/utils/constants'
-   
-   import { dequal } from 'dequal';
+   import { Emit, BulkEditItemStates } from '@/utils/constants'
+   import { dequal } from 'dequal' // deep equal
    
    const props = defineProps({items: Array})
    const emit  = defineEmits([Emit.DONE])

@@ -6,7 +6,6 @@
          </v-col>
          <v-col>
             <v-text-field v-model="itemName" label="Item name" :rules="requiredRule"/>
-            <v-select     v-model="state"    label="Visibility" :items="ItemStates"/>
             <EditArtist :artistContainer="primaryArtistContainer" class="mb-5"/>
             <input id="fileInput" type="file" @change="handleFileChange"/>
             <v-card-text>
@@ -23,7 +22,7 @@
 </template>
 
 <script setup>
-   import { computed, onMounted, ref } from 'vue'
+   import { computed, ref } from 'vue'
    import { storage } from '@/firebase'
    import { ref as storageRef } from 'firebase/storage'
    import { uploadBytesResumable, getDownloadURL } from 'firebase/storage'
@@ -32,11 +31,10 @@
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useArtistMgr }    from '@/stores/artistMgr'
    import { useImageMgr }     from '@/stores/image/imageMgr'
-   import { useViewStore }    from '@/stores/viewStore'
    import { useAddItemImageHandler } from '@/stores/image/addItemImageHandler'
    import EditArtist          from './EditArtist.vue'
    import { dateUuid, requiredRule } from '@/utils/utils'
-   import { Emit, ItemStates, ImageType, ItemType, State }  from '@/utils/constants'
+   import { Emit, ImageType, ItemType, State }  from '@/utils/constants'
 
    const props = defineProps({ gallery: Object, userId: String })
    const emit  = defineEmits([ Emit.DONE ])
@@ -45,20 +43,12 @@
    const galleryStore = useGalleryStore()
    const artistMgr    = useArtistMgr()
    const imageMgr     = useImageMgr()
-   const viewStore    = useViewStore()
    const primaryArtistContainer = ref(artistMgr.defaultArtistContainer) 
    const imageHandler = useAddItemImageHandler()
-   const itemDefaults = ref({ state: State.PRIVATE, artistOption: null })
    const itemName = ref('')
-   const itemState = ref(null)
    const itemFile = ref('')
    const fileUrl = ref('')
    const uploadStatus = ref('')
-
-   onMounted(() => {
-      if (viewStore.addItemDefaults && !props.userId) { itemDefaults.value = viewStore.addItemDefaults }
-      itemState.value = itemDefaults.value.state
-   })
 
    const userId    = computed(() => props.userId ? props.userId : userStore.userId)
    const showImage = computed(() => fileUrl.value.length ? true : false)
@@ -68,15 +58,6 @@
       itemFile.value = e.target.files[0]
       fileUrl.value = URL.createObjectURL(itemFile.value)
    }
-
-   const state = computed({ 
-      get() { return itemState.value },
-      set(value) {
-         itemState.value = value
-         itemDefaults.value.state = value
-         if (!props.userId) { viewStore.setAddItemDefaults(itemDefaults.value) }
-      }
-   })
 
    const addItem = () => {
       const primaryArtist = artistMgr.getArtistFromContainer(primaryArtistContainer.value)            
@@ -107,7 +88,7 @@
                const item = {
                   id:     dateUuid(),
                   name:   itemName.value,
-                  state:  itemState.value,
+                  state:  State.PRIVATE,
                   type:   ItemType.SINGLE,
                   userId: userId.value,
                   galleryIds: props.gallery ? [props.gallery.id] : [],

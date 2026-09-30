@@ -87,16 +87,18 @@
    import { useItemStore }    from '@/stores/itemStore'
    import { useGalleryStore } from '@/stores/galleryStore'
    import { useGalleryMgr }   from '@/stores/galleryMgr'
+   import { useGroupStore }   from '@/stores/groupStore'
    import { useGroupMgr }     from '@/stores/groupMgr'
    import { useArtistMgr }    from '@/stores/artistMgr'
    import { useWallStore }    from '@/stores/wallStore'
    import { useWallMgr }      from '@/stores/wallMgr'
+   import { useNotificationMgr } from '@/stores/notificationMgr'
    import EditArtist          from './EditArtist.vue'
    import EditArtists         from './EditArtists.vue'
    import EditHtml            from '@/components/util/EditHtml.vue'
    import CheckboxExpansion   from '@/components/util/CheckboxExpansion.vue'
    import { isGroup, optionalYearRule, requiredRule, sortByName } from '@/utils/utils'
-   import { Emit, ItemStates, ItemType } from '@/utils/constants'
+   import { Emit, ItemStates, ItemType, State } from '@/utils/constants'
    
    const props = defineProps({item: Object, items: Array})
    const emit  = defineEmits([Emit.DONE])
@@ -107,10 +109,12 @@
    const itemStore    = useItemStore()
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
+   const groupStore   = useGroupStore()
    const groupMgr     = useGroupMgr()
    const artistMgr    = useArtistMgr()
    const wallStore    = useWallStore()
    const wallMgr      = useWallMgr()
+   const notificationMgr = useNotificationMgr()
    const currItem = ref({})
    const currItemName     = ref('')
    const currAltName      = ref('')
@@ -193,9 +197,9 @@
    })
 
    const save = () => {
-      const existingGalleryIds = currItem.value.galleryIds ? currItem.value.galleryIds : []
+      const existingGalleryIds = currItem.value.galleryIds ?? []
       const updatedGalleryIds = xs.value ? [ ...xsSelectedGalleryIds.value ] : [ ...selectedGalleryIds.value ]
-      
+
       const addItemToGalleries = []
       for (const galleryId of updatedGalleryIds) {
          if (!existingGalleryIds.includes(galleryId)) { addItemToGalleries.push(galleryId) }
@@ -205,7 +209,24 @@
       for (const galleryId of existingGalleryIds) {
          if (!updatedGalleryIds.includes(galleryId)) { deleteItemFromGalleries.push(galleryId) }
       }
-   
+      
+      // check for group notifications 
+      const notificationGroupIds = []  
+      if (currItemState.value == State.GROUP) {
+         const updatedGroupIds = selectedGroupIds.value
+         if (currItemState.value == currItem.value.state) {
+            // item was already GROUP - add new groupIds
+            const existingGroupIds = currItem.value.groupIds ?? []
+            for (const groupId of updatedGroupIds ) {
+               if (!existingGroupIds.includes(groupId)) { notificationGroupIds.push(groupId) }
+            }
+         }
+         else {
+            // item has been changed to GROUP - add all groupIds
+            notificationGroupIds.push(...updatedGroupIds)
+         } 
+      }
+
       const itemToUpdate = {
          id: currItem.value.id,
          name: currItemName.value,
@@ -234,6 +255,12 @@
       // console.log("contentModified", contentModified)
       itemStore.updateItem(itemToUpdate, contentModified)
       
+      for (const groupId of notificationGroupIds ) {
+         const group = groupStore.getMyGroup(groupId)
+         if (group) { notificationMgr.addGroupItemNotification(group, itemToUpdate) }
+         else { console.log("Could find group to send group item notifiction to groupId", groupId) }
+      }
+   
       for (const galleryId of addItemToGalleries) { 
          const { id, primaryImage, otherImages } = currItem.value
          galleryStore.addItem(galleryId, { id, name: currItemName.value, primaryImage, otherImages }) 

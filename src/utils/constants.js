@@ -220,6 +220,7 @@ export const State = {
    HIDDEN:    'Hidden',   
 }
 export const ItemStates    = [ State.PUBLIC, State.GROUP, State.PRIVATE, State.HIDDEN ]
+export const BulkEditItemStates = [ State.PUBLIC, State.PRIVATE, State.HIDDEN ]
 export const GalleryStates = [ State.PUBLIC, State.PRIVATE ]
 export const GroupStates   = [ State.PUBLIC, State.PRIVATE, State.HIDDEN ]
 export const ChatStates    = [ State.PUBLIC, State.GROUP, State.PRIVATE ]

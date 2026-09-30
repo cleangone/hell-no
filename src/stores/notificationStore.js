@@ -13,7 +13,8 @@ import { NotificationStatus } from '@/utils/constants'
       status: NotificationStatus: READ, UNREAD
       notificationType: NotificationType: GROUP_ITEM, GROUP_CHAT
       userId
-      groupId
+      groupId 
+      itemId
       text
       url
       dateCreated

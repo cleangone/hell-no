@@ -51,7 +51,10 @@
                      <v-radio label="Daily/Batched"        :value="NotificationOptions.DAILY"/>
                   </v-radio-group>
                   <v-checkbox v-model="notifyViaMessage" label="By Message" class="mx-3 mt-n4 tight-checkbox"/>
-                  <v-checkbox v-model="groupChatSetting" label="Group Chat" class="mx-3 tight-checkbox"/>
+                  
+                  <div style="font-size: medium; font-weight: bold" class="text-left mt-5">Group Notifications</div>
+                  <v-checkbox v-model="groupChatSetting" label="Group Chat"  class="mt-n1 mx-3 tight-checkbox"/>
+                  <v-checkbox v-model="groupItemSetting" label="Group Items" class="mx-3 tight-checkbox"/>
                </v-col>
             </v-row>
          </v-form>  
@@ -139,6 +142,11 @@
       get() { return settings.value[NotificationType.GROUP_CHAT] ? true : false},
       set(setting) { settings.value[NotificationType.GROUP_CHAT] = setting }
    })
+
+   const groupItemSetting = computed({ 
+      get() { return settings.value[NotificationType.GROUP_ITEM] ? true : false},
+      set(setting) { settings.value[NotificationType.GROUP_ITEM] = setting }
+   })
    
    const dataUpdated = computed(() => 
       firstName.value   != user.value.firstName ||
@@ -150,7 +158,8 @@
       settings.value.soloMode         != user.value.settings?.soloMode ||
       settings.value.notifyViaEmail   != user.value.settings?.notifyViaEmail ||
       settings.value.notifyViaMessage != user.value.settings?.notifyViaMessage ||
-      settings.value[NotificationType.GROUP_CHAT] != userSetting(NotificationType.GROUP_CHAT)
+      settings.value[NotificationType.GROUP_CHAT] != userSetting(NotificationType.GROUP_CHAT) ||
+      settings.value[NotificationType.GROUP_ITEM] != userSetting(NotificationType.GROUP_ITEM)
    )
     
    const userSetting = (fieldName) => { return user.value.settings ? user.value.settings[fieldName] : null }

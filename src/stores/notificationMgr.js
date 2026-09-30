@@ -4,9 +4,7 @@ import { useUserStore }  from './userStore'
 import { useUserMgr }    from './userMgr'
 import { useNotificationStore } from './notificationStore'
 import { useGroupStore } from './groupStore'
-import {  } from '@/utils/utils'
 import { NotificationType, Route } from '@/utils/constants'
-   
 
 export const useNotificationMgr = defineStore('notificationMgr', () => {
    const userStore = useUserStore()
@@ -38,6 +36,15 @@ export const useNotificationMgr = defineStore('notificationMgr', () => {
          groupId: group.id }) 
    }
 
-   return { addGroupNotification, addGroupChatNotification }
+   function addGroupItemNotification(group, item) {
+      addGroupNotification({ 
+         notificationType: NotificationType.GROUP_ITEM, 
+         text: group.name + " group item " + item.name + " updated", 
+         url: Route.GROUP.url + group.id,
+         groupId: group.id,
+         itemId: item.id }) 
+   }
+
+   return { addGroupNotification, addGroupChatNotification, addGroupItemNotification }
 })
 
