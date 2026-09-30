@@ -30,7 +30,6 @@
    import ExpandIcon       from '@/components/util/icon/ExpandIcon.vue'
    import IconButton       from '@/components/util/IconButton.vue'
    import HorizontalDiv    from '@/components/util/HorizontalDiv.vue'
-   import { NotificationType, Route } from '@/utils/constants'
    
    const props = defineProps({ chat: Object, group: Object })
 
@@ -53,13 +52,7 @@
       chatStore.updateChatContentModified(props.chat.id)
       text.value = null
       postStore.clearPostItem()
-      if (props.group) { 
-         notificationMgr.addGroupNotification({ 
-            notificationType: NotificationType.GROUP_CHAT, 
-            text: props.group.name + " group chat " + props.chat.name + " updated", 
-            url: Route.GROUP.url + props.group.id  + "/" +  props.chat.id,
-            groupId: props.group.id }) 
-      }
+      if (props.group) { notificationMgr.addGroupChatNotification(props.group, props.chat) }
    }
 
    const cancel = () => { 

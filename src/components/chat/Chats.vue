@@ -14,7 +14,7 @@
           <div v-for="chat in displayChats" :key="chat.id"  @click="selectChat(chat)" class="hand mb-2">
             <Chat :chat="chat" :postCount="postCount(chat)" :isSeleted="isSelected(chat)" :canUpdate="canUpdate"/> 
             <div v-if="selectedChat && selectedChat.id == chat.id" class="mb-2 flex-grow-1">
-               <div><Posts :chat="chat" @popup="onPopup"/></div>
+               <div><Posts :chat="chat" :group="group" @popup="onPopup"/></div>
                <AddPost :chat="chat" :group="group"/>
             </div> 
          </div>
@@ -26,7 +26,7 @@
             </div>
          </div>
          <div class="mb-2 flex-grow-1">
-            <div><Posts :chat="selectedChat" @popup="onPopup"/></div>
+            <div><Posts :chat="selectedChat" :group="group" @popup="onPopup"/></div>
             <AddPost v-if="selectedChat && isActive(selectedChat)" :chat="selectedChat", :group="group"/>
          </div> 
       </HorizontalDiv>

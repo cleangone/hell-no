@@ -5,7 +5,7 @@
    <div v-else class="d-flex flex-column h-100 w-100" style="max-height: 400px;">
       <v-virtual-scroll :items="posts" height="auto" ref="virtualScrollRef">
          <template v-slot:default="{ item }">
-            <Post :key="item.id" :post="item" :chat="chat" @popup="onPopup"/>
+            <Post :key="item.id" :post="item" :chat="chat" :group="group" @popup="onPopup"/>
          </template>
       </v-virtual-scroll>
    </div>
@@ -28,7 +28,7 @@
    import { toSortedDateCreatedAsc } from '@/utils/utils'
    import { Emit } from '@/utils/constants'
    
-   const props = defineProps({ chat: Object })
+   const props = defineProps({ chat: Object, group: Object })
    const emit  = defineEmits([ Emit.POPUP ])
 
    const postStore = usePostStore()

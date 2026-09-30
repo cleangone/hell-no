@@ -5,6 +5,8 @@ import { useUserMgr }    from './userMgr'
 import { useNotificationStore } from './notificationStore'
 import { useGroupStore } from './groupStore'
 import {  } from '@/utils/utils'
+import { NotificationType, Route } from '@/utils/constants'
+   
 
 export const useNotificationMgr = defineStore('notificationMgr', () => {
    const userStore = useUserStore()
@@ -28,6 +30,14 @@ export const useNotificationMgr = defineStore('notificationMgr', () => {
       }
    }
 
-   return { addGroupNotification }
+   function addGroupChatNotification(group, chat) {
+      addGroupNotification({ 
+         notificationType: NotificationType.GROUP_CHAT, 
+         text: group.name + " group chat " + chat.name + " updated", 
+         url: Route.GROUP.url + group.id  + "/" +  chat.id,
+         groupId: group.id }) 
+   }
+
+   return { addGroupNotification, addGroupChatNotification }
 })
 

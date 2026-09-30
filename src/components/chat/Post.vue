@@ -23,7 +23,7 @@
       </v-card-item>
    </v-card>
 
-   <Replies v-if="isExpanded" :postId="props.post.id" :chat="chat"/>
+   <Replies v-if="isExpanded" :postId="props.post.id" :chat="chat" :group="group"/>
 
    <v-dialog v-model="showEditDialog" width="auto">
       <EditPost :post="post" @done="showEditDialog=false"/>
@@ -52,7 +52,7 @@
    import { chatDate } from '@/utils/dateUtils'
    import { Emit, ItemOrigin,  Route, ThumbSize } from '@/utils/constants'
    
-   const props = defineProps({ post: Object, chat: Object })
+   const props = defineProps({ post: Object, chat: Object, group: Object })
    const emit  = defineEmits([ Emit.POPUP ])
 
    const userStore  = useUserStore()

@@ -17,23 +17,26 @@
 </template>
 
 <script setup>
-   import { computed, ref } from 'vue'
+   import { ref } from 'vue'
    import { useReplyStore } from '@/stores/chat/replyStore'
    import { useChatStore }  from '@/stores/chat/chatStore'
+   import { useNotificationMgr } from '@/stores/notificationMgr'
    import ExpandIcon        from '@/components/util/icon/ExpandIcon.vue'
    import IconButton        from '@/components/util/IconButton.vue'
 
-   const props = defineProps({ postId: String, chatId: String, expand: Boolean })
+   const props = defineProps({ postId: String, chat: Object, group: Object, expand: Boolean })
 
    const replyStore = useReplyStore()
    const chatStore  = useChatStore()
+   const notificationMgr = useNotificationMgr()
    const isExpanded = ref(props.expand)
    const text       = ref(null)
 
    const addReply = () => {    
       replyStore.addReply({ postId: props.postId, text: text.value })
-      chatStore.updateChatContentModified(props.chatId)
+      chatStore.updateChatContentModified(props.chat.id)
       text.value = null
+      if (props.group) { notificationMgr.addGroupChatNotification(props.group, props.chat) }
    }
 
    const cancel = () => { text.value = null }
