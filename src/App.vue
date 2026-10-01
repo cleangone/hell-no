@@ -95,9 +95,10 @@
          <v-col :cols="sideCols" class="flex-grow-0 flex-shrink-0 nav-right">
             <!-- top right icon for mobile -->
             <div v-if="viewMgr.isMobile">
-               <span v-if="inRoutes(Route.HOME, Route.USER)">
+               <span v-if="inRoutes(Route.HOME, Route.USER)" style="white-space: nowrap">
                   <!-- <Icon icon="mdi-dice-multiple" @click="toRoute(Route.RANDOM)"/> -->
-                  <DarkButton/>
+                  <ShakeIcon icon="mdi-bell-ring" size="small" @click="toRoute(Route.MESSAGE)" class="mr-n1"/>
+                  <DarkButton class="mr-n2"/>
                </span>
                <span v-else-if="isRoute(Route.GALLERIES)" class="text-no-wrap">
                   <ThumbSizeButton :thumbType="ThumbType.GALLERY"/>
@@ -122,6 +123,7 @@
             <div v-else-if="userExists">
                <SearchBox class="mr-2"/>
                <RouterLink :to="isMyUserPage ? Route.ACCOUNT.url : Route.USER.url + userId">{{ displayName }}</RouterLink>
+               <ShakeIcon icon="mdi-bell-ring" size="small" @click="toRoute(Route.MESSAGE)" class="mx-1"/>
                <v-menu>
                   <template v-slot:activator="{ props }">
                      <v-btn v-bind="props" icon="mdi-account" size="medium" variant="text" class="icon-btn"/>
@@ -224,6 +226,8 @@
    import SearchBox           from '@/components/util/SearchBox.vue'
    import ThumbSizeButton     from '@/components/util/ThumbSizeButton.vue'
    import ToggleIcon          from '@/components/util/icon/ToggleIcon.vue'
+   import IconButton          from '@/components/util/IconButton.vue'
+   import ShakeIcon          from '@/components/util/icon/ShakeIcon.vue'
    import YouTubeAudio        from '@/components/util/YouTubeAudio.vue'
    import ViewedSortButton    from '@/views/viewed/ViewedSortButton.vue'
    import { handleError }     from '@/utils/utils'
@@ -237,6 +241,7 @@
    const userMgr    = useUserMgr()
    const adminStore = useAdminStore()
    const groupMgr   = useGroupMgr()
+   const notificationStore = useNotificationStore()
    const viewStore  = useViewStore()
    const viewMgr    = useViewMgr()
    const localStore = useLocalStore()
@@ -304,6 +309,8 @@
    const userOwnerId = computed(() => userStore.user.ownerId) 
    const myProfiles  = computed(() => userMgr.myProfiles) 
    
+   const notificationsExist = computed(() => notificationStore.myActiveNotifications.length)
+
    const displayName = computed(() => {
       const currUser = user.value // ugly - check user, which drives update of localStore.soloMode
       return localStore.soloMode ? "Solo" : (currUser ? currUser.firstName : "")
@@ -418,6 +425,19 @@
 .width-100 { 
    min-width: 100%; 
    max-width: 100%; 
+}
+@keyframes icon-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  15% { transform: rotate(-15deg); }
+  30% { transform: rotate(12deg); }
+  45% { transform: rotate(-10deg); }
+  60% { transform: rotate(8deg); }
+  75% { transform: rotate(-4deg); }
+}
+.icon-wiggle-on-load {
+  animation: icon-wiggle 0.8s ease-in-out;
+  animation-iteration-count: 3; 
+  transform-origin: center; 
 }
 </style>
 

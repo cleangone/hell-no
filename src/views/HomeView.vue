@@ -14,7 +14,7 @@
    <!-- greeting, notifications, wall -->
    <v-container class="pa-0 mb-2 width-100">
       <!-- <div v-if="viewMgr.solo" class="text-subtitle-1 mt-n2 mb-2">Solo Mode</div> -->
-      <ShowNotifications v-if="notifications.length" :notifications="notifications" class="mb-3"/>
+      <ShowNotifications v-if="invites.length" :notifications="invites" class="mb-3"/>
       <div class="walldiv" :style="wallDivStyle">
          <v-img :src="wallImage" cover :style="wallBackgroundStyle" class="wall-background"></v-img>
          <div class="wall-content">
@@ -141,7 +141,7 @@
       }
    }
 
-   const notifications = computed(() => {
+   const invites = computed(() => {
       // console.log("notifications", inviteStore.myActiveInvites)
       const todos = []
       for (const invite of inviteStore.myActiveInvites) {

@@ -18,6 +18,7 @@
        - handle xs chat layout
 */
 export const versions = [   
+   ["v2.67.4", "10/1/26"], // Add activeNotifications icon
    ["v2.67.3", "9/30/26"], // Add group item notifications
    ["v2.67.2", "9/29/26"], // Continued notification integration
    ["v2.67.1", "9/25/26"], // Create Group chat notification in AddPost
