@@ -247,8 +247,8 @@ export const ItemMaxLandscapeWidths = {
    xsSizes: new Map([ [ThumbSize.IMG, 125], [ThumbSize.SM, 125], [ThumbSize.MED, 175], [ThumbSize.LG, Defaults.MAX_THUMB_SIDE] ]) }
 
 export const NotificationStatus = { 
-   READ:       'Read', 
-   UNREAD:     'Unread' 
+   ACTIVE:     'Active', 
+   INACTIVE:   'Inactive' 
 }
 
 export const NotificationType = {

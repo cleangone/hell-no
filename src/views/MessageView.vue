@@ -33,7 +33,7 @@
    const tab = ref(TABS.email)
 
    onMounted(async() => {
-      if (notificationStore.myUnreadNotifications.length) { tab.value = TABS.notification }
+      if (notificationStore.myActiveNotifications.length) { tab.value = TABS.notification }
    })
 </script>
 

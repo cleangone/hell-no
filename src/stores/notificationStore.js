@@ -1,7 +1,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import { db } from '@/firebase'
-import { collection, doc, query, where, setDoc, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore"
+import { collection, doc, query, where, setDoc, updateDoc, deleteDoc, serverTimestamp, writeBatch } from "firebase/firestore"
 import { useFirestore } from '@vueuse/firebase/useFirestore'
 import { useUserStore } from './userStore'
 import { dateUuid, toSortedDateCreatedDesc } from '@/utils/utils'
@@ -40,10 +40,10 @@ export const useNotificationStore = defineStore('notification', () => {
    const myNotificationsQuery  = computed(() => userStore.userId && query(notificationCollection, where('userId', '==', userStore.userId)) )
    const myRawNotifications    = useFirestore(myNotificationsQuery, [])
    const myNotifications       = computed(() => toSortedDateCreatedDesc(myRawNotifications.value))
-   const myUnreadNotifications = computed(() => myNotifications.value.filter(notification => notification.status == NotificationStatus.UNREAD))
+   const myActiveNotifications = computed(() => myNotifications.value.filter(notification => notification.status == NotificationStatus.ACTIVE))
 
    function addNotification(notification) {
-      const notificationToSet = { ...notification, id: dateUuid(), status: NotificationStatus.UNREAD, dateCreated: serverTimestamp() } 
+      const notificationToSet = { ...notification, id: dateUuid(), status: NotificationStatus.ACTIVE, dateCreated: serverTimestamp() } 
          
       const existingNotifications = userIdToNotifications.value.get(notification.userId)
       const duplicates = existingNotifications ? 
@@ -59,9 +59,18 @@ export const useNotificationStore = defineStore('notification', () => {
       else { setDoc(notificationDoc(notificationToSet.id), notificationToSet) }
    }
 
-   function setStatusRead(id)      { updateDoc(notificationDoc(id), { status: NotificationStatus.READ }) }
+   function setInactive(id) { updateDoc(notificationDoc(id), { status: NotificationStatus.INACTIVE }) }
+
    function deleteNotification(id) { deleteDoc(doc(notificationCollection, id)) }
 
-   return { myNotifications, myUnreadNotifications, addNotification, setStatusRead, deleteNotification }
+   function deleteNotifications(ids) {
+      const batch = writeBatch(db)
+      for (const id of ids) {
+         batch.delete(doc(notificationCollection, id))
+      }
+      batch.commit()
+   }
+
+   return { myNotifications, myActiveNotifications, addNotification, setInactive, deleteNotification, deleteNotifications }
 })
 

@@ -1,9 +1,11 @@
 <template>
    <div class="text-left">
-      <div class="text-h6">
-         Notifications 
-         <TextButton v-if="showRead" @click="showRead=!showRead" text="Hide Read"/>
-         <TextButton v-else @click="showRead=!showRead" text="Show Read"/>
+      <div class="text-h6 justify-space-between">
+         <span>        
+            {{ showActive ? "Active Notifications" : "Notifications" }}
+            <TextButton :text="showActive?'Show All':'Show Active'" @click="showActive=!showActive"/>
+         </span>
+         <TextButton v-if="!showActive && notifications.length" text="Delete Inactive" @click="deleteInactive()"/>
       </div>
       <div>
          <v-card v-for="notification in notifications" class="bg-blue-lighten-5 mb-2">
@@ -13,7 +15,8 @@
                   <span v-if="notification.url" @click="toUrl(notification)" class="hand admin-link">{{  notification.text }}</span>
                   <span v-else>{{  notification.text }}</span>
                </span>
-               <IconButton v-if="isUnread(notification)" @click="setStatus(notification)" icon="mdi-close-thick" xs color="blue-darken-2"/>
+               <IconButton v-if="isActive(notification)" @click="setInactive(notification)" icon="mdi-close-thick" xs color="blue-darken-2"/>
+               <DeleteButton v-else @click="deleteNotification(notification)" class="admin-link"/> 
             </div>
          </v-card>
       </div>
@@ -22,14 +25,15 @@
 
 <script setup>
    import { computed, ref } from 'vue'
-   import { useRouter }     from 'vue-router'
-   import { useUserStore }  from '@/stores/userStore'
+   import { useRouter }    from 'vue-router'
+   import { useUserStore } from '@/stores/userStore'
    import { useNotificationStore } from '@/stores/notificationStore'
-   import { useItemStore }  from '@/stores/itemStore'
-   import { useViewStore }  from '@/stores/viewStore'
-   import { useViewMgr }    from '@/stores/viewMgr'
-   import ItemThumb   from '@/components/item/thumb/ItemThumb.vue'
-   import TextButton  from '@/components/util/TextButton.vue'
+   import { useItemStore } from '@/stores/itemStore'
+   import { useViewStore } from '@/stores/viewStore'
+   import { useViewMgr }   from '@/stores/viewMgr'
+   import ItemThumb        from '@/components/item/thumb/ItemThumb.vue'
+   import DeleteButton     from '@/components/util/DeleteButton.vue'
+   import TextButton       from '@/components/util/TextButton.vue'
    import IconButton       from '@/components/util/IconButton.vue'
    import { dateMmDd } from '@/utils/dateUtils'
    import { NotificationStatus } from '@/utils/constants'
@@ -40,18 +44,28 @@
    const itemStore  = useItemStore()
    const viewStore  = useViewStore()
    const viewMgr    = useViewMgr()
-   const showRead   = ref(false)
+   const showActive = ref(true)
    
-   const notifications = computed(() => showRead.value ? notificationStore.myNotifications : notificationStore.myUnreadNotifications)
+   const notifications = computed(() => showActive.value ? notificationStore.myActiveNotifications : notificationStore.myNotifications)
 
    const toUrl = (notification) => { 
-      if (isUnread(notification)) { setStatus(notification) }
+      if (isActive(notification)) { setInactive(notification) }
       router.push(notification.url) 
    } 
 
-   const getDate   = (notification) => { return dateMmDd(notification.dateCreated.toDate()) }
-   const isUnread  = (notification) => { return notification.status == NotificationStatus.UNREAD } 
-   const setStatus = (notification) => { notificationStore.setStatusRead(notification.id) } 
+   const getDate  = (notification) => { return dateMmDd(notification.dateCreated.toDate()) }
+   const isActive = (notification) => { return notification.status == NotificationStatus.ACTIVE } 
+
+   const setInactive = (notification) => { notificationStore.setInactive(notification.id) } 
+   
+   const deleteNotification = (notification) => { notificationStore.deleteNotification(notification.id) }
+
+   const deleteInactive = () => { 
+      const inactiveIds = notificationStore.myNotifications
+         .filter(notification => notification.status == NotificationStatus.INACTIVE)
+         .map(notification => notification.id)
+      notificationStore.deleteNotifications(inactiveIds) 
+   }
 </script>
 
 <style>
