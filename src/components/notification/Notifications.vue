@@ -26,6 +26,7 @@
          </v-card>
       </div>
    </div>
+   <ItemPopup v-if="popupImage" :popupImage="popupImage"/>
 </template>
 
 <script setup>
@@ -34,6 +35,7 @@
    import { useNotificationStore } from '@/stores/notificationStore'
    import { useItemStore } from '@/stores/itemStore'
    import ItemThumb        from '@/components/item/thumb/ItemThumb.vue'
+   import ItemPopup        from '@/components/item/ItemPopup.vue'
    import DeleteButton     from '@/components/util/DeleteButton.vue'
    import TextButton       from '@/components/util/TextButton.vue'
    import IconButton       from '@/components/util/IconButton.vue'
@@ -45,6 +47,7 @@
    const notificationStore = useNotificationStore()
    const itemStore  = useItemStore()
    const showActive = ref(true)
+   const popupImage = ref(null)
    
    const notifications = computed(() => showActive.value ? notificationStore.myActiveNotifications : notificationStore.myNotifications)
 
@@ -67,6 +70,8 @@
          .map(notification => notification.id)
       notificationStore.deleteNotifications(inactiveIds) 
    }
+
+   const onPopup = (popup) => { popupImage.value = popup }
 </script>
 
 <style>
