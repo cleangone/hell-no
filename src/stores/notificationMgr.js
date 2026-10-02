@@ -39,7 +39,7 @@ export const useNotificationMgr = defineStore('notificationMgr', () => {
    function addGroupItemNotification(group, item) {
       addGroupNotification({ 
          notificationType: NotificationType.GROUP_ITEM, 
-         text: group.name + " group item " + item.name + " updated", 
+         text: item.name + " added to Group " + group.name, 
          url: Route.GROUP.url + group.id,
          groupId: group.id,
          itemId: item.id }) 

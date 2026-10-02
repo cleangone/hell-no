@@ -9,15 +9,20 @@
       </div>
       <div>
          <v-card v-for="notification in notifications" class="bg-blue-lighten-5 mb-2">
-            <div class="d-flex align-center justify-space-between w-100 px-2">
-               <span class="py-1">
-                  <span class="mr-2">{{ getDate(notification) }}</span>
-                  <span v-if="notification.url" @click="toUrl(notification)" class="hand admin-link">{{  notification.text }}</span>
-                  <span v-else>{{  notification.text }}</span>
-               </span>
-               <IconButton v-if="isActive(notification)" @click="setInactive(notification)" icon="mdi-close-thick" xs color="blue-darken-2"/>
-               <DeleteButton v-else @click="deleteNotification(notification)" class="admin-link"/> 
-            </div>
+            <HorizontalDiv class="px-2">
+               <div v-if="notification.itemId">
+                  <ItemThumb :item="getItem(notification)" :size="ThumbSize.IMG" :origin="ItemOrigin.EXTERNAL" emitPopup @popup="onPopup"/>
+               </div>
+               <div class="d-flex align-center justify-space-between w-100">
+                  <span class="py-1">
+                     <span class="mr-2">{{ getDate(notification) }}</span>
+                     <span v-if="notification.url" @click="toUrl(notification)" class="hand admin-link">{{  notification.text }}</span>
+                     <span v-else>{{  notification.text }}</span>
+                  </span>
+                  <IconButton v-if="isActive(notification)" @click="setInactive(notification)" icon="mdi-close-thick" xs color="blue-darken-2"/>
+                  <DeleteButton v-else @click="deleteNotification(notification)" class="admin-link"/> 
+               </div>
+            </HorizontalDiv>
          </v-card>
       </div>
    </div>
@@ -26,24 +31,19 @@
 <script setup>
    import { computed, ref } from 'vue'
    import { useRouter }    from 'vue-router'
-   import { useUserStore } from '@/stores/userStore'
    import { useNotificationStore } from '@/stores/notificationStore'
    import { useItemStore } from '@/stores/itemStore'
-   import { useViewStore } from '@/stores/viewStore'
-   import { useViewMgr }   from '@/stores/viewMgr'
    import ItemThumb        from '@/components/item/thumb/ItemThumb.vue'
    import DeleteButton     from '@/components/util/DeleteButton.vue'
    import TextButton       from '@/components/util/TextButton.vue'
    import IconButton       from '@/components/util/IconButton.vue'
+   import HorizontalDiv    from '@/components/util/HorizontalDiv.vue'
    import { dateMmDd } from '@/utils/dateUtils'
-   import { NotificationStatus } from '@/utils/constants'
+   import { ItemOrigin, NotificationStatus, ThumbSize } from '@/utils/constants'
    
    const router     = useRouter()
-   const userStore  = useUserStore()
    const notificationStore = useNotificationStore()
    const itemStore  = useItemStore()
-   const viewStore  = useViewStore()
-   const viewMgr    = useViewMgr()
    const showActive = ref(true)
    
    const notifications = computed(() => showActive.value ? notificationStore.myActiveNotifications : notificationStore.myNotifications)
@@ -55,7 +55,8 @@
 
    const getDate  = (notification) => { return dateMmDd(notification.dateCreated.toDate()) }
    const isActive = (notification) => { return notification.status == NotificationStatus.ACTIVE } 
-
+   const getItem  = (notification) => { return itemStore.getItem(notification.itemId) }
+   
    const setInactive = (notification) => { notificationStore.setInactive(notification.id) } 
    
    const deleteNotification = (notification) => { notificationStore.deleteNotification(notification.id) }
