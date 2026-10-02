@@ -1,13 +1,8 @@
 <template>
    <div>
       <v-form>
-         <cropper v-if="cropImageType == ImageType.GALLERY" ref="cropperElement" :src="urlToCrop" @change="onCropChange"
-            :stencil-props="{aspectRatio: 16/9}" class="image-cropper"/>
-         <cropper v-if="cropImageType == ImageType.GROUP" ref="cropperElement" :src="urlToCrop" @change="onCropChange"
-            :stencil-props="{aspectRatio: ThumbAspectRatio.GROUP}" class="image-cropper"/>
-         <cropper v-else-if="cropImageType == ImageType.USER" ref="cropperElement" :src="urlToCrop" @change="onCropChange"
-            :stencil-component="CircleStencil" class="image-cropper"/>
-         <cropper v-else ref="cropperElement" :src="urlToCrop" @change="onCropChange" class="image-cropper"/>
+         <cropper ref="cropperElement" :src="urlToCrop" @change="onCropChange"
+            :stencil-props="stencilProps" :stencil-component="stencilComponent" class="image-cropper"/>
       </v-form>
       <div class="card-actions">  <!-- float at bottom -->
          <v-btn @click="crop(item)"       color="primary" variant="text" class="mr-4 bg-white">crop</v-btn>
@@ -17,25 +12,37 @@
 </template>
 
 <script setup>
-   import { computed, ref } from 'vue'
+   import { computed, nextTick, onMounted, ref } from 'vue'
    import { storage } from '@/firebase'
    import { ref as storageRef } from 'firebase/storage'
    import { uploadBytes, getDownloadURL } from 'firebase/storage'
-   import { Cropper, CircleStencil } from 'vue-advanced-cropper'
+   import { Cropper, CircleStencil, RectangleStencil } from 'vue-advanced-cropper'
    import { useUserStore } from '@/stores/userStore'
    import { useImageMgr }  from '@/stores/image/imageMgr'
    import { Emit, ImageType, ThumbAspectRatio } from '@/utils/constants'
    import 'vue-advanced-cropper/dist/style.css'
 
-   // context  contains item:Object, profileId:Object, or nothing if it is a user upload
+   // context contains item:Object, profileId:Object, or nothing if it is a user upload
    const props = defineProps({ imageToCrop:Object, cropImageType:String, uploadHandler: Object, uploadContext: Object })    
    const emit  = defineEmits([Emit.DONE])
 
    const userStore = useUserStore()
    const imageMgr  = useImageMgr()
-   const cropperElement = ref(null)
-   const cropCoordinates = ref(null)
+   const cropperElement   = ref(null)
+   const cropCoordinates  = ref(null)
    const cropActiveCanvas = ref(null)
+
+   onMounted(() => {
+      // allow elements to settle before initializing layout 
+      nextTick(() => { cropperElement.value?.refresh() })
+   })
+
+   const stencilProps = computed(() => 
+      props.cropImageType === ImageType.GALLERY ? { aspectRatio: ThumbAspectRatio.GALLERY } 
+      : props.cropImageType === ImageType.GROUP ? { aspectRatio: ThumbAspectRatio.GROUP } 
+      : {})
+
+   const stencilComponent = computed(() => props.cropImageType === ImageType.USER ? CircleStencil : RectangleStencil)
 
    const urlToCrop   = computed(() => props.imageToCrop ? props.imageToCrop.url + "&random=" + Math.random() : "")
    const contentType = computed(() => props.cropImageType == ImageType.USER ? "image/png" : "image/jpeg")

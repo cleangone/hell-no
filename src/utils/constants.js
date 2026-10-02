@@ -265,6 +265,7 @@ export const ThumbType = {
 }
 
 export const ThumbAspectRatio = { 
+   GALLERY:    16/9, 
    GROUP:      4/3, 
 }  
 
