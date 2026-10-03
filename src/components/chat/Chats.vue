@@ -81,11 +81,11 @@
          chatStore.getGroupChats(props.group.id)
          : props.state == State.PUBLIC ? chatStore.publicChats : []
       if (props.initialChatId) {
-         isExpanded.value = true
          for (const chat of chats) {
             if (chat.id == props.initialChatId) { selectedChat.value = chat }
          }
       }
+      if (props.state == State.PUBLIC || props.initialChatId) { isExpanded.value = true }
 
       return chats
    })
