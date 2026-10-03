@@ -1,14 +1,19 @@
 <template>
    <v-card class="text-left w-100 elevation-1">
-      <div class="text-h6">
-         <ExpandIcon v-if="collapsible && chatsExist" :isExpanded="isExpanded"
-            @click="isExpanded=!isExpanded" large iconClass="icon-btn mr-n1"/>
-         Chats
-         <TextButton v-if="isExpanded && canUpdate" @click="showAddChatDialog=true" text="Add Chat"/>
-         <span v-if="isExpanded && archivedChatsExist"> 
-            <TextButton v-if="showArchived" @click="showArchived=false" text="Hide Archived"/>
-            <TextButton v-else @click="showArchived=true" text="Show Archived"/>
+      <div>
+          <span class="text-h6">
+            <ExpandIcon v-if="collapsible && chatsExist" :isExpanded="isExpanded"
+               @click="isExpanded=!isExpanded" large iconClass="icon-btn mr-n1"/>
+            Chats
          </span>
+         <span v-if="isExpanded">
+            <TextButton v-if="canUpdate" @click="showAddChatDialog=true" text="Add Chat"/>
+            <span v-if="archivedChatsExist"> 
+               <TextButton v-if="showArchived" @click="showArchived=false" text="Hide Archived"/>
+               <TextButton v-else @click="showArchived=true" text="Show Archived"/>
+            </span>
+          </span>
+          <span v-else-if="dateContentModified" class="text-overline ml-1 mb-1">{{ dateContentModified }}</span>
       </div>
       <div v-if="viewMgr.isXs && isExpanded" class="mx-2">
           <div v-for="chat in displayChats" :key="chat.id"  @click="selectChat(chat)" class="hand mb-2">
@@ -54,6 +59,7 @@
    import ExpandIcon        from '../util/icon/ExpandIcon.vue'
    import HorizontalDiv     from '../util/HorizontalDiv.vue'
    import { toSortedNameAsc } from '@/utils/utils'
+   import { chatDate } from '@/utils/dateUtils'
    import { ChatStatus, Emit, State } from '@/utils/constants'
    
    const props = defineProps({ state: String, group: Object, initialChatId: String, collapsible: Boolean })
@@ -106,6 +112,8 @@
       }
       return toSortedNameAsc(chats)
    })
+
+   const dateContentModified = computed(() => chatDate(selectedChat.value?.dateContentModified?.toDate()))
 
    const canUpdate = computed(() => adminStore.isAdmin || props.group?.moderatorIds.includes(userStore.userId))
    

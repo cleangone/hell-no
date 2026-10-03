@@ -16,10 +16,10 @@
       <div class="bg-shade border-md fill-height pa-3"> <!-- users -->
          <UserThumbSwiper :users="groupUsers" @userId="selectUser"/>
       </div>
-      <div  class="mt-5">
+      <div class="mt-5">
          <Chats :state="State.GROUP" :group="paramGroup" :initialChatId="route.params.chatId" collapsible @select="onChatSelected"/>
       </div>
-      <v-row v-if="!chatExpanded" class="mt-5"> <!-- items -->
+      <v-row class="mt-5"> <!-- items -->
          <div v-for="item in displayItems" :key="item.id" class="group-thumb mr-2">
             <ItemThumb :item="item" :origin="ItemOrigin.GROUP"/>
             <div v-if="selectedChatId" class="group-thumb-icon" :class="thumbIconRight">
@@ -65,7 +65,6 @@
    const viewMgr    = useViewMgr()
    const userIdToNumItems  = ref(new Map())
    const selectedUserId    = ref(null)
-   const chatExpanded      = ref(false)
    const selectedChatId    = ref(null)
    const showEditGroupDialog = ref(false)
    

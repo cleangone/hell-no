@@ -25,7 +25,12 @@
          From <RouterLink :to="Route.USER.url + fromUser.id">{{ fromUser.username }}</RouterLink> 
          <EmailButton v-if="!isOwnedByUser" :user="itemUser" :item="paramItem"/>
       </div>
-      <div v-if="isOwnedByUser && !isPublic(paramItem)">{{ paramItem.state }}</div> 
+      <div v-if="!isPublic(paramItem)">
+         <div v-if="isGroup(paramItem)">
+            <span v-if="groups.length">via <GroupNameLinks :groups="groups"/></span>
+         </div> 
+         <span v-else>{{ paramItem.state }}</span>
+      </div>
       <div v-html="paramItem.desc" class="mt-3 mb-1"></div>
    </DefineTemplate>
 
@@ -161,6 +166,7 @@
    import { useItemStore }    from '@/stores/itemStore'
    import { useItemMgr }      from '@/stores/itemMgr'
    import { useGalleryStore } from '@/stores/galleryStore'
+   import { useGroupStore }   from '@/stores/groupStore'
    import { useWallStore }    from '@/stores/wallStore'
    import { useViewStore }    from '@/stores/viewStore'
    import { useViewMgr }      from '@/stores/viewMgr'
@@ -172,11 +178,12 @@
    import ShowItemGroupImages from '@/components/item/ShowItemGroupImages.vue'
    import EditItemDialog      from '@/components/item/crud/EditItemDialog.vue'
    import EmailButton         from '@/components/email/EmailButton.vue'
+   import GroupNameLinks      from '@/components/group/GroupNameLinks.vue'
    import UserLinkAvatar      from '@/components/user/avatar/UserLinkAvatar.vue'
    import EditButton          from '@/components/util/EditButton.vue'
    import IconButton          from '@/components/util/IconButton.vue'
    import CopyLink            from '@/components/util/CopyLink.vue'
-   import { isOwned, isPublic, populated } from '@/utils/utils'
+   import { isOwned, isGroup, isPublic, populated, toSortedNameAsc } from '@/utils/utils'
    import { ImageType, ItemNavAction, ItemOrigin, Route } from '@/utils/constants'
 
    const EXPAND_ITEMS_CLASS = "ExpandItems"
@@ -189,6 +196,7 @@
    const itemStore    = useItemStore()
    const itemMgr      = useItemMgr()
    const galleryStore = useGalleryStore()
+   const groupStore   = useGroupStore()
    const wallStore    = useWallStore()
    const viewStore    = useViewStore()
    const viewMgr      = useViewMgr()
@@ -260,7 +268,8 @@
    const descBeside    = computed(() => viewStore.itemDescBesideImage)
    const primaryArtist = computed(() => paramItem.value.primaryArtist) 
    const otherArtists  = computed(() => paramItem.value.otherArtists) 
-   
+   const groups        = computed(() => groupStore.myGroups.filter(group => paramItem.value.groupIds.includes(group.id)))
+
    const backgroundStyle = computed(() => "opacity: .05;") // make this configurable?
    const backgroundImage = computed(() => {
       let gallery = originGallery.value
@@ -335,7 +344,6 @@
    const artistName = (artist) => { return artist.fullName }
    const artistRole = (artist) => { return (artist.role ? " - " + artist.role : "") }
    
-   artistName
    const navItems = computed(() => { 
       for (let i=0; i<viewStoreItems.value.length; i++) {
          const viewStoreItem = viewStoreItems.value[i]
