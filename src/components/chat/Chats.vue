@@ -1,16 +1,15 @@
 <template>
    <v-card class="text-left w-100 elevation-1">
-      <div>
+      <div @click="isExpanded=!isExpanded" class="hand">
           <span class="text-h6">
-            <ExpandIcon v-if="collapsible && chatsExist" :isExpanded="isExpanded"
-               @click="isExpanded=!isExpanded" large iconClass="icon-btn mr-n1"/>
+            <ExpandIcon v-if="collapsible && chatsExist" :isExpanded="isExpanded" large iconClass="icon-btn mr-n1"/>
             Chats
          </span>
          <span v-if="isExpanded">
-            <TextButton v-if="canUpdate" @click="showAddChatDialog=true" text="Add Chat"/>
+            <TextButton v-if="canUpdate" @click.stop="showAddChatDialog=true" text="Add Chat"/>
             <span v-if="archivedChatsExist"> 
-               <TextButton v-if="showArchived" @click="showArchived=false" text="Hide Archived"/>
-               <TextButton v-else @click="showArchived=true" text="Show Archived"/>
+               <TextButton v-if="showArchived" @click.stop="showArchived=false" text="Hide Archived"/>
+               <TextButton v-else @click.stop="showArchived=true" text="Show Archived"/>
             </span>
           </span>
           <span v-else-if="dateContentModified" class="text-overline ml-1 mb-1">{{ dateContentModified }}</span>
@@ -58,7 +57,7 @@
    import TextButton        from '@/components/util/TextButton.vue'
    import ExpandIcon        from '../util/icon/ExpandIcon.vue'
    import HorizontalDiv     from '../util/HorizontalDiv.vue'
-   import { toSortedNameAsc } from '@/utils/utils'
+   import { toSortedDateContentModifiedDesc, toSortedNameAsc } from '@/utils/utils'
    import { chatDate } from '@/utils/dateUtils'
    import { ChatStatus, Emit, State } from '@/utils/constants'
    
@@ -73,15 +72,16 @@
    const showArchived = ref(false)
    const popupImage   = ref(null)
    const selectedChat = ref(null)
-   const isExpanded   = ref(true)
+   const isExpanded   = ref(false)
    const showAddChatDialog = ref(false)
    
    const allChats = computed(() => {
       // console.log("props.initialChatId", props.initialChatId)
       const chats = (props.state == State.GROUP && props.group?.id) ? 
-         chatStore.getGroupChats(props.group.id) :
-         props.state == State.PUBLIC ? chatStore.publicChats : []
+         chatStore.getGroupChats(props.group.id)
+         : props.state == State.PUBLIC ? chatStore.publicChats : []
       if (props.initialChatId) {
+         isExpanded.value = true
          for (const chat of chats) {
             if (chat.id == props.initialChatId) { selectedChat.value = chat }
          }
@@ -113,7 +113,10 @@
       return toSortedNameAsc(chats)
    })
 
-   const dateContentModified = computed(() => chatDate(selectedChat.value?.dateContentModified?.toDate()))
+   const dateContentModified = computed(() => {
+      const chats = toSortedDateContentModifiedDesc(displayChats.value)
+      return chats.length ? chatDate(chats[0].dateContentModified?.toDate()) : ""
+   })
 
    const canUpdate = computed(() => adminStore.isAdmin || props.group?.moderatorIds.includes(userStore.userId))
    
