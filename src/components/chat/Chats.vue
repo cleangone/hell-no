@@ -1,8 +1,8 @@
 <template>
-   <v-card class="text-left w-100 elevation-1">
-      <div @click="isExpanded=!isExpanded" class="hand">
-          <span class="text-h6">
-            <ExpandIcon v-if="collapsible && chatsExist" :isExpanded="isExpanded" large iconClass="icon-btn mr-n1"/>
+   <v-card class="text-left w-100 thumb-link">
+      <div @click="toggleExpand()" :class="toggleClass">
+          <span class="ml-3 text-h6">
+            <ExpandIcon v-if="collapsible && chatsExist" :isExpanded="isExpanded" large iconClass="admin-link mx-n1"/>
             Chats
          </span>
          <span v-if="isExpanded">
@@ -31,14 +31,14 @@
          </div>
          <div class="mb-2 flex-grow-1">
             <div><Posts :chat="selectedChat" :group="group" @popup="onPopup"/></div>
-            <AddPost v-if="selectedChat && isActive(selectedChat)" :chat="selectedChat", :group="group"/>
+            <AddPost v-if="selectedChat && isActive(selectedChat)" :chat="selectedChat" :group="group"/>
          </div> 
       </HorizontalDiv>
     </v-card>
 
    <ItemPopup v-if="popupImage" :popupImage="popupImage"/>
    <v-dialog v-model="showAddChatDialog" width="auto">
-      <AddChat :state="state" :groupId="groupId" @done="showAddChatDialog=false"/>
+      <AddChat :state="state" :groupId="group.id" @done="showAddChatDialog=false"/>
    </v-dialog>
 </template>
 
@@ -118,7 +118,9 @@
       return chats.length ? chatDate(chats[0].dateContentModified?.toDate()) : ""
    })
 
-   const canUpdate = computed(() => adminStore.isAdmin || props.group?.moderatorIds.includes(userStore.userId))
+   const canUpdate   = computed(() => adminStore.isAdmin || props.group?.moderatorIds.includes(userStore.userId))
+   const toggleClass = computed(() => props.collapsible ? "hand" : "")
+   const toggleExpand = () => { if (props.collapsible) { isExpanded.value = !isExpanded.value }}
    
    const isActive   = (chat) => { return chatMgr.isActive(chat) }
    const isSelected = (chat) => { return selectedChat.value?.id == chat.id }

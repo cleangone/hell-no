@@ -113,5 +113,8 @@ export default defineConfig({
       alias: {
          '@': fileURLToPath(new URL('./src', import.meta.url))
       }
-   }
+   },
+   build: {
+    sourcemap: true // Can also be set to 'inline' or 'hidden'
+  }
 })

@@ -109,7 +109,7 @@
 
    const displayItems = computed(() => { 
       const items = groupItems.value.filter(item => !selectedUserId.value || item.userId == selectedUserId.value )
-      return viewStore.setVisibleItems(ItemOrigin.GROUP, paramGroup.value.name, Route.GROUP.url + route.params.id, items) 
+      return viewStore.setVisibleItems(ItemOrigin.GROUP, paramGroup.value?.name ?? "", Route.GROUP.url + route.params.id, items) 
    })
 
    const selectUser     = (userId) => { selectedUserId.value = userId }
