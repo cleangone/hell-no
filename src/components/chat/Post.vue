@@ -1,5 +1,6 @@
 <template> 
-   <v-card class="mb-2" :class="bgClass">
+   <EditPost v-if="showEdit" :post="post" @done="showEdit=false"/>
+   <v-card v-else class="mb-2" :class="bgClass">
       <v-card-item class="pr-0 pt-0">
          <HorizontalDiv class="w-100">
             <div v-if="item" class="my-1 ml-n2">
@@ -14,8 +15,8 @@
                   <span class="text-label-small">{{ replyText }}</span>
                </span>
                <span v-if="canUpdate" style="float:right"> 
-                  <EditButton   @click="editPost()"   xs/>
-                  <DeleteButton @click="deletePost()" xs/>
+                  <EditButton   @click="showEdit=true"   xs/>
+                  <DeleteButton @click="showDelete=true" xs/>
                </span>
                <div class="pr-2 mt-n2">
                   <div v-if="youTube">
@@ -33,11 +34,8 @@
 
    <Replies v-if="isExpanded" :postId="props.post.id" :chat="chat" :group="group"/>
 
-   <v-dialog v-model="showEditDialog" width="auto">
-      <EditPost :post="post" @done="showEditDialog=false"/>
-   </v-dialog>
-   <v-dialog v-model="showDeleteDialog" width="auto">
-      <DeletePost :post="post" @done="showDeleteDialog=false"/>
+   <v-dialog v-model="showDelete" width="auto">
+      <DeletePost :post="post" @done="showDelete=false"/>
    </v-dialog>
 </template>
 
@@ -67,9 +65,9 @@
    const itemStore  = useItemStore()   
    const replyStore = useReplyStore()
    const viewStore  = useViewStore()
-   const isExpanded       = ref(false)
-   const showEditDialog   = ref(false)
-   const showDeleteDialog = ref(false)
+   const isExpanded = ref(false)
+   const showEdit   = ref(false)
+   const showDelete = ref(false)
 
    const item       = computed(() => props.post.itemId ? itemStore.getItem(props.post.itemId) : null)
    const user       = computed(() => userStore.getUser(props.post.userId))  
@@ -81,9 +79,6 @@
    const bgClass    = computed(() =>  "bg-" + viewStore.getMsgColor(props.post.userId))
    const canUpdate  = computed(() => props.post.userId == userStore.userId )
    
-   const editPost   = () => { showEditDialog.value = true }
-   const deletePost = () => { showDeleteDialog.value = true }
-
    // ugly prototype
    const youTube = computed(() => { 
       const startIndex = props.post.text.indexOf("https://www.youtube.com") 
