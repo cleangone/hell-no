@@ -97,7 +97,7 @@
             <div v-if="viewMgr.isMobile">
                <span v-if="inRoutes(Route.HOME, Route.USER)" style="white-space: nowrap">
                   <!-- <Icon icon="mdi-dice-multiple" @click="toRoute(Route.RANDOM)"/> -->
-                  <ShakeIcon icon="mdi-bell-ring" size="small" @click="toRoute(Route.MESSAGE)" class="mr-n1"/>
+                  <ShakeIcon v-if="activeNotificationsExist" icon="mdi-bell-ring" size="small" @click="toRoute(Route.MESSAGE)" class="mr-n1"/>
                   <DarkButton class="mr-n2"/>
                </span>
                <span v-else-if="isRoute(Route.GALLERIES)" class="text-no-wrap">
@@ -123,7 +123,7 @@
             <div v-else-if="userExists">
                <SearchBox class="mr-2"/>
                <RouterLink :to="isMyUserPage ? Route.ACCOUNT.url : Route.USER.url + userId">{{ displayName }}</RouterLink>
-               <ShakeIcon icon="mdi-bell-ring" size="small" @click="toRoute(Route.MESSAGE)" class="mx-1"/>
+               <ShakeIcon v-if="activeNotificationsExist" icon="mdi-bell-ring" size="small" @click="toRoute(Route.MESSAGE)" class="mx-1"/>
                <v-menu>
                   <template v-slot:activator="{ props }">
                      <v-btn v-bind="props" icon="mdi-account" size="medium" variant="text" class="icon-btn"/>
@@ -309,7 +309,7 @@
    const userOwnerId = computed(() => userStore.user.ownerId) 
    const myProfiles  = computed(() => userMgr.myProfiles) 
    
-   const notificationsExist = computed(() => notificationStore.myActiveNotifications.length)
+   const activeNotificationsExist = computed(() => notificationStore.myActiveNotifications.length)
 
    const displayName = computed(() => {
       const currUser = user.value // ugly - check user, which drives update of localStore.soloMode

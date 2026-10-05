@@ -17,7 +17,18 @@
                   <EditButton   @click="editPost()"   xs/>
                   <DeleteButton @click="deletePost()" xs/>
                </span>
-               <div class="pr-2 mt-n2">{{ post.text }}</div>
+               <div class="pr-2 mt-n2">
+                 
+                  <!-- <div v-if="isYouTube">
+                     {{ youTubeId }} - {{ post.text }}
+
+                     <img :data-video-id="youTubeId" src="https://youtube.com" alt="Video Thumbnail" /> -->
+
+<!-- <img :src="thumbnailUrl" alt="YouTube Video Thumbnail" /> -->
+
+                  <!-- </div> -->
+                  <div>{{ post.text }}</div>
+               </div>
             </div>
          </HorizontalDiv>
       </v-card-item>
@@ -75,6 +86,18 @@
    
    const editPost   = () => { showEditDialog.value = true }
    const deletePost = () => { showDeleteDialog.value = true }
+
+   const isYouTube = computed(() => props.post.text.startsWith("https://www.youtube.com"))
+   const youTubeId = computed(() => { 
+      const id = props.post.text.substr(props.post.text.indexOf("v=") + 2)
+      console.log("youTubeId", id)
+      return id
+   })
+   // show the link text for https://www.youtube.com/watch?v=Wuoo5hlr9jo
+   // show the link text for https://www.youtube.com/watch?v=Wuoo5hlr9jo
+
+   // const youTubeThumb = computed(() => "https://youtube.com{videoId.value}/hqdefault.jpg`
+   // v=Wuoo5hlr9jo
 
    const onPopup = (popup) => { emit(Emit.POPUP, popup) }
 </script>

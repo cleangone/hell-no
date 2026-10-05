@@ -18,8 +18,7 @@
        - handle xs chat layout
 */
 export const versions = [   
-   ["v2.68.0", "10/4/26"], // Temp enable sourcemap in vite.config for debugging of deployed code
-                           // Ipad bug fixes
+   ["v2.68.0", "10/4/26"], // Ipad bug fixes, enable vite.config sourcemap for deployed code debugging
    ["v2.67.4", "10/1/26"], // Add activeNotifications icon
    ["v2.67.3", "9/30/26"], // Add group item notifications
    ["v2.67.2", "9/29/26"], // Continued notification integration
