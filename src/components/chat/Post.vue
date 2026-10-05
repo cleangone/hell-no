@@ -18,16 +18,13 @@
                   <DeleteButton @click="deletePost()" xs/>
                </span>
                <div class="pr-2 mt-n2">
-                 
-                  <!-- <div v-if="isYouTube">
-                     {{ youTubeId }} - {{ post.text }}
-
-                     <img :data-video-id="youTubeId" src="https://youtube.com" alt="Video Thumbnail" /> -->
-
-<!-- <img :src="thumbnailUrl" alt="YouTube Video Thumbnail" /> -->
-
-                  <!-- </div> -->
-                  <div>{{ post.text }}</div>
+                  <div v-if="youTube">
+                     <div>{{ youTube.text }}</div>
+                     <a :href="youTube.link" target="_blank" rel="noopener noreferrer">
+                        <img :src="youTube.src" alt="Video Thumbnail" class="video-thumb" />
+                     </a>
+                  </div>
+                  <div v-else>{{ post.text }}</div>
                </div>
             </div>
          </HorizontalDiv>
@@ -87,20 +84,38 @@
    const editPost   = () => { showEditDialog.value = true }
    const deletePost = () => { showDeleteDialog.value = true }
 
-   const isYouTube = computed(() => props.post.text.startsWith("https://www.youtube.com"))
-   const youTubeId = computed(() => { 
-      const id = props.post.text.substr(props.post.text.indexOf("v=") + 2)
-      console.log("youTubeId", id)
-      return id
+   // ugly prototype
+   const youTube = computed(() => { 
+      const startIndex = props.post.text.indexOf("https://www.youtube.com") 
+      if (startIndex == -1) { return null }
+      const endIndex = props.post.text.substr(startIndex).indexOf(" ") 
+      const text = props.post.text.substr(0, startIndex)
+      const ytLink = props.post.text.substr(startIndex, endIndex)
+      // console.log("ytLink", ytLink)
+      
+      const thumbUrl = ytThumbUrl(ytLink)
+      // console.log("thumbUrl", thumbUrl)
+      return thumbUrl ? { link: ytLink, src: thumbUrl, text: text } : null
    })
-   // show the link text for https://www.youtube.com/watch?v=Wuoo5hlr9jo
-   // show the link text for https://www.youtube.com/watch?v=Wuoo5hlr9jo
 
-   // const youTubeThumb = computed(() => "https://youtube.com{videoId.value}/hqdefault.jpg`
-   // v=Wuoo5hlr9jo
+   const RegExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/
+   const ytThumbUrl = (link) => {
+      if (link) { 
+         const match = link.match(RegExp)
+         const videoId = (match && match[2].length === 11) ? match[2] : null
+         if (videoId) { return `https://i.ytimg.com/vi/${videoId}/maxresdefault.jpg` }
+      }
+      return null 
+   }
 
    const onPopup = (popup) => { emit(Emit.POPUP, popup) }
 </script>
 
 <style>
+.video-thumb {
+  width: 100%;
+  max-width: 100px;
+  height: auto;
+  display: block;
+}
 </style>
