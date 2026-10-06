@@ -8,6 +8,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/ios": "^8.5.2",
     "@ckeditor/ckeditor5-build-classic": "^41.4.2",
     "@ckeditor/ckeditor5-vue": "^5.1.0",
     "@unhead/vue": "^1.9.16",
@@ -43,6 +45,7 @@
     "vuetify": "^3.7.4"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.2",
     "@mdi/font": "^7.3.67",
     "@vitejs/plugin-vue": "^4.4.0",
     "@vue/cli-plugin-pwa": "~5.0.0",

@@ -1,0 +1,8 @@
+{
+  "appId": "gallery.hellno.app",
+  "appName": "hell-no",
+  "webDir": "dist",
+  "server": {
+    "iosScheme": "https"
+  }
+}
