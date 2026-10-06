@@ -18,6 +18,7 @@
        - handle xs chat layout
 */
 export const versions = [   
+   ["v3.0.0",  "10/5/26"], // Branch git for ionic app dev
    ["v2.68.2", "10/5/26"], // Edit notification inline
    ["v2.68.1", "10/5/26"], // Prototype youtube link, disable deployed sourcemap
    ["v2.68.0", "10/4/26"], // Ipad bug fixes, deploy sourcemap for prod debugging
