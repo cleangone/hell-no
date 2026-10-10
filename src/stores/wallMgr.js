@@ -38,10 +38,9 @@ export const useWallMgr = defineStore('wallMgr', () => {
       const filledWall = { ...wall }
       filledWall.wallItems = [ ...wall.wallItems ]
       filledWall.userWallItems = wall.userWallItems ? [ ...wall.userWallItems ] : [  ...wall.wallItems ]
-      const randomUngroupedItems = [ ...itemMgr.ungroupItems(items) ]
-      for (const item of randomUngroupedItems) { 
-         item.random = Math.floor(Math.random() * 1000) 
-      }
+
+      const randomUngroupedItems = itemMgr.ungroupItems(items)
+         .map(item => ({ ...item, random: Math.floor(Math.random() * 1000) }))
       randomUngroupedItems.sort(function(a, b){return b.random - a.random}) 
 
       for (const ungroupedItem of randomUngroupedItems) { 
