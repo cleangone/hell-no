@@ -18,6 +18,7 @@
        - handle xs chat layout
 */
 export const versions = [   
+   ["v2.69.1", "10/13/26"],// Fix old group/invite bugs
    ["v2.69.0", "10/10/26"],// Fix wallMgr bug found during ios development
    ["v2.68.2", "10/5/26"], // Edit notification inline
    ["v2.68.1", "10/5/26"], // Prototype youtube link, disable deployed sourcemap

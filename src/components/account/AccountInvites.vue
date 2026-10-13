@@ -7,7 +7,7 @@
       </div>
 
       <v-data-table :headers="headers" :items="invites" :custom-key-sort="customKeySort"  
-            v-model:expanded="expandedInviteIds" density="compact">
+            v-model:expanded="expandedInviteIds" items-per-page="25" density="compact">
          <template v-slot:item.to="{ item }">
             {{ item.toFirstName ? item.toFirstName : item.toGroupName }}
          </template>

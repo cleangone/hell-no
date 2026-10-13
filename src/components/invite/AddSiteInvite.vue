@@ -22,6 +22,7 @@
    import { computed, ref } from 'vue'
    import { useUserStore }   from '@/stores/userStore'
    import { useInviteStore } from '@/stores/inviteStore'
+   import { useGroupStore }  from '@/stores/groupStore'
    import { useGroupMgr }    from '@/stores/groupMgr'
    import TextButton         from '@/components/util/TextButton.vue'
    import { requiredRule, emailRule, randomPlate } from '@/utils/utils'
@@ -31,9 +32,10 @@
 
    const userStore   = useUserStore()
    const inviteStore = useInviteStore()
-   const groupMgr  = useGroupMgr()
+   const groupStore  = useGroupStore()
+   const groupMgr    = useGroupMgr()
    const invitePerson = ref(true)
-   const name = ref('')
+   const name  = ref('')
    const email = ref('')
    const selectedGroupId = ref(null)
    const dataValid = ref(true)
@@ -44,7 +46,8 @@
    const groupOptions = computed(() => groupMgr.myGroupOptions)
 
    const save = () => {
-      const initialGroup = groupMgr.myGroupIdToGroup.get(selectedGroupId.value)
+      const initialGroup = groupStore.getMyGroup(selectedGroupId.value)
+      
       const invite = { 
          type: InviteType.SITE, 
          state: InviteState.CREATED,

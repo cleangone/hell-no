@@ -7,10 +7,10 @@ import { ImageType } from '@/utils/constants'
 export const useGroupMgr = defineStore('groupmMgr', () => {   
    const groupStore = useGroupStore()   
    
+   const myGroups = computed(() => groupStore.myGroups.filter(group => !isHidden(group)))
    const myThumbGroups = computed(() => {
       const groups = []
-      const myGroups = groupStore.myGroups ? groupStore.myGroups.filter(group => !isHidden(group)) : []
-      for (const group of myGroups) {
+      for (const group of myGroups.value) {
          if (group.images?.length) {
             for (const image of group.images) {
                if (image.active) { 
@@ -45,7 +45,7 @@ export const useGroupMgr = defineStore('groupmMgr', () => {
    
    const myGroupOptions = computed(() => { 
      const options = []
-      for (const group of mySortedGroups.value) { 
+      for (const group of myGroups.value) { 
          options.push({ title: group.name, value: group.id })
       }
       return options
