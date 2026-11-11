@@ -33,6 +33,7 @@ import { ImageType, State } from '@/utils/constants'
       childGalleryIds[]
       useAltItemName
       useLocalItemName
+      isPhotoGallery - boolean
       dateCreated
       dateModified
       dateContentModified
