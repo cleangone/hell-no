@@ -1,7 +1,7 @@
 <template>
    <div class="text-left">
-      <MessageSetup/>
-      <MessageHandler/>
+      <!-- <MessageSetup/>
+      <MessageHandler/> -->
       <SendMessage/>
    </div>
 </template>

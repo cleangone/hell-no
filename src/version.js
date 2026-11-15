@@ -18,6 +18,7 @@
        - handle xs chat layout
 */
 export const versions = [   
+   ["v2.70.0", "11/15/26"],// Update Admin/SendMessage per new push message infra
    ["v2.69.2", "11/10/26"],// Add gallery.isPhotoGallery for app
    ["v2.69.1", "10/13/26"],// Fix old group/invite bugs
    ["v2.69.0", "10/10/26"],// Fix wallMgr bug found during ios development

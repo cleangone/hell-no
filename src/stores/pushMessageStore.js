@@ -4,34 +4,36 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore"
 import { dateUuid } from '@/utils/utils'
 
 /*
-   Message
+   PushMessage
       id
-      state: MessageState: CREATED, ERROR (message deleted after successfully sent)
+      state: MessageState: CREATED, SENT, ERROR
       data
          title
          body 
       error
-      messagingToken
-         device
+      messageToken
+         deviceId
          token
+         deviceType
       username
       dateCreated
 */
 
-const TABLE = 'messages'
+const TABLE = 'push-messages'
 const MessageState = { CREATED: 'Created' }
 
-export const useMessageStore = defineStore('message', () => {
-   function addMessage(title, body, user) {
-      console.log("addMessage", title, body)
-      console.log("addMessage.messagingTokens", user.messagingTokens)
-      for (const messagingToken of user.messagingTokens) {   
+export const usePushMessageStore = defineStore('pushMessage', () => {
+
+   function addPushMessage(title, body, user) {
+      console.log("addMessage", user.username, title, body)
+      for (const messageToken of user.pushMessageTokens) {   
          const id = dateUuid()
+         console.log("Adding push-message for device", messageToken.deviceType)
          setDoc(messageDoc(id), {
             id: id,
             state: MessageState.CREATED,
             data: { title: title, body: body },
-            messagingToken: messagingToken,
+            messageToken: messageToken,
             username: user.username,
             dateCreated: serverTimestamp()
          })
@@ -40,5 +42,5 @@ export const useMessageStore = defineStore('message', () => {
 
    function messageDoc(id) { return doc(db, TABLE, id) }
 
-   return { addMessage }
+   return { addPushMessage }
 })
