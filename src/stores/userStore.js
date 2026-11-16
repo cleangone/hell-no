@@ -23,8 +23,9 @@ import { useFirestore } from '@vueuse/firebase/useFirestore'
          notifyViaMessage
          soloMode - boolean, initially false
       messagingTokens[]
-         device
+         deviceId
          token
+         deviceType
       dateVisited
       dateCreated
       dateModified

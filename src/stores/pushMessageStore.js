@@ -2,45 +2,49 @@ import { defineStore } from 'pinia'
 import { db } from '@/firebase'
 import { doc, setDoc, serverTimestamp } from "firebase/firestore"
 import { dateUuid } from '@/utils/utils'
+import { PushMessageState } from '@/utils/constants'
 
 /*
    PushMessage
       id
-      state: MessageState: CREATED, SENT, ERROR
-      data
-         title
-         body 
-      error
-      messageToken
-         deviceId
-         token
-         deviceType
-      username
+      state: PushMessageState: ACTIVE, STAGED, SENT, ERROR
+      title
+      body 
+      destination
+         userId
+         username
+         messageToken
+            deviceId
+            token
+            deviceType
+      error - populated by backend if ERROR
       dateCreated
 */
 
 const TABLE = 'push-messages'
-const MessageState = { CREATED: 'Created' }
 
 export const usePushMessageStore = defineStore('pushMessage', () => {
 
-   function addPushMessage(title, body, user) {
-      console.log("addMessage", user.username, title, body)
-      for (const messageToken of user.pushMessageTokens) {   
-         const id = dateUuid()
-         console.log("Adding push-message for device", messageToken.deviceType)
-         setDoc(messageDoc(id), {
-            id: id,
-            state: MessageState.CREATED,
-            data: { title: title, body: body },
-            messageToken: messageToken,
-            username: user.username,
+   function addPushMessages(title, body, destinations, pushMessageState = PushMessageState.ACTIVE) {
+      console.log("addPushMessages", title, body) 
+      const ids = []
+      for (const destination of destinations) {
+         const pushMessage = {
+            id: dateUuid(),
+            state: pushMessageState,
+            title: title, 
+            body: body,
+            destination: destination,
             dateCreated: serverTimestamp()
-         })
+         }
+         console.log("addding pushMessage", pushMessage) 
+         setDoc(pushMessageDoc(pushMessage.id), pushMessage)
+         ids.push(pushMessage.id)
       }
+      return ids
    }
 
-   function messageDoc(id) { return doc(db, TABLE, id) }
+   function pushMessageDoc(id) { return doc(db, TABLE, id) }
 
-   return { addPushMessage }
+   return { addPushMessages }
 })

@@ -256,6 +256,13 @@ export const NotificationType = {
    GROUP_CHAT: 'GroupChat'
 }
 
+export const PushMessageState = { 
+   ACTIVE:     'Active', 
+   STAGED:     'Staged',
+   SENT:       'Sent',  // set by backend
+   ERROR:      'Error'  // set by backend
+}
+
 export const ThumbType = {
    ITEM:       'Item',
    GALLERY:    'Gallery',
