@@ -14,7 +14,7 @@
       </RouterLink>
       <div v-if="showText" :class="textMargin">
          <div class="text-body-2">
-            <span class="font-weight-bold">{{ gallery.name }}</span>
+            <span class="font-weight-bold">{{ name }}</span>
             <span v-if="visibleItemCount" class="ml-1">({{ visibleItemCount }})</span>
          </div>
          <UserDateText :user="fromUser" :date="showDateModified ? gallery.dateContentModified : null" class="text-body-2"/>
@@ -80,6 +80,7 @@
 
    const carouselHeight   = computed(() => cardWidth * 9 / 16)
    const carouselInterval = computed(() => 4000 + Math.floor(Math.random() * 4000)) // random bet 4-8 secs 
+   const name             = computed(() => thumbSize.value == ThumbSize.SM && props.gallery.shortName ? props.gallery.shortName : props.gallery.name)
    const visibleItemCount = computed(() => viewMgr.galleryItemCount(props.gallery))
    const showUser         = computed(() => !props.bypassShowUser && viewStore.galleryThumbOptions.includes(GalleryThumbOptions.USER))
    const showDateModified = computed(() => viewStore.galleryThumbOptions.includes(GalleryThumbOptions.UPDATED))

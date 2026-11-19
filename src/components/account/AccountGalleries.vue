@@ -93,7 +93,7 @@
    
    const galleryHeaders = computed(() => { 
       const headers = [{ title: 'Name', value: 'name', sortable: true } ]
-      if (fieldsExist.value.tag) { headers.push({ title: 'Tag', value: 'tag', sortable: true }) }
+      if (fieldsExist.value.shortName) { headers.push({ title: 'Short Name', value: 'shortName', sortable: true }) }
       headers.push(...[
          { title: 'Items',           value: 'itemsDesc',           align: 'center'  },
          { title: 'Images', key: 'images'  },
@@ -149,9 +149,9 @@
    })
 
    const fieldsExist = computed(() => { 
-      const fields = { tag: false, contributorIds: false  }
+      const fields = { shortName: false, contributorIds: false  }
       for (const gallery of userGalleries.value) {
-         if (gallery.tag?.length) { fields.tag = true }
+         if (gallery.shortName?.length) { fields.shortName = true }
          if (gallery.contributorIds?.length) { fields.contributorIds = true }
       }
       return fields

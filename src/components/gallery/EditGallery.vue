@@ -7,7 +7,7 @@
             <v-col><v-text-field v-model="gallerySortName" label="Sort Name"/></v-col>
          </v-row>
          <v-row class="mt-n4">
-            <v-col><v-text-field v-model="galleryTag" label="Tag" :rules="tagRule"/></v-col>
+            <v-col><v-text-field v-model="galleryShortName" label="Short Name"/></v-col>
             <v-col :cols="9">
                <v-select v-model="childGalleries" label="Child Galleries" :items="childGalleryOptions" 
                   item-title="name" return-object multiple v-on:update:modelValue="sortChildGalleries" class="select-min text-subtitle-2"/>
@@ -28,7 +28,6 @@
             <v-col cols="8"><v-checkbox v-model="descInHeader" label="Place description inside bottom/right of header image" class="ms-n1 mt-n2 tight-checkbox"/></v-col> 
             <v-col><v-text-field v-if="descInHeader" v-model="descHeaderPct" label="Width in header" suffix="%" type="number" class="mt-1"/></v-col>
          </v-row>
-         <v-checkbox v-model="isPhotoGallery" label="Is a Photo Gallery" class="ms-n2 mt-2 tight-checkbox"/> 
          <v-checkbox v-model="shareBackground" label="Share background with Gallery Items" class="ms-n2 tight-checkbox"/> 
          <v-checkbox v-model="useAltItemName" label="Use Item Alternate Name, if set, for Thumbnail" class="ms-n2 tight-checkbox"/> 
          <v-checkbox v-model="useLocalItemName" label="Localize Item Name in Thumbnail" class="ms-n2 tight-checkbox"/> 
@@ -64,6 +63,7 @@
    const galleryStore = useGalleryStore()
    const galleryMgr   = useGalleryMgr()
    const galleryName      = ref('')
+   const galleryShortName = ref('')
    const gallerySortName  = ref('')
    const galleryTag       = ref('')
    const galleryState     = ref('')
@@ -74,7 +74,6 @@
    const childGalleries = ref([])
    const itemThumbPrefix  = ref('')
    const itemThumbReplace = ref('')
-   const isPhotoGallery   = ref(false)
    const shareBackground  = ref(false)
    const useAltItemName   = ref(false)
    const useLocalItemName = ref(false)
@@ -82,6 +81,7 @@
    
    onMounted(() => {
       galleryName.value       = props.gallery.name
+      galleryShortName.value  = props.gallery.shortName ?? null
       gallerySortName.value   = props.gallery.sortName ?? null
       galleryTag.value        = props.gallery.tag ?? ""
       galleryState.value      = props.gallery.state
@@ -89,7 +89,6 @@
       galleryDescContainer.value.content = props.gallery.desc ?? ""
       descInHeader.value      = props.gallery.descInHeader     ?? false
       descHeaderPct.value     = props.gallery.descHeaderPct    ?? 60
-      isPhotoGallery.value    = props.gallery.isPhotoGallery   ?? false
       shareBackground.value   = props.gallery.shareBackground  ?? false
       useAltItemName.value    = props.gallery.useAltItemName   ?? false
       useLocalItemName.value  = props.gallery.useLocalItemName ?? false
@@ -102,14 +101,6 @@
       sortChildGalleries()
    })
    
-   const tagRule = computed(() => [
-      v => !v || !v.length || v.length < 16 || 'Max 15 characters',
-      v => {         
-         const gallery = galleryStore.getGalleryByTag(v)
-         return gallery && gallery.id != props.gallery.id ? "Tag already exists" : true 
-      }
-   ])
-
    const parentGalleryName = computed(() => galleryStore.getMyGallery(props.gallery.parentGalleryId)?.name )
    
    const otherUsers = computed(() => [ ...userMgr.otherUsers ])
@@ -173,6 +164,7 @@
       galleryStore.updateGallery({
          id: props.gallery.id,
          name:      galleryName.value,
+         shortName: galleryShortName.value,
          sortName:  gallerySortName.value,
          tag:       galleryTag.value,
          state:     galleryState.value,
@@ -180,7 +172,6 @@
          desc: galleryDescContainer.value.content,
          descInHeader:     descInHeader.value,
          descHeaderPct:    descHeaderPct.value,
-         isPhotoGallery:   isPhotoGallery.value,
          shareBackground:  shareBackground.value,
          useAltItemName:   useAltItemName.value,
          useLocalItemName: useLocalItemName.value,
